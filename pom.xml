@@ -42,6 +42,13 @@
           <artifactId>hoccer-talk-common</artifactId>
           <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        
+        <!-- ORM library for database management -->
+        <dependency>
+          <groupId>com.j256.ormlite</groupId>
+          <artifactId>ormlite-android</artifactId>
+          <version>4.43</version>
+        </dependency>
     </dependencies>
 
     <build>
