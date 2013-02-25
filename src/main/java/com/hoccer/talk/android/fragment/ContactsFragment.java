@@ -12,7 +12,6 @@ public class ContactsFragment extends Fragment {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 	}
 
@@ -26,13 +25,11 @@ public class ContactsFragment extends Fragment {
 
 	@Override
 	public void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 	}
 	
 	@Override
 	public void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 	}
 

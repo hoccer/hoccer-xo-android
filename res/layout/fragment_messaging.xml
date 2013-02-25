@@ -8,7 +8,9 @@
         android:id="@+id/messaging_message_list"
         android:layout_width="match_parent"
         android:layout_weight="1"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp"
+        android:transcriptMode="normal"
+        android:stackFromBottom="true"/>
     
     <LinearLayout
         android:id="@+id/messaging_composer"
@@ -21,11 +23,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         
-        <Button
-            android:id="@+id/messaging_composer_send"
-            android:text="Send"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/messaging_composer_attach"
+                android:text="Attach"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+            <Button
+                android:id="@+id/messaging_composer_send"
+                android:text="Send"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
         
     </LinearLayout>
 
