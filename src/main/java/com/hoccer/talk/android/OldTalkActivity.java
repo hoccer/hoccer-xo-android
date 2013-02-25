@@ -26,7 +26,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class TalkActivity extends Activity {
+public class OldTalkActivity extends Activity {
 
 	MessageStore mMessageStore;
 	
@@ -123,7 +123,7 @@ public class TalkActivity extends Activity {
 		
 		public MessageStore(Context context) {
 			super(context, R.layout.message_list_item, R.id.item_content, new ArrayList<TalkMessage>());
-			mInflater = TalkActivity.this.getLayoutInflater();
+			mInflater = OldTalkActivity.this.getLayoutInflater();
 		}
 
 		@Override
