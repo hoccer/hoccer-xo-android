@@ -9,12 +9,13 @@
         android:targetSdkVersion="14" />
 
     <application
-        android:allowBackup="true"
+        android:name=".TalkApplication"
+        android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".TalkActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
