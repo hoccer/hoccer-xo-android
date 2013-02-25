@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     
     <parent>
-      <groupId>hoccer</groupId>
-      <artifactId>hoccer-talk</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+        <groupId>hoccer</groupId>
+        <artifactId>hoccer-talk</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     
     <packaging>apk</packaging>
@@ -30,11 +30,6 @@
           <groupId>com.google.android</groupId>
           <artifactId>support-v4</artifactId>
           <version>r7</version>
-        </dependency>
-        <dependency>
-            <groupId>hoccer</groupId>
-            <artifactId>hoccer-java-api</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
