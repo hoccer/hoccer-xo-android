@@ -20,7 +20,7 @@ import java.util.logging.LogRecord;
 
 import android.util.Log;
 
-import com.hoccer.talk.android.logging.HoccerLoggers;
+import com.hoccer.talk.logging.HoccerLoggers;
 
 /**
  * Logging handler that forwards incoming log records to Android's logcat so
