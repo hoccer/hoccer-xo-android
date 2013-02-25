@@ -40,7 +40,6 @@ public class MessagingFragment extends Fragment {
 			throw new ClassCastException(
 				activity.toString() + " must implement TalkActivity");
 		}
-		
 	}
 
 	@Override

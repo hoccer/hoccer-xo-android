@@ -117,6 +117,36 @@ public class MainActivity extends FragmentActivity
 		
 	}
 	
+	public BaseAdapter makeContactListAdapter() {
+		ContactListAdapter a = new ContactListAdapter(this);
+		a.add("Pia");
+		a.add("Udo");
+		a.add("George");
+		return a;
+	}
+	
+	public class ContactListAdapter extends ArrayAdapter<String> {
+
+		LayoutInflater mInflater;
+		
+		public ContactListAdapter(Context context) {
+			super(context, R.id.contact_name);
+			mInflater = getLayoutInflater();
+		}
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View v = convertView;
+			
+			if(v == null) {
+				v = mInflater.inflate(R.layout.item_contact, null);
+			}
+			
+			return v;
+		}
+		
+	}
+	
 	public BaseAdapter makeMessageListAdapter() {
 		MessageListAdapter a = new MessageListAdapter(this);
 		generateTestMessages(a);
@@ -160,7 +190,7 @@ public class MainActivity extends FragmentActivity
 		
 		public MessageListAdapter(Context context) {
 			super(context, R.layout.item_message, R.id.item_content, new ArrayList<TalkMessage>());
-			mInflater = MainActivity.this.getLayoutInflater();
+			mInflater = getLayoutInflater();
 		}
 
 		@Override
