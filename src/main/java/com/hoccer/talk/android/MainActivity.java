@@ -1,33 +1,32 @@
 package com.hoccer.talk.android;
 
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
 import com.hoccer.talk.android.fragment.ContactsFragment;
 import com.hoccer.talk.android.fragment.MessagingFragment;
 import com.hoccer.talk.android.model.TalkMessage;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class MainActivity extends FragmentActivity
+public class MainActivity extends SherlockFragmentActivity
 		implements TalkActivity {
 
 	private static final int VIEW_CONTACTS  = 0;
@@ -56,7 +55,7 @@ public class MainActivity extends FragmentActivity
 		setContentView(R.layout.activity_main);
 		
 		// get and configure the action bar
-		mActionBar = getActionBar();
+		mActionBar = getSupportActionBar();
 		mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 		
 		// set up fragment handling
@@ -77,13 +76,13 @@ public class MainActivity extends FragmentActivity
 							R.id.main_fragment_messaging);
 		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.common, menu);
+		getSupportMenuInflater().inflate(R.menu.common, menu);
 		return true;
 	}
-
+	
 	public class MainPagerAdapter extends FragmentPagerAdapter {
 
 		public MainPagerAdapter() {

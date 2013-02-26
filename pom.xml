@@ -31,9 +31,9 @@
         
         <!-- Android support library v4 -->
         <dependency>
-          <groupId>android.support</groupId>
-          <artifactId>compatibility-v4</artifactId>
-          <version>${compatv4.version}</version>
+          <groupId>com.actionbarsherlock</groupId>
+          <artifactId>actionbarsherlock</artifactId>
+          <version>4.2.0</version>
         </dependency>
         
         <!-- Base library with models and protocols -->

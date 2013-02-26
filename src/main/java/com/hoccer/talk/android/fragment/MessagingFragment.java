@@ -2,6 +2,7 @@ package com.hoccer.talk.android.fragment;
 
 import java.util.logging.Logger;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.logging.HoccerLoggers;
@@ -14,7 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-public class MessagingFragment extends Fragment {
+public class MessagingFragment extends SherlockFragment {
 
 	private static final Logger LOG =
 			HoccerLoggers.getLogger(MessagingFragment.class);
