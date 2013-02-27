@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import com.hoccer.talk.android.service.ITalkClientService;
 
 public class MainActivity extends SherlockFragmentActivity
 		implements TalkActivity {
@@ -145,8 +146,13 @@ public class MainActivity extends SherlockFragmentActivity
 		}
 		
 	}
-	
-	public BaseAdapter makeMessageListAdapter() {
+
+    @Override
+    public ITalkClientService getTalkClientService() {
+        return null;
+    }
+
+    public BaseAdapter makeMessageListAdapter() {
 		MessageListAdapter a = new MessageListAdapter(this);
 		generateTestMessages(a);
 		generateMessagesInBackground(a);
