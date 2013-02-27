@@ -31,15 +31,23 @@
         
         <!-- Android support library v4 -->
         <dependency>
+            <groupId>android.support</groupId>
+            <artifactId>compatibility-v4</artifactId>
+            <version>11</version>
+        </dependency>
+
+        <!-- Action Bar Sherlock -->
+        <dependency>
           <groupId>com.actionbarsherlock</groupId>
           <artifactId>actionbarsherlock</artifactId>
           <version>4.2.0</version>
+          <type>apklib</type>
         </dependency>
         
-        <!-- Base library with models and protocols -->
+        <!-- Talk client library -->
         <dependency>
           <groupId>hoccer</groupId>
-          <artifactId>hoccer-talk-common</artifactId>
+          <artifactId>hoccer-talk-client</artifactId>
           <version>0.0.1-SNAPSHOT</version>
         </dependency>
         
@@ -56,12 +64,13 @@
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.5.1</version>
                 <configuration>
                     <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
                     <assetsDirectory>${project.basedir}/assets</assetsDirectory>
                     <resourceDirectory>${project.basedir}/res</resourceDirectory>
                     <nativeLibrariesDirectory>${project.basedir}/src/main/native</nativeLibrariesDirectory>
+                    <extractDuplicates>true</extractDuplicates>
                     <sdk>
                         <platform>17</platform>
                     </sdk>
