@@ -2,7 +2,13 @@ package com.hoccer.talk.android.fragment;
 
 import java.util.logging.Logger;
 
+import android.app.SearchManager;
+import android.content.Context;
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.widget.SearchView;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.logging.HoccerLoggers;
@@ -28,6 +34,7 @@ public class ContactsFragment extends SherlockFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		LOG.info("onCreate()");
 		super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 	}
 	
 	@Override
@@ -54,6 +61,34 @@ public class ContactsFragment extends SherlockFragment {
 		
 		return v;
 	}
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        SherlockFragmentActivity activity = getSherlockActivity();
+        inflater.inflate(R.menu.fragment_messaging, menu);
+
+        SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        if (null != searchView )
+        {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
+            searchView.setIconifiedByDefault(false);
+        }
+
+        SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener()
+        {
+            public boolean onQueryTextChange(String newText)
+            {
+                return true;
+            }
+
+            public boolean onQueryTextSubmit(String query)
+            {
+                return true;
+            }
+        };
+        searchView.setOnQueryTextListener(queryTextListener);
+    }
 
 	@Override
 	public void onResume() {
