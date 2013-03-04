@@ -74,21 +74,21 @@ public class MessagingFragment extends SherlockFragment {
         {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
             searchView.setIconifiedByDefault(false);
+
+            SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener()
+            {
+                public boolean onQueryTextChange(String newText)
+                {
+                    return true;
+                }
+
+                public boolean onQueryTextSubmit(String query)
+                {
+                    return true;
+                }
+            };
+            searchView.setOnQueryTextListener(queryTextListener);
         }
-
-        SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener()
-        {
-            public boolean onQueryTextChange(String newText)
-            {
-                return true;
-            }
-
-            public boolean onQueryTextSubmit(String query)
-            {
-                return true;
-            }
-        };
-        searchView.setOnQueryTextListener(queryTextListener);
     }
 
     @Override

@@ -69,25 +69,25 @@ public class ContactsFragment extends SherlockFragment {
 
         SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        if (null != searchView )
+        if (searchView != null)
         {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
             searchView.setIconifiedByDefault(false);
+
+            SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener()
+            {
+                public boolean onQueryTextChange(String newText)
+                {
+                    return true;
+                }
+
+                public boolean onQueryTextSubmit(String query)
+                {
+                    return true;
+                }
+            };
+            searchView.setOnQueryTextListener(queryTextListener);
         }
-
-        SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener()
-        {
-            public boolean onQueryTextChange(String newText)
-            {
-                return true;
-            }
-
-            public boolean onQueryTextSubmit(String query)
-            {
-                return true;
-            }
-        };
-        searchView.setOnQueryTextListener(queryTextListener);
     }
 
 	@Override
