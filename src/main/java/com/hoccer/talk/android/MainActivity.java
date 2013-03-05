@@ -3,8 +3,15 @@ package com.hoccer.talk.android;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
+import android.os.RemoteException;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -26,13 +33,19 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.hoccer.talk.android.service.ITalkClientService;
+import com.hoccer.talk.android.service.TalkClientService;
+import com.hoccer.talk.logging.HoccerLoggers;
 
-public class MainActivity extends SherlockFragmentActivity
-		implements TalkActivity {
+public class MainActivity extends SherlockFragmentActivity implements TalkActivity {
+
+    private static final Logger LOG =
+            HoccerLoggers.getLogger(MainActivity.class);
 
 	private static final int VIEW_CONTACTS  = 0;
 	private static final int VIEW_MESSAGING = 1;
-	
+
+    ITalkClientService mService;
+
 	FragmentManager mFragmentManager;
 	
 	ActionBar mActionBar;
@@ -42,11 +55,16 @@ public class MainActivity extends SherlockFragmentActivity
 	
 	ContactsFragment mContactsFragment;
 	MessagingFragment mMessagingFragment;
+
+    ServiceConnection mServiceConnection;
 	
-	ScheduledExecutorService mBackgroundExecutor = Executors.newSingleThreadScheduledExecutor();
+	ScheduledExecutorService mBackgroundExecutor;
+
+    ScheduledFuture<?> mKeepAliveTimer;
 	
 	@Override
 	protected void onCreate(Bundle state) {
+        LOG.info("onCreate()");
 		super.onCreate(state);
 		
 		// get the fragment manager
@@ -62,13 +80,15 @@ public class MainActivity extends SherlockFragmentActivity
 		// set up fragment handling
 		mViewPager = (ViewPager)findViewById(R.id.main_fragment_pager);
 		if(mViewPager != null) {
-			// if we have a ViewPager we use a one-pane layout (handset version)
+            // if we have a ViewPager we use a one-pane layout (handset version)
+            LOG.info("using one-pane handset layout");
 			mViewPagerAdapter = new MainPagerAdapter();
 			
 			mViewPager.setAdapter(mViewPagerAdapter);
 			mViewPager.setCurrentItem(VIEW_MESSAGING);
 		} else {
-			// if we have a ViewPager we use a one-pane layout (handset version)
+            // if we don't have a ViewPager we use a two-pane layout (tablet version)
+            LOG.info("using two-pane tablet layout");
 			mContactsFragment = (ContactsFragment)
 					mFragmentManager.findFragmentById(
 							R.id.main_fragment_contacts);
@@ -78,18 +98,122 @@ public class MainActivity extends SherlockFragmentActivity
 		}
 	}
 
-	@Override
+    @Override
+    protected void onResume() {
+        LOG.info("onResume()");
+        super.onResume();
+
+        // launch a new background executor
+        mBackgroundExecutor = Executors.newSingleThreadScheduledExecutor();
+
+        // start the backend service and bind to it
+        Intent serviceIntent = new Intent(getApplicationContext(), TalkClientService.class);
+        startService(serviceIntent);
+        mServiceConnection = new MainServiceConnection();
+        bindService(serviceIntent, mServiceConnection, BIND_IMPORTANT);
+    }
+
+    @Override
+    protected void onPause() {
+        LOG.info("onPause()");
+        super.onPause();
+
+        // stop keeping the service alive
+        shutdownKeepAlive();
+
+        // drop reference to service binder
+        if(mService != null) {
+            mService = null;
+        }
+        // unbind service connection
+        if(mServiceConnection != null) {
+            unbindService(mServiceConnection);
+            mServiceConnection = null;
+        }
+        // stop any remaining background tasks
+        if(mBackgroundExecutor != null) {
+            mBackgroundExecutor.shutdownNow();
+            mBackgroundExecutor = null;
+        }
+    }
+
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+        LOG.info("onCreateOptionsMenu()");
 		getSupportMenuInflater().inflate(R.menu.common, menu);
 		return true;
 	}
-	
+
+    /**
+     * Retrieve reference to service binder
+     * @return
+     */
+    @Override
+    public ITalkClientService getTalkClientService() {
+        return mService;
+    }
+
+    /**
+     * Schedule regular keep-alive calls to the service
+     */
+    private void scheduleKeepAlive() {
+        shutdownKeepAlive();
+        mKeepAliveTimer = mBackgroundExecutor.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                if(mService != null) {
+                    try {
+                        mService.keepAlive();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, 1, 30, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Stop sending keep-alive calls to the service
+     */
+    private void shutdownKeepAlive() {
+        if(mKeepAliveTimer != null) {
+            mKeepAliveTimer.cancel(false);
+            mKeepAliveTimer = null;
+        }
+    }
+
+    /**
+     * Connection to our backend service
+     */
+    public class MainServiceConnection implements ServiceConnection {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            LOG.info("onServiceConnected()");
+            mService = (ITalkClientService)service;
+            scheduleKeepAlive();
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            LOG.info("onServiceDisconnected()");
+            shutdownKeepAlive();
+            mService = null;
+        }
+    }
+
+    /**
+     * Pager adapter for our ViewPager
+     */
 	public class MainPagerAdapter extends FragmentPagerAdapter {
 
 		public MainPagerAdapter() {
 			super(mFragmentManager);
 		}
-		
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
 		@Override
 		public Fragment getItem(int position) {
 			Fragment fragment = null;
@@ -109,14 +233,18 @@ public class MainActivity extends SherlockFragmentActivity
 			}
 			return fragment;
 		}
-
-		@Override
-		public int getCount() {
-			return 2;
-		}
 		
 	}
-	
+
+
+
+
+
+
+
+
+
+
 	public BaseAdapter makeContactListAdapter() {
 		ContactListAdapter a = new ContactListAdapter(this);
 		a.add("Pia");
@@ -147,15 +275,9 @@ public class MainActivity extends SherlockFragmentActivity
 		
 	}
 
-    @Override
-    public ITalkClientService getTalkClientService() {
-        return null;
-    }
-
     public BaseAdapter makeMessageListAdapter() {
 		MessageListAdapter a = new MessageListAdapter(this);
 		generateTestMessages(a);
-		generateMessagesInBackground(a);
 		return a;
 	}
 	

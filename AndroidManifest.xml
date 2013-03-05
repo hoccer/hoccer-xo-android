@@ -8,6 +8,8 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="14" />
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:name=".TalkApplication"
         android:allowBackup="false"
@@ -23,6 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".service.TalkClientService">
+        </service>
     </application>
 
 </manifest>
