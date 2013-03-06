@@ -17,7 +17,6 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.hoccer.talk.android.fragment.ContactsFragment;
 import com.hoccer.talk.android.fragment.MessagingFragment;
-import com.hoccer.talk.android.model.TalkMessage;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -32,9 +31,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import com.hoccer.talk.android.service.ITalkClientListener;
 import com.hoccer.talk.android.service.ITalkClientService;
 import com.hoccer.talk.android.service.TalkClientService;
 import com.hoccer.talk.logging.HoccerLoggers;
+import com.hoccer.talk.model.TalkMessage;
 
 public class MainActivity extends SherlockFragmentActivity implements TalkActivity {
 
@@ -43,6 +44,8 @@ public class MainActivity extends SherlockFragmentActivity implements TalkActivi
 
 	private static final int VIEW_CONTACTS  = 0;
 	private static final int VIEW_MESSAGING = 1;
+
+    TalkApplication mApplication;
 
     ITalkClientService mService;
 
@@ -66,7 +69,10 @@ public class MainActivity extends SherlockFragmentActivity implements TalkActivi
 	protected void onCreate(Bundle state) {
         LOG.info("onCreate()");
 		super.onCreate(state);
-		
+
+        // get our global application object
+        mApplication = (TalkApplication)getApplication();
+
 		// get the fragment manager
 		mFragmentManager = getSupportFragmentManager();
 		
@@ -168,8 +174,11 @@ public class MainActivity extends SherlockFragmentActivity implements TalkActivi
                         e.printStackTrace();
                     }
                 }
-            }
-        }, 1, 30, TimeUnit.SECONDS);
+                }
+        },
+        TalkConfiguration.SERVICE_KEEPALIVE_PING_DELAY,
+        TalkConfiguration.SERVICE_KEEPALIVE_PING_INTERVAL,
+        TimeUnit.SECONDS);
     }
 
     /**
@@ -183,6 +192,20 @@ public class MainActivity extends SherlockFragmentActivity implements TalkActivi
     }
 
     /**
+     * Attach our listener to the client service
+     */
+    private void attachServiceListener() {
+        if(mService != null) {
+            try {
+                mService.setListener(new MainServiceListener());
+            } catch (RemoteException e) {
+                // XXX fault
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
      * Connection to our backend service
      */
     public class MainServiceConnection implements ServiceConnection {
@@ -191,6 +214,7 @@ public class MainActivity extends SherlockFragmentActivity implements TalkActivi
             LOG.info("onServiceConnected()");
             mService = (ITalkClientService)service;
             scheduleKeepAlive();
+            attachServiceListener();
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -198,6 +222,12 @@ public class MainActivity extends SherlockFragmentActivity implements TalkActivi
             shutdownKeepAlive();
             mService = null;
         }
+    }
+
+    /**
+     * Listener for events from service
+     */
+    public class MainServiceListener extends ITalkClientListener.Stub {
     }
 
     /**
@@ -284,31 +314,9 @@ public class MainActivity extends SherlockFragmentActivity implements TalkActivi
 	private void generateTestMessages(MessageListAdapter a) {
 		for(int i = 0; i < 10; i++) {
 			boolean foo = (i & 2) == 0;
-			TalkMessage m = new TalkMessage(foo ? "Pia" : "George", "Test message #" + i);
+			TalkMessage m = new TalkMessage();
 			a.add(m);
 		}
-	}
-	
-	private void generateMessagesInBackground(final MessageListAdapter a) {
-		mBackgroundExecutor.scheduleAtFixedRate(new Runnable() {
-			
-			@Override
-			public void run() {
-				Log.d("Foo", "Delivering message from Udo");
-				runOnUiThread(new Runnable() {
-					
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						Log.d("Foo", "Scheduling next delivery");
-						TalkMessage m = new TalkMessage("Udo", "Foobar!");
-
-						a.add(m);
-					}
-				});
-
-			}
-		}, 5000, 5000, TimeUnit.MILLISECONDS);
 	}
 	
 	class MessageListAdapter extends ArrayAdapter<TalkMessage> {
@@ -332,8 +340,8 @@ public class MainActivity extends SherlockFragmentActivity implements TalkActivi
 			TextView content = (TextView)v.findViewById(R.id.item_content);
 			TextView sender = (TextView)v.findViewById(R.id.item_sender_name);
 			
-			content.setText(m.getContent());
-			sender.setText(m.getSender());
+			content.setText(m.getBody());
+			sender.setText(m.getSenderId());
 			
 			return v;
 		}

@@ -8,4 +8,6 @@ interface ITalkClientService {
 
     void setListener(ITalkClientListener listener);
 
+    void messageCreated(String messageTag);
+
 }

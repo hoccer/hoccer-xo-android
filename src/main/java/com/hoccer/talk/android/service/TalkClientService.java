@@ -1,8 +1,14 @@
 package com.hoccer.talk.android.service;
 
+import java.sql.SQLException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
+import com.hoccer.talk.android.TalkConfiguration;
 import com.hoccer.talk.android.database.TalkDatabase;
 import com.hoccer.talk.client.HoccerTalkClient;
 import com.hoccer.talk.logging.HoccerLoggers;
@@ -22,22 +28,66 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> {
 
     HoccerTalkClient mClient;
 
+    ScheduledExecutorService mExecutor;
+
+    ScheduledFuture<?> mShutdownFuture;
+
 	@Override
 	public void onCreate() {
         LOG.info("onCreate()");
 		super.onCreate();
 
-        mClient = new HoccerTalkClient(getHelper());
+        mExecutor = Executors.newSingleThreadScheduledExecutor();
+
+        mClient = new HoccerTalkClient(mExecutor, getHelper());
 	}
 
-	@Override
+    @Override
+    public void onDestroy() {
+        LOG.info("onDestroy()");
+        super.onDestroy();
+        mExecutor.shutdownNow();
+    }
+
+    @Override
 	public IBinder onBind(Intent intent) {
         LOG.info("onBind(" + intent.toString() + ")");
-        getHelper();
-		return new Connection();
+        try {
+            getHelper().getMessageDao().queryForAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new Connection();
 	}
-	
-	public class Connection extends ITalkClientService.Stub {
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        LOG.info("onUnbind(" + intent.toString() + ")");
+        return super.onUnbind(intent);
+    }
+
+    private void scheduleShutdown() {
+        shutdownShutdown();
+        mShutdownFuture = mExecutor.schedule(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        LOG.info("shutting down due to keep-alive timeout");
+                        stopSelf();
+                    }
+                },
+                TalkConfiguration.SERVICE_KEEPALIVE_TIMEOUT, TimeUnit.SECONDS
+        );
+    }
+
+    private void shutdownShutdown() {
+        if(mShutdownFuture != null) {
+            mShutdownFuture.cancel(false);
+            mShutdownFuture = null;
+        }
+    }
+
+    public class Connection extends ITalkClientService.Stub {
 
         int mId;
 
@@ -53,6 +103,7 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> {
 		public void keepAlive()
                 throws RemoteException {
             LOG.info("[" + mId + "] keepAlive()");
+            scheduleShutdown();
 		}
 
         @Override
@@ -61,7 +112,13 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> {
             LOG.info("[" + mId + "] setListener()");
             mListener = listener;
         }
-		
-	}
+
+        @Override
+        public void messageCreated(String messageTag) throws RemoteException {
+            LOG.info("[" + mId + "] messageCreated(" + messageTag + ")");
+            mClient.tryToDeliver(messageTag);
+        }
+
+    }
 
 }

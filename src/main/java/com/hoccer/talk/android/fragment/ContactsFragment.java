@@ -11,6 +11,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.widget.SearchView;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
+import com.hoccer.talk.android.database.TalkDatabase;
 import com.hoccer.talk.logging.HoccerLoggers;
 
 import android.app.Activity;
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 public class ContactsFragment extends SherlockFragment {
 
@@ -27,6 +29,8 @@ public class ContactsFragment extends SherlockFragment {
 			HoccerLoggers.getLogger(ContactsFragment.class);
 	
 	TalkActivity mActivity;
+
+    TalkDatabase mDatabase;
 	
 	ListView mContactList;
 	
@@ -48,6 +52,8 @@ public class ContactsFragment extends SherlockFragment {
 			throw new ClassCastException(
 				activity.toString() + " must implement TalkActivity");
 		}
+
+        mDatabase = OpenHelperManager.getHelper(activity, TalkDatabase.class);
 	}
 
 	@Override
@@ -64,30 +70,9 @@ public class ContactsFragment extends SherlockFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        LOG.info("onCreateOptionsMenu()");
         SherlockFragmentActivity activity = getSherlockActivity();
         inflater.inflate(R.menu.fragment_messaging, menu);
-
-        SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        if (searchView != null)
-        {
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
-            searchView.setIconifiedByDefault(false);
-
-            SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener()
-            {
-                public boolean onQueryTextChange(String newText)
-                {
-                    return true;
-                }
-
-                public boolean onQueryTextSubmit(String query)
-                {
-                    return true;
-                }
-            };
-            searchView.setOnQueryTextListener(queryTextListener);
-        }
     }
 
 	@Override
