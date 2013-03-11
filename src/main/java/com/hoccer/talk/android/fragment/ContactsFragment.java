@@ -2,21 +2,17 @@ package com.hoccer.talk.android.fragment;
 
 import java.util.logging.Logger;
 
-import android.app.SearchManager;
-import android.content.Context;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.widget.SearchView;
 import com.hoccer.talk.android.R;
-import com.hoccer.talk.android.TalkActivity;
+import com.hoccer.talk.android.ITalkActivity;
 import com.hoccer.talk.android.database.TalkDatabase;
 import com.hoccer.talk.logging.HoccerLoggers;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +24,7 @@ public class ContactsFragment extends SherlockFragment {
 	private static final Logger LOG =
 			HoccerLoggers.getLogger(ContactsFragment.class);
 	
-	TalkActivity mActivity;
+	ITalkActivity mActivity;
 
     TalkDatabase mDatabase;
 	
@@ -46,11 +42,11 @@ public class ContactsFragment extends SherlockFragment {
 		LOG.info("onAttach()");
 		super.onAttach(activity);
 		
-		if (activity instanceof TalkActivity) {
-			mActivity = (TalkActivity) activity;
+		if (activity instanceof ITalkActivity) {
+			mActivity = (ITalkActivity) activity;
 		} else {
 			throw new ClassCastException(
-				activity.toString() + " must implement TalkActivity");
+				activity.toString() + " must implement ITalkActivity");
 		}
 
         mDatabase = OpenHelperManager.getHelper(activity, TalkDatabase.class);

@@ -24,7 +24,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +36,7 @@ import com.hoccer.talk.android.service.TalkClientService;
 import com.hoccer.talk.logging.HoccerLoggers;
 import com.hoccer.talk.model.TalkMessage;
 
-public class MainActivity extends SherlockFragmentActivity implements TalkActivity {
+public class MainActivity extends SherlockFragmentActivity implements ITalkActivity {
 
     /** Logger for the activity */
     private static final Logger LOG =
