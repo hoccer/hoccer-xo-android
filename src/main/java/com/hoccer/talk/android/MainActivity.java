@@ -39,39 +39,55 @@ import com.hoccer.talk.model.TalkMessage;
 
 public class MainActivity extends SherlockFragmentActivity implements TalkActivity {
 
+    /** Logger for the activity */
     private static final Logger LOG =
             HoccerLoggers.getLogger(MainActivity.class);
 
+
+    /** Number of views in the ViewPager */
+    private static final int NUM_VIEWS = 2;
+    /** Index of the contact list in the ViewPager */
 	private static final int VIEW_CONTACTS  = 0;
+    /** Index of the messaging view in the ViewPager */
 	private static final int VIEW_MESSAGING = 1;
 
-    TalkApplication mApplication;
 
+    /** Executor for background tasks */
+    ScheduledExecutorService mBackgroundExecutor;
+
+    /** Our fragment manager for dealing with transitions and such */
+	FragmentManager mFragmentManager;
+
+    /** The view pager we use for fragment sliding */
+	ViewPager mViewPager;
+
+    /** Our pager adapter for the ViewPager */
+	MainPagerAdapter mViewPagerAdapter;
+
+    /** Our actionbar */
+    ActionBar mActionBar;
+
+
+    /** Fragment for contact management */
+    ContactsFragment mContactsFragment;
+    /** Fragment for messaging */
+    MessagingFragment mMessagingFragment;
+
+
+    /** RPC interface to service (null when not connected) */
     ITalkClientService mService;
 
-	FragmentManager mFragmentManager;
-	
-	ActionBar mActionBar;
-	
-	ViewPager mViewPager;
-	MainPagerAdapter mViewPagerAdapter;
-	
-	ContactsFragment mContactsFragment;
-	MessagingFragment mMessagingFragment;
-
+    /** Service connection object managing mService */
     ServiceConnection mServiceConnection;
-	
-	ScheduledExecutorService mBackgroundExecutor;
 
+    /** Timer for keepalive calls to the service */
     ScheduledFuture<?> mKeepAliveTimer;
-	
+
+
 	@Override
 	protected void onCreate(Bundle state) {
         LOG.info("onCreate()");
 		super.onCreate(state);
-
-        // get our global application object
-        mApplication = (TalkApplication)getApplication();
 
 		// get the fragment manager
 		mFragmentManager = getSupportFragmentManager();
@@ -241,7 +257,7 @@ public class MainActivity extends SherlockFragmentActivity implements TalkActivi
 
         @Override
         public int getCount() {
-            return 2;
+            return NUM_VIEWS;
         }
 
 		@Override
