@@ -15,17 +15,12 @@
 
     <artifactId>hoccer-talk-android</artifactId>
 
-    <properties>
-        <platform.version>4.2_r1</platform.version>
-        <compatv4.version>11</compatv4.version>
-    </properties>
-
     <dependencies>
         <!-- Android platform -->
         <dependency>
             <groupId>android</groupId>
             <artifactId>android</artifactId>
-            <version>${platform.version}</version>
+            <version>${android.platform.version}</version>
             <scope>provided</scope>
         </dependency>
         
@@ -33,14 +28,14 @@
         <dependency>
             <groupId>android.support</groupId>
             <artifactId>compatibility-v4</artifactId>
-            <version>11</version>
+            <version>${android.supportv4.version}</version>
         </dependency>
 
         <!-- Action Bar Sherlock -->
         <dependency>
           <groupId>com.actionbarsherlock</groupId>
           <artifactId>actionbarsherlock</artifactId>
-          <version>4.2.0</version>
+          <version>${actionbarsherlock.version}</version>
           <type>apklib</type>
         </dependency>
         
@@ -55,7 +50,7 @@
         <dependency>
           <groupId>com.j256.ormlite</groupId>
           <artifactId>ormlite-android</artifactId>
-          <version>4.43</version>
+          <version>${ormlite.version}</version>
         </dependency>
     </dependencies>
 
