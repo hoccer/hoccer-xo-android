@@ -7,16 +7,13 @@ import com.hoccer.talk.android.service.ITalkClientListener;
  */
 interface ITalkClientService {
 
-    /**
-     *
-     */
+    /** Tell the service that it is still needed */
     void keepAlive();
 
-    /**
-     *
-     */
+    /** Provide a callback listener to the service for notifications */
     void setListener(ITalkClientListener listener);
 
+    /** Notify the server of a newly created message */
     void messageCreated(String messageTag);
 
 }

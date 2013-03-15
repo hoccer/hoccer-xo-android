@@ -241,27 +241,55 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
 
     /**
      * Listener for events from service
+     *
+     * This gets called when the network side of the client has changed
+     * the database. Views should be updated according to what has changed.
      */
     public class MainServiceListener extends ITalkClientListener.Stub {
+        @Override
+        public void messageCreated(String messageTag) throws RemoteException {
+            LOG.info("callback messageCreated(" + messageTag + ")");
+        }
+
+        @Override
+        public void messageDeleted(String messageTag) throws RemoteException {
+            LOG.info("callback messageDeleted(" + messageTag + ")");
+        }
+
+        @Override
+        public void deliveryCreated(String messageTag, String receiverId) throws RemoteException {
+            LOG.info("callback deliveryCreated(" + messageTag + "," + receiverId + ")");
+        }
+
+        @Override
+        public void deliveryChanged(String messageTag, String receiverId) throws RemoteException {
+            LOG.info("callback deliveryChanged(" + messageTag + "," + receiverId + ")");
+        }
+
+        @Override
+        public void deliveryDeleted(String messageTag, String receiverId) throws RemoteException {
+            LOG.info("callback deliveryDeleted(" + messageTag + "," + receiverId + ")");
+        }
     }
 
     /**
      * Pager adapter for our ViewPager
+     *
+     * Our view pager calls back to this adapter to
+     * get the fragments it should display.
      */
 	public class MainPagerAdapter extends FragmentPagerAdapter {
-
 		public MainPagerAdapter() {
 			super(mFragmentManager);
 		}
-
         @Override
         public int getCount() {
             return NUM_VIEWS;
         }
-
 		@Override
 		public Fragment getItem(int position) {
 			Fragment fragment = null;
+            // select and create the appropriate fragment
 			switch(position) {
 			case VIEW_CONTACTS:
 				if(mContactsFragment == null) {
@@ -278,7 +306,6 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
 			}
 			return fragment;
 		}
-		
 	}
 
 
