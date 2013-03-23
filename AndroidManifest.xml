@@ -8,7 +8,25 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="14" />
 
+    <!-- Obviously, we need internet access -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- We also use GCM -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <!-- GCM requires a Google account. -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+    <!-- GCM uses this -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Our own GCM permission -->
+    <uses-permission android:name="com.hoccer.talk.android.permission.C2D_MESSAGE"/>
+
+    <!-- Declare permission for controlling our own push package -->
+    <permission
+            android:name="com.hoccer.talk.android.permission.C2D_MESSAGE"
+            android:protectionLevel="signature"/>
 
     <application
         android:name=".TalkApplication"
@@ -16,6 +34,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
@@ -26,9 +45,26 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".service.TalkClientService">
-        </service>
+        <!-- connection and delivery service -->
+        <service android:name=".service.TalkClientService"/>
+
+        <!-- GCM push service -->
+        <service android:name=".push.TalkPushService"/>
+
+        <!-- GCM broadcast receiver -->
+        <receiver
+            android:name=".push.TalkPushReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <!-- Receives the actual messages. -->
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <!-- Receives the registration id. -->
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <!-- Restrict to our own push package -->
+                <category android:name="com.hoccer.talk.android" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
