@@ -30,8 +30,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import com.hoccer.talk.android.service.ITalkClientListener;
 import com.hoccer.talk.android.service.ITalkClientService;
+import com.hoccer.talk.android.service.ITalkClientServiceListener;
 import com.hoccer.talk.android.service.TalkClientService;
 import com.hoccer.talk.logging.HoccerLoggers;
 import com.hoccer.talk.model.TalkMessage;
@@ -230,12 +230,18 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
             mService = (ITalkClientService)service;
             scheduleKeepAlive();
             attachServiceListener();
+            try {
+                mService.wake();
+            } catch (RemoteException e) {
+                e.printStackTrace();  // XXX
+            }
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
             LOG.info("onServiceDisconnected()");
             shutdownKeepAlive();
             mService = null;
+            // XXX this should be indicated
         }
     }
 
@@ -245,7 +251,7 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
      * This gets called when the network side of the client has changed
      * the database. Views should be updated according to what has changed.
      */
-    public class MainServiceListener extends ITalkClientListener.Stub {
+    public class MainServiceListener extends ITalkClientServiceListener.Stub {
         @Override
         public void messageCreated(String messageTag) throws RemoteException {
             LOG.info("callback messageCreated(" + messageTag + ")");

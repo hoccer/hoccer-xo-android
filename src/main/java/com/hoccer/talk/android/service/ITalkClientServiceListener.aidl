@@ -7,7 +7,7 @@ package com.hoccer.talk.android.service;
  * using the ITalkClientService.setListener() method.
  *
  */
-interface ITalkClientListener {
+interface ITalkClientServiceListener {
 
     void messageCreated(String messageTag);
     void messageDeleted(String messageTag);
