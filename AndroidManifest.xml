@@ -11,6 +11,9 @@
     <!-- Obviously, we need internet access -->
     <uses-permission android:name="android.permission.INTERNET"/>
 
+    <!-- We monitor connection status while we want to communicate -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <!-- We also use GCM -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 

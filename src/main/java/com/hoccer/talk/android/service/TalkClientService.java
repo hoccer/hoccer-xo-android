@@ -1,6 +1,5 @@
 package com.hoccer.talk.android.service;
 
-import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -8,6 +7,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import com.hoccer.talk.android.TalkConfiguration;
 import com.hoccer.talk.android.database.TalkDatabase;
 import com.hoccer.talk.client.HoccerTalkClient;
@@ -37,11 +41,17 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> implemen
     private static final AtomicInteger ID_COUNTER =
         new AtomicInteger();
 
-    /** Hoccer client that we serve */
-    HoccerTalkClient mClient;
+    /** Connectivity manager for monitoring */
+    ConnectivityManager mConnectivityManager;
+
+    /** Our connectivity change broadcast receiver */
+    ConnectivityReceiver mConnectivityReceiver;
 
     /** Executor for ourselves and the client */
     ScheduledExecutorService mExecutor;
+
+    /** Hoccer client that we serve */
+    HoccerTalkClient mClient;
 
     /** Reference to latest auto-shutdown future */
     ScheduledFuture<?> mShutdownFuture;
@@ -50,6 +60,10 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> implemen
 	public void onCreate() {
         LOG.info("onCreate()");
 		super.onCreate();
+
+        mConnectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        mConnectivityReceiver = new ConnectivityReceiver();
 
         mExecutor = Executors.newSingleThreadScheduledExecutor();
 
@@ -83,6 +97,13 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> implemen
     @Override
     public void onClientStateChange(HoccerTalkClient client, int state) {
         LOG.info("onClientStateChange(" + HoccerTalkClient.stateToString(state) + ")");
+        if(state == HoccerTalkClient.STATE_IDLE) {
+            registerConnectivityReceiver();
+            handleConnectivityChange(mConnectivityManager.getActiveNetworkInfo());
+        }
+        if(state == HoccerTalkClient.STATE_INACTIVE) {
+            unregisterConnectivityReceiver();
+        }
     }
 
     private void doShutdown() {
@@ -113,6 +134,31 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> implemen
         if(mShutdownFuture != null) {
             mShutdownFuture.cancel(false);
             mShutdownFuture = null;
+        }
+    }
+
+    private void registerConnectivityReceiver() {
+        LOG.info("registerConnectivityReceiver()");
+        registerReceiver(mConnectivityReceiver,
+                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    private void unregisterConnectivityReceiver() {
+        LOG.info("unregisterConnectivityReceiver()");
+        unregisterReceiver(mConnectivityReceiver);
+    }
+
+    private void handleConnectivityChange(NetworkInfo activeNetwork) {
+        LOG.info("connectivity change:"
+                + " type " + activeNetwork.getTypeName()
+                + " state " + activeNetwork.getState().name());
+    }
+
+    private class ConnectivityReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            LOG.info("onConnectivityChange()");
+            handleConnectivityChange(mConnectivityManager.getActiveNetworkInfo());
         }
     }
 
@@ -152,7 +198,6 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> implemen
         @Override
         public void messageCreated(String messageTag) throws RemoteException {
             LOG.info("[" + mId + "] messageCreated(" + messageTag + ")");
-            mClient.wake();
             mClient.tryToDeliver(messageTag);
         }
 
