@@ -63,8 +63,6 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> implemen
 
         mConnectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        mConnectivityReceiver = new ConnectivityReceiver();
-
         mExecutor = Executors.newSingleThreadScheduledExecutor();
 
         mClient = new HoccerTalkClient(mExecutor, getHelper());
@@ -76,6 +74,7 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> implemen
         LOG.info("onDestroy()");
         super.onDestroy();
         mExecutor.shutdownNow();
+        unregisterConnectivityReceiver();
     }
 
     @Override
@@ -139,13 +138,19 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> implemen
 
     private void registerConnectivityReceiver() {
         LOG.info("registerConnectivityReceiver()");
-        registerReceiver(mConnectivityReceiver,
-                new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        if(mConnectivityReceiver == null) {
+            mConnectivityReceiver = new ConnectivityReceiver();
+            registerReceiver(mConnectivityReceiver,
+                    new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        }
     }
 
     private void unregisterConnectivityReceiver() {
         LOG.info("unregisterConnectivityReceiver()");
-        unregisterReceiver(mConnectivityReceiver);
+        if(mConnectivityReceiver != null) {
+            unregisterReceiver(mConnectivityReceiver);
+            mConnectivityReceiver = null;
+        }
     }
 
     private void handleConnectivityChange(NetworkInfo activeNetwork) {
