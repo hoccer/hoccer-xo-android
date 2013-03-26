@@ -3,7 +3,7 @@ package com.hoccer.talk.android;
 public class TalkConfiguration {
 
     /** GCM sender id for push notifications */
-    public static final String GCM_SENDER_ID = "";
+    public static final String GCM_SENDER_ID = "1894273085";
 
     /** Delay after which new activities send their first keepalive (seconds) */
     public static final int SERVICE_KEEPALIVE_PING_DELAY    = 30;
