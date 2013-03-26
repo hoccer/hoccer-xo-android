@@ -5,6 +5,9 @@ public class TalkConfiguration {
     /** GCM sender id for push notifications */
     public static final String GCM_SENDER_ID = "1894273085";
 
+    /** GCM server registration expiration (seconds) */
+    public static final long GCM_REGISTRATION_EXPIRATION = 24 * 3600;
+
     /** Delay after which new activities send their first keepalive (seconds) */
     public static final int SERVICE_KEEPALIVE_PING_DELAY    = 30;
 

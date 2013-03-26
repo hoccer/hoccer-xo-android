@@ -15,6 +15,7 @@ import android.os.RemoteException;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
+import com.google.android.gcm.GCMRegistrar;
 import com.hoccer.talk.android.fragment.ContactsFragment;
 import com.hoccer.talk.android.fragment.MessagingFragment;
 
@@ -117,6 +118,11 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
 					mFragmentManager.findFragmentById(
 							R.id.main_fragment_messaging);
 		}
+
+        // trigger GCM registration
+        if(!GCMRegistrar.isRegistered(this)) {
+            GCMRegistrar.register(this, TalkConfiguration.GCM_SENDER_ID);
+        }
 	}
 
     @Override

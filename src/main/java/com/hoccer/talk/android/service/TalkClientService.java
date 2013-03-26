@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import com.google.android.gcm.GCMRegistrar;
 import com.hoccer.talk.android.TalkConfiguration;
 import com.hoccer.talk.android.database.TalkDatabase;
 import com.hoccer.talk.client.HoccerTalkClient;
@@ -102,6 +103,36 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> implemen
         }
         if(state == HoccerTalkClient.STATE_INACTIVE) {
             unregisterConnectivityReceiver();
+        }
+        if(state == HoccerTalkClient.STATE_ACTIVE) {
+            mExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    doUpdateGcm();
+                }
+            });
+        }
+    }
+
+    private void doUpdateGcm() {
+        LOG.info("updating GCM registration");
+        // only if we are registered (registration triggers this code path)
+        if(GCMRegistrar.isRegistered(this)) {
+            // check if we got here already
+            if(!GCMRegistrar.isRegisteredOnServer(this)) {
+                // perform the registration call
+                mClient.registerGcm(this.getPackageName(),
+                        GCMRegistrar.getRegistrationId(this));
+                // set the registration timeout (XXX move elsewhere)
+                GCMRegistrar.setRegisterOnServerLifespan(
+                        this, TalkConfiguration.GCM_REGISTRATION_EXPIRATION * 1000);
+                // tell the registrar that we did this successfully
+                GCMRegistrar.setRegisteredOnServer(this, true);
+            } else {
+                LOG.info("already registered on server");
+            }
+        } else {
+            LOG.info("not registered yet");
         }
     }
 
