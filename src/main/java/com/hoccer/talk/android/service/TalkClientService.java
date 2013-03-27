@@ -119,7 +119,7 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> implemen
         // only if we are registered (registration triggers this code path)
         if(GCMRegistrar.isRegistered(this)) {
             // check if we got here already
-            if(!GCMRegistrar.isRegisteredOnServer(this)) {
+            if(TalkConfiguration.GCM_ALWAYS_REGISTER || !GCMRegistrar.isRegisteredOnServer(this)) {
                 // perform the registration call
                 mClient.registerGcm(this.getPackageName(),
                         GCMRegistrar.getRegistrationId(this));

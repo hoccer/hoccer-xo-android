@@ -2,6 +2,9 @@ package com.hoccer.talk.android;
 
 public class TalkConfiguration {
 
+    /** If true, GCM registration should always be pushed to server */
+    public static final boolean GCM_ALWAYS_REGISTER = true;
+
     /** GCM sender id for push notifications */
     public static final String GCM_SENDER_ID = "1894273085";
 
