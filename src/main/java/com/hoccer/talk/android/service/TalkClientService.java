@@ -15,6 +15,7 @@ import android.net.NetworkInfo;
 import com.google.android.gcm.GCMRegistrar;
 import com.hoccer.talk.android.TalkConfiguration;
 import com.hoccer.talk.android.database.TalkDatabase;
+import com.hoccer.talk.android.push.TalkPushService;
 import com.hoccer.talk.client.HoccerTalkClient;
 import com.hoccer.talk.client.ITalkClientListener;
 import com.hoccer.talk.logging.HoccerLoggers;
@@ -76,6 +77,17 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> implemen
         super.onDestroy();
         mExecutor.shutdownNow();
         unregisterConnectivityReceiver();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        LOG.info("onStartCommand(" + ((intent == null) ? "null" : intent.toString()) + ")");
+        if(intent != null) {
+            if(intent.hasExtra(TalkPushService.EXTRA_WAKE)) {
+                mClient.wake();
+            }
+        }
+        return START_STICKY;
     }
 
     @Override
