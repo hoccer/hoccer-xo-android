@@ -85,9 +85,14 @@ public class TalkDatabase extends OrmLiteSqliteOpenHelper implements ITalkClient
         return mDeliveryDao;
     }
 
+    private static TalkClient CLIENT = null;
+
     @Override
     public TalkClient getClient() {
-        return new TalkClient(UUID.randomUUID().toString());
+        if(CLIENT == null) {
+            CLIENT = new TalkClient(UUID.randomUUID().toString());
+        }
+        return CLIENT;
     }
 
     @Override
