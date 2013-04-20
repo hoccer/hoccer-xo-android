@@ -55,7 +55,7 @@ public class TalkDatabase extends OrmLiteSqliteOpenHelper implements ITalkClient
     public Dao<TalkClient, String> getClientDao() {
         if(mClientDao == null) {
             try {
-                mClientDao = getDao(TalkClient.class);
+                mClientDao = (Dao<TalkClient,String>)getDao(TalkClient.class);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -66,7 +66,7 @@ public class TalkDatabase extends OrmLiteSqliteOpenHelper implements ITalkClient
     public Dao<TalkMessage, String> getMessageDao() {
         if(mMessageDao == null) {
             try {
-                mMessageDao = getDao(TalkMessage.class);
+                mMessageDao = (Dao<TalkMessage,String>)getDao(TalkMessage.class);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -77,7 +77,7 @@ public class TalkDatabase extends OrmLiteSqliteOpenHelper implements ITalkClient
     public Dao<TalkDelivery, String> getDeliveryDao() {
         if(mDeliveryDao == null) {
             try {
-                mDeliveryDao = getDao(TalkDelivery.class);
+                mDeliveryDao = (Dao<TalkDelivery,String>)getDao(TalkDelivery.class);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
