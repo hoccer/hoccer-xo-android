@@ -96,6 +96,11 @@ public class TalkDatabase extends OrmLiteSqliteOpenHelper implements ITalkClient
     }
 
     @Override
+    public void saveClient(TalkClient client) {
+        CLIENT = client;
+    }
+
+    @Override
     public TalkMessage getMessageByTag(String messageTag) throws SQLException {
         List<TalkMessage> result = getMessageDao()
                 .queryForEq(TalkMessage.FIELD_MESSAGE_TAG, messageTag);
