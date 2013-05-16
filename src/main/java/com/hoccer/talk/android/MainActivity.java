@@ -17,7 +17,9 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.google.android.gcm.GCMRegistrar;
 import com.hoccer.talk.android.fragment.ContactsFragment;
+import com.hoccer.talk.android.fragment.MenuFragment;
 import com.hoccer.talk.android.fragment.MessagingFragment;
+import com.hoccer.talk.android.fragment.AboutFragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -45,12 +47,15 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
 
 
     /** Number of views in the ViewPager */
-    private static final int NUM_VIEWS = 2;
-    /** Index of the contact list in the ViewPager */
-	private static final int VIEW_CONTACTS  = 0;
+    private static final int NUM_VIEWS = 4;
+    /** Index of the menu view in the ViewPager */
+    private static final int VIEW_MENU = 0;
     /** Index of the messaging view in the ViewPager */
 	private static final int VIEW_MESSAGING = 1;
-
+    /** Index of the about view in the ViewPager */
+    private static final int VIEW_ABOUT = 2;
+    /** Index of the contact list in the ViewPager */
+    private static final int VIEW_CONTACTS  = 3;
 
     /** Executor for background tasks */
     ScheduledExecutorService mBackgroundExecutor;
@@ -72,6 +77,10 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
     ContactsFragment mContactsFragment;
     /** Fragment for messaging */
     MessagingFragment mMessagingFragment;
+    /** Fragment for about */
+    AboutFragment mAboutFragment;
+    /** Fragment for menu */
+    MenuFragment mMenuFragment;
 
 
     /** RPC interface to service (null when not connected) */
@@ -315,6 +324,18 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
 				}
 				fragment = mMessagingFragment;
 				break;
+            case VIEW_ABOUT:
+                if(mAboutFragment == null) {
+                    mAboutFragment = new AboutFragment();
+                }
+                fragment = mAboutFragment;
+                break;
+            case VIEW_MENU:
+                if(mMenuFragment == null) {
+                    mMenuFragment = new MenuFragment();
+                }
+                fragment = mMenuFragment;
+                break;
 			}
 			return fragment;
 		}
