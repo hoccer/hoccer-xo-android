@@ -32,7 +32,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="jdk" jdkName="Maven Android 4.2.2 Platform" jdkType="Android SDK" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: android:android:4.2.2_r2" level="project" />
-    <orderEntry type="library" name="Maven: android.support:compatibility-v4:12" level="project" />
+    <orderEntry type="library" name="Maven: android.support:compatibility-v4:13" level="project" />
     <orderEntry type="module" module-name="actionbarsherlock" />
     <orderEntry type="module" module-name="hoccer-talk-client" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-websocket:8.1.10.v20130312" level="project" />
