@@ -16,6 +16,6 @@
     <WebView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:id="@+id/webView"
+        android:id="@+id/about_webView"
         android:layout_gravity="center"/>
 </LinearLayout>

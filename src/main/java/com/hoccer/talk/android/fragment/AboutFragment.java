@@ -10,6 +10,7 @@ package com.hoccer.talk.android.fragment;
 
 import java.util.logging.Logger;
 
+import android.webkit.*;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -31,18 +32,43 @@ public class AboutFragment extends SherlockFragment{
 
     ITalkActivity mActivity;
 
+    private WebView aboutWebView;
+    private String LOG_TAG = "aboutWebView";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         LOG.info("onCreate()");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         LOG.info("onCreateView()");
-        return inflater.inflate(R.layout.fragment_about, container, false);
+
+       // setContentView(R.layout.fragmentAbout);
+        View v = inflater.inflate(R.layout.fragment_about, container, false);
+
+        //enable Javascript inside WebView
+        aboutWebView.getSettings().setJavaScriptEnabled(true);
+        //load WebView zoomed out
+        aboutWebView.getSettings().setLoadWithOverviewMode(true);
+        //set viewport to its own dimensions
+        aboutWebView.getSettings().setUseWideViewPort(true);
+        //open all links in its own window
+        aboutWebView.setWebViewClient(new WebViewClient());
+        aboutWebView.setWebChromeClient(new WebChromeClient());
+        //cache configuration in android webview
+        aboutWebView.getSettings().setAppCacheMaxSize(1024*1024*8);
+        aboutWebView.getSettings().setAppCachePath("/data/com.hoccer.talk.android/cache");
+        aboutWebView.getSettings().setAppCacheEnabled(true);
+        aboutWebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+
+        //Load this URL in aboutWebView
+        aboutWebView.loadUrl("http://www.hoccer.com/xo-about-view");
+        return v;
 
     }
 
@@ -64,6 +90,5 @@ public class AboutFragment extends SherlockFragment{
         LOG.info("onPause()");
         super.onPause();
     }
-
 }
 

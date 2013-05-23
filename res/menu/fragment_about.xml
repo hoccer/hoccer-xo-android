@@ -10,22 +10,4 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/menu_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/menu_settings"/>
-
-    <item
-        android:id="@+id/menu_legal"
-        android:orderInCategory="800"
-        android:showAsAction="never"
-        android:title="@string/menu_legal"/>
-
-    <item
-        android:id="@+id/menu_quit"
-        android:orderInCategory="900"
-        android:showAsAction="never"
-        android:title="@string/menu_quit"/>
-
 </menu>
