@@ -246,7 +246,6 @@ public class TalkClientService extends OrmLiteBaseService<TalkDatabase> implemen
         @Override
         public void messageCreated(String messageTag) throws RemoteException {
             LOG.info("[" + mId + "] messageCreated(" + messageTag + ")");
-            mClient.tryToDeliver(messageTag);
         }
 
     }
