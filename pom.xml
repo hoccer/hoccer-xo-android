@@ -52,6 +52,14 @@
           <artifactId>ormlite-android</artifactId>
           <version>${ormlite.version}</version>
         </dependency>
+
+        <!-- Logging adapter -->
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-android</artifactId>
+          <version>1.6.1-RC1</version>
+        </dependency>
+
     </dependencies>
 
     <build>
