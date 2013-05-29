@@ -1,0 +1,59 @@
+package com.hoccer.talk.android.database;
+
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import com.hoccer.talk.client.ITalkClientDatabaseBackend;
+import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientSelf;
+import com.hoccer.talk.client.model.TalkClientMessage;
+import com.hoccer.talk.logging.HoccerLoggers;
+import com.hoccer.talk.model.*;
+import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
+
+import java.sql.SQLException;
+import java.util.logging.Logger;
+
+public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITalkClientDatabaseBackend {
+
+    private static final Logger LOG = HoccerLoggers.getLogger(AndroidTalkDatabase.class);
+
+    private static final String DATABASE_NAME    = "hoccer-talk.db";
+
+    private static final int    DATABASE_VERSION = 1;
+
+    Dao<TalkClient, String> mClientDao;
+    Dao<TalkMessage, String> mMessageDao;
+    Dao<TalkDelivery, String> mDeliveryDao;
+
+    public AndroidTalkDatabase(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db, ConnectionSource cs) {
+        LOG.info("creating database at schema version " + DATABASE_VERSION);
+        try {
+            TableUtils.createTable(cs, TalkClientContact.class);
+            TableUtils.createTable(cs, TalkClientSelf.class);
+            TableUtils.createTable(cs, TalkPresence.class);
+            TableUtils.createTable(cs, TalkRelationship.class);
+
+            TableUtils.createTable(cs, TalkClientMessage.class);
+            TableUtils.createTable(cs, TalkMessage.class);
+            TableUtils.createTable(cs, TalkDelivery.class);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // XXX app must fail or something
+        }
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, ConnectionSource cs, int oldVersion, int newVersion) {
+        LOG.info("upgrading database from schema version "
+                + oldVersion + " to schema version " + newVersion);
+    }
+
+}

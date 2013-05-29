@@ -8,7 +8,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.ITalkActivity;
-import com.hoccer.talk.android.database.TalkDatabase;
+import com.hoccer.talk.android.database.AndroidTalkDatabase;
 import com.hoccer.talk.logging.HoccerLoggers;
 
 import android.app.Activity;
@@ -26,7 +26,7 @@ public class ContactsFragment extends SherlockFragment {
 	
 	ITalkActivity mActivity;
 
-    TalkDatabase mDatabase;
+    AndroidTalkDatabase mDatabase;
 	
 	ListView mContactList;
 	
@@ -49,7 +49,7 @@ public class ContactsFragment extends SherlockFragment {
 				activity.toString() + " must implement ITalkActivity");
 		}
 
-        mDatabase = OpenHelperManager.getHelper(activity, TalkDatabase.class);
+        mDatabase = OpenHelperManager.getHelper(activity, AndroidTalkDatabase.class);
 	}
 
 	@Override

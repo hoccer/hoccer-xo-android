@@ -14,7 +14,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import com.google.android.gcm.GCMRegistrar;
 import com.hoccer.talk.android.TalkConfiguration;
-import com.hoccer.talk.android.database.TalkDatabase;
+import com.hoccer.talk.android.database.AndroidTalkDatabase;
 import com.hoccer.talk.android.push.TalkPushService;
 import com.hoccer.talk.client.HoccerTalkClient;
 import com.hoccer.talk.client.ITalkClientListener;
@@ -35,7 +35,7 @@ import com.j256.ormlite.android.apptools.OrmLiteBaseService;
  *
  *
  */
-public class TalkClientService extends OrmLiteBaseService<TalkDatabase> implements ITalkClientListener {
+public class TalkClientService extends OrmLiteBaseService<AndroidTalkDatabase> implements ITalkClientListener {
 
 	private static final Logger LOG =
 		HoccerLoggers.getLogger(TalkClientService.class);

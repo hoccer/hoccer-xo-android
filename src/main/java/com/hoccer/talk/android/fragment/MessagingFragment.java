@@ -1,13 +1,10 @@
 package com.hoccer.talk.android.fragment;
 
-import java.sql.SQLException;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.os.RemoteException;
 import android.widget.Button;
 import android.widget.EditText;
 import com.actionbarsherlock.app.SherlockFragment;
@@ -17,7 +14,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.widget.SearchView;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.ITalkActivity;
-import com.hoccer.talk.android.database.TalkDatabase;
+import com.hoccer.talk.android.database.AndroidTalkDatabase;
 import com.hoccer.talk.logging.HoccerLoggers;
 
 import android.app.Activity;
@@ -29,7 +26,6 @@ import android.widget.ListView;
 import com.hoccer.talk.model.TalkDelivery;
 import com.hoccer.talk.model.TalkMessage;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
-import com.j256.ormlite.misc.TransactionManager;
 
 public class MessagingFragment extends SherlockFragment
         implements View.OnClickListener, SearchView.OnQueryTextListener {
@@ -39,7 +35,7 @@ public class MessagingFragment extends SherlockFragment
 
 	ITalkActivity mActivity;
 
-    TalkDatabase mDatabase;
+    AndroidTalkDatabase mDatabase;
 
 	ListView mMessageList;
 
@@ -66,7 +62,7 @@ public class MessagingFragment extends SherlockFragment
 				activity.toString() + " must implement ITalkActivity");
 		}
 
-        mDatabase = OpenHelperManager.getHelper(activity, TalkDatabase.class);
+        mDatabase = OpenHelperManager.getHelper(activity, AndroidTalkDatabase.class);
 	}
 
 	@Override
@@ -162,37 +158,37 @@ public class MessagingFragment extends SherlockFragment
         // log to help debugging
         LOG.info("created message with tag " + message.getMessageTag());
 
-        // save new objects to database
-        try {
-            LOG.info("saving message to database");
-            TransactionManager.callInTransaction(mDatabase.getConnectionSource(),
-                new Callable<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-                        // save the message itself
-                        mDatabase.getMessageDao().create(message);
-                        // save related deliveries
-                        for(int i = 0; i < deliveries.length; i++) {
-                            mDatabase.getDeliveryDao().create(deliveries[i]);
-                        }
-                        return null;
-                    }
-                });
-        } catch (SQLException e) {
-            // XXX fail horribly
-            e.printStackTrace();
-            return;
-        }
-
-        // notify the client service so it'll start delivery
-        try {
-            LOG.info("notifying service");
-            mActivity.getTalkClientService().messageCreated(message.getMessageTag());
-        } catch (RemoteException e) {
-            // XXX fail horribly
-            e.printStackTrace();
-            return;
-        }
+//        // save new objects to database
+//        try {
+//            LOG.info("saving message to database");
+//            TransactionManager.callInTransaction(mDatabase.getConnectionSource(),
+//                new Callable<Void>() {
+//                    @Override
+//                    public Void call() throws Exception {
+//                        // save the message itself
+//                        mDatabase.getMessageDao().create(message);
+//                        // save related deliveries
+//                        for(int i = 0; i < deliveries.length; i++) {
+//                            mDatabase.getDeliveryDao().create(deliveries[i]);
+//                        }
+//                        return null;
+//                    }
+//                });
+//        } catch (SQLException e) {
+//            // XXX fail horribly
+//            e.printStackTrace();
+//            return;
+//        }
+//
+//        // notify the client service so it'll start delivery
+//        try {
+//            LOG.info("notifying service");
+//            mActivity.getTalkClientService().messageCreated(message.getMessageTag());
+//        } catch (RemoteException e) {
+//            // XXX fail horribly
+//            e.printStackTrace();
+//            return;
+//        }
 
         // clear the composer UI to prepare it for the next message
         clearComposedMessage();
