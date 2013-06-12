@@ -5,9 +5,7 @@ import android.content.Intent;
 import com.google.android.gcm.GCMBaseIntentService;
 import com.hoccer.talk.android.TalkConfiguration;
 import com.hoccer.talk.android.service.TalkClientService;
-import com.hoccer.talk.logging.HoccerLoggers;
-
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 /**
  * GCM push notification service
@@ -24,7 +22,7 @@ public class TalkPushService extends GCMBaseIntentService {
 
     public static final String EXTRA_WAKE = "com.hoccer.talk.android.WAKE";
 
-    private static final Logger LOG = HoccerLoggers.getLogger(TalkPushService.class);
+    private static final Logger LOG = Logger.getLogger(TalkPushService.class);
 
     public TalkPushService() {
         super(TalkConfiguration.GCM_SENDER_ID);

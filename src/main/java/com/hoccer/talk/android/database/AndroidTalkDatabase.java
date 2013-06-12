@@ -6,19 +6,18 @@ import com.hoccer.talk.client.ITalkClientDatabaseBackend;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientSelf;
 import com.hoccer.talk.client.model.TalkClientMessage;
-import com.hoccer.talk.logging.HoccerLoggers;
 import com.hoccer.talk.model.*;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
-import java.util.logging.Logger;
 
 public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITalkClientDatabaseBackend {
 
-    private static final Logger LOG = HoccerLoggers.getLogger(AndroidTalkDatabase.class);
+    private static final Logger LOG = Logger.getLogger(AndroidTalkDatabase.class);
 
     private static final String DATABASE_NAME    = "hoccer-talk.db";
 

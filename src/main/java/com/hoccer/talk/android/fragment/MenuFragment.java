@@ -19,14 +19,11 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.hoccer.talk.android.ITalkActivity;
 import com.hoccer.talk.android.R;
-import com.hoccer.talk.logging.HoccerLoggers;
-
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 public class MenuFragment extends SherlockFragment {
 
-    private static final Logger LOG =
-            HoccerLoggers.getLogger(MenuFragment.class);
+    private static final Logger LOG = Logger.getLogger(MenuFragment.class);
 
     ITalkActivity mActivity;
 

@@ -5,7 +5,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -36,14 +35,13 @@ import android.widget.TextView;
 import com.hoccer.talk.android.service.ITalkClientService;
 import com.hoccer.talk.android.service.ITalkClientServiceListener;
 import com.hoccer.talk.android.service.TalkClientService;
-import com.hoccer.talk.logging.HoccerLoggers;
 import com.hoccer.talk.model.TalkMessage;
+import org.apache.log4j.Logger;
 
 public class MainActivity extends SherlockFragmentActivity implements ITalkActivity {
 
     /** Logger for the activity */
-    private static final Logger LOG =
-            HoccerLoggers.getLogger(MainActivity.class);
+    private static final Logger LOG = Logger.getLogger(MainActivity.class);
 
 
     /** Number of views in the ViewPager */

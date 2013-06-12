@@ -53,11 +53,18 @@
           <version>${ormlite.version}</version>
         </dependency>
 
-        <!-- Logging adapter -->
+        <!-- Logging -->
         <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-android</artifactId>
-          <version>1.6.1-RC1</version>
+          <groupId>ufwa-common</groupId>
+          <artifactId>log4j-android</artifactId>
+          <version>1.2.17-1</version>
+        </dependency>
+        <!-- exclude "normal" non-android log4j -->
+        <dependency>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+          <version>${log4j.version}</version>
+          <scope>provided</scope>
         </dependency>
 
     </dependencies>

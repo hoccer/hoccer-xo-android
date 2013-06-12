@@ -5,7 +5,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,12 +17,12 @@ import com.hoccer.talk.android.database.AndroidTalkDatabase;
 import com.hoccer.talk.android.push.TalkPushService;
 import com.hoccer.talk.client.HoccerTalkClient;
 import com.hoccer.talk.client.ITalkClientListener;
-import com.hoccer.talk.logging.HoccerLoggers;
 
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 import com.j256.ormlite.android.apptools.OrmLiteBaseService;
+import org.apache.log4j.Logger;
 
 /**
  * Android service for Hoccer Talk
@@ -37,8 +36,7 @@ import com.j256.ormlite.android.apptools.OrmLiteBaseService;
  */
 public class TalkClientService extends OrmLiteBaseService<AndroidTalkDatabase> implements ITalkClientListener {
 
-	private static final Logger LOG =
-		HoccerLoggers.getLogger(TalkClientService.class);
+	private static final Logger LOG = Logger.getLogger(TalkClientService.class);
 
     private static final AtomicInteger ID_COUNTER =
         new AtomicInteger();

@@ -1,30 +1,43 @@
 package com.hoccer.talk.android;
 
-import com.hoccer.talk.android.logging.AndroidLogHandler;
+import android.os.Environment;
+import android.util.Log;
 
 import android.app.Application;
-import com.hoccer.talk.logging.HoccerLoggers;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
 
-import java.util.logging.Logger;
+import java.io.File;
+import java.io.IOException;
 
 public class TalkApplication extends Application {
 
-    private static final Logger LOG =
-            HoccerLoggers.getLogger(TalkApplication.class);
-
 	@Override
 	public void onCreate() {
-        LOG.info("onCreate()");
 		super.onCreate();
 
+        Log.i("HoccerTalk", "Initializing logging");
+
+        Logger rootLogger = Logger.getRootLogger();
+
+        try {
+            String file = Environment.getExternalStorageDirectory() + File.separator + "myapp.log";
+            FileAppender fileAppender = new FileAppender(new SimpleLayout(), file);
+            rootLogger.addAppender(fileAppender);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        Log.i("HoccerTalk", "Done initializing logging");
+
         // enable log forwarding
-        AndroidLogHandler.engage();
+        //AndroidLogHandler.engage();
 	}
 
     @Override
     public void onTerminate() {
-        LOG.info("onTerminate()");
         super.onTerminate();
     }
 

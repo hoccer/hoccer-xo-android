@@ -1,7 +1,5 @@
 package com.hoccer.talk.android.fragment;
 
-import java.util.logging.Logger;
-
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -9,7 +7,6 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.ITalkActivity;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
-import com.hoccer.talk.logging.HoccerLoggers;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -18,11 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import org.apache.log4j.Logger;
 
 public class ContactsFragment extends SherlockFragment {
 
-	private static final Logger LOG =
-			HoccerLoggers.getLogger(ContactsFragment.class);
+	private static final Logger LOG = Logger.getLogger(ContactsFragment.class);
 	
 	ITalkActivity mActivity;
 

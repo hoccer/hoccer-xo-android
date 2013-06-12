@@ -1,7 +1,6 @@
 package com.hoccer.talk.android.fragment;
 
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -15,7 +14,6 @@ import com.actionbarsherlock.widget.SearchView;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.ITalkActivity;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
-import com.hoccer.talk.logging.HoccerLoggers;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -26,12 +24,12 @@ import android.widget.ListView;
 import com.hoccer.talk.model.TalkDelivery;
 import com.hoccer.talk.model.TalkMessage;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import org.apache.log4j.Logger;
 
 public class MessagingFragment extends SherlockFragment
         implements View.OnClickListener, SearchView.OnQueryTextListener {
 
-	private static final Logger LOG =
-			HoccerLoggers.getLogger(MessagingFragment.class);
+	private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
 
 	ITalkActivity mActivity;
 
