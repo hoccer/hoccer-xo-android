@@ -26,6 +26,9 @@
     <!-- Our own GCM permission -->
     <uses-permission android:name="com.hoccer.talk.android.permission.C2D_MESSAGE"/>
 
+    <!-- For logging -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <!-- Declare permission for controlling our own push package -->
     <permission
             android:name="com.hoccer.talk.android.permission.C2D_MESSAGE"
