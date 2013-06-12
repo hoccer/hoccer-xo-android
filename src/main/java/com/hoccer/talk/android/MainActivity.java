@@ -324,7 +324,7 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
 				break;
             case VIEW_ABOUT:
                 if(mAboutFragment == null) {
-                    mAboutFragment = new AboutFragment();
+                    mAboutFragment = new AboutFragment(MainActivity.this, MainActivity.this);
                 }
                 fragment = mAboutFragment;
                 break;

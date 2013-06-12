@@ -8,6 +8,7 @@
 
 package com.hoccer.talk.android.fragment;
 
+import android.content.Context;
 import android.os.Environment;
 import android.webkit.*;
 import com.actionbarsherlock.app.SherlockFragment;
@@ -31,14 +32,21 @@ public class AboutFragment extends SherlockFragment{
 
     private static final Logger LOG = Logger.getLogger(AboutFragment.class);
 
+    Context mContext;
+    ITalkActivity mActivity;
+
     private WebView mAboutWebView;
+
+    public AboutFragment(Context context, ITalkActivity activity) {
+        mContext = context;
+        mActivity = activity;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         LOG.info("onCreate()");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
     }
 
     @Override
@@ -63,7 +71,7 @@ public class AboutFragment extends SherlockFragment{
         webSettings.setUseWideViewPort(true);
         // cache configuration in android web view
         webSettings.setAppCacheMaxSize(1024 * 1024 * 8);
-        webSettings.setAppCachePath(Environment.getExternalStorageDirectory() + File.separator + "webapp-cache");
+        webSettings.setAppCachePath(mContext.getFilesDir().toString() + File.separator + "webapp-cache");
         webSettings.setAppCacheEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
 
