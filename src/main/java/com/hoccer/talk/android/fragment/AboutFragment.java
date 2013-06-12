@@ -8,8 +8,7 @@
 
 package com.hoccer.talk.android.fragment;
 
-import java.util.logging.Logger;
-
+import android.os.Environment;
 import android.webkit.*;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -17,23 +16,22 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.ITalkActivity;
-import com.hoccer.talk.logging.HoccerLoggers;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import org.apache.log4j.Logger;
+
+import java.io.File;
 
 public class AboutFragment extends SherlockFragment{
 
-    private static final Logger LOG =
-            HoccerLoggers.getLogger(AboutFragment.class);
+    private static final String ABOUT_URL = "http://www.hoccer.com/xo-about-view";
 
-    ITalkActivity mActivity;
+    private static final Logger LOG = Logger.getLogger(AboutFragment.class);
 
-    private WebView aboutWebView;
-    private String LOG_TAG = "aboutWebView";
+    private WebView mAboutWebView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,28 +46,31 @@ public class AboutFragment extends SherlockFragment{
                              Bundle savedInstanceState) {
         LOG.info("onCreateView()");
 
-       // setContentView(R.layout.fragmentAbout);
         View v = inflater.inflate(R.layout.fragment_about, container, false);
 
-        //enable Javascript inside WebView
-        aboutWebView.getSettings().setJavaScriptEnabled(true);
-        //load WebView zoomed out
-        aboutWebView.getSettings().setLoadWithOverviewMode(true);
-        //set viewport to its own dimensions
-        aboutWebView.getSettings().setUseWideViewPort(true);
-        //open all links in its own window
-        aboutWebView.setWebViewClient(new WebViewClient());
-        aboutWebView.setWebChromeClient(new WebChromeClient());
-        //cache configuration in android webview
-        aboutWebView.getSettings().setAppCacheMaxSize(1024*1024*8);
-        aboutWebView.getSettings().setAppCachePath("/data/com.hoccer.talk.android/cache");
-        aboutWebView.getSettings().setAppCacheEnabled(true);
-        aboutWebView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        mAboutWebView = (WebView)v.findViewById(R.id.about_webview);
+        // open all links in its own window
+        mAboutWebView.setWebViewClient(new WebViewClient());
+        mAboutWebView.setWebChromeClient(new WebChromeClient());
 
-        //Load this URL in aboutWebView
-        aboutWebView.loadUrl("http://www.hoccer.com/xo-about-view");
+        // get settings for web view
+        WebSettings webSettings = mAboutWebView.getSettings();
+        // enable Javascript inside web view
+        webSettings.setJavaScriptEnabled(true);
+        // always zoom out on load
+        webSettings.setLoadWithOverviewMode(true);
+        // set viewport to its own dimensions
+        webSettings.setUseWideViewPort(true);
+        // cache configuration in android web view
+        webSettings.setAppCacheMaxSize(1024 * 1024 * 8);
+        webSettings.setAppCachePath(Environment.getExternalStorageDirectory() + File.separator + "webapp-cache");
+        webSettings.setAppCacheEnabled(true);
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+
+        // load our target URL
+        mAboutWebView.loadUrl(ABOUT_URL);
+
         return v;
-
     }
 
     @Override
@@ -90,5 +91,5 @@ public class AboutFragment extends SherlockFragment{
         LOG.info("onPause()");
         super.onPause();
     }
-}
 
+}
