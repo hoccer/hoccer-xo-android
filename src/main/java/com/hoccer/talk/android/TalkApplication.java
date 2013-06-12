@@ -22,7 +22,7 @@ public class TalkApplication extends Application {
         Logger rootLogger = Logger.getRootLogger();
 
         try {
-            String file = Environment.getExternalStorageDirectory() + File.separator + "myapp.log";
+            String file = Environment.getExternalStorageDirectory() + File.separator + "hoccer-talk.log";
             FileAppender fileAppender = new FileAppender(new SimpleLayout(), file);
             rootLogger.addAppender(fileAppender);
         } catch (IOException e) {
