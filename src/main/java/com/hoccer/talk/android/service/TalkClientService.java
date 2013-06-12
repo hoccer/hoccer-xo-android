@@ -6,6 +6,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -34,7 +35,7 @@ import org.apache.log4j.Logger;
  *
  *
  */
-public class TalkClientService extends OrmLiteBaseService<AndroidTalkDatabase> implements ITalkClientListener {
+public class TalkClientService extends Service implements ITalkClientListener {
 
 	private static final Logger LOG = Logger.getLogger(TalkClientService.class);
 
@@ -65,7 +66,7 @@ public class TalkClientService extends OrmLiteBaseService<AndroidTalkDatabase> i
 
         mExecutor = Executors.newSingleThreadScheduledExecutor();
 
-        mClient = new HoccerTalkClient(mExecutor, getHelper());
+        mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()));
         mClient.registerListener(this);
 	}
 

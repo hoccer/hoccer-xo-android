@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 
-public class AboutFragment extends SherlockFragment{
+public class AboutFragment extends SherlockFragment {
 
     private static final String ABOUT_URL = "http://www.hoccer.com/xo-about-view";
 

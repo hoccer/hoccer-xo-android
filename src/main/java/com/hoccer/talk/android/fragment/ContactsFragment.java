@@ -1,5 +1,7 @@
 package com.hoccer.talk.android.fragment;
 
+import android.widget.AdapterView;
+import android.widget.Button;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -14,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import com.hoccer.talk.client.model.TalkClientContact;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import org.apache.log4j.Logger;
 
@@ -23,9 +26,12 @@ public class ContactsFragment extends SherlockFragment {
 	
 	ITalkActivity mActivity;
 
-    AndroidTalkDatabase mDatabase;
-	
 	ListView mContactList;
+    Button mPairingButton;
+
+    public ContactsFragment(ITalkActivity activity) {
+        mActivity = activity;
+    }
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -46,7 +52,6 @@ public class ContactsFragment extends SherlockFragment {
 				activity.toString() + " must implement ITalkActivity");
 		}
 
-        mDatabase = OpenHelperManager.getHelper(activity, AndroidTalkDatabase.class);
 	}
 
 	@Override
@@ -57,6 +62,23 @@ public class ContactsFragment extends SherlockFragment {
 		
 		mContactList = (ListView)v.findViewById(R.id.contacts_contact_list);
 		mContactList.setAdapter(mActivity.makeContactListAdapter());
+        mContactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TalkClientContact contact = (TalkClientContact)parent.getItemAtPosition(position);
+                mActivity.selectContact(contact);
+            }
+        });
+
+        mPairingButton = (Button)v.findViewById(R.id.contacts_find_contacts);
+        mPairingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mActivity.showPairing();
+            }
+        });
+
+
 		
 		return v;
 	}

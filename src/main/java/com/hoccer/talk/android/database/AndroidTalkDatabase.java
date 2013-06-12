@@ -23,11 +23,20 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
 
     private static final int    DATABASE_VERSION = 1;
 
+    private static AndroidTalkDatabase INSTANCE = null;
+
+    public static AndroidTalkDatabase getInstance(Context applicationContext) {
+        if(INSTANCE == null) {
+            INSTANCE = new AndroidTalkDatabase(applicationContext);
+        }
+        return INSTANCE;
+    }
+
     Dao<TalkClient, String> mClientDao;
     Dao<TalkMessage, String> mMessageDao;
     Dao<TalkDelivery, String> mDeliveryDao;
 
-    public AndroidTalkDatabase(Context context) {
+    private AndroidTalkDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

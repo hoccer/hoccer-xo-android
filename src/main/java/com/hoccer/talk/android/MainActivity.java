@@ -1,5 +1,6 @@
 package com.hoccer.talk.android;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -15,10 +16,8 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.google.android.gcm.GCMRegistrar;
-import com.hoccer.talk.android.fragment.ContactsFragment;
-import com.hoccer.talk.android.fragment.MenuFragment;
-import com.hoccer.talk.android.fragment.MessagingFragment;
-import com.hoccer.talk.android.fragment.AboutFragment;
+import com.hoccer.talk.android.database.AndroidTalkDatabase;
+import com.hoccer.talk.android.fragment.*;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -35,6 +34,8 @@ import android.widget.TextView;
 import com.hoccer.talk.android.service.ITalkClientService;
 import com.hoccer.talk.android.service.ITalkClientServiceListener;
 import com.hoccer.talk.android.service.TalkClientService;
+import com.hoccer.talk.client.TalkClientDatabase;
+import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.model.TalkMessage;
 import org.apache.log4j.Logger;
 
@@ -45,15 +46,20 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
 
 
     /** Number of views in the ViewPager */
-    private static final int NUM_VIEWS = 4;
+    private static final int NUM_VIEWS = 2;
     /** Index of the menu view in the ViewPager */
     private static final int VIEW_MENU = 0;
-    /** Index of the messaging view in the ViewPager */
-	private static final int VIEW_MESSAGING = 1;
-    /** Index of the about view in the ViewPager */
-    private static final int VIEW_ABOUT = 2;
-    /** Index of the contact list in the ViewPager */
-    private static final int VIEW_CONTACTS  = 3;
+    /** Index of the main view in the ViewPager */
+	private static final int VIEW_MAIN = 1;
+
+    private static final int MAINVIEW_CONTACTS = 0;
+    private static final int MAINVIEW_CONVERSATIONS = 1;
+    private static final int MAINVIEW_MESSAGING = 2;
+    private static final int MAINVIEW_ABOUT = 3;
+    private static final int MAINVIEW_PROFILE = 4;
+    private static final int MAINVIEW_PAIRING = 5;
+
+    TalkClientDatabase mDatabase;
 
     /** Executor for background tasks */
     ScheduledExecutorService mBackgroundExecutor;
@@ -70,16 +76,21 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
     /** Our actionbar */
     ActionBar mActionBar;
 
-
+    /** Fragment for menu */
+    MenuFragment mMenuFragment;
     /** Fragment for contact management */
     ContactsFragment mContactsFragment;
     /** Fragment for messaging */
     MessagingFragment mMessagingFragment;
     /** Fragment for about */
     AboutFragment mAboutFragment;
-    /** Fragment for menu */
-    MenuFragment mMenuFragment;
+    /** Fragment for profile display and editor */
+    ProfileFragment mProfileFragment;
+    /** Fragment for pairing operations */
+    PairingFragment mPairingFragment;
 
+
+    int mCurrentMainView;
 
     /** RPC interface to service (null when not connected) */
     ITalkClientService mService;
@@ -96,7 +107,14 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
         LOG.info("onCreate()");
 		super.onCreate(state);
 
-		// get the fragment manager
+        mDatabase = new TalkClientDatabase(AndroidTalkDatabase.getInstance(this.getApplicationContext()));
+        try {
+            mDatabase.initialize();
+        } catch (SQLException e) {
+            LOG.error("sql error", e);
+        }
+
+        // get the fragment manager
 		mFragmentManager = getSupportFragmentManager();
 		
 		// apply the layout (this is indirect and depends on the device)
@@ -114,7 +132,7 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
 			mViewPagerAdapter = new MainPagerAdapter();
 			
 			mViewPager.setAdapter(mViewPagerAdapter);
-			mViewPager.setCurrentItem(VIEW_MESSAGING);
+			mViewPager.setCurrentItem(VIEW_MAIN);
 		} else {
             // if we don't have a ViewPager we use a two-pane layout (tablet version)
             LOG.info("using two-pane tablet layout");
@@ -185,6 +203,65 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
     @Override
     public ITalkClientService getTalkClientService() {
         return mService;
+    }
+
+    @Override
+    public void selectContact(TalkClientContact contact) {
+        switchMainView(MAINVIEW_PROFILE);
+        getCurrentMainFragment();
+        mProfileFragment.showProfile(contact);
+    }
+
+    @Override
+    public void showPairing() {
+        switchMainView(MAINVIEW_PAIRING);
+    }
+
+    private void switchMainView(int newView) {
+        LOG.info("Switching main view to " + newView);
+        Fragment oldMainFragment = getCurrentMainFragment();
+        mCurrentMainView = newView;
+        if(mViewPager != null) {
+            mFragmentManager.beginTransaction().remove(oldMainFragment).commit();
+            mViewPagerAdapter.notifyDataSetChanged();
+        } else {
+            // XXX tablet version
+        }
+        //getCurrentMainFragment();
+    }
+
+    private Fragment getMenuFragment() {
+        if(mMenuFragment == null) {
+            mMenuFragment = new MenuFragment();
+        }
+        return mMenuFragment;
+    }
+
+    private Fragment getCurrentMainFragment() {
+        switch(mCurrentMainView) {
+        case MAINVIEW_ABOUT:
+            if(mAboutFragment == null) {
+                mAboutFragment = new AboutFragment(this, this);
+            }
+            return mAboutFragment;
+        case MAINVIEW_CONTACTS:
+        default:
+            if(mContactsFragment == null) {
+                mContactsFragment = new ContactsFragment(this);
+            }
+            return mContactsFragment;
+        case MAINVIEW_PROFILE:
+            if(mProfileFragment == null) {
+                mProfileFragment = new ProfileFragment();
+            }
+            return mProfileFragment;
+        case MAINVIEW_PAIRING:
+            if(mPairingFragment == null) {
+                mPairingFragment = new PairingFragment();
+            }
+            return mPairingFragment;
+        }
+
     }
 
     /**
@@ -310,29 +387,11 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
 			Fragment fragment = null;
             // select and create the appropriate fragment
 			switch(position) {
-			case VIEW_CONTACTS:
-				if(mContactsFragment == null) {
-					mContactsFragment = new ContactsFragment();
-				}
-				fragment = mContactsFragment;
-				break;
-			case VIEW_MESSAGING:
-				if(mMessagingFragment == null) {
-					mMessagingFragment = new MessagingFragment();
-				}
-				fragment = mMessagingFragment;
-				break;
-            case VIEW_ABOUT:
-                if(mAboutFragment == null) {
-                    mAboutFragment = new AboutFragment(MainActivity.this, MainActivity.this);
-                }
-                fragment = mAboutFragment;
-                break;
             case VIEW_MENU:
-                if(mMenuFragment == null) {
-                    mMenuFragment = new MenuFragment();
-                }
-                fragment = mMenuFragment;
+                fragment = getMenuFragment();
+                break;
+            case VIEW_MAIN:
+                fragment = getCurrentMainFragment();
                 break;
 			}
 			return fragment;
@@ -350,13 +409,15 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
 
 	public BaseAdapter makeContactListAdapter() {
 		ContactListAdapter a = new ContactListAdapter(this);
-		a.add("Pia");
-		a.add("Udo");
-		a.add("George");
-		return a;
+        try {
+            a.addAll(mDatabase.findAllContacts());
+        } catch (SQLException e) {
+            LOG.error("sql error", e);
+        }
+        return a;
 	}
 	
-	public class ContactListAdapter extends ArrayAdapter<String> {
+	public class ContactListAdapter extends ArrayAdapter<TalkClientContact> {
 
 		LayoutInflater mInflater;
 		
@@ -372,7 +433,10 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
 			if(v == null) {
 				v = mInflater.inflate(R.layout.item_contact, null);
 			}
-			
+
+            TextView nameView = (TextView)v.findViewById(R.id.contact_name);
+            nameView.setText(getItem(position).getContactType());
+
 			return v;
 		}
 		
