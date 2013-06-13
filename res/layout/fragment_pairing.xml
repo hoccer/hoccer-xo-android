@@ -4,4 +4,25 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
+  <TextView
+          android:layout_height="wrap_content"
+          android:layout_width="match_parent"
+          android:text="Give this pairing code to someone else:"
+          android:textAlignment="center"/>
+
+  <TextView
+          android:layout_height="wrap_content"
+          android:layout_width="match_parent"
+          android:text="23425"/>
+
+  <TextView
+          android:layout_height="wrap_content"
+          android:layout_width="match_parent"
+          android:text="Or enter someone elses code here:"/>
+
+  <EditText
+          android:layout_height="wrap_content"
+          android:layout_width="match_parent"
+          android:text="23425"/>
+
 </LinearLayout>
