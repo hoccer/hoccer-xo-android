@@ -247,6 +247,10 @@ public class TalkClientService extends Service implements ITalkClientListener {
             LOG.info("[" + mId + "] messageCreated(" + messageTag + ")");
         }
 
+        @Override
+        public String generatePairingToken() throws RemoteException {
+            return mClient.generatePairingToken();
+        }
     }
 
 }

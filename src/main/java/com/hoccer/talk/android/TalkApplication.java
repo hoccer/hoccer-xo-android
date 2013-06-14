@@ -8,8 +8,19 @@ import org.apache.log4j.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class TalkApplication extends Application {
+
+    private static ScheduledExecutorService EXECUTOR = null;
+
+    public static ScheduledExecutorService getExecutor() {
+        if(EXECUTOR == null) {
+            EXECUTOR = Executors.newScheduledThreadPool(2);
+        }
+        return EXECUTOR;
+    }
 
 	@Override
 	public void onCreate() {
@@ -35,6 +46,11 @@ public class TalkApplication extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
+
+        if(EXECUTOR != null) {
+            EXECUTOR.shutdownNow();
+            EXECUTOR = null;
+        }
     }
 
 }

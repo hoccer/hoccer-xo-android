@@ -16,6 +16,8 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.google.android.gcm.GCMRegistrar;
+import com.hoccer.talk.android.activity.PairingActivity;
+import com.hoccer.talk.android.activity.ProfileActivity;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
 import com.hoccer.talk.android.fragment.*;
 
@@ -156,7 +158,7 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
         super.onResume();
 
         // launch a new background executor
-        mBackgroundExecutor = Executors.newSingleThreadScheduledExecutor();
+        mBackgroundExecutor = TalkApplication.getExecutor();
 
         // start the backend service and bind to it
         Intent serviceIntent = new Intent(getApplicationContext(), TalkClientService.class);
@@ -182,11 +184,6 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
             unbindService(mServiceConnection);
             mServiceConnection = null;
         }
-        // stop any remaining background tasks
-        if(mBackgroundExecutor != null) {
-            mBackgroundExecutor.shutdownNow();
-            mBackgroundExecutor = null;
-        }
     }
 
     @Override
@@ -207,14 +204,14 @@ public class MainActivity extends SherlockFragmentActivity implements ITalkActiv
 
     @Override
     public void selectContact(TalkClientContact contact) {
-        switchMainView(MAINVIEW_PROFILE);
-        getCurrentMainFragment();
-        mProfileFragment.showProfile(contact);
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra("clientContactId", contact.getClientContactId());
+        startActivity(intent);
     }
 
     @Override
     public void showPairing() {
-        switchMainView(MAINVIEW_PAIRING);
+        startActivity(new Intent(this, PairingActivity.class));
     }
 
     private void switchMainView(int newView) {

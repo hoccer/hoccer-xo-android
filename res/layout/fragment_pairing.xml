@@ -11,6 +11,7 @@
           android:textAlignment="center"/>
 
   <TextView
+          android:id="@+id/pairing_token_text"
           android:layout_height="wrap_content"
           android:layout_width="match_parent"
           android:text="23425"/>
@@ -21,8 +22,15 @@
           android:text="Or enter someone elses code here:"/>
 
   <EditText
+          android:id="@+id/pairing_token_edit"
           android:layout_height="wrap_content"
           android:layout_width="match_parent"
           android:text="23425"/>
+
+  <Button
+          android:id="@+id/pairing_token_pair"
+          android:layout_height="wrap_content"
+          android:layout_width="match_parent"
+          android:text="Pair with token"/>
 
 </LinearLayout>

@@ -19,4 +19,7 @@ interface ITalkClientService {
     /** Notify the server of a newly created message */
     void messageCreated(String messageTag);
 
+    /** Generate a pairing token */
+    String generatePairingToken();
+
 }
