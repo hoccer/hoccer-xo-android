@@ -151,8 +151,13 @@ public class PairingFragment extends TalkFragment {
         super.onPause();
     }
 
+    public void initializeWithReceivedToken(String token) {
+        LOG.info("initializeWithReceivedToken(" + token + ")");
+        mTokenEdit.setText(token);
+    }
+
     private void performPairing(String token) {
-        LOG.info("trying to pair using token " + token);
+        LOG.info("performPairing(" + token + ")");
         try {
             getTalkActivity().getService().pairUsingToken(token);
         } catch (RemoteException e) {

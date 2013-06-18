@@ -14,6 +14,7 @@ public interface ITalkActivity {
 	public BaseAdapter makeContactListAdapter();
 
     public void showContactProfile(TalkClientContact contact);
+    public void showContactConversation(TalkClientContact contact);
 
     public void showPairing();
     public void showAbout();

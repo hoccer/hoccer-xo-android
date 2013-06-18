@@ -3,8 +3,15 @@ package com.hoccer.talk.android;
 import android.app.Activity;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.hoccer.talk.client.TalkClientDatabase;
 import org.apache.log4j.Logger;
 
+/**
+ * Base class for fragments working with the talk client
+ *
+ * This encapsulated commonalities:
+ *  - access to activity for db and services
+ */
 public class TalkFragment extends SherlockFragment {
 
     protected Logger LOG = null;
@@ -17,6 +24,10 @@ public class TalkFragment extends SherlockFragment {
 
     public TalkActivity getTalkActivity() {
         return mActivity;
+    }
+
+    public TalkClientDatabase getTalkDatabase() {
+        return mActivity.getTalkClientDatabase();
     }
 
     @Override

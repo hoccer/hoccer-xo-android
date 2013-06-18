@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.model.TalkDelivery;
 import com.hoccer.talk.model.TalkMessage;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -72,7 +73,6 @@ public class MessagingFragment extends TalkFragment
 		View v = inflater.inflate(R.layout.fragment_messaging, container, false);
 
 		mMessageList = (ListView)v.findViewById(R.id.messaging_message_list);
-		mMessageList.setAdapter(mActivity.makeMessageListAdapter());
 
         mTextEdit = (EditText)v.findViewById(R.id.messaging_composer_text);
 
@@ -104,6 +104,14 @@ public class MessagingFragment extends TalkFragment
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        LOG.info("onResume()");
+        // do this late so activity has database initialized
+        mMessageList.setAdapter(getTalkActivity().makeMessageListAdapter());
+    }
+
+    @Override
     public void onClick(View v) {
         if(v == mSendButton) {
             LOG.info("onClick(SendButton)");
@@ -124,6 +132,10 @@ public class MessagingFragment extends TalkFragment
     public boolean onQueryTextSubmit(String query) {
         LOG.info("onQueryTextSubmit(\"" + query + "\")");
         return true;
+    }
+
+    public void converseWithContact(TalkClientContact contact) {
+        LOG.info("converseWithContact(" + contact.getClientContactId() + ")");
     }
 
     private void clearComposedMessage() {

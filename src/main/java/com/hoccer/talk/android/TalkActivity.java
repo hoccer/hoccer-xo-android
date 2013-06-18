@@ -18,6 +18,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.hoccer.talk.android.activity.AboutActivity;
+import com.hoccer.talk.android.activity.MessagingActivity;
 import com.hoccer.talk.android.activity.PairingActivity;
 import com.hoccer.talk.android.activity.ProfileActivity;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
@@ -33,6 +34,15 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Base class for activities working with the talk client
+ *
+ * This encapsulated commonalities:
+ *  - Database access
+ *  - Permanent connection to the client service
+ *  - Methods for moving between activities
+ *  - Methods for constructing view adapters
+ */
 public abstract class TalkActivity extends SherlockFragmentActivity implements ITalkActivity {
 
     protected Logger LOG = null;
@@ -274,23 +284,33 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
 
     @Override
     public void showContactProfile(TalkClientContact contact) {
+        LOG.info("showContactProfile(" + contact.getClientContactId() + ")");
         Intent intent = new Intent(this, ProfileActivity.class);
         intent.putExtra("clientContactId", contact.getClientContactId());
         startActivity(intent);
     }
 
     @Override
+    public void showContactConversation(TalkClientContact contact) {
+        LOG.info("showContactConversation(" + contact.getClientContactId() + ")");
+        Intent intent = new Intent(this, MessagingActivity.class);
+        intent.putExtra("clientContactId", contact.getClientContactId());
+        startActivity(intent);
+    }
+
+    @Override
     public void showPairing() {
+        LOG.info("showPairing()");
         startActivity(new Intent(this, PairingActivity.class));
     }
 
     @Override
     public void showAbout() {
+        LOG.info("showAbout()");
         startActivity(new Intent(this, AboutActivity.class));
     }
 
     public class ContactListAdapter extends ArrayAdapter<TalkClientContact> {
-
         LayoutInflater mInflater;
 
         public ContactListAdapter(Context context) {

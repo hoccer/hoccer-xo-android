@@ -39,12 +39,6 @@ public class ProfileFragment extends SherlockFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        LOG.info("onAttach()");
-        super.onAttach(activity);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         LOG.info("onCreateView()");
@@ -64,20 +58,7 @@ public class ProfileFragment extends SherlockFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         LOG.info("onCreateOptionsMenu()");
-        SherlockFragmentActivity activity = getSherlockActivity();
         inflater.inflate(R.menu.fragment_profile, menu);
-    }
-
-    @Override
-    public void onResume() {
-        LOG.info("onResume()");
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        LOG.info("onPause()");
-        super.onPause();
     }
 
     public void showProfile(TalkClientContact contact) {
