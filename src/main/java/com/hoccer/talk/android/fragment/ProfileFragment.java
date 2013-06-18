@@ -1,6 +1,5 @@
 package com.hoccer.talk.android.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +8,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.hoccer.talk.android.R;
@@ -18,7 +16,7 @@ import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkRelationship;
 import org.apache.log4j.Logger;
 
-public class ProfileFragment extends SherlockFragment {
+public class ProfileFragment extends SherlockFragment implements View.OnClickListener {
 
     private static final Logger LOG = Logger.getLogger(ProfileFragment.class);
 
@@ -26,7 +24,7 @@ public class ProfileFragment extends SherlockFragment {
     TextView mStatusText;
     ImageView mAvatarImage;
 
-    Button mSelfSetAvatar;
+    Button mSelfSetAvatarButton;
 
     TextView mUserBlockStatus;
     Button mUserBlockButton;
@@ -48,7 +46,7 @@ public class ProfileFragment extends SherlockFragment {
         mNameText = (TextView)v.findViewById(R.id.profile_name_text);
         mStatusText = (TextView)v.findViewById(R.id.profile_status_text);
         mAvatarImage = (ImageView)v.findViewById(R.id.profile_avatar_image);
-        mSelfSetAvatar = (Button)v.findViewById(R.id.profile_self_set_avatar);
+        mSelfSetAvatarButton = (Button)v.findViewById(R.id.profile_self_set_avatar);
         mUserBlockStatus = (TextView)v.findViewById(R.id.profile_user_block_status);
         mUserBlockButton = (Button)v.findViewById(R.id.profile_user_block_button);
 
@@ -61,9 +59,17 @@ public class ProfileFragment extends SherlockFragment {
         inflater.inflate(R.menu.fragment_profile, menu);
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v == mUserBlockButton) {
+        }
+        if(v == mSelfSetAvatarButton) {
+        }
+    }
+
     public void showProfile(TalkClientContact contact) {
         // self
-        mSelfSetAvatar.setVisibility(contact.isSelf() ? View.VISIBLE : View.GONE);
+        mSelfSetAvatarButton.setVisibility(contact.isSelf() ? View.VISIBLE : View.GONE);
         // client
         mUserBlockStatus.setVisibility(contact.isClient() ? View.VISIBLE : View.GONE);
         mUserBlockButton.setVisibility(contact.isClient() ? View.VISIBLE : View.GONE);
