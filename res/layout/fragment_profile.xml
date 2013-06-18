@@ -15,6 +15,12 @@
     android:layout_width="match_parent"
     android:text="Hans Hoccermann"/>
 
+  <TextView
+    android:id="@+id/profile_status_text"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:text="Still hoccing"/>
+
   <Button
     android:id="@+id/profile_self_set_avatar"
     android:layout_height="wrap_content"

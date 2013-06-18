@@ -13,8 +13,7 @@
   <TextView
           android:id="@+id/pairing_token_text"
           android:layout_height="wrap_content"
-          android:layout_width="match_parent"
-          android:text="23425"/>
+          android:layout_width="match_parent"/>
 
   <TextView
           android:layout_height="wrap_content"
@@ -25,7 +24,9 @@
           android:id="@+id/pairing_token_edit"
           android:layout_height="wrap_content"
           android:layout_width="match_parent"
-          android:text="23425"/>
+          android:inputType="text|textNoSuggestions"
+          android:imeOptions="actionDone"
+          android:hint="Pairing code"/>
 
   <Button
           android:id="@+id/pairing_token_pair"

@@ -22,24 +22,20 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.hoccer.talk.android.TalkFragment;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 
-public class AboutFragment extends SherlockFragment {
+public class AboutFragment extends TalkFragment {
 
     private static final String ABOUT_URL = "http://www.hoccer.com/xo-about-view";
 
     private static final Logger LOG = Logger.getLogger(AboutFragment.class);
 
-    Context mContext;
-    ITalkActivity mActivity;
-
     private WebView mAboutWebView;
 
-    public AboutFragment(Context context, ITalkActivity activity) {
-        mContext = context;
-        mActivity = activity;
+    public AboutFragment() {
     }
 
     @Override
@@ -54,8 +50,10 @@ public class AboutFragment extends SherlockFragment {
                              Bundle savedInstanceState) {
         LOG.info("onCreateView()");
 
+        // inflate the layout
         View v = inflater.inflate(R.layout.fragment_about, container, false);
 
+        // get the web view
         mAboutWebView = (WebView)v.findViewById(R.id.about_webview);
         // open all links in its own window
         mAboutWebView.setWebViewClient(new WebViewClient());
@@ -71,12 +69,9 @@ public class AboutFragment extends SherlockFragment {
         webSettings.setUseWideViewPort(true);
         // cache configuration in android web view
         webSettings.setAppCacheMaxSize(1024 * 1024 * 8);
-        webSettings.setAppCachePath(mContext.getFilesDir().toString() + File.separator + "webapp-cache");
+        webSettings.setAppCachePath(getActivity().getFilesDir().toString() + File.separator + "webapp-cache");
         webSettings.setAppCacheEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-
-        // load our target URL
-        mAboutWebView.loadUrl(ABOUT_URL);
 
         return v;
     }
@@ -84,7 +79,6 @@ public class AboutFragment extends SherlockFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         LOG.info("onCreateOptionsMenu()");
-        SherlockFragmentActivity activity = getSherlockActivity();
         inflater.inflate(R.menu.fragment_about, menu);
     }
 
@@ -92,12 +86,8 @@ public class AboutFragment extends SherlockFragment {
     public void onResume() {
         LOG.info("onResume()");
         super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        LOG.info("onPause()");
-        super.onPause();
+        // load our target URL
+        mAboutWebView.loadUrl(ABOUT_URL);
     }
 
 }

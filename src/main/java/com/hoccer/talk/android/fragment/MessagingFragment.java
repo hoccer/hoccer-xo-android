@@ -13,6 +13,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.widget.SearchView;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.ITalkActivity;
+import com.hoccer.talk.android.TalkFragment;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
 
 import android.app.Activity;
@@ -26,7 +27,7 @@ import com.hoccer.talk.model.TalkMessage;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import org.apache.log4j.Logger;
 
-public class MessagingFragment extends SherlockFragment
+public class MessagingFragment extends TalkFragment
         implements View.OnClickListener, SearchView.OnQueryTextListener {
 
 	private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
@@ -64,9 +65,9 @@ public class MessagingFragment extends SherlockFragment
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		LOG.info("onCreateView()");
+        super.onCreateView(inflater, container, savedInstanceState);
 
 		View v = inflater.inflate(R.layout.fragment_messaging, container, false);
 
@@ -87,7 +88,10 @@ public class MessagingFragment extends SherlockFragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         LOG.info("onCreateOptionsMenu()");
+        super.onCreateOptionsMenu(menu, inflater);
+
         SherlockFragmentActivity activity = getSherlockActivity();
+
         inflater.inflate(R.menu.fragment_messaging, menu);
 
         SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
@@ -98,18 +102,6 @@ public class MessagingFragment extends SherlockFragment
             searchView.setOnQueryTextListener(this);
         }
     }
-
-    @Override
-    public void onPause() {
-        LOG.info("onPause()");
-        super.onPause();
-    }
-
-	@Override
-	public void onResume() {
-		LOG.info("onResume()");
-		super.onResume();
-	}
 
     @Override
     public void onClick(View v) {
@@ -155,38 +147,6 @@ public class MessagingFragment extends SherlockFragment
 
         // log to help debugging
         LOG.info("created message with tag " + message.getMessageTag());
-
-//        // save new objects to database
-//        try {
-//            LOG.info("saving message to database");
-//            TransactionManager.callInTransaction(mDatabase.getConnectionSource(),
-//                new Callable<Void>() {
-//                    @Override
-//                    public Void call() throws Exception {
-//                        // save the message itself
-//                        mDatabase.getMessageDao().create(message);
-//                        // save related deliveries
-//                        for(int i = 0; i < deliveries.length; i++) {
-//                            mDatabase.getDeliveryDao().create(deliveries[i]);
-//                        }
-//                        return null;
-//                    }
-//                });
-//        } catch (SQLException e) {
-//            // XXX fail horribly
-//            e.printStackTrace();
-//            return;
-//        }
-//
-//        // notify the client service so it'll start delivery
-//        try {
-//            LOG.info("notifying service");
-//            mActivity.getTalkClientService().messageCreated(message.getMessageTag());
-//        } catch (RemoteException e) {
-//            // XXX fail horribly
-//            e.printStackTrace();
-//            return;
-//        }
 
         // clear the composer UI to prepare it for the next message
         clearComposedMessage();

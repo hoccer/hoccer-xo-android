@@ -9,11 +9,7 @@ package com.hoccer.talk.android.service;
  */
 interface ITalkClientServiceListener {
 
-    void messageCreated(String messageTag);
-    void messageDeleted(String messageTag);
-
-    void deliveryCreated(String messageTag, String receiverId);
-    void deliveryChanged(String messageTag, String receiverId);
-    void deliveryDeleted(String messageTag, String receiverId);
+    void onTokenPairingFailed(String token);
+    void onTokenPairingSucceeded(String token);
 
 }

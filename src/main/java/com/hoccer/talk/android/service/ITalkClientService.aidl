@@ -22,4 +22,7 @@ interface ITalkClientService {
     /** Generate a pairing token */
     String generatePairingToken();
 
+    /** Pair using token */
+    void pairUsingToken(String token);
+
 }

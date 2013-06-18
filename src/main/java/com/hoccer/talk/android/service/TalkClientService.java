@@ -22,6 +22,7 @@ import com.hoccer.talk.client.ITalkClientListener;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
+import com.hoccer.talk.client.model.TalkClientContact;
 import com.j256.ormlite.android.apptools.OrmLiteBaseService;
 import org.apache.log4j.Logger;
 
@@ -35,9 +36,18 @@ import org.apache.log4j.Logger;
  *
  *
  */
-public class TalkClientService extends Service implements ITalkClientListener {
+public class TalkClientService extends Service {
 
 	private static final Logger LOG = Logger.getLogger(TalkClientService.class);
+
+    private static final String INTENT_PREFIX =
+            "com.hoccer.talk.broadcast.";
+    public static final String INTENT_CLIENT_STATE_CHANGED =
+            INTENT_PREFIX + "clientStateChanged";
+    public static final String INTENT_CONTACT_PRESENCE_UPDATED =
+            INTENT_PREFIX + "contactPresenceUpdated";
+    public static final String INTENT_CONTACT_RELATIONSHIP_UPDATED =
+            INTENT_PREFIX + "contactRelationshipUpdated";
 
     private static final AtomicInteger ID_COUNTER =
         new AtomicInteger();
@@ -67,7 +77,7 @@ public class TalkClientService extends Service implements ITalkClientListener {
         mExecutor = Executors.newSingleThreadScheduledExecutor();
 
         mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()));
-        mClient.registerListener(this);
+        mClient.registerListener(new ClientListener());
 	}
 
     @Override
@@ -92,6 +102,7 @@ public class TalkClientService extends Service implements ITalkClientListener {
     @Override
 	public IBinder onBind(Intent intent) {
         LOG.info("onBind(" + intent.toString() + ")");
+
         if(!mClient.isActivated()) {
             mClient.activate();
         }
@@ -103,26 +114,6 @@ public class TalkClientService extends Service implements ITalkClientListener {
     public boolean onUnbind(Intent intent) {
         LOG.info("onUnbind(" + intent.toString() + ")");
         return super.onUnbind(intent);
-    }
-
-    @Override
-    public void onClientStateChange(HoccerTalkClient client, int state) {
-        LOG.info("onClientStateChange(" + HoccerTalkClient.stateToString(state) + ")");
-        if(state == HoccerTalkClient.STATE_IDLE) {
-            registerConnectivityReceiver();
-            handleConnectivityChange(mConnectivityManager.getActiveNetworkInfo());
-        }
-        if(state == HoccerTalkClient.STATE_INACTIVE) {
-            unregisterConnectivityReceiver();
-        }
-        if(state == HoccerTalkClient.STATE_ACTIVE) {
-            mExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    doUpdateGcm();
-                }
-            });
-        }
     }
 
     private void doUpdateGcm() {
@@ -199,6 +190,11 @@ public class TalkClientService extends Service implements ITalkClientListener {
         LOG.info("connectivity change:"
                 + " type " + activeNetwork.getTypeName()
                 + " state " + activeNetwork.getState().name());
+        if(activeNetwork.isConnectedOrConnecting()) {
+            mClient.activate();
+        } else {
+            mClient.deactivate();
+        }
     }
 
     private class ConnectivityReceiver extends BroadcastReceiver {
@@ -206,6 +202,36 @@ public class TalkClientService extends Service implements ITalkClientListener {
         public void onReceive(Context context, Intent intent) {
             LOG.info("onConnectivityChange()");
             handleConnectivityChange(mConnectivityManager.getActiveNetworkInfo());
+        }
+    }
+
+    private class ClientListener implements ITalkClientListener {
+        @Override
+        public void onClientStateChange(HoccerTalkClient client, int state) {
+            LOG.info("onClientStateChange(" + HoccerTalkClient.stateToString(state) + ")");
+            if(state == HoccerTalkClient.STATE_IDLE) {
+                registerConnectivityReceiver();
+                handleConnectivityChange(mConnectivityManager.getActiveNetworkInfo());
+            }
+            if(state == HoccerTalkClient.STATE_INACTIVE) {
+                unregisterConnectivityReceiver();
+            }
+            if(state == HoccerTalkClient.STATE_ACTIVE) {
+                mExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        doUpdateGcm();
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onContactPresenceChanged(TalkClientContact contact) {
+        }
+
+        @Override
+        public void onContactRelationshipChanged(TalkClientContact contact) {
         }
     }
 
@@ -249,7 +275,28 @@ public class TalkClientService extends Service implements ITalkClientListener {
 
         @Override
         public String generatePairingToken() throws RemoteException {
+            LOG.info("[" + mId + "] generatePairingToken()");
             return mClient.generatePairingToken();
+        }
+
+        @Override
+        public void pairUsingToken(final String token) throws RemoteException {
+            LOG.info("[" + mId + "] pairUsingToken(" + token + ")");
+            mExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        mClient.performTokenPairing(token);
+                        mListener.onTokenPairingSucceeded(token);
+                    } catch (Throwable t) {
+                        try {
+                            mListener.onTokenPairingFailed(token);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
         }
     }
 
