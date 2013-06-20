@@ -21,6 +21,34 @@
     android:layout_width="match_parent"
     android:text="Still hoccing"/>
 
+  <EditText
+    android:id="@+id/profile_name_edit"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:inputType="text"
+    android:imeOptions="actionDone"
+    android:hint="Name"/>
+
+  <Button
+    android:id="@+id/profile_name_set_button"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:text="Set name"/>
+
+  <EditText
+    android:id="@+id/profile_status_edit"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:inputType="text"
+    android:imeOptions="actionDone"
+    android:hint="Status"/>
+
+  <Button
+    android:id="@+id/profile_status_set_button"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:text="Set status"/>
+
   <Button
     android:id="@+id/profile_self_set_avatar"
     android:layout_height="wrap_content"

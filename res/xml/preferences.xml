@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <PreferenceCategory
+          android:title="Development"
+          android:summary="Intended for use by developers and testers">
+
+    <CheckBoxPreference
+            android:key="preference_log_logcat"
+            android:title="Log via logcat"/>
+
+    <CheckBoxPreference
+            android:key="preference_log_sd"
+            android:title="Log to SD card"/>
+
+    <ListPreference
+            android:key="preference_log_level"
+            android:title="Global log level"
+            android:entries="@array/preference_log_level_names"
+            android:entryValues="@array/preference_log_level_values"
+            android:defaultValue="INFO"/>
+
+  </PreferenceCategory>
+
+</PreferenceScreen>

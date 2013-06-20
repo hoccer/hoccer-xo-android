@@ -9,7 +9,14 @@ package com.hoccer.talk.android.service;
  */
 interface ITalkClientServiceListener {
 
+    void onClientStateChanged(int state);
+
     void onTokenPairingFailed(String token);
     void onTokenPairingSucceeded(String token);
+
+    void onClientPresenceChanged(int contactId);
+    void onClientRelationshipChanged(int contactId);
+
+    void onGroupPresenceChanged(int contactId);
 
 }

@@ -75,13 +75,21 @@
           </intent-filter>
         </activity>
 
-      <activity
-              android:name=".activity.AboutActivity"
-              android:label="@string/app_name">
-        <intent-filter>
-          <action android:name="android.intent.action.VIEW" />
-        </intent-filter>
-      </activity>
+        <activity
+                android:name=".activity.AboutActivity"
+                android:label="@string/app_name">
+          <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+          </intent-filter>
+        </activity>
+
+        <activity
+                android:name=".activity.PreferenceActivity"
+                android:label="@string/app_name">
+          <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+          </intent-filter>
+        </activity>
 
         <!-- connection and delivery service -->
         <service android:name=".service.TalkClientService"/>

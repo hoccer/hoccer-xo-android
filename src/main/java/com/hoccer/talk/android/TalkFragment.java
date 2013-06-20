@@ -1,8 +1,12 @@
 package com.hoccer.talk.android;
 
 import android.app.Activity;
+import android.os.IBinder;
+import android.os.RemoteException;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.hoccer.talk.android.service.ITalkClientService;
+import com.hoccer.talk.android.service.ITalkClientServiceListener;
 import com.hoccer.talk.client.TalkClientDatabase;
 import org.apache.log4j.Logger;
 
@@ -12,7 +16,7 @@ import org.apache.log4j.Logger;
  * This encapsulated commonalities:
  *  - access to activity for db and services
  */
-public class TalkFragment extends SherlockFragment {
+public class TalkFragment extends SherlockFragment implements ITalkClientServiceListener {
 
     protected Logger LOG = null;
 
@@ -22,12 +26,26 @@ public class TalkFragment extends SherlockFragment {
         LOG = Logger.getLogger(getClass());
     }
 
+    /** Just a dummy so we can implement the listener interface */
+    @Override
+    public IBinder asBinder() {
+        return null;
+    }
+
     public TalkActivity getTalkActivity() {
         return mActivity;
     }
 
     public TalkClientDatabase getTalkDatabase() {
         return mActivity.getTalkClientDatabase();
+    }
+
+    public ITalkClientService getTalkService() {
+        return mActivity.getTalkClientService();
+    }
+
+    public void runOnUiThread(Runnable runnable) {
+        mActivity.runOnUiThread(runnable);
     }
 
     @Override
@@ -40,6 +58,49 @@ public class TalkFragment extends SherlockFragment {
         } else {
             throw new RuntimeException("Talk fragments need to be in a talk activity");
         }
+
+        mActivity.registerTalkFragment(this);
+    }
+
+    @Override
+    public void onDetach() {
+        LOG.info("onDetach()");
+        super.onDetach();
+
+        if(mActivity != null) {
+            mActivity.unregisterTalkFragment(this);
+            mActivity = null;
+        }
+    }
+
+    public void onServiceConnected() {
+    }
+
+    public void onServiceDisconnected() {
+    }
+
+    @Override
+    public void onClientStateChanged(int state) throws RemoteException {
+    }
+
+    @Override
+    public void onTokenPairingFailed(String token) throws RemoteException {
+    }
+
+    @Override
+    public void onTokenPairingSucceeded(String token) throws RemoteException {
+    }
+
+    @Override
+    public void onClientPresenceChanged(int contactId) {
+    }
+
+    @Override
+    public void onClientRelationshipChanged(int contactId) {
+    }
+
+    @Override
+    public void onGroupPresenceChanged(int contactId) {
     }
 
 }

@@ -7,6 +7,8 @@ import com.hoccer.talk.client.model.TalkClientContact;
 
 public interface ITalkActivity {
 
+    public int getClientState();
+
     public ITalkClientService getTalkClientService();
     public TalkClientDatabase getTalkClientDatabase();
 
@@ -16,6 +18,7 @@ public interface ITalkActivity {
     public void showContactProfile(TalkClientContact contact);
     public void showContactConversation(TalkClientContact contact);
 
+    public void showPreferences();
     public void showPairing();
     public void showAbout();
 	

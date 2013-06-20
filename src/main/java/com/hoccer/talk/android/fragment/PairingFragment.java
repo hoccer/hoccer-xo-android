@@ -1,6 +1,5 @@
 package com.hoccer.talk.android.fragment;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.Editable;
@@ -14,15 +13,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkFragment;
-import com.hoccer.talk.client.model.TalkClientContact;
-import org.apache.log4j.Logger;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -32,11 +27,13 @@ public class PairingFragment extends TalkFragment {
     TextView mTokenText;
 
     EditText mTokenEdit;
-    Button mTokenPair;
+    Button mTokenPairButton;
 
     ScheduledFuture<?> mTokenFuture;
 
     TextWatcher mTextWatcher;
+
+    String mActiveToken;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,7 +53,7 @@ public class PairingFragment extends TalkFragment {
         mTokenEdit = (EditText)view.findViewById(R.id.pairing_token_edit);
         mTokenEdit.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
-        mTokenPair = (Button)view.findViewById(R.id.pairing_token_pair);
+        mTokenPairButton = (Button)view.findViewById(R.id.pairing_token_pair);
 
         return view;
     }
@@ -94,7 +91,7 @@ public class PairingFragment extends TalkFragment {
                 }, 1, 120, TimeUnit.SECONDS
         );
         // bind the listener for the button that starts pairing
-        mTokenPair.setOnClickListener(new View.OnClickListener() {
+        mTokenPairButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 performPairing(mTokenEdit.getText().toString());
@@ -103,7 +100,7 @@ public class PairingFragment extends TalkFragment {
 
         // reset the token editor
         mTokenEdit.setText("");
-        mTokenPair.setEnabled(false);
+        mTokenPairButton.setEnabled(false);
         // perform pairing on "done" action
         mTokenEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -127,9 +124,9 @@ public class PairingFragment extends TalkFragment {
             public void afterTextChanged(Editable s) {
                 String token = s.toString();
                 if(token.length() > 0) {
-                    mTokenPair.setEnabled(true);
+                    mTokenPairButton.setEnabled(true);
                 } else {
-                    mTokenPair.setEnabled(false);
+                    mTokenPairButton.setEnabled(false);
                 }
             }
         };
@@ -158,11 +155,41 @@ public class PairingFragment extends TalkFragment {
 
     private void performPairing(String token) {
         LOG.info("performPairing(" + token + ")");
+        mActiveToken = token;
+        mTokenEdit.setEnabled(false);
+        mTokenPairButton.setEnabled(false);
         try {
             getTalkActivity().getService().pairUsingToken(token);
         } catch (RemoteException e) {
             LOG.info("pairing failed");
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onTokenPairingFailed(String token) throws RemoteException {
+        if(token.equals(mActiveToken)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mTokenEdit.setEnabled(true);
+                    mTokenPairButton.setEnabled(true);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onTokenPairingSucceeded(String token) throws RemoteException {
+        if(token.equals(mActiveToken)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mTokenEdit.setEnabled(true);
+                    mTokenEdit.setText("");
+                    mTokenPairButton.setEnabled(false);
+                }
+            });
         }
     }
 

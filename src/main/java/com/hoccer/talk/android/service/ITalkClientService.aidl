@@ -7,6 +7,12 @@ import com.hoccer.talk.android.service.ITalkClientServiceListener;
  */
 interface ITalkClientService {
 
+    /** Get the current state of the client */
+    int getClientState();
+
+    void setClientName(String newName);
+    void setClientStatus(String newStatus);
+
     /** Tell the service that it is still needed */
     void keepAlive();
 

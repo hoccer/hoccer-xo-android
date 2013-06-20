@@ -17,19 +17,19 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.hoccer.talk.android.activity.AboutActivity;
-import com.hoccer.talk.android.activity.MessagingActivity;
-import com.hoccer.talk.android.activity.PairingActivity;
-import com.hoccer.talk.android.activity.ProfileActivity;
+import com.hoccer.talk.android.activity.*;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
 import com.hoccer.talk.android.service.ITalkClientService;
 import com.hoccer.talk.android.service.ITalkClientServiceListener;
 import com.hoccer.talk.android.service.TalkClientService;
+import com.hoccer.talk.client.HoccerTalkClient;
 import com.hoccer.talk.client.TalkClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -64,6 +64,9 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     /** Talk client database */
     TalkClientDatabase mDatabase;
 
+    /** List of all talk fragments */
+    ArrayList<TalkFragment> mTalkFragments = new ArrayList<TalkFragment>();
+
     public TalkActivity() {
         LOG = Logger.getLogger(getClass());
     }
@@ -78,6 +81,14 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
         return mService;
     }
 
+    public void registerTalkFragment(TalkFragment fragment) {
+        mTalkFragments.add(fragment);
+    }
+
+    public void unregisterTalkFragment(TalkFragment fragment) {
+        mTalkFragments.remove(fragment);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +97,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
         // set up database connection
         mDatabase = new TalkClientDatabase(AndroidTalkDatabase.getInstance(this.getApplicationContext()));
         try {
+            LOG.info("opening client database");
             mDatabase.initialize();
         } catch (SQLException e) {
             LOG.error("sql error", e);
@@ -161,6 +173,9 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
                     e.printStackTrace();
                 }
                 break;
+            case R.id.menu_settings:
+                showPreferences();
+                break;
             case R.id.menu_about:
                 showAbout();
                 break;
@@ -231,13 +246,18 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
             } catch (RemoteException e) {
                 e.printStackTrace();  // XXX
             }
+            for(TalkFragment fragment: mTalkFragments) {
+                fragment.onServiceConnected();
+            }
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
             LOG.info("onServiceDisconnected()");
             shutdownKeepAlive();
             mService = null;
-            // XXX this should be indicated
+            for(TalkFragment fragment: mTalkFragments) {
+                fragment.onServiceDisconnected();
+            }
         }
     }
 
@@ -249,11 +269,54 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
      */
     public class MainServiceListener extends ITalkClientServiceListener.Stub implements ITalkClientServiceListener {
         @Override
+        public void onClientStateChanged(int state) throws RemoteException {
+            for(TalkFragment fragment: mTalkFragments) {
+                fragment.onClientStateChanged(state);
+            }
+        }
+        @Override
         public void onTokenPairingFailed(String token) throws RemoteException {
+            for(TalkFragment fragment: mTalkFragments) {
+                fragment.onTokenPairingFailed(token);
+            }
         }
         @Override
         public void onTokenPairingSucceeded(String token) throws RemoteException {
+            for(TalkFragment fragment: mTalkFragments) {
+                fragment.onTokenPairingSucceeded(token);
+            }
         }
+        @Override
+        public void onClientPresenceChanged(int contactId) {
+            for(TalkFragment fragment: mTalkFragments) {
+                fragment.onClientPresenceChanged(contactId);
+            }
+        }
+        @Override
+        public void onClientRelationshipChanged(int contactId) {
+            for(TalkFragment fragment: mTalkFragments) {
+                fragment.onClientRelationshipChanged(contactId);
+            }
+        }
+        @Override
+        public void onGroupPresenceChanged(int contactId) throws RemoteException {
+            for(TalkFragment fragment: mTalkFragments) {
+                fragment.onGroupPresenceChanged(contactId);
+            }
+        }
+    }
+
+    @Override
+    public int getClientState() {
+        int state = HoccerTalkClient.STATE_INACTIVE;
+        if(mService != null) {
+            try {
+                state = mService.getClientState();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return state;
     }
 
     @Override
@@ -275,7 +338,10 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     public BaseAdapter makeContactListAdapter() {
         ContactListAdapter a = new ContactListAdapter(this);
         try {
-            a.addAll(mDatabase.findAllClientContacts());
+            List<TalkClientContact> contacts = mDatabase.findAllContacts();
+            for(TalkClientContact contact: contacts) {
+                a.add(contact);
+            }
         } catch (SQLException e) {
             LOG.error("sql error", e);
         }
@@ -310,6 +376,12 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
         startActivity(new Intent(this, AboutActivity.class));
     }
 
+    @Override
+    public void showPreferences() {
+        LOG.info("showPreferences()");
+        startActivity(new Intent(this, PreferenceActivity.class));
+    }
+
     public class ContactListAdapter extends ArrayAdapter<TalkClientContact> {
         LayoutInflater mInflater;
 
@@ -326,8 +398,12 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
                 v = mInflater.inflate(R.layout.item_contact, null);
             }
 
+            TalkClientContact contact = getItem(position);
+
             TextView nameView = (TextView)v.findViewById(R.id.contact_name);
-            nameView.setText(getItem(position).getContactType());
+            nameView.setText(contact.getName());
+            TextView statusView = (TextView)v.findViewById(R.id.contact_status);
+            statusView.setText(contact.getStatus());
 
             return v;
         }

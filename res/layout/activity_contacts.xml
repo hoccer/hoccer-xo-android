@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-              class="com.hoccer.talk.android.fragment.ContactsFragment"
-              android:id="@+id/activity_contacts_fragment"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-</fragment>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+  <fragment
+            class="com.hoccer.talk.android.fragment.StatusFragment"
+            android:id="@+id/activity_contacts_status_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+  <fragment
+            class="com.hoccer.talk.android.fragment.ContactsFragment"
+            android:id="@+id/activity_contacts_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+</LinearLayout>

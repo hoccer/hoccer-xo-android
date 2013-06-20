@@ -8,4 +8,16 @@
     <string name="menu_about">About</string>
     <string name="menu_quit">Quit</string>
 
+    <string-array name="preference_log_level_names">
+      <item>Info</item>
+      <item>Debug</item>
+      <item>Trace</item>
+    </string-array>
+
+    <string-array name="preference_log_level_values">
+      <item>INFO</item>
+      <item>DEBUG</item>
+      <item>TRACE</item>
+    </string-array>
+
 </resources>
