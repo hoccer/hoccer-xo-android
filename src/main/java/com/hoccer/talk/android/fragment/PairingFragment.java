@@ -22,6 +22,11 @@ import com.hoccer.talk.android.TalkFragment;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Fragment for pairing
+ *
+ * This offers various ways of finding new friends.
+ */
 public class PairingFragment extends TalkFragment {
 
     TextView mTokenText;

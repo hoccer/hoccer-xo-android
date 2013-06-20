@@ -27,6 +27,11 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 
+/**
+ * Fragment that shows the "about" web page
+ *
+ * This uses webapp caching to cache the page.
+ */
 public class AboutFragment extends TalkFragment {
 
     private static final String ABOUT_URL = "http://www.hoccer.com/xo-about-view";

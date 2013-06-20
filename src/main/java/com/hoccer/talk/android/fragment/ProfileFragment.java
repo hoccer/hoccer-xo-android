@@ -23,6 +23,9 @@ import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
 
+/**
+ * Fragment for display and editing of profiles
+ */
 public class ProfileFragment extends TalkFragment implements View.OnClickListener, TextView.OnEditorActionListener {
 
     private static final Logger LOG = Logger.getLogger(ProfileFragment.class);

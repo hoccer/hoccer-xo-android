@@ -28,6 +28,9 @@ import com.hoccer.talk.model.TalkMessage;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import org.apache.log4j.Logger;
 
+/**
+ * Fragment for conversations
+ */
 public class MessagingFragment extends TalkFragment
         implements View.OnClickListener, SearchView.OnQueryTextListener {
 

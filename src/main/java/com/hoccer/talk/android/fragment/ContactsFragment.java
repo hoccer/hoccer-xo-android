@@ -15,6 +15,12 @@ import android.widget.ListView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
 
+/**
+ * Fragment that shows a list of contacts
+ *
+ * This currently shows only contact data but should also be able to show
+ * recent conversations for use as a "conversations" view.
+ */
 public class ContactsFragment extends TalkFragment {
 
 	private static final Logger LOG = Logger.getLogger(ContactsFragment.class);

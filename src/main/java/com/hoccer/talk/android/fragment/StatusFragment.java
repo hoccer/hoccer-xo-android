@@ -11,6 +11,9 @@ import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkFragment;
 import com.hoccer.talk.client.HoccerTalkClient;
 
+/**
+ * Mix-in fragment for showing client status
+ */
 public class StatusFragment extends TalkFragment {
 
     TextView mStatusText;
