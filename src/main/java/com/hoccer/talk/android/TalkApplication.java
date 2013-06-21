@@ -36,7 +36,8 @@ public class TalkApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-        Log.i(TAG, "onCreate()");
+
+        Log.i(TAG, "[logging] initializing logging");
 
         mRootLogger = Logger.getRootLogger();
 
@@ -79,7 +80,6 @@ public class TalkApplication extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
-        Log.i(TAG, "onTerminate()");
 
         if(mPreferencesChangedListener != null) {
             mPreferences.unregisterOnSharedPreferenceChangeListener(mPreferencesChangedListener);
@@ -94,14 +94,14 @@ public class TalkApplication extends Application {
 
     private void configureLogLevel() {
         String levelString = mPreferences.getString("preference_log_level", "INFO");
-        Log.i(TAG, "Setting log level to " + levelString);
+        Log.i(TAG, "[logging] setting log level to " + levelString);
         Level level = Level.toLevel(levelString);
         mRootLogger.setLevel(level);
     }
 
     private void configureLogSd() {
         boolean enabled = mPreferences.getBoolean("preference_log_sd", false);
-        Log.i(TAG, (enabled ? "Enabling" : "Disabling") + " logging to SD card");
+        Log.i(TAG, "[logging] " + (enabled ? "enabling" : "disabling") + " logging to SD card");
         if(enabled) {
             mRootLogger.addAppender(mFileAppender);
         } else {
@@ -111,7 +111,7 @@ public class TalkApplication extends Application {
 
     private void configureLogLogcat() {
         boolean enabled = mPreferences.getBoolean("preference_log_logcat", true);
-        Log.i(TAG, (enabled ? "Enabling" : "Disabling") + " logging to logcat");
+        Log.i(TAG, "[logging] " + (enabled ? "enabling" : "disabling") + " logging to logcat");
         if(enabled) {
             mRootLogger.addAppender(mLogcatAppender);
         } else {
@@ -159,7 +159,7 @@ public class TalkApplication extends Application {
 
         @Override
         public void close() {
-            Log.i(TAG, "Logcat appender closed");
+            Log.v(TAG, "[logging] logcat appender closed");
         }
 
         @Override
