@@ -164,7 +164,7 @@ public class PairingFragment extends TalkFragment {
         mTokenEdit.setEnabled(false);
         mTokenPairButton.setEnabled(false);
         try {
-            getTalkActivity().getService().pairUsingToken(token);
+            getTalkService().pairUsingToken(token);
         } catch (RemoteException e) {
             LOG.info("pairing failed");
             e.printStackTrace();
