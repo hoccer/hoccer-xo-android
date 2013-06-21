@@ -80,15 +80,15 @@ public class TalkFragment extends SherlockFragment implements ITalkClientService
     }
 
     @Override
-    public void onClientStateChanged(int state) throws RemoteException {
+    public void onClientStateChanged(int state) {
     }
 
     @Override
-    public void onTokenPairingFailed(String token) throws RemoteException {
+    public void onTokenPairingFailed(String token) {
     }
 
     @Override
-    public void onTokenPairingSucceeded(String token) throws RemoteException {
+    public void onTokenPairingSucceeded(String token) {
     }
 
     @Override
@@ -97,6 +97,14 @@ public class TalkFragment extends SherlockFragment implements ITalkClientService
 
     @Override
     public void onClientRelationshipChanged(int contactId) {
+    }
+
+    @Override
+    public void onGroupCreationSucceeded(int contactId) {
+    }
+
+    @Override
+    public void onGroupCreationFailed() {
     }
 
     @Override

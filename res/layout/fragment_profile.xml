@@ -9,6 +9,12 @@
     android:layout_width="wrap_content"
     android:id="@+id/profile_avatar_image"/>
 
+  <Button
+    android:id="@+id/profile_avatar_set_button"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:text="Change avatar image"/>
+
   <TextView
     android:id="@+id/profile_name_text"
     android:layout_height="wrap_content"
@@ -49,12 +55,6 @@
     android:layout_width="match_parent"
     android:text="Set status"/>
 
-  <Button
-    android:id="@+id/profile_self_set_avatar"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:text="Change my avatar image"/>
-
   <TextView
     android:id="@+id/profile_user_block_status"
     android:layout_height="wrap_content"
@@ -66,5 +66,29 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:text="Block this user"/>
+
+  <Button
+    android:id="@+id/profile_user_depair_button"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:text="Defriend this user"/>
+
+  <Button
+    android:id="@+id/profile_user_delete_button"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:text="Delete this contact"/>
+
+  <Button
+    android:id="@+id/profile_group_invite_button"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:text="Invite other users"/>
+
+  <Button
+    android:id="@+id/profile_group_leave_button"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:text="Leave this group"/>
 
 </LinearLayout>

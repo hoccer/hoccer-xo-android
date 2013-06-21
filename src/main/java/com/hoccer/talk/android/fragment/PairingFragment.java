@@ -172,7 +172,7 @@ public class PairingFragment extends TalkFragment {
     }
 
     @Override
-    public void onTokenPairingFailed(String token) throws RemoteException {
+    public void onTokenPairingFailed(String token) {
         if(token.equals(mActiveToken)) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -185,7 +185,7 @@ public class PairingFragment extends TalkFragment {
     }
 
     @Override
-    public void onTokenPairingSucceeded(String token) throws RemoteException {
+    public void onTokenPairingSucceeded(String token) {
         if(token.equals(mActiveToken)) {
             runOnUiThread(new Runnable() {
                 @Override

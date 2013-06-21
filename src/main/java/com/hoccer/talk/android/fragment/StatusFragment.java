@@ -51,7 +51,7 @@ public class StatusFragment extends TalkFragment {
     }
 
     @Override
-    public void onClientStateChanged(final int state) throws RemoteException {
+    public void onClientStateChanged(final int state) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

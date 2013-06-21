@@ -299,6 +299,18 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
             }
         }
         @Override
+        public void onGroupCreationSucceeded(int contactId) throws RemoteException {
+            for(TalkFragment fragment: mTalkFragments) {
+                fragment.onGroupCreationSucceeded(contactId);
+            }
+        }
+        @Override
+        public void onGroupCreationFailed() throws RemoteException {
+            for(TalkFragment fragment: mTalkFragments) {
+                fragment.onGroupCreationFailed();
+            }
+        }
+        @Override
         public void onGroupPresenceChanged(int contactId) throws RemoteException {
             for(TalkFragment fragment: mTalkFragments) {
                 fragment.onGroupPresenceChanged(contactId);
@@ -338,7 +350,9 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     public BaseAdapter makeContactListAdapter() {
         ContactListAdapter a = new ContactListAdapter(this);
         try {
-            List<TalkClientContact> contacts = mDatabase.findAllContacts();
+            List<TalkClientContact> contacts = new ArrayList<TalkClientContact>();
+            contacts.addAll(mDatabase.findAllClientContacts());
+            contacts.addAll(mDatabase.findAllGroupContacts());
             for(TalkClientContact contact: contacts) {
                 a.add(contact);
             }

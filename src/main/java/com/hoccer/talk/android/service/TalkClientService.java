@@ -1,5 +1,6 @@
 package com.hoccer.talk.android.service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -40,15 +41,6 @@ import org.apache.log4j.Logger;
 public class TalkClientService extends Service {
 
 	private static final Logger LOG = Logger.getLogger(TalkClientService.class);
-
-    private static final String INTENT_PREFIX =
-            "com.hoccer.talk.broadcast.";
-    public static final String INTENT_CLIENT_STATE_CHANGED =
-            INTENT_PREFIX + "clientStateChanged";
-    public static final String INTENT_CONTACT_PRESENCE_UPDATED =
-            INTENT_PREFIX + "contactPresenceUpdated";
-    public static final String INTENT_CONTACT_RELATIONSHIP_UPDATED =
-            INTENT_PREFIX + "contactRelationshipUpdated";
 
     private static final AtomicInteger ID_COUNTER =
         new AtomicInteger();
@@ -383,6 +375,29 @@ public class TalkClientService extends Service {
         }
 
         @Override
+        public void createGroup() throws RemoteException {
+            LOG.info("[" + mId + "] createGroup()");
+            mExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    LOG.info("[" + mId + "] creating group");
+                    try {
+                        TalkClientContact contact = mClient.createGroup();
+                        LOG.error("[" + mId + "] group creation ok");
+                        mListener.onGroupCreationSucceeded(contact.getClientContactId());
+                    } catch (Throwable t) {
+                        LOG.error("[" + mId + "] group creation failed");
+                        try {
+                            mListener.onGroupCreationFailed();
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        }
+
+        @Override
         public String generatePairingToken() throws RemoteException {
             LOG.info("[" + mId + "] generatePairingToken()");
             String res = mClient.generatePairingToken();
@@ -411,6 +426,26 @@ public class TalkClientService extends Service {
                     }
                 }
             });
+        }
+
+        @Override
+        public void blockContact(int contactId) throws RemoteException {
+            LOG.info("[" + mId + "] blockContact(" + contactId + ")");
+            try {
+                mClient.blockContact(mClient.getDatabase().findClientContactById(contactId));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void unblockContact(int contactId) throws RemoteException {
+            LOG.info("[" + mId + "] unblockContact(" + contactId + ")");
+            try {
+                mClient.unblockContact(mClient.getDatabase().findClientContactById(contactId));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

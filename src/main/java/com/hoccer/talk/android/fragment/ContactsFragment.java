@@ -21,12 +21,13 @@ import org.apache.log4j.Logger;
  * This currently shows only contact data but should also be able to show
  * recent conversations for use as a "conversations" view.
  */
-public class ContactsFragment extends TalkFragment {
+public class ContactsFragment extends TalkFragment implements View.OnClickListener {
 
 	private static final Logger LOG = Logger.getLogger(ContactsFragment.class);
 
 	ListView mContactList;
-    Button mPairingButton;
+    Button mFindContactsButton;
+    Button mCreateGroupButton;
 
     public ContactsFragment() {
     }
@@ -48,13 +49,12 @@ public class ContactsFragment extends TalkFragment {
         });
 
         // button leading to pairing activity
-        mPairingButton = (Button)v.findViewById(R.id.contacts_find_contacts);
-        mPairingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getTalkActivity().showPairing();
-            }
-        });
+        mFindContactsButton = (Button)v.findViewById(R.id.contacts_find_contacts_button);
+        mFindContactsButton.setOnClickListener(this);
+
+        // button for creating new groups
+        mCreateGroupButton = (Button)v.findViewById(R.id.contacts_create_group_button);
+        mCreateGroupButton.setOnClickListener(this);
 
 		return v;
 	}
@@ -72,11 +72,14 @@ public class ContactsFragment extends TalkFragment {
         // do this late so activity has database initialized
         mContactList.setAdapter(getTalkActivity().makeContactListAdapter());
     }
-	
-	@Override
-	public void onPause() {
-		LOG.info("onPause()");
-		super.onPause();
-	}
 
+    @Override
+    public void onClick(View v) {
+        if(v == mFindContactsButton) {
+            getTalkActivity().showPairing();
+        }
+        if(v == mCreateGroupButton) {
+            getTalkActivity();
+        }
+    }
 }

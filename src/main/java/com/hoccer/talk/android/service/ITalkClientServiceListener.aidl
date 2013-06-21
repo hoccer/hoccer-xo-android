@@ -17,6 +17,9 @@ interface ITalkClientServiceListener {
     void onClientPresenceChanged(int contactId);
     void onClientRelationshipChanged(int contactId);
 
+    void onGroupCreationSucceeded(int contactId);
+    void onGroupCreationFailed();
+
     void onGroupPresenceChanged(int contactId);
 
 }
