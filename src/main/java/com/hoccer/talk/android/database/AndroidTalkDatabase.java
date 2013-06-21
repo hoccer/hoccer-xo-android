@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import com.hoccer.talk.client.ITalkClientDatabaseBackend;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientMembership;
 import com.hoccer.talk.client.model.TalkClientSelf;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.model.*;
@@ -21,7 +22,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
 
     private static final String DATABASE_NAME    = "hoccer-talk.db";
 
-    private static final int    DATABASE_VERSION = 2;
+    private static final int    DATABASE_VERSION = 3;
 
     private static AndroidTalkDatabase INSTANCE = null;
 
@@ -51,6 +52,8 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
             TableUtils.createTable(cs, TalkGroup.class);
             TableUtils.createTable(cs, TalkGroupMember.class);
 
+            TableUtils.createTable(cs, TalkClientMembership.class);
+
             TableUtils.createTable(cs, TalkClientMessage.class);
             TableUtils.createTable(cs, TalkMessage.class);
             TableUtils.createTable(cs, TalkDelivery.class);
@@ -68,6 +71,9 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
             if(oldVersion < 2) {
                 TableUtils.createTable(cs, TalkGroup.class);
                 TableUtils.createTable(cs, TalkGroupMember.class);
+            }
+            if(oldVersion < 3) {
+                TableUtils.createTable(cs, TalkClientMembership.class);
             }
         } catch (SQLException e) {
             e.printStackTrace();
