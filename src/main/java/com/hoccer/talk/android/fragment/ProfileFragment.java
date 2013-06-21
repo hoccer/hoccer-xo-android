@@ -49,6 +49,7 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     Button mGroupInviteButton;
     Button mGroupLeaveButton;
     Button mGroupKickButton;
+    Button mGroupDisbandButton;
     Button mGroupDeleteButton;
 
     TalkClientContact mContact;
@@ -100,6 +101,8 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         mGroupLeaveButton.setOnClickListener(this);
         mGroupKickButton = (Button)v.findViewById(R.id.profile_group_kick_button);
         mGroupKickButton.setOnClickListener(this);
+        mGroupDisbandButton = (Button)v.findViewById(R.id.profile_group_disband_button);
+        mGroupDisbandButton.setOnClickListener(this);
         mGroupDeleteButton = (Button)v.findViewById(R.id.profile_group_delete_button);
         mGroupDeleteButton.setOnClickListener(this);
 
@@ -218,7 +221,8 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         mGroupInviteButton.setVisibility(groupAdminVisibility);
         mGroupLeaveButton.setVisibility(groupJoinedVisibility);
         mGroupKickButton.setVisibility(groupAdminVisibility);
-        mGroupDeleteButton.setVisibility(groupAdminVisibility);
+        mGroupDisbandButton.setVisibility(groupAdminVisibility);
+        mGroupDeleteButton.setVisibility(contact.isGroup() ? View.VISIBLE : View.GONE);
 
         // apply data from the contact that needs to recurse
         if(contact.isClient() || contact.isSelf()) {

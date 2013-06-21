@@ -104,6 +104,12 @@
     android:text="Kick a user"/>
 
   <Button
+    android:id="@+id/profile_group_disband_button"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:text="Disband this group"/>
+
+  <Button
     android:id="@+id/profile_group_delete_button"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
