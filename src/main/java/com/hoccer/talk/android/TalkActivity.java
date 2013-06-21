@@ -179,6 +179,13 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
             case R.id.menu_about:
                 showAbout();
                 break;
+            case R.id.menu_reconnect:
+                try {
+                    mService.reconnect();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
