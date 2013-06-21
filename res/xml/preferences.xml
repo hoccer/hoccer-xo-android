@@ -8,11 +8,13 @@
 
     <CheckBoxPreference
             android:key="preference_log_logcat"
-            android:title="Log via logcat"/>
+            android:title="Log via logcat"
+            android:defaultValue="true"/>
 
     <CheckBoxPreference
             android:key="preference_log_sd"
-            android:title="Log to SD card"/>
+            android:title="Log to SD card"
+            android:defaultValue="false"/>
 
     <ListPreference
             android:key="preference_log_level"
