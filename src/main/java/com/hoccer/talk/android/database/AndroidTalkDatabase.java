@@ -21,7 +21,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
 
     private static final String DATABASE_NAME    = "hoccer-talk.db";
 
-    private static final int    DATABASE_VERSION = 1;
+    private static final int    DATABASE_VERSION = 2;
 
     private static AndroidTalkDatabase INSTANCE = null;
 
@@ -48,6 +48,8 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
             TableUtils.createTable(cs, TalkClientSelf.class);
             TableUtils.createTable(cs, TalkPresence.class);
             TableUtils.createTable(cs, TalkRelationship.class);
+            TableUtils.createTable(cs, TalkGroup.class);
+            TableUtils.createTable(cs, TalkGroupMember.class);
 
             TableUtils.createTable(cs, TalkClientMessage.class);
             TableUtils.createTable(cs, TalkMessage.class);
@@ -62,6 +64,15 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
     public void onUpgrade(SQLiteDatabase db, ConnectionSource cs, int oldVersion, int newVersion) {
         LOG.info("upgrading database from schema version "
                 + oldVersion + " to schema version " + newVersion);
+        try {
+            if(oldVersion < 2) {
+                TableUtils.createTable(cs, TalkGroup.class);
+                TableUtils.createTable(cs, TalkGroupMember.class);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // XXX app must fail or something
+        }
     }
 
 }
