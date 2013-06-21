@@ -363,6 +363,13 @@ public class TalkClientService extends Service {
         }
 
         @Override
+        public void reconnect()
+                throws RemoteException {
+            LOG.info("[" + mId + "] reconnect()");
+            mClient.reconnect();
+        }
+
+        @Override
         public void setListener(ITalkClientServiceListener listener)
                 throws RemoteException {
             LOG.info("[" + mId + "] setListener()");
@@ -383,7 +390,7 @@ public class TalkClientService extends Service {
                     LOG.info("[" + mId + "] creating group");
                     try {
                         TalkClientContact contact = mClient.createGroup();
-                        LOG.error("[" + mId + "] group creation ok");
+                        LOG.info("[" + mId + "] group creation ok");
                         mListener.onGroupCreationSucceeded(contact.getClientContactId());
                     } catch (Throwable t) {
                         LOG.error("[" + mId + "] group creation failed");

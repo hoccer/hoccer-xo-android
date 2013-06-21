@@ -80,6 +80,12 @@
     android:text="Delete this contact"/>
 
   <Button
+    android:id="@+id/profile_group_join_button"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:text="Accept invitation"/>
+
+  <Button
     android:id="@+id/profile_group_invite_button"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
@@ -90,5 +96,17 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:text="Leave this group"/>
+
+  <Button
+    android:id="@+id/profile_group_kick_button"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:text="Kick a user"/>
+
+  <Button
+    android:id="@+id/profile_group_delete_button"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:text="Delete this group"/>
 
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.hoccer.talk.android.fragment;
 
+import android.os.RemoteException;
 import android.widget.AdapterView;
 import android.widget.Button;
 import com.actionbarsherlock.view.Menu;
@@ -14,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
+
+import java.sql.SQLException;
 
 /**
  * Fragment that shows a list of contacts
@@ -79,7 +82,28 @@ public class ContactsFragment extends TalkFragment implements View.OnClickListen
             getTalkActivity().showPairing();
         }
         if(v == mCreateGroupButton) {
-            getTalkActivity();
+            try {
+                getTalkService().createGroup();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    @Override
+    public void onGroupCreationSucceeded(int contactId) {
+        LOG.info("onGroupCreationSucceeded(" + contactId + ")");
+        try {
+            TalkClientContact contact = getTalkDatabase().findClientContactById(contactId);
+            if(contact != null) {
+                getTalkActivity().showContactProfile(contact);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onGroupCreationFailed() {
     }
 }

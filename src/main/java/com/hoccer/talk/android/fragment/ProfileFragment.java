@@ -45,8 +45,11 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     Button   mUserDepairButton;
     Button   mUserDeleteButton;
 
+    Button mGroupJoinButton;
     Button mGroupInviteButton;
     Button mGroupLeaveButton;
+    Button mGroupKickButton;
+    Button mGroupDeleteButton;
 
     TalkClientContact mContact;
 
@@ -85,14 +88,20 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         mUserBlockButton = (Button)v.findViewById(R.id.profile_user_block_button);
         mUserBlockButton.setOnClickListener(this);
         mUserDepairButton = (Button)v.findViewById(R.id.profile_user_depair_button);
-        mUserDeleteButton.setOnClickListener(this);
+        mUserDepairButton.setOnClickListener(this);
         mUserDeleteButton = (Button)v.findViewById(R.id.profile_user_delete_button);
         mUserDeleteButton.setOnClickListener(this);
         // group operations
+        mGroupJoinButton = (Button)v.findViewById(R.id.profile_group_join_button);
+        mGroupJoinButton.setOnClickListener(this);
         mGroupInviteButton = (Button)v.findViewById(R.id.profile_group_invite_button);
         mGroupInviteButton.setOnClickListener(this);
         mGroupLeaveButton = (Button)v.findViewById(R.id.profile_group_leave_button);
         mGroupLeaveButton.setOnClickListener(this);
+        mGroupKickButton = (Button)v.findViewById(R.id.profile_group_kick_button);
+        mGroupKickButton.setOnClickListener(this);
+        mGroupDeleteButton = (Button)v.findViewById(R.id.profile_group_delete_button);
+        mGroupDeleteButton.setOnClickListener(this);
 
         return v;
     }
@@ -151,17 +160,41 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     }
 
     public void showProfile(TalkClientContact contact) {
+        LOG.info("showProfile(" + contact.getClientContactId() + ")");
         mContact = contact;
 
-        // first, configure visibility based on just contact type
-        // avatar-related
-        mAvatarSetButton.setVisibility(contact.isSelf() ? View.VISIBLE : View.GONE);
-        // name-related
-        boolean canEditName = contact.isSelf(); // XXX can edit group name if admin
+        if(contact.isGroup()) {
+            LOG.info("contact " + contact.getClientContactId() + " is group");
+            if(contact.isGroupRegistered()) {
+                LOG.info("contact " + contact.getClientContactId() + " group registered as " + contact.getGroupId());
+            } else {
+                LOG.info("contact " + contact.getClientContactId() + " is unregistered");
+            }
+            if(contact.isGroupJoined()) {
+                LOG.info("contact " + contact.getClientContactId() + " is joined");
+            }
+            if(contact.isGroupAdmin()) {
+                LOG.info("contact " + contact.getClientContactId() + " is admin");
+            }
+            if(contact.isGroupInvited()) {
+                LOG.info("contact " + contact.getClientContactId() + " is invited");
+            }
+        }
+        if(contact.isClient()) {
+            LOG.info("contact " + contact.getClientContactId() + " is client " + contact.getClientId());
+        }
+        if(contact.isSelf()) {
+            LOG.info("contact " + contact.getClientContactId() + " is self");
+        }
+
+        boolean canEditName = contact.isSelf() || contact.isGroupAdmin();
+        // avatar
+        mAvatarSetButton.setVisibility(canEditName ? View.VISIBLE : View.GONE);
+        // name
         mNameText.setVisibility(canEditName ? View.GONE : View.VISIBLE);
         mNameEdit.setVisibility(canEditName ? View.VISIBLE : View.GONE);
         mNameSetButton.setVisibility(canEditName ? View.VISIBLE : View.GONE);
-        // status-related
+        // status
         int statusTextVisibility = contact.isSelf() ? View.VISIBLE : View.GONE;
         int statusEditVisibility = contact.isSelf() ? View.GONE : View.VISIBLE;
         if(contact.isGroup()) {
@@ -177,12 +210,17 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         mUserBlockButton.setVisibility(clientVisibility);
         mUserDepairButton.setVisibility(clientVisibility);
         mUserDeleteButton.setVisibility(clientVisibility);
-        // group-related
-        int groupVisibility = contact.isGroup() ? View.VISIBLE : View.GONE;
-        mGroupInviteButton.setVisibility(groupVisibility);
-        mGroupLeaveButton.setVisibility(groupVisibility);
+        // group operations
+        int groupJoinedVisibility = contact.isGroupJoined() ? View.VISIBLE : View.GONE;
+        int groupInvitedVisibility = contact.isGroupInvited() ? View.VISIBLE : View.GONE;
+        int groupAdminVisibility = contact.isGroupAdmin() ? View.VISIBLE : View.GONE;
+        mGroupJoinButton.setVisibility(groupInvitedVisibility);
+        mGroupInviteButton.setVisibility(groupAdminVisibility);
+        mGroupLeaveButton.setVisibility(groupJoinedVisibility);
+        mGroupKickButton.setVisibility(groupAdminVisibility);
+        mGroupDeleteButton.setVisibility(groupAdminVisibility);
 
-        // now apply data from the contact
+        // apply data from the contact that needs to recurse
         if(contact.isClient() || contact.isSelf()) {
             TalkPresence presence = contact.getClientPresence();
             if(presence != null) {
@@ -206,6 +244,7 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     }
 
     private void updateName() {
+        LOG.info("updateName()");
         try {
             if(mContact.isSelf()) {
                 getTalkService().setClientName(mNameEdit.getText().toString());
@@ -216,6 +255,7 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     }
 
     private void updateStatus() {
+        LOG.info("updateStatus()");
         try {
             if(mContact.isSelf()) {
                 getTalkService().setClientStatus(mStatusEdit.getText().toString());

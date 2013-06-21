@@ -13,6 +13,8 @@ interface ITalkClientService {
     /** Instruct the server to connect and retrieve updates */
     void wake();
 
+    void reconnect();
+
     /** Provide a callback listener to the service for notifications */
     void setListener(ITalkClientServiceListener listener);
 
