@@ -22,9 +22,9 @@ public class TalkApplication extends Application {
     private SharedPreferences mPreferences;
     private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesChangedListener;
 
-    private Logger         mRootLogger;
-    private FileAppender   mFileAppender;
-    private LogcatAppender mLogcatAppender;
+    private Logger              mRootLogger;
+    private RollingFileAppender mFileAppender;
+    private LogcatAppender      mLogcatAppender;
 
     public static ScheduledExecutorService getExecutor() {
         if(EXECUTOR == null) {
@@ -47,6 +47,9 @@ public class TalkApplication extends Application {
         try {
             String file = Environment.getExternalStorageDirectory() + File.separator + "hoccer-talk.log";
             mFileAppender = new RollingFileAppender(fileLayout, file);
+            // small log files so they are easy to transfer
+            mFileAppender.setMaximumFileSize(512 * 1024);
+            mFileAppender.setMaxBackupIndex(10);
         } catch (IOException e) {
             e.printStackTrace();
         }
