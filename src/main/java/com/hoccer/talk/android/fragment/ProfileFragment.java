@@ -138,6 +138,26 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
                 }
             }
         }
+        if(v == mGroupJoinButton) {
+            LOG.info("onClick(groupJoinButton)");
+            if(mContact != null && mContact.isGroup()) {
+                try {
+                    getTalkService().joinGroup(mContact.getClientContactId());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if(v == mGroupLeaveButton) {
+            LOG.info("onClick(groupLeaveButton)");
+            if(mContact != null && mContact.isGroup()) {
+                try {
+                    getTalkService().leaveGroup(mContact.getClientContactId());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         if(v == mUserDepairButton) {
             LOG.info("onClick(userDepairButton)");
             depairContact();
