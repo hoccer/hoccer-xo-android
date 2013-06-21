@@ -14,6 +14,9 @@ interface ITalkClientServiceListener {
     void onTokenPairingFailed(String token);
     void onTokenPairingSucceeded(String token);
 
+    void onContactAdded(int contactId);
+    void onContactRemoved(int contactId);
+
     void onClientPresenceChanged(int contactId);
     void onClientRelationshipChanged(int contactId);
 

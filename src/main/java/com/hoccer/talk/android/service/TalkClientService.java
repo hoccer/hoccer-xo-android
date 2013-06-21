@@ -262,6 +262,38 @@ public class TalkClientService extends Service {
         }
 
         @Override
+        public void onContactAdded(TalkClientContact contact) {
+            LOG.info("onContactAdded(" + contact.getClientContactId() + ")");
+            checkBinders();
+            int contactId = contact.getClientContactId();
+            for(Connection connection: mConnections) {
+                if(connection.hasListener()) {
+                    try {
+                        connection.getListener().onContactAdded(contactId);
+                    } catch (RemoteException e) {
+                        LOG.error("callback error", e);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onContactRemoved(TalkClientContact contact) {
+            LOG.info("onContactRemoved(" + contact.getClientContactId() + ")");
+            checkBinders();
+            int contactId = contact.getClientContactId();
+            for(Connection connection: mConnections) {
+                if(connection.hasListener()) {
+                    try {
+                        connection.getListener().onContactRemoved(contactId);
+                    } catch (RemoteException e) {
+                        LOG.error("callback error", e);
+                    }
+                }
+            }
+        }
+
+        @Override
         public void onClientPresenceChanged(TalkClientContact contact) {
             LOG.info("onClientPresenceChanged(" + contact.getClientContactId() + ")");
             checkBinders();
@@ -356,38 +388,36 @@ public class TalkClientService extends Service {
 
         @Override
         public void setClientName(String newName) throws RemoteException {
+            LOG.info("[" + mId + "] setClientName(" + newName + ")");
             mClient.setClientString(newName, null);
         }
 
         @Override
         public void setClientStatus(String newStatus) throws RemoteException {
+            LOG.info("[" + mId + "] setClientStatus(" + newStatus + ")");
             mClient.setClientString(null, newStatus);
         }
 
         @Override
-		public void keepAlive()
-                throws RemoteException {
+		public void keepAlive() throws RemoteException {
             LOG.info("[" + mId + "] keepAlive()");
             scheduleShutdown();
 		}
 
         @Override
-        public void wake()
-                throws RemoteException {
+        public void wake() throws RemoteException {
             LOG.info("[" + mId + "] wake()");
             mClient.wake();
         }
 
         @Override
-        public void reconnect()
-                throws RemoteException {
+        public void reconnect() throws RemoteException {
             LOG.info("[" + mId + "] reconnect()");
             mClient.reconnect();
         }
 
         @Override
-        public void setListener(ITalkClientServiceListener listener)
-                throws RemoteException {
+        public void setListener(ITalkClientServiceListener listener) throws RemoteException {
             LOG.info("[" + mId + "] setListener()");
             mListener = listener;
         }
@@ -418,6 +448,38 @@ public class TalkClientService extends Service {
                     }
                 }
             });
+        }
+
+        @Override
+        public void inviteToGroup(int groupContactId, int clientContactId) throws RemoteException {
+            LOG.info("[" + mId + "] inviteToGroup(" + groupContactId + "," + clientContactId + ")");
+            try {
+                mClient.inviteClientToGroup(
+                        mClient.getDatabase().findClientContactById(groupContactId).getGroupId(),
+                        mClient.getDatabase().findClientContactById(clientContactId).getClientId());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void joinGroup(int contactId) throws RemoteException {
+            LOG.info("[" + mId + "] joinGroup(" + contactId + ")");
+            try {
+                mClient.joinGroup(mClient.getDatabase().findClientContactById(contactId).getGroupId());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void leaveGroup(int contactId) throws RemoteException {
+            LOG.info("[" + mId + "] leaveGroup(" + contactId + ")");
+            try {
+                mClient.leaveGroup(mClient.getDatabase().findClientContactById(contactId).getGroupId());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -452,13 +514,19 @@ public class TalkClientService extends Service {
         }
 
         @Override
-        public void depairContact(int contactID) throws RemoteException {
-            LOG.info("[" + mId + "] depairContact(" + contactID + ")");
+        public void depairContact(int contactId) throws RemoteException {
+            LOG.info("[" + mId + "] depairContact(" + contactId + ")");
             try {
-                mClient.depairContact(mClient.getDatabase().findClientContactById(contactID));
+                mClient.depairContact(mClient.getDatabase().findClientContactById(contactId));
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+
+        @Override
+        public void deleteContact(int contactId) throws RemoteException {
+            LOG.info("[" + mId + "] deleteContact(" + contactId + ")");
+            // XXX
         }
 
         @Override

@@ -294,6 +294,18 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
             }
         }
         @Override
+        public void onContactAdded(int contactId) throws RemoteException {
+            for(TalkFragment fragment: mTalkFragments) {
+                fragment.onContactAdded(contactId);
+            }
+        }
+        @Override
+        public void onContactRemoved(int contactId) throws RemoteException {
+            for(TalkFragment fragment: mTalkFragments) {
+                fragment.onContactRemoved(contactId);
+            }
+        }
+        @Override
         public void onClientPresenceChanged(int contactId) {
             for(TalkFragment fragment: mTalkFragments) {
                 fragment.onClientPresenceChanged(contactId);

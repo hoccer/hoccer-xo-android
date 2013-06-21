@@ -84,6 +84,14 @@ public class TalkFragment extends SherlockFragment implements ITalkClientService
     }
 
     @Override
+    public void onContactAdded(int contactId) {
+    }
+
+    @Override
+    public void onContactRemoved(int contactId) {
+    }
+
+    @Override
     public void onTokenPairingFailed(String token) {
     }
 
@@ -114,4 +122,5 @@ public class TalkFragment extends SherlockFragment implements ITalkClientService
     @Override
     public void onGroupMembershipChanged(int contactId) {
     }
+
 }

@@ -32,18 +32,21 @@ interface ITalkClientService {
 
     /** Generate a pairing token */
     String generatePairingToken();
-
     /** Pair using token */
     void pairUsingToken(String token);
-
+    /** Depair a contact */
     void depairContact(int contactId);
+    /** Delete a contact completely */
+    void deleteContact(int contactId);
 
     /** Create new group */
     void createGroup();
+    void inviteToGroup(int groupContactId, int clientContactId);
+    void joinGroup(int contactId);
+    void leaveGroup(int contactId);
 
     /** Block given contact */
     void blockContact(int contactId);
-
     /** Unblock given contact */
     void unblockContact(int contactId);
 
