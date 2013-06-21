@@ -15,6 +15,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import com.google.android.gcm.GCMRegistrar;
+import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkConfiguration;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
 import com.hoccer.talk.android.push.TalkPushService;
@@ -69,7 +70,7 @@ public class TalkClientService extends Service {
 
         mConnectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        mExecutor = Executors.newSingleThreadScheduledExecutor();
+        mExecutor = TalkApplication.getExecutor();
 
         mConnections = new ArrayList<Connection>();
 
