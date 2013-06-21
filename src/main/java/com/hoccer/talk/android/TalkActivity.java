@@ -323,6 +323,12 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
                 fragment.onGroupPresenceChanged(contactId);
             }
         }
+        @Override
+        public void onGroupMembershipChanged(int contactId) throws RemoteException {
+            for(TalkFragment fragment: mTalkFragments) {
+                fragment.onGroupMembershipChanged(contactId);
+            }
+        }
     }
 
     @Override

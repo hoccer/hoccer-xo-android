@@ -308,6 +308,22 @@ public class TalkClientService extends Service {
                 }
             }
         }
+
+        @Override
+        public void onGroupMembershipChanged(TalkClientContact contact) {
+            LOG.info("onGroupMembership(" + contact.getClientContactId() + ")");
+            checkBinders();
+            int contactId = contact.getClientContactId();
+            for(Connection connection: mConnections) {
+                if(connection.hasListener()) {
+                    try {
+                        connection.getListener().onGroupMembershipChanged(contactId);
+                    } catch (RemoteException e) {
+                        LOG.error("callback error", e);
+                    }
+                }
+            }
+        }
     }
 
     public class Connection extends ITalkClientService.Stub {
@@ -433,6 +449,16 @@ public class TalkClientService extends Service {
                     }
                 }
             });
+        }
+
+        @Override
+        public void depairContact(int contactID) throws RemoteException {
+            LOG.info("[" + mId + "] depairContact(" + contactID + ")");
+            try {
+                mClient.depairContact(mClient.getDatabase().findClientContactById(contactID));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override

@@ -138,6 +138,10 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
                 }
             }
         }
+        if(v == mUserDepairButton) {
+            LOG.info("onClick(userDepairButton)");
+            depairContact();
+        }
         if(v == mAvatarSetButton) {
             LOG.info("onClick(avatarSetButton)");
         }
@@ -163,7 +167,20 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     }
 
     public void showProfile(TalkClientContact contact) {
+        showProfile(contact, false);
+    }
+
+    public void showProfile(TalkClientContact contact, boolean refresh) {
         LOG.info("showProfile(" + contact.getClientContactId() + ")");
+
+        if(refresh) {
+            try {
+                contact = getTalkDatabase().findClientContactById(contact.getClientContactId());
+            } catch (SQLException e) {
+                LOG.error("sql error", e);
+            }
+        }
+
         mContact = contact;
 
         if(contact.isGroup()) {
@@ -198,8 +215,8 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         mNameEdit.setVisibility(canEditName ? View.VISIBLE : View.GONE);
         mNameSetButton.setVisibility(canEditName ? View.VISIBLE : View.GONE);
         // status
-        int statusTextVisibility = contact.isSelf() ? View.VISIBLE : View.GONE;
-        int statusEditVisibility = contact.isSelf() ? View.GONE : View.VISIBLE;
+        int statusTextVisibility = contact.isClient() ? View.VISIBLE : View.GONE;
+        int statusEditVisibility = contact.isSelf() ? View.VISIBLE : View.GONE;
         if(contact.isGroup()) {
             statusTextVisibility = View.GONE;
             statusEditVisibility = View.GONE;
@@ -209,9 +226,10 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         mStatusSetButton.setVisibility(statusEditVisibility);
         // client operations
         int clientVisibility = contact.isClient() ? View.VISIBLE : View.GONE;
-        mUserBlockStatus.setVisibility(clientVisibility);
-        mUserBlockButton.setVisibility(clientVisibility);
-        mUserDepairButton.setVisibility(clientVisibility);
+        int clientRelatedVisibility = contact.isClientRelated() ? View.VISIBLE : View.GONE;
+        mUserBlockStatus.setVisibility(clientRelatedVisibility);
+        mUserBlockButton.setVisibility(clientRelatedVisibility);
+        mUserDepairButton.setVisibility(clientRelatedVisibility);
         mUserDeleteButton.setVisibility(clientVisibility);
         // group operations
         int groupJoinedVisibility = contact.isGroupJoined() ? View.VISIBLE : View.GONE;
@@ -269,6 +287,17 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         }
     }
 
+    private void depairContact() {
+        LOG.info("depairContact()");
+        if(mContact != null) {
+            try {
+                getTalkService().depairContact(mContact.getClientContactId());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void blockContact() {
         LOG.info("blockContact()");
         if(mContact != null) {
@@ -294,15 +323,10 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     private void refreshContact() {
         LOG.info("refreshContact()");
         if(mContact != null) {
-            try {
-                mContact = getTalkDatabase().findClientContactById(mContact.getClientContactId());
-            } catch (SQLException e) {
-                LOG.error("sql error", e);
-            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    showProfile(mContact);
+                    showProfile(mContact, true);
                 }
             });
         }
@@ -327,6 +351,14 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     @Override
     public void onGroupPresenceChanged(int contactId) {
         LOG.info("onGroupPresenceChanged(" + contactId + ")");
+        if(mContact != null && mContact.getClientContactId() == contactId) {
+            refreshContact();
+        }
+    }
+
+    @Override
+    public void onGroupMembershipChanged(int contactId) {
+        LOG.info("onGroupMembershipChanged(" + contactId + ")");
         if(mContact != null && mContact.getClientContactId() == contactId) {
             refreshContact();
         }

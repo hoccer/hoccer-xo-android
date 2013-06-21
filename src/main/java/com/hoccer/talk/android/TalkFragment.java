@@ -111,4 +111,7 @@ public class TalkFragment extends SherlockFragment implements ITalkClientService
     public void onGroupPresenceChanged(int contactId) {
     }
 
+    @Override
+    public void onGroupMembershipChanged(int contactId) {
+    }
 }

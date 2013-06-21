@@ -36,6 +36,8 @@ interface ITalkClientService {
     /** Pair using token */
     void pairUsingToken(String token);
 
+    void depairContact(int contactId);
+
     /** Create new group */
     void createGroup();
 
