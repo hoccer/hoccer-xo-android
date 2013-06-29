@@ -223,15 +223,16 @@ public class TalkClientService extends Service {
             LOG.info("connectivity change:"
                     + " type " + activeNetwork.getTypeName()
                     + " state " + activeNetwork.getState().name());
-            if(activeNetwork.isConnectedOrConnecting()) {
-                if(mClient.getState() == HoccerTalkClient.STATE_INACTIVE) {
-                    mClient.activate();
-                }
+            if(activeNetwork.isConnected()) {
                 if(mClient.getState() <= HoccerTalkClient.STATE_CONNECTING) {
                     mClient.wake();
                 }
+            } else if(activeNetwork.isConnectedOrConnecting()) {
+                if(mClient.getState() <= HoccerTalkClient.STATE_INACTIVE) {
+                    mClient.activate();
+                }
             } else {
-                if(mClient.getState() >= HoccerTalkClient.STATE_INACTIVE) {
+                if(mClient.getState() > HoccerTalkClient.STATE_INACTIVE) {
                     mClient.deactivate();
                 }
             }
