@@ -29,6 +29,8 @@ public class TalkApplication extends Application {
     private RollingFileAppender mFileAppender;
     private LogcatAppender      mLogcatAppender;
 
+    private Thread.UncaughtExceptionHandler mPreviousHandler;
+
     public static ScheduledExecutorService getExecutor() {
         if(EXECUTOR == null) {
             EXECUTOR = Executors.newScheduledThreadPool(2);
@@ -87,10 +89,14 @@ public class TalkApplication extends Application {
         LOG = Logger.getLogger(TalkApplication.class);
 
         // install a default exception handler
+        mPreviousHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread thread, Throwable ex) {
                 LOG.error("uncaught exception", ex);
+                if(mPreviousHandler != null) {
+                    mPreviousHandler.uncaughtException(thread, ex);
+                }
             }
         });
     }
@@ -98,6 +104,11 @@ public class TalkApplication extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
+
+        if(mPreviousHandler != null) {
+            Thread.setDefaultUncaughtExceptionHandler(mPreviousHandler);
+            mPreviousHandler = null;
+        }
 
         if(mPreferencesChangedListener != null) {
             mPreferences.unregisterOnSharedPreferenceChangeListener(mPreferencesChangedListener);
