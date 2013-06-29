@@ -16,8 +16,11 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public class TalkApplication extends Application {
 
-    private static ScheduledExecutorService EXECUTOR = null;
     private final static String TAG = "HoccerTalk";
+
+    private static Logger LOG = null;
+
+    private static ScheduledExecutorService EXECUTOR = null;
 
     private SharedPreferences mPreferences;
     private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesChangedListener;
@@ -41,9 +44,11 @@ public class TalkApplication extends Application {
 
         mRootLogger = Logger.getRootLogger();
 
+        // create logcat appender
         Layout logcatLayout = new PatternLayout("[%t] %-5p %-3c - %m%n");
         mLogcatAppender = new LogcatAppender(logcatLayout);
 
+        // create file appender
         Layout fileLayout = new PatternLayout("[%t] %-5p %c - %m%n");
         try {
             String file = Environment.getExternalStorageDirectory() + File.separator + "hoccer-talk.log";
@@ -55,6 +60,7 @@ public class TalkApplication extends Application {
             e.printStackTrace();
         }
 
+        // attach preference listener
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferencesChangedListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
@@ -72,9 +78,21 @@ public class TalkApplication extends Application {
         };
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesChangedListener);
 
+        // apply initial configuration
         configureLogLevel();
         configureLogLogcat();
         configureLogSd();
+
+        // get logger for this class
+        LOG = Logger.getLogger(TalkApplication.class);
+
+        // install a default exception handler
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable ex) {
+                LOG.error("uncaught exception", ex);
+            }
+        });
     }
 
     @Override
