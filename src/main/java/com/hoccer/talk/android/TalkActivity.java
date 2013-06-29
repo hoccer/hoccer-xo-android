@@ -67,6 +67,8 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     /** List of all talk fragments */
     ArrayList<TalkFragment> mTalkFragments = new ArrayList<TalkFragment>();
 
+    ArrayList<ITalkClientServiceListener> mListeners = new ArrayList<ITalkClientServiceListener>();
+
     public TalkActivity() {
         LOG = Logger.getLogger(getClass());
     }
@@ -83,10 +85,20 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
 
     public void registerTalkFragment(TalkFragment fragment) {
         mTalkFragments.add(fragment);
+        mListeners.add(fragment);
     }
 
     public void unregisterTalkFragment(TalkFragment fragment) {
         mTalkFragments.remove(fragment);
+        mListeners.remove(fragment);
+    }
+
+    public void registerListener(ITalkClientServiceListener listener) {
+        mListeners.add(listener);
+    }
+
+    public void unregisterListener(ITalkClientServiceListener listener) {
+        mListeners.remove(listener);
     }
 
     @Override
@@ -277,68 +289,68 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     public class MainServiceListener extends ITalkClientServiceListener.Stub implements ITalkClientServiceListener {
         @Override
         public void onClientStateChanged(int state) throws RemoteException {
-            for(TalkFragment fragment: mTalkFragments) {
-                fragment.onClientStateChanged(state);
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onClientStateChanged(state);
             }
         }
         @Override
         public void onTokenPairingFailed(String token) throws RemoteException {
-            for(TalkFragment fragment: mTalkFragments) {
-                fragment.onTokenPairingFailed(token);
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onTokenPairingFailed(token);
             }
         }
         @Override
         public void onTokenPairingSucceeded(String token) throws RemoteException {
-            for(TalkFragment fragment: mTalkFragments) {
-                fragment.onTokenPairingSucceeded(token);
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onTokenPairingSucceeded(token);
             }
         }
         @Override
         public void onContactAdded(int contactId) throws RemoteException {
-            for(TalkFragment fragment: mTalkFragments) {
-                fragment.onContactAdded(contactId);
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onContactAdded(contactId);
             }
         }
         @Override
         public void onContactRemoved(int contactId) throws RemoteException {
-            for(TalkFragment fragment: mTalkFragments) {
-                fragment.onContactRemoved(contactId);
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onContactRemoved(contactId);
             }
         }
         @Override
-        public void onClientPresenceChanged(int contactId) {
-            for(TalkFragment fragment: mTalkFragments) {
-                fragment.onClientPresenceChanged(contactId);
+        public void onClientPresenceChanged(int contactId) throws RemoteException {
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onClientPresenceChanged(contactId);
             }
         }
         @Override
-        public void onClientRelationshipChanged(int contactId) {
-            for(TalkFragment fragment: mTalkFragments) {
-                fragment.onClientRelationshipChanged(contactId);
+        public void onClientRelationshipChanged(int contactId) throws RemoteException {
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onClientRelationshipChanged(contactId);
             }
         }
         @Override
         public void onGroupCreationSucceeded(int contactId) throws RemoteException {
-            for(TalkFragment fragment: mTalkFragments) {
-                fragment.onGroupCreationSucceeded(contactId);
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onGroupCreationSucceeded(contactId);
             }
         }
         @Override
         public void onGroupCreationFailed() throws RemoteException {
-            for(TalkFragment fragment: mTalkFragments) {
-                fragment.onGroupCreationFailed();
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onGroupCreationFailed();
             }
         }
         @Override
         public void onGroupPresenceChanged(int contactId) throws RemoteException {
-            for(TalkFragment fragment: mTalkFragments) {
-                fragment.onGroupPresenceChanged(contactId);
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onGroupPresenceChanged(contactId);
             }
         }
         @Override
         public void onGroupMembershipChanged(int contactId) throws RemoteException {
-            for(TalkFragment fragment: mTalkFragments) {
-                fragment.onGroupMembershipChanged(contactId);
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onGroupMembershipChanged(contactId);
             }
         }
     }
