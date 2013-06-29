@@ -1,19 +1,18 @@
 package com.hoccer.talk.android.service;
 
+import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.IntentFilter;
+import android.content.*;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import com.google.android.gcm.GCMRegistrar;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkConfiguration;
@@ -22,11 +21,10 @@ import com.hoccer.talk.android.push.TalkPushService;
 import com.hoccer.talk.client.HoccerTalkClient;
 import com.hoccer.talk.client.ITalkClientListener;
 
-import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
+import com.hoccer.talk.client.TalkClientConfiguration;
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.j256.ormlite.android.apptools.OrmLiteBaseService;
 import org.apache.log4j.Logger;
 
 /**
@@ -43,14 +41,7 @@ public class TalkClientService extends Service {
 
 	private static final Logger LOG = Logger.getLogger(TalkClientService.class);
 
-    private static final AtomicInteger ID_COUNTER =
-        new AtomicInteger();
-
-    /** Connectivity manager for monitoring */
-    ConnectivityManager mConnectivityManager;
-
-    /** Our connectivity change broadcast receiver */
-    ConnectivityReceiver mConnectivityReceiver;
+    private static final AtomicInteger ID_COUNTER = new AtomicInteger();
 
     /** Executor for ourselves and the client */
     ScheduledExecutorService mExecutor;
@@ -61,7 +52,18 @@ public class TalkClientService extends Service {
     /** Reference to latest auto-shutdown future */
     ScheduledFuture<?> mShutdownFuture;
 
+    /** All service connections */
     ArrayList<Connection> mConnections;
+
+    /** Preferences containing service configuration */
+    SharedPreferences mPreferences;
+    /** Listener for configuration changes */
+    SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
+
+    /** Connectivity manager for monitoring */
+    ConnectivityManager mConnectivityManager;
+    /** Our connectivity change broadcast receiver */
+    ConnectivityReceiver mConnectivityReceiver;
 
 	@Override
 	public void onCreate() {
@@ -76,6 +78,17 @@ public class TalkClientService extends Service {
 
         mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()));
         mClient.registerListener(new ClientListener());
+
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                if(key.equals("preference_service_uri")) {
+                    configureServiceUri();
+                }
+            }
+        };
+        mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
 	}
 
     @Override
@@ -84,6 +97,10 @@ public class TalkClientService extends Service {
         super.onDestroy();
         mExecutor.shutdownNow();
         unregisterConnectivityReceiver();
+        if(mPreferencesListener != null) {
+            mPreferences.unregisterOnSharedPreferenceChangeListener(mPreferencesListener);
+            mPreferencesListener = null;
+        }
     }
 
     @Override
@@ -118,12 +135,22 @@ public class TalkClientService extends Service {
         return super.onUnbind(intent);
     }
 
-    private void doUpdateGcm() {
-        LOG.info("updating GCM registration");
+    private void configureServiceUri() {
+        String uriString = mPreferences.getString("preference_service_uri", "");
+        if(uriString.isEmpty()) {
+            uriString = TalkClientConfiguration.SERVER_URI;
+        }
+        URI uri = URI.create(uriString);
+        mClient.setServiceUri(uri);
+    }
+
+    private void doUpdateGcm(boolean forced) {
+        LOG.info("doUpdateGcm(" + forced + ")");
         // only if we are registered (registration triggers this code path)
         if(GCMRegistrar.isRegistered(this)) {
             // check if we got here already
-            if(TalkConfiguration.GCM_ALWAYS_REGISTER || !GCMRegistrar.isRegisteredOnServer(this)) {
+            if(forced || !GCMRegistrar.isRegisteredOnServer(this)) {
+                LOG.info("providing GCM parameters to server");
                 // perform the registration call
                 mClient.registerGcm(this.getPackageName(),
                         GCMRegistrar.getRegistrationId(this));
@@ -133,10 +160,10 @@ public class TalkClientService extends Service {
                 // tell the registrar that we did this successfully
                 GCMRegistrar.setRegisteredOnServer(this, true);
             } else {
-                LOG.info("already registered on server");
+                LOG.info("server should already have GCM parameters");
             }
         } else {
-            LOG.info("not registered yet");
+            LOG.info("not yet registered for GCM");
         }
     }
 
@@ -246,7 +273,7 @@ public class TalkClientService extends Service {
                 mExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        doUpdateGcm();
+                        doUpdateGcm(TalkConfiguration.GCM_ALWAYS_REGISTER);
                     }
                 });
             }
@@ -260,6 +287,17 @@ public class TalkClientService extends Service {
                     }
                 }
             }
+        }
+
+        @Override
+        public void onPushRegistrationRequested() {
+            LOG.info("onPushRegistrationRequested()");
+            mExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    doUpdateGcm(true);
+                }
+            });
         }
 
         @Override
