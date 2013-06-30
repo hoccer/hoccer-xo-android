@@ -20,7 +20,9 @@ import org.apache.log4j.Logger;
  */
 public class TalkPushService extends GCMBaseIntentService {
 
-    public static final String EXTRA_WAKE = "com.hoccer.talk.android.WAKE";
+    public static final String EXTRA_GCM_REGISTERED = "com.hoccer.talk.android.GCM_REGISTERED";
+    public static final String EXTRA_GCM_UNREGISTERED = "com.hoccer.talk.android.GCM_UNREGISTERED";
+    public static final String EXTRA_WAKE_CLIENT = "com.hoccer.talk.android.WAKE_CLIENT";
 
     private static final Logger LOG = Logger.getLogger(TalkPushService.class);
 
@@ -28,10 +30,14 @@ public class TalkPushService extends GCMBaseIntentService {
         super(TalkConfiguration.GCM_SENDER_ID);
     }
 
-    private void wakeClient() {
+    private void sendServiceIntent(String extra, String extraValue) {
         Intent serviceIntent = new Intent(getApplicationContext(), TalkClientService.class);
-        serviceIntent.putExtra(EXTRA_WAKE, "foobar");
+        serviceIntent.putExtra(extra, extraValue);
         startService(serviceIntent);
+    }
+
+    private void wakeClient() {
+        sendServiceIntent(EXTRA_WAKE_CLIENT, "dummy");
     }
 
     @Override
@@ -62,11 +68,13 @@ public class TalkPushService extends GCMBaseIntentService {
     @Override
     protected void onRegistered(Context context, String registrationId) {
         LOG.info("onRegistered(" + registrationId + ")");
+        sendServiceIntent(EXTRA_GCM_REGISTERED, registrationId);
     }
 
     @Override
     protected void onUnregistered(Context context, String registrationId) {
         LOG.info("onUnregistered(" + registrationId + ")");
+        sendServiceIntent(EXTRA_GCM_UNREGISTERED, registrationId);
     }
 
 }

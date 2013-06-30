@@ -65,6 +65,8 @@ public class TalkClientService extends Service {
     /** Our connectivity change broadcast receiver */
     ConnectivityReceiver mConnectivityReceiver;
 
+    boolean mGcmSupported;
+
 	@Override
 	public void onCreate() {
         LOG.info("onCreate()");
@@ -89,6 +91,8 @@ public class TalkClientService extends Service {
             }
         };
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
+
+        doVerifyGcm();
 	}
 
     @Override
@@ -107,8 +111,14 @@ public class TalkClientService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         LOG.info("onStartCommand(" + ((intent == null) ? "null" : intent.toString()) + ")");
         if(intent != null) {
-            if(intent.hasExtra(TalkPushService.EXTRA_WAKE)) {
+            if(intent.hasExtra(TalkPushService.EXTRA_WAKE_CLIENT)) {
                 mClient.wake();
+            }
+            if(intent.hasExtra(TalkPushService.EXTRA_GCM_REGISTERED)) {
+                doUpdateGcm(true);
+            }
+            if(intent.hasExtra(TalkPushService.EXTRA_GCM_UNREGISTERED)) {
+                doUpdateGcm(true);
             }
         }
         return START_STICKY;
@@ -144,26 +154,76 @@ public class TalkClientService extends Service {
         mClient.setServiceUri(uri);
     }
 
+    private void doVerifyGcm() {
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("doVerifyGcm()");
+        }
+
+        // check our manifest for GCM compatibility
+        boolean manifestAllowsGcm = false;
+        try {
+            GCMRegistrar.checkManifest(this);
+            manifestAllowsGcm = true;
+        } catch (IllegalStateException ex) {
+            LOG.warn("GCM unavailable due to manifest problems", ex);
+        }
+
+        // check GCM device support
+        boolean deviceSupportsGcm = false;
+            if(manifestAllowsGcm) {
+            try {
+                GCMRegistrar.checkDevice(this);
+                deviceSupportsGcm = true;
+            } catch (UnsupportedOperationException ex) {
+                LOG.warn("GCM not supported by device", ex);
+            }
+        }
+
+        // make the final decision
+        mGcmSupported = deviceSupportsGcm && manifestAllowsGcm;
+        if(mGcmSupported) {
+            LOG.info("GCM is supported");
+        } else {
+            LOG.warn("GCM not supported");
+        }
+    }
+
+    private void doRegisterGcm(boolean forced) {
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("doRegisterGcm(" + (forced ? "forced" : "") + ")");
+        }
+        if(mGcmSupported) {
+            if (forced || !GCMRegistrar.isRegistered(this)) {
+                LOG.info("requesting GCM registration");
+                GCMRegistrar.register(this, TalkConfiguration.GCM_SENDER_ID);
+            }
+        }
+    }
+
     private void doUpdateGcm(boolean forced) {
-        LOG.info("doUpdateGcm(" + forced + ")");
-        // only if we are registered (registration triggers this code path)
-        if(GCMRegistrar.isRegistered(this)) {
+        if(LOG.isDebugEnabled()) {
+            LOG.debug("doUpdateGcm(" + (forced ? "forced" : "") + ")");
+        }
+        if(mGcmSupported && GCMRegistrar.isRegistered(this)) {
             // check if we got here already
             if(forced || !GCMRegistrar.isRegisteredOnServer(this)) {
-                LOG.info("providing GCM parameters to server");
+                LOG.info("updating GCM registration");
                 // perform the registration call
-                mClient.registerGcm(this.getPackageName(),
-                        GCMRegistrar.getRegistrationId(this));
+                mClient.registerGcm(this.getPackageName(), GCMRegistrar.getRegistrationId(this));
                 // set the registration timeout (XXX move elsewhere)
                 GCMRegistrar.setRegisterOnServerLifespan(
                         this, TalkConfiguration.GCM_REGISTRATION_EXPIRATION * 1000);
                 // tell the registrar that we did this successfully
                 GCMRegistrar.setRegisteredOnServer(this, true);
             } else {
-                LOG.info("server should already have GCM parameters");
+                LOG.debug("no need to update GCM registration");
             }
         } else {
-            LOG.info("not yet registered for GCM");
+            if(forced || GCMRegistrar.isRegisteredOnServer(this)) {
+                LOG.info("retracting GCM registration");
+                mClient.unregisterGcm();
+                GCMRegistrar.setRegisteredOnServer(this, false);
+            }
         }
     }
 
@@ -274,7 +334,8 @@ public class TalkClientService extends Service {
                 mExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        doUpdateGcm(TalkConfiguration.GCM_ALWAYS_REGISTER);
+                        doRegisterGcm(TalkConfiguration.GCM_ALWAYS_REGISTER);
+                        doUpdateGcm(TalkConfiguration.GCM_ALWAYS_UPDATE);
                     }
                 });
             }
@@ -296,6 +357,7 @@ public class TalkClientService extends Service {
             mExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
+                    doRegisterGcm(false);
                     doUpdateGcm(true);
                 }
             });
