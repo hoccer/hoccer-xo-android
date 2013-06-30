@@ -18,6 +18,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.hoccer.talk.android.activity.*;
+import com.hoccer.talk.android.adapter.ContactsAdapter;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
 import com.hoccer.talk.android.service.ITalkClientService;
 import com.hoccer.talk.android.service.ITalkClientServiceListener;
@@ -384,19 +385,11 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     }
 
     @Override
-    public BaseAdapter makeContactListAdapter() {
-        ContactListAdapter a = new ContactListAdapter(this);
-        try {
-            List<TalkClientContact> contacts = new ArrayList<TalkClientContact>();
-            contacts.addAll(mDatabase.findAllClientContacts());
-            contacts.addAll(mDatabase.findAllGroupContacts());
-            for(TalkClientContact contact: contacts) {
-                a.add(contact);
-            }
-        } catch (SQLException e) {
-            LOG.error("sql error", e);
-        }
-        return a;
+    public TalkAdapter makeContactListAdapter() {
+        TalkAdapter adapter = new ContactsAdapter(this);
+        adapter.register();
+        adapter.reload();
+        return adapter;
     }
 
     @Override

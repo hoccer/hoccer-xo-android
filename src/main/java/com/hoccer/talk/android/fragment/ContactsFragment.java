@@ -47,7 +47,7 @@ public class ContactsFragment extends TalkFragment implements View.OnClickListen
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TalkClientContact contact = (TalkClientContact)parent.getItemAtPosition(position);
-                getTalkActivity().showContactProfile(contact);
+                getTalkActivity().showContactConversation(contact);
             }
         });
 

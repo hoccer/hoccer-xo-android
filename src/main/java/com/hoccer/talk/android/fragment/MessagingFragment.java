@@ -36,37 +36,11 @@ public class MessagingFragment extends TalkFragment
 
 	private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
 
-	ITalkActivity mActivity;
-
-    AndroidTalkDatabase mDatabase;
-
 	ListView mMessageList;
 
     EditText mTextEdit;
     Button mSendButton;
     Button mAttachButton;
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		LOG.info("onCreate()");
-		super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		LOG.info("onAttach()");
-		super.onAttach(activity);
-
-		if (activity instanceof ITalkActivity) {
-			mActivity = (ITalkActivity) activity;
-		} else {
-			throw new ClassCastException(
-				activity.toString() + " must implement ITalkActivity");
-		}
-
-        mDatabase = OpenHelperManager.getHelper(activity, AndroidTalkDatabase.class);
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -111,7 +85,7 @@ public class MessagingFragment extends TalkFragment
         super.onResume();
         LOG.info("onResume()");
         // do this late so activity has database initialized
-        mMessageList.setAdapter(getTalkActivity().makeMessageListAdapter());
+        //mMessageList.setAdapter(getTalkActivity().makeMessageListAdapter());
     }
 
     @Override
