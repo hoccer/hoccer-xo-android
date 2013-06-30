@@ -18,9 +18,9 @@ public class TalkConfiguration {
     public static final int SERVICE_KEEPALIVE_PING_DELAY    = 60;
 
     /** Interval at which activities send keepalives to the client service (seconds) */
-    public static final int SERVICE_KEEPALIVE_PING_INTERVAL = 300;
+    public static final int SERVICE_KEEPALIVE_PING_INTERVAL = 600;
 
     /** Timeout after which the client service terminates automatically (seconds) */
-    public static final int SERVICE_KEEPALIVE_TIMEOUT       = 600;
+    public static final int SERVICE_KEEPALIVE_TIMEOUT       = 1800;
 
 }
