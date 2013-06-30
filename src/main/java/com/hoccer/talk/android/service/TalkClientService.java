@@ -64,6 +64,10 @@ public class TalkClientService extends Service {
     ConnectivityManager mConnectivityManager;
     /** Our connectivity change broadcast receiver */
     ConnectivityReceiver mConnectivityReceiver;
+    /** Previous state of connectivity */
+    boolean mPreviousConnectionState = false;
+    /** Type of previous connection */
+    int mPreviousConnectionType = -1;
 
     boolean mGcmSupported;
 
@@ -112,7 +116,7 @@ public class TalkClientService extends Service {
         LOG.info("onStartCommand(" + ((intent == null) ? "null" : intent.toString()) + ")");
         if(intent != null) {
             if(intent.hasExtra(TalkPushService.EXTRA_WAKE_CLIENT)) {
-                mClient.wake();
+                wakeClient();
             }
             if(intent.hasExtra(TalkPushService.EXTRA_GCM_REGISTERED)) {
                 doUpdateGcm(true);
@@ -152,6 +156,12 @@ public class TalkClientService extends Service {
         }
         URI uri = URI.create(uriString);
         mClient.setServiceUri(uri);
+    }
+
+    private void wakeClient() {
+        if(mPreviousConnectionState) {
+            mClient.wake();
+        }
     }
 
     private void doVerifyGcm() {
@@ -279,23 +289,45 @@ public class TalkClientService extends Service {
         if(activeNetwork == null) {
             LOG.info("connectivity change: no connectivity");
             mClient.deactivate();
+            mPreviousConnectionState = false;
+            mPreviousConnectionType = -1;
         } else {
             LOG.info("connectivity change:"
                     + " type " + activeNetwork.getTypeName()
                     + " state " + activeNetwork.getState().name());
+
+            int previousState = mClient.getState();
             if(activeNetwork.isConnected()) {
-                if(mClient.getState() <= HoccerTalkClient.STATE_CONNECTING) {
-                    mClient.wake();
+                if(previousState <= HoccerTalkClient.STATE_INACTIVE) {
+                    mClient.activate();
                 }
             } else if(activeNetwork.isConnectedOrConnecting()) {
-                if(mClient.getState() <= HoccerTalkClient.STATE_INACTIVE) {
+                if(previousState <= HoccerTalkClient.STATE_INACTIVE) {
                     mClient.activate();
                 }
             } else {
-                if(mClient.getState() > HoccerTalkClient.STATE_INACTIVE) {
+                if(previousState > HoccerTalkClient.STATE_INACTIVE) {
                     mClient.deactivate();
                 }
             }
+
+            boolean netState = activeNetwork.isConnected();
+            int netType = activeNetwork.getType();
+
+            if(TalkConfiguration.CONNECTIVITY_RECONNECT_ON_CHANGE) {
+                if(netState && !mClient.isIdle()) {
+                    if(!mPreviousConnectionState
+                            || mPreviousConnectionType == -1
+                            || mPreviousConnectionType != netType) {
+                        if(mClient.getState() < HoccerTalkClient.STATE_CONNECTING) {
+                            mClient.reconnect("connection change");
+                        }
+                    }
+                }
+            }
+
+            mPreviousConnectionState = netState;
+            mPreviousConnectionType = netType;
         }
     }
 
@@ -509,13 +541,13 @@ public class TalkClientService extends Service {
         @Override
         public void wake() throws RemoteException {
             LOG.info("[" + mId + "] wake()");
-            mClient.wake();
+            wakeClient();
         }
 
         @Override
         public void reconnect() throws RemoteException {
             LOG.info("[" + mId + "] reconnect()");
-            mClient.reconnect();
+            mClient.reconnect("client request");
         }
 
         @Override
