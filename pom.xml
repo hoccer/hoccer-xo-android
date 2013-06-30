@@ -63,7 +63,7 @@
         <dependency>
           <groupId>ufwa-common</groupId>
           <artifactId>log4j-android</artifactId>
-          <version>1.2.17-1</version>
+          <version>${log4j-android.version}</version>
         </dependency>
         <!-- exclude "normal" non-android log4j -->
         <dependency>
@@ -80,7 +80,7 @@
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>${maven-android.version}</version>
                 <configuration>
                     <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
                     <assetsDirectory>${project.basedir}/assets</assetsDirectory>
@@ -104,7 +104,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>${maven-compiler.version}</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
