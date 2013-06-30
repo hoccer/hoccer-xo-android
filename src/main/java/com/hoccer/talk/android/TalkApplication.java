@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import android.app.Application;
+import com.j256.ormlite.logger.LoggerFactory;
 import org.apache.log4j.*;
 import org.apache.log4j.spi.LoggingEvent;
 
@@ -42,48 +43,11 @@ public class TalkApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 
-        Log.i(TAG, "[logging] initializing logging");
+        // initialize logging system
+        initLogging();
 
-        mRootLogger = Logger.getRootLogger();
-
-        // create logcat appender
-        Layout logcatLayout = new PatternLayout("[%t] %-5p %-3c - %m%n");
-        mLogcatAppender = new LogcatAppender(logcatLayout);
-
-        // create file appender
-        Layout fileLayout = new PatternLayout("[%t] %-5p %c - %m%n");
-        try {
-            String file = Environment.getExternalStorageDirectory() + File.separator + "hoccer-talk.log";
-            mFileAppender = new RollingFileAppender(fileLayout, file);
-            // small log files so they are easy to transfer
-            mFileAppender.setMaximumFileSize(512 * 1024);
-            mFileAppender.setMaxBackupIndex(10);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // attach preference listener
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mPreferencesChangedListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if(key.equals("preference_log_logcat")) {
-                    configureLogLogcat();
-                }
-                if(key.equals("preference_log_sd")) {
-                    configureLogSd();
-                }
-                if(key.equals("preference_log_level")) {
-                    configureLogLevel();
-                }
-            }
-        };
-        mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesChangedListener);
-
-        // apply initial configuration
-        configureLogLevel();
-        configureLogLogcat();
-        configureLogSd();
+        // configure ormlite to use log4j
+        System.setProperty("com.j256.ormlite.logger.type", "LOG4J");
 
         // get logger for this class
         LOG = Logger.getLogger(TalkApplication.class);
@@ -119,6 +83,49 @@ public class TalkApplication extends Application {
             EXECUTOR.shutdownNow();
             EXECUTOR = null;
         }
+    }
+
+    private void initLogging() {
+        Log.i(TAG, "[logging] initializing logging");
+
+        // get the root logger for configuration
+        mRootLogger = Logger.getRootLogger();
+
+        // create logcat appender
+        mLogcatAppender = new LogcatAppender(TalkConfiguration.LOG_LOGCAT_LAYOUT);
+
+        // create file appender
+        try {
+            String file = Environment.getExternalStorageDirectory() + File.separator + "hoccer-talk.log";
+            mFileAppender = new RollingFileAppender(TalkConfiguration.LOG_FILE_LAYOUT, file);
+            mFileAppender.setMaximumFileSize(TalkConfiguration.LOG_FILE_SIZE);
+            mFileAppender.setMaxBackupIndex(TalkConfiguration.LOG_FILE_COUNT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // attach preference listener
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mPreferencesChangedListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                if(key.equals("preference_log_logcat")) {
+                    configureLogLogcat();
+                }
+                if(key.equals("preference_log_sd")) {
+                    configureLogSd();
+                }
+                if(key.equals("preference_log_level")) {
+                    configureLogLevel();
+                }
+            }
+        };
+        mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesChangedListener);
+
+        // apply initial configuration
+        configureLogLevel();
+        configureLogLogcat();
+        configureLogSd();
     }
 
     private void configureLogLevel() {
