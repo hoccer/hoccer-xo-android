@@ -38,7 +38,7 @@ public class GCMBroadcastReceiver extends BroadcastReceiver {
     private static boolean mReceiverSet = false;
 
     private final GCMLogger mLogger = new GCMLogger("GCMBroadcastReceiver",
-            "[" + getClass().getName() + "]: ");
+            "[" + getClass().getName() + "]: ", getClass());
 
     @Override
     public final void onReceive(Context context, Intent intent) {

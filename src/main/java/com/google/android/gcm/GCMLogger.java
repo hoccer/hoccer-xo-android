@@ -17,6 +17,8 @@
 package com.google.android.gcm;
 
 import android.util.Log;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * Custom logger.
@@ -27,9 +29,12 @@ class GCMLogger {
     // can't use class name on TAG since size is limited to 23 chars
     private final String mLogPrefix;
 
-    GCMLogger(String tag, String logPrefix) {
+    private final Logger mLogger;
+
+    GCMLogger(String tag, String logPrefix, Class<?> clazz) {
         mTag = tag;
         mLogPrefix = logPrefix;
+        mLogger = Logger.getLogger(clazz);
     }
 
     /**
@@ -40,9 +45,30 @@ class GCMLogger {
      * @param args list of arguments
      */
     protected void log(int priority, String template, Object... args) {
-        if (Log.isLoggable(mTag, priority)) {
-            String message = String.format(template, args);
-            Log.println(priority, mTag, mLogPrefix + message);
+        Level level = Level.INFO;
+        switch (priority) {
+            case Log.INFO:
+                level = Level.INFO;
+                break;
+            case Log.ERROR:
+                level = Level.ERROR;
+                break;
+            case Log.DEBUG:
+                level = Level.DEBUG;
+                break;
+            case Log.VERBOSE:
+                level = Level.DEBUG;
+                break;
+            case Log.WARN:
+                level = Level.WARN;
+                break;
+            case Log.ASSERT:
+                level = Level.FATAL;
+                break;
+        }
+
+        if(mLogger.isEnabledFor(level)) {
+            mLogger.log(level, String.format(template, args));
         }
     }
 }
