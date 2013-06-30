@@ -29,6 +29,9 @@ public class TalkConfiguration {
     /** The layout for log files */
     public static final Layout LOG_FILE_LAYOUT = new PatternLayout("[%t] %-5p %c - %m%n");
 
+    /** Whether to reconnect explicitly on connection changes */
+    public static final boolean CONNECTIVITY_RECONNECT_ON_CHANGE = true;
+
     /** Delay after which new activities send their first keepalive (seconds) */
     public static final int SERVICE_KEEPALIVE_PING_DELAY    = 60;
 
