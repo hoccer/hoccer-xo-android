@@ -354,6 +354,24 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
                 listener.onGroupMembershipChanged(contactId);
             }
         }
+        @Override
+        public void onMessageAdded(int messageId) throws RemoteException {
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onMessageAdded(messageId);
+            }
+        }
+        @Override
+        public void onMessageRemoved(int messageId) throws RemoteException {
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onMessageRemoved(messageId);
+            }
+        }
+        @Override
+        public void onMessageStateChanged(int messageId) throws RemoteException {
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onMessageStateChanged(messageId);
+            }
+        }
     }
 
     @Override

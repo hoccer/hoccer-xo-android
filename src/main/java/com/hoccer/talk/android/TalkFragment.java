@@ -123,4 +123,15 @@ public class TalkFragment extends SherlockFragment implements ITalkClientService
     public void onGroupMembershipChanged(int contactId) {
     }
 
+    @Override
+    public void onMessageAdded(int messageId) throws RemoteException {
+    }
+
+    @Override
+    public void onMessageRemoved(int messageId) throws RemoteException {
+    }
+
+    @Override
+    public void onMessageStateChanged(int messageId) throws RemoteException {
+    }
 }

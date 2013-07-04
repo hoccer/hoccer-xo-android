@@ -25,6 +25,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import com.hoccer.talk.client.TalkClientConfiguration;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientMessage;
 import org.apache.log4j.Logger;
 
 /**
@@ -489,6 +490,21 @@ public class TalkClientService extends Service {
                     }
                 }
             }
+        }
+
+        @Override
+        public void onMessageAdded(TalkClientMessage message) {
+            LOG.info("onMessageAdded(" + message.getClientMessageId()  + ")");
+        }
+
+        @Override
+        public void onMessageRemoved(TalkClientMessage message) {
+            LOG.info("onMessageRemoved(" + message.getClientMessageId()  + ")");
+        }
+
+        @Override
+        public void onMessageStateChanged(TalkClientMessage message) {
+            LOG.info("onMessageStateChanged(" + message.getClientMessageId()  + ")");
         }
     }
 

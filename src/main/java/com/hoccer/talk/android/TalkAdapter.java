@@ -29,6 +29,10 @@ public abstract class TalkAdapter extends BaseAdapter implements ITalkClientServ
         mActivity.unregisterListener(this);
     }
 
+    public void runOnUiThread(Runnable runnable) {
+        mActivity.runOnUiThread(runnable);
+    }
+
     abstract public void reload();
 
     @Override
@@ -80,4 +84,15 @@ public abstract class TalkAdapter extends BaseAdapter implements ITalkClientServ
     public void onGroupMembershipChanged(int contactId) throws RemoteException {
     }
 
+    @Override
+    public void onMessageAdded(int messageId) throws RemoteException {
+    }
+
+    @Override
+    public void onMessageRemoved(int messageId) throws RemoteException {
+    }
+
+    @Override
+    public void onMessageStateChanged(int messageId) throws RemoteException {
+    }
 }

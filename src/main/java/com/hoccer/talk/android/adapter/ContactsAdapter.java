@@ -10,12 +10,15 @@ import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.TalkAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
+import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContactsAdapter extends TalkAdapter {
+
+    private static final Logger LOG = Logger.getLogger(ContactsAdapter.class);
 
     protected final static long ITEM_ID_UNKNOWN = -1000;
     protected final static long ITEM_ID_CLIENT_HEADER = -1;
@@ -39,10 +42,16 @@ public class ContactsAdapter extends TalkAdapter {
         try {
             mClientContacts = mDatabase.findAllClientContacts();
             mGroupContacts = mDatabase.findAllGroupContacts();
-            notifyDataSetInvalidated();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetInvalidated();
+            }
+        });
     }
 
     @Override
@@ -62,22 +71,32 @@ public class ContactsAdapter extends TalkAdapter {
 
     @Override
     public void onContactRemoved(int contactId) throws RemoteException {
+        LOG.info("onContactRemoved(" + contactId + ")");
+        reload();
     }
 
     @Override
     public void onClientPresenceChanged(int contactId) throws RemoteException {
+        LOG.info("onClientPresenceChanged(" + contactId + ")");
+        reload();
     }
 
     @Override
     public void onClientRelationshipChanged(int contactId) throws RemoteException {
+        LOG.info("onClientRelationshipChanged(" + contactId + ")");
+        reload();
     }
 
     @Override
     public void onGroupPresenceChanged(int contactId) throws RemoteException {
+        LOG.info("onGroupPresenceChanged(" + contactId + ")");
+        reload();
     }
 
     @Override
     public void onGroupMembershipChanged(int contactId) throws RemoteException {
+        LOG.info("onGroupMembershipChanged(" + contactId + ")");
+        reload();
     }
 
     @Override
