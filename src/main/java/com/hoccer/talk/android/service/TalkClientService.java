@@ -98,6 +98,9 @@ public class TalkClientService extends Service {
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
 
         doVerifyGcm();
+
+        registerConnectivityReceiver();
+        handleConnectivityChange(mConnectivityManager.getActiveNetworkInfo());
 	}
 
     @Override
@@ -356,13 +359,6 @@ public class TalkClientService extends Service {
         @Override
         public void onClientStateChange(HoccerTalkClient client, int state) {
             LOG.info("onClientStateChange(" + HoccerTalkClient.stateToString(state) + ")");
-            if(state == HoccerTalkClient.STATE_IDLE) {
-                registerConnectivityReceiver();
-                handleConnectivityChange(mConnectivityManager.getActiveNetworkInfo());
-            }
-            if(state == HoccerTalkClient.STATE_INACTIVE) {
-                unregisterConnectivityReceiver();
-            }
             if(state == HoccerTalkClient.STATE_ACTIVE) {
                 mExecutor.execute(new Runnable() {
                     @Override
