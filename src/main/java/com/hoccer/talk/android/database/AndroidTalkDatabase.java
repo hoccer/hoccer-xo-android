@@ -22,7 +22,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
 
     private static final String DATABASE_NAME    = "hoccer-talk.db";
 
-    private static final int    DATABASE_VERSION = 3;
+    private static final int    DATABASE_VERSION = 4;
 
     private static AndroidTalkDatabase INSTANCE = null;
 
@@ -32,10 +32,6 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
         }
         return INSTANCE;
     }
-
-    Dao<TalkClient, String> mClientDao;
-    Dao<TalkMessage, String> mMessageDao;
-    Dao<TalkDelivery, String> mDeliveryDao;
 
     private AndroidTalkDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -57,6 +53,9 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
             TableUtils.createTable(cs, TalkClientMessage.class);
             TableUtils.createTable(cs, TalkMessage.class);
             TableUtils.createTable(cs, TalkDelivery.class);
+
+            TableUtils.createTable(cs, TalkKey.class);
+            TableUtils.createTable(cs, TalkPrivateKey.class);
         } catch (SQLException e) {
             e.printStackTrace();
             // XXX app must fail or something
@@ -74,6 +73,10 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
             }
             if(oldVersion < 3) {
                 TableUtils.createTable(cs, TalkClientMembership.class);
+            }
+            if(oldVersion < 4) {
+                TableUtils.createTable(cs, TalkKey.class);
+                TableUtils.createTable(cs, TalkPrivateKey.class);
             }
         } catch (SQLException e) {
             e.printStackTrace();
