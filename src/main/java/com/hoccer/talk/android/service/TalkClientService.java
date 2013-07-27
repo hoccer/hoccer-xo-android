@@ -569,8 +569,9 @@ public class TalkClientService extends Service {
         }
 
         @Override
-        public void messageCreated(String messageTag) throws RemoteException {
-            LOG.info("[" + mId + "] messageCreated(" + messageTag + ")");
+        public void performDeliveries() throws RemoteException {
+            LOG.info("[" + mId + "] requestDelivery()");
+            mClient.requestDelivery();
         }
 
         @Override

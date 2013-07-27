@@ -21,14 +21,11 @@ interface ITalkClientService {
     /** Get the current state of the client */
     int getClientState();
 
-    /** Set name in client presence (works without connection) */
+    /** Set name in client presence */
     void setClientName(String newName);
 
-    /** Set status in client presence (works without connection) */
+    /** Set status in client presence */
     void setClientStatus(String newStatus);
-
-    /** Notify the server of a newly created message */
-    void messageCreated(String messageTag);
 
     /** Generate a pairing token */
     String generatePairingToken();
@@ -38,6 +35,9 @@ interface ITalkClientService {
     void depairContact(int contactId);
     /** Delete a contact completely */
     void deleteContact(int contactId);
+
+    /** Perform outstanding deliveries */
+    void performDeliveries();
 
     /** Create new group */
     void createGroup();

@@ -1,9 +1,11 @@
 package com.hoccer.talk.android.fragment;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.os.RemoteException;
 import android.widget.Button;
 import android.widget.EditText;
 import com.actionbarsherlock.app.SherlockFragment;
@@ -22,7 +24,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import com.hoccer.talk.client.TalkClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.model.TalkDelivery;
 import com.hoccer.talk.model.TalkMessage;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -41,6 +45,8 @@ public class MessagingFragment extends TalkFragment
     EditText mTextEdit;
     Button mSendButton;
     Button mAttachButton;
+
+    TalkClientContact mContact;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -113,29 +119,71 @@ public class MessagingFragment extends TalkFragment
 
     public void converseWithContact(TalkClientContact contact) {
         LOG.info("converseWithContact(" + contact.getClientContactId() + ")");
+        mContact = contact;
     }
 
     private void clearComposedMessage() {
         mTextEdit.setText(null);
     }
 
+    void refreshContact() {
+        TalkClientDatabase db = getTalkDatabase();
+
+        if(mContact != null) {
+            try {
+                mContact = db.findClientContactById(mContact.getClientContactId());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void sendComposedMessage() {
+        TalkClientDatabase db = getTalkDatabase();
+
+        if(mContact == null) {
+            return;
+        }
+
         // construct message and delivery objects
+        final TalkClientMessage clientMessage = new TalkClientMessage();
         final TalkMessage message = new TalkMessage();
-        final TalkDelivery[] deliveries = new TalkDelivery[0];
+        final TalkDelivery delivery = new TalkDelivery();
 
         final String messageTag = UUID.randomUUID().toString();
 
         message.setMessageTag(messageTag);
         message.setBody(mTextEdit.getText().toString());
 
-        for(int i = 0; i < deliveries.length; i++) {
-            deliveries[i] = new TalkDelivery();
-            deliveries[i].setMessageTag(messageTag);
+        delivery.setMessageTag(messageTag);
+        if(mContact.isGroup()) {
+            delivery.setGroupId(mContact.getGroupId());
+        }
+        if(mContact.isClient()) {
+            delivery.setReceiverId(mContact.getClientId());
+        }
+
+        clientMessage.setMessageTag(messageTag);
+        clientMessage.setContact(mContact);
+        clientMessage.setMessage(message);
+        clientMessage.setOutgoingDelivery(delivery);
+
+        try {
+            db.saveMessage(message);
+            db.saveDelivery(delivery);
+            db.saveClientMessage(clientMessage);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         // log to help debugging
-        LOG.info("created message with tag " + message.getMessageTag());
+        LOG.info("created message with id " + clientMessage.getClientMessageId() + " and tag " + message.getMessageTag());
+
+        try {
+            getTalkService().performDeliveries();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
         // clear the composer UI to prepare it for the next message
         clearComposedMessage();
