@@ -57,8 +57,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
             TableUtils.createTable(cs, TalkKey.class);
             TableUtils.createTable(cs, TalkPrivateKey.class);
         } catch (SQLException e) {
-            e.printStackTrace();
-            // XXX app must fail or something
+            LOG.error("sql error creating database", e);
         }
     }
 
@@ -79,8 +78,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
                 TableUtils.createTable(cs, TalkPrivateKey.class);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            // XXX app must fail or something
+            LOG.error("sql error upgrading database", e);
         }
     }
 
