@@ -1,5 +1,6 @@
 package com.hoccer.talk.android.service;
 
+import java.io.File;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -83,7 +84,11 @@ public class TalkClientService extends Service {
 
         mConnections = new ArrayList<Connection>();
 
+        File avatarsDir = new File(getFilesDir(), "avatars");
+        avatarsDir.mkdirs();
+
         mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()));
+        mClient.setAvatarDirectory(avatarsDir.toString());
         mClient.registerListener(new ClientListener());
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
