@@ -36,10 +36,7 @@ public class ContactsAdapter extends TalkAdapter {
 
     public ContactsAdapter(TalkActivity activity) {
         super(activity);
-        mActivity = activity;
     }
-
-    TalkActivity mActivity;
 
     List<TalkClientContact> mClientContacts = new ArrayList<TalkClientContact>();
     List<TalkClientContact> mGroupContacts = new ArrayList<TalkClientContact>();
@@ -62,7 +59,7 @@ public class ContactsAdapter extends TalkAdapter {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("sql error", e);
         }
         runOnUiThread(new Runnable() {
             @Override
