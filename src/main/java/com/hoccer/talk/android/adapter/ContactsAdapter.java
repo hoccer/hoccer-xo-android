@@ -1,17 +1,21 @@
 package com.hoccer.talk.android.adapter;
 
+import android.graphics.drawable.Drawable;
 import android.os.RemoteException;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.TalkAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientDownload;
 import org.apache.log4j.Logger;
 
+import java.io.File;
+import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +36,10 @@ public class ContactsAdapter extends TalkAdapter {
 
     public ContactsAdapter(TalkActivity activity) {
         super(activity);
+        mActivity = activity;
     }
+
+    TalkActivity mActivity;
 
     List<TalkClientContact> mClientContacts = new ArrayList<TalkClientContact>();
     List<TalkClientContact> mGroupContacts = new ArrayList<TalkClientContact>();
@@ -42,7 +49,18 @@ public class ContactsAdapter extends TalkAdapter {
         try {
             mClientContacts = mDatabase.findAllClientContacts();
             mGroupContacts = mDatabase.findAllGroupContacts();
-
+            for(TalkClientContact contact: mClientContacts) {
+                TalkClientDownload avatarDownload = contact.getAvatarDownload();
+                if(avatarDownload != null) {
+                    mDatabase.refreshClientDownload(avatarDownload);
+                }
+            }
+            for(TalkClientContact contact: mGroupContacts) {
+                TalkClientDownload avatarDownload = contact.getAvatarDownload();
+                if(avatarDownload != null) {
+                    mDatabase.refreshClientDownload(avatarDownload);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -97,6 +115,14 @@ public class ContactsAdapter extends TalkAdapter {
     public void onGroupMembershipChanged(int contactId) throws RemoteException {
         LOG.info("onGroupMembershipChanged(" + contactId + ")");
         reload();
+    }
+
+    @Override
+    public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
+        LOG.info("onDownloadStateChanged(" + contactId + "," + downloadId + "," + state);
+        if(TalkClientDownload.State.COMPLETE.toString().equals(state)) {
+            reload();
+        }
     }
 
     @Override
@@ -218,13 +244,13 @@ public class ContactsAdapter extends TalkAdapter {
             if(v == null) {
                 v = mInflater.inflate(R.layout.item_contact_client, null);
             }
-            updateContact(v, position);
+            updateContact(v, (TalkClientContact)getItem(position));
             break;
         case VIEW_TYPE_GROUP:
             if(v == null) {
                 v = mInflater.inflate(R.layout.item_contact_group, null);
             }
-            updateContact(v, position);
+            updateContact(v, (TalkClientContact)getItem(position));
             break;
         case VIEW_TYPE_SEPARATOR:
             if(v == null) {
@@ -245,25 +271,38 @@ public class ContactsAdapter extends TalkAdapter {
         separator.setText((String)getItem(position));
     }
 
-    private void updateContact(View view, int position) {
-        final TalkClientContact contact = (TalkClientContact)getItem(position);
+    private void updateContact(final View view, final TalkClientContact contact) {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mActivity.showContactConversation(contact);
             }
         });
-        TextView nameView = (TextView)view.findViewById(R.id.contact_name);
+        TextView nameView = (TextView) view.findViewById(R.id.contact_name);
         nameView.setText(contact.getName());
-        TextView statusView = (TextView)view.findViewById(R.id.contact_status);
+        TextView statusView = (TextView) view.findViewById(R.id.contact_status);
         statusView.setText(contact.getStatus());
-        Button profileButton = (Button)view.findViewById(R.id.contact_profile_button);
+        Button profileButton = (Button) view.findViewById(R.id.contact_profile_button);
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mActivity.showContactProfile(contact);
             }
         });
+
+        TalkClientDownload download = contact.getAvatarDownload();
+        ImageView iconView = (ImageView) view.findViewById(R.id.contact_icon);
+        if(download == null || !download.getState().equals(TalkClientDownload.State.COMPLETE)) {
+            iconView.setImageResource(R.drawable.ic_launcher);
+        } else {
+            File avatarFile = download.getAvatarFile(getAvatarDirectory());
+            Drawable drawable = Drawable.createFromPath(avatarFile.toString());
+            iconView.setImageDrawable(drawable);
+        }
+    }
+
+    File getAvatarDirectory() {
+        return new File(mActivity.getFilesDir(), "avatars");
     }
 
 }
