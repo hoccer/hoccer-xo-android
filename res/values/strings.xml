@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Hoccer Talk</string>
+    <string name="app_name">Hoccer XO</string>
 
     <string name="menu_myprofile">My profile</string>
     <string name="menu_settings">Settings</string>
