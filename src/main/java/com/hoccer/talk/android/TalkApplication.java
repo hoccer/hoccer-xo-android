@@ -6,12 +6,14 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import android.app.Application;
-import com.j256.ormlite.logger.LoggerFactory;
+import com.hoccer.talk.client.HttpClientWithKeystore;
 import org.apache.log4j.*;
 import org.apache.log4j.spi.LoggingEvent;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.security.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -63,6 +65,21 @@ public class TalkApplication extends Application {
                 }
             }
         });
+
+        // set up SSL keystore
+        LOG.info("initializing SSL keystore");
+        try {
+            KeyStore ks = KeyStore.getInstance("BKS");
+            InputStream in = this.getResources().openRawResource(R.raw.ssl_bks);
+			try {
+				ks.load(in, "password".toCharArray());
+			} finally {
+				in.close();
+			}
+            HttpClientWithKeystore.initializeSsl(ks);
+        } catch (Exception e) {
+            LOG.error("error initializing SSL keystore", e);
+        }
     }
 
     @Override
