@@ -73,28 +73,27 @@ public class PairingFragment extends TalkFragment {
     public void onResume() {
         super.onResume();
         LOG.info("onResume()");
-        // request a new token every now and then and show it
-        mTokenFuture = TalkApplication.getExecutor().scheduleAtFixedRate(
-                new Runnable() {
-                    public void run() {
-                        LOG.info("requesting new pairing token");
-                        try {
-                            final String token = getTalkActivity().getService().generatePairingToken();
-                            LOG.info("got token");
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    LOG.info("setting token text");
-                                    mTokenText.setText(token);
-                                }
-                            });
-                        } catch (RemoteException e) {
-                            LOG.info("generation failed");
-                            e.printStackTrace();
+
+        // request a new token and show it
+        TalkApplication.getExecutor().schedule(new Runnable() {
+            @Override
+            public void run() {
+                LOG.info("requesting new pairing token");
+                try {
+                    final String token = getTalkActivity().getService().generatePairingToken();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTokenText.setText(token);
                         }
-                    }
-                }, 1, 120, TimeUnit.SECONDS
-        );
+                    });
+                } catch (RemoteException e) {
+                    LOG.error("token generation failed", e);
+                    e.printStackTrace();
+                }
+            }
+        }, 1, TimeUnit.SECONDS);
+
         // bind the listener for the button that starts pairing
         mTokenPairButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -169,6 +168,10 @@ public class PairingFragment extends TalkFragment {
             LOG.info("pairing failed");
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onContactAdded(int contactId) {
     }
 
     @Override
