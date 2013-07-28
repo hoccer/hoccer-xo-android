@@ -1,6 +1,7 @@
 package com.hoccer.talk.android.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.fragment.MessagingFragment;
@@ -13,6 +14,12 @@ public class MessagingActivity extends TalkActivity {
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_messaging;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

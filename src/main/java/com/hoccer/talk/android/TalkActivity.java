@@ -122,7 +122,6 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
         // get and configure the action bar
         mActionBar = getSupportActionBar();
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        mActionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

@@ -19,4 +19,10 @@ public class PairingActivity extends TalkActivity {
         return R.layout.activity_pairing;
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
 }
