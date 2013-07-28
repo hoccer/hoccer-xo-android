@@ -76,6 +76,7 @@ public class AboutFragment extends TalkFragment {
         webSettings.setAppCacheMaxSize(1024 * 1024 * 8);
         webSettings.setAppCachePath(getActivity().getFilesDir().toString() + File.separator + "webapp-cache");
         webSettings.setAppCacheEnabled(true);
+        // set cache mode
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
 
         return v;
