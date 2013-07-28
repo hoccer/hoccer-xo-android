@@ -12,7 +12,7 @@ public interface ITalkActivity {
     public ITalkClientService getTalkClientService();
     public TalkClientDatabase getTalkClientDatabase();
 
-	public BaseAdapter makeMessageListAdapter();
+	public BaseAdapter makeConversationAdapter();
 	public BaseAdapter makeContactListAdapter();
 
     public void showContactProfile(TalkClientContact contact);

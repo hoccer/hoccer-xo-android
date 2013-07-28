@@ -19,6 +19,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.hoccer.talk.android.activity.*;
 import com.hoccer.talk.android.adapter.ContactsAdapter;
+import com.hoccer.talk.android.adapter.ConversationAdapter;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
 import com.hoccer.talk.android.service.ITalkClientService;
 import com.hoccer.talk.android.service.ITalkClientServiceListener;
@@ -415,8 +416,11 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     }
 
     @Override
-    public BaseAdapter makeMessageListAdapter() {
-        return null;
+    public ConversationAdapter makeConversationAdapter() {
+        ConversationAdapter adapter = new ConversationAdapter(this);
+        adapter.register();
+        adapter.reload();
+        return adapter;
     }
 
     @Override

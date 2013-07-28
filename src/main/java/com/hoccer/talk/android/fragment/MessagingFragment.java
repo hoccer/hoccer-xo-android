@@ -8,28 +8,24 @@ import android.content.Context;
 import android.os.RemoteException;
 import android.widget.Button;
 import android.widget.EditText;
-import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.widget.SearchView;
 import com.hoccer.talk.android.R;
-import com.hoccer.talk.android.ITalkActivity;
 import com.hoccer.talk.android.TalkFragment;
-import com.hoccer.talk.android.database.AndroidTalkDatabase;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import com.hoccer.talk.android.adapter.ConversationAdapter;
 import com.hoccer.talk.client.TalkClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.model.TalkDelivery;
 import com.hoccer.talk.model.TalkMessage;
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 import org.apache.log4j.Logger;
 
 /**
@@ -47,6 +43,8 @@ public class MessagingFragment extends TalkFragment
     Button mAttachButton;
 
     TalkClientContact mContact;
+
+    ConversationAdapter mAdapter;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -91,7 +89,13 @@ public class MessagingFragment extends TalkFragment
         super.onResume();
         LOG.info("onResume()");
         // do this late so activity has database initialized
-        //mMessageList.setAdapter(getTalkActivity().makeMessageListAdapter());
+        if(mAdapter == null) {
+            mAdapter = getTalkActivity().makeConversationAdapter();
+            if(mContact != null) {
+                mAdapter.converseWithContact(mContact);
+            }
+        }
+        mMessageList.setAdapter(mAdapter);
     }
 
     @Override
@@ -120,6 +124,9 @@ public class MessagingFragment extends TalkFragment
     public void converseWithContact(TalkClientContact contact) {
         LOG.info("converseWithContact(" + contact.getClientContactId() + ")");
         mContact = contact;
+        if(mAdapter != null) {
+            mAdapter.converseWithContact(contact);
+        }
     }
 
     private void clearComposedMessage() {
