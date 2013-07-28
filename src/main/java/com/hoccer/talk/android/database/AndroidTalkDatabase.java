@@ -3,10 +3,7 @@ package com.hoccer.talk.android.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import com.hoccer.talk.client.ITalkClientDatabaseBackend;
-import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.client.model.TalkClientMembership;
-import com.hoccer.talk.client.model.TalkClientSelf;
-import com.hoccer.talk.client.model.TalkClientMessage;
+import com.hoccer.talk.client.model.*;
 import com.hoccer.talk.model.*;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
@@ -22,7 +19,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
 
     private static final String DATABASE_NAME    = "hoccer-talk.db";
 
-    private static final int    DATABASE_VERSION = 4;
+    private static final int    DATABASE_VERSION = 5;
 
     private static AndroidTalkDatabase INSTANCE = null;
 
@@ -56,6 +53,9 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
 
             TableUtils.createTable(cs, TalkKey.class);
             TableUtils.createTable(cs, TalkPrivateKey.class);
+
+            TableUtils.createTable(cs, TalkClientDownload.class);
+            TableUtils.createTable(cs, TalkClientUpload.class);
         } catch (SQLException e) {
             LOG.error("sql error creating database", e);
         }
@@ -76,6 +76,10 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITal
             if(oldVersion < 4) {
                 TableUtils.createTable(cs, TalkKey.class);
                 TableUtils.createTable(cs, TalkPrivateKey.class);
+            }
+            if(oldVersion < 5) {
+                TableUtils.createTable(cs, TalkClientDownload.class);
+                TableUtils.createTable(cs, TalkClientUpload.class);
             }
         } catch (SQLException e) {
             LOG.error("sql error upgrading database", e);
