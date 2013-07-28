@@ -496,16 +496,52 @@ public class TalkClientService extends Service {
         @Override
         public void onMessageAdded(TalkClientMessage message) {
             LOG.info("onMessageAdded(" + message.getClientMessageId()  + ")");
+            checkBinders();
+            int messageId = message.getClientMessageId();
+            int contactId = message.getContact().getClientContactId();
+            for(Connection connection: mConnections) {
+                if(connection.hasListener()) {
+                    try {
+                        connection.getListener().onMessageAdded(contactId, messageId);
+                    } catch (RemoteException e) {
+                        LOG.error("callback error", e);
+                    }
+                }
+            }
         }
 
         @Override
         public void onMessageRemoved(TalkClientMessage message) {
             LOG.info("onMessageRemoved(" + message.getClientMessageId()  + ")");
+            checkBinders();
+            int messageId = message.getClientMessageId();
+            int contactId = message.getContact().getClientContactId();
+            for(Connection connection: mConnections) {
+                if(connection.hasListener()) {
+                    try {
+                        connection.getListener().onMessageRemoved(contactId, messageId);
+                    } catch (RemoteException e) {
+                        LOG.error("callback error", e);
+                    }
+                }
+            }
         }
 
         @Override
         public void onMessageStateChanged(TalkClientMessage message) {
             LOG.info("onMessageStateChanged(" + message.getClientMessageId()  + ")");
+            checkBinders();
+            int messageId = message.getClientMessageId();
+            int contactId = message.getContact().getClientContactId();
+            for(Connection connection: mConnections) {
+                if(connection.hasListener()) {
+                    try {
+                        connection.getListener().onMessageStateChanged(contactId, messageId);
+                    } catch (RemoteException e) {
+                        LOG.error("callback error", e);
+                    }
+                }
+            }
         }
     }
 

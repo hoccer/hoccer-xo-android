@@ -26,8 +26,12 @@ interface ITalkClientServiceListener {
     void onGroupPresenceChanged(int contactId);
     void onGroupMembershipChanged(int contactId);
 
-    void onMessageAdded(int messageId);
-    void onMessageRemoved(int messageId);
-    void onMessageStateChanged(int messageId);
+    void onMessageAdded(int contactId, int messageId);
+    void onMessageRemoved(int contactId, int messageId);
+    void onMessageStateChanged(int contactId, int messageId);
+
+    void onDownloadAdded(int contactId, int downloadId);
+    void onDownloadRemoved(int contactId, int downloadId);
+    void onDownloadStateChanged(int contactId, int downloadId, String state);
 
 }

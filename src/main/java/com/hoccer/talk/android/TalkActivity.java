@@ -355,21 +355,39 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
             }
         }
         @Override
-        public void onMessageAdded(int messageId) throws RemoteException {
+        public void onMessageAdded(int contactId, int messageId) throws RemoteException {
             for(ITalkClientServiceListener listener: mListeners) {
-                listener.onMessageAdded(messageId);
+                listener.onMessageAdded(contactId, messageId);
             }
         }
         @Override
-        public void onMessageRemoved(int messageId) throws RemoteException {
+        public void onMessageRemoved(int contactId, int messageId) throws RemoteException {
             for(ITalkClientServiceListener listener: mListeners) {
-                listener.onMessageRemoved(messageId);
+                listener.onMessageRemoved(contactId, messageId);
             }
         }
         @Override
-        public void onMessageStateChanged(int messageId) throws RemoteException {
+        public void onMessageStateChanged(int contactId, int messageId) throws RemoteException {
             for(ITalkClientServiceListener listener: mListeners) {
-                listener.onMessageStateChanged(messageId);
+                listener.onMessageStateChanged(contactId, messageId);
+            }
+        }
+        @Override
+        public void onDownloadAdded(int contactId, int downloadId) throws RemoteException {
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onDownloadAdded(contactId, downloadId);
+            }
+        }
+        @Override
+        public void onDownloadRemoved(int contactId, int downloadId) throws RemoteException {
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onDownloadRemoved(contactId, downloadId);
+            }
+        }
+        @Override
+        public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onDownloadStateChanged(contactId, downloadId, state);
             }
         }
     }

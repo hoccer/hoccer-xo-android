@@ -124,14 +124,26 @@ public class TalkFragment extends SherlockFragment implements ITalkClientService
     }
 
     @Override
-    public void onMessageAdded(int messageId) throws RemoteException {
+    public void onMessageAdded(int contactId, int messageId) throws RemoteException {
     }
 
     @Override
-    public void onMessageRemoved(int messageId) throws RemoteException {
+    public void onMessageRemoved(int contactId, int messageId) throws RemoteException {
     }
 
     @Override
-    public void onMessageStateChanged(int messageId) throws RemoteException {
+    public void onMessageStateChanged(int contactId, int messageId) throws RemoteException {
+    }
+
+    @Override
+    public void onDownloadAdded(int contactId, int downloadId) throws RemoteException {
+    }
+
+    @Override
+    public void onDownloadRemoved(int contactId, int downloadId) throws RemoteException {
+    }
+
+    @Override
+    public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
     }
 }
