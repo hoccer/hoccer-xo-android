@@ -498,7 +498,7 @@ public class TalkClientService extends Service {
             LOG.info("onMessageAdded(" + message.getClientMessageId()  + ")");
             checkBinders();
             int messageId = message.getClientMessageId();
-            int contactId = message.getContact().getClientContactId();
+            int contactId = message.getConversationContact().getClientContactId();
             for(Connection connection: mConnections) {
                 if(connection.hasListener()) {
                     try {
@@ -515,7 +515,7 @@ public class TalkClientService extends Service {
             LOG.info("onMessageRemoved(" + message.getClientMessageId()  + ")");
             checkBinders();
             int messageId = message.getClientMessageId();
-            int contactId = message.getContact().getClientContactId();
+            int contactId = message.getConversationContact().getClientContactId();
             for(Connection connection: mConnections) {
                 if(connection.hasListener()) {
                     try {
@@ -532,7 +532,7 @@ public class TalkClientService extends Service {
             LOG.info("onMessageStateChanged(" + message.getClientMessageId()  + ")");
             checkBinders();
             int messageId = message.getClientMessageId();
-            int contactId = message.getContact().getClientContactId();
+            int contactId = message.getConversationContact().getClientContactId();
             for(Connection connection: mConnections) {
                 if(connection.hasListener()) {
                     try {

@@ -171,7 +171,7 @@ public class MessagingFragment extends TalkFragment
         }
 
         clientMessage.setMessageTag(messageTag);
-        clientMessage.setContact(mContact);
+        clientMessage.setConversationContact(mContact);
         clientMessage.setMessage(message);
         clientMessage.setOutgoingDelivery(delivery);
 
