@@ -1,5 +1,6 @@
 package com.hoccer.talk.android.adapter;
 
+import android.graphics.drawable.Drawable;
 import android.os.RemoteException;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +10,11 @@ import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.TalkAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +53,11 @@ public class ConversationAdapter extends TalkAdapter {
 
     @Override
     public void onMessageStateChanged(int contactId, int messageId) throws RemoteException {
+        reload();
+    }
+
+    @Override
+    public void onDownloadRemoved(int contactId, int downloadId) throws RemoteException {
         reload();
     }
 
@@ -140,8 +148,48 @@ public class ConversationAdapter extends TalkAdapter {
     }
 
     private void updateViewCommon(View view, TalkClientMessage message) {
+        TalkClientContact sendingContact = message.getSenderContact();
+
+        try {
+            mDatabase.refreshClientContact(sendingContact);
+        } catch (SQLException e) {
+            LOG.error("sql error", e);
+        }
+
         TextView text = (TextView)view.findViewById(R.id.message_text);
-        text.setText("msg " + message.getClientMessageId());
+        String textString = message.getText();
+        if(textString == null) {
+            text.setText("Unreadable"); // XXX
+        } else {
+            text.setText(textString);
+        }
+
+        ImageView avatar = (ImageView)view.findViewById(R.id.message_avatar);
+        if(sendingContact != null) {
+            TalkClientDownload avatarDownload = sendingContact.getAvatarDownload();
+            if(avatarDownload != null) {
+                try {
+                    mDatabase.refreshClientDownload(avatarDownload);
+                } catch (SQLException e) {
+                    LOG.error("SQL error", e);
+                }
+                if(avatarDownload.getState().equals(TalkClientDownload.State.COMPLETE)) {
+                    File avatarFile = avatarDownload.getAvatarFile(getAvatarDirectory());
+                    Drawable drawable = Drawable.createFromPath(avatarFile.toString());
+                    avatar.setImageDrawable(drawable);
+                } else {
+                    avatar.setImageResource(R.drawable.ic_launcher);
+                }
+            } else {
+                avatar.setImageResource(R.drawable.ic_launcher);
+            }
+        } else {
+            avatar.setImageResource(R.drawable.ic_launcher);
+        }
+    }
+
+    File getAvatarDirectory() {
+        return new File(mActivity.getFilesDir(), "avatars");
     }
 
 }

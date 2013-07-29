@@ -152,6 +152,8 @@ public class MessagingFragment extends TalkFragment
             return;
         }
 
+        String messageText = mTextEdit.getText().toString();
+
         // construct message and delivery objects
         final TalkClientMessage clientMessage = new TalkClientMessage();
         final TalkMessage message = new TalkMessage();
@@ -160,7 +162,7 @@ public class MessagingFragment extends TalkFragment
         final String messageTag = UUID.randomUUID().toString();
 
         message.setMessageTag(messageTag);
-        message.setBody(mTextEdit.getText().toString());
+        message.setBody(messageText);
 
         delivery.setMessageTag(messageTag);
         if(mContact.isGroup()) {
@@ -170,6 +172,7 @@ public class MessagingFragment extends TalkFragment
             delivery.setReceiverId(mContact.getClientId());
         }
 
+        clientMessage.setText(messageText);
         clientMessage.setMessageTag(messageTag);
         clientMessage.setConversationContact(mContact);
         clientMessage.setMessage(message);
