@@ -115,11 +115,9 @@ public class ContactsAdapter extends TalkAdapter {
     }
 
     @Override
-    public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
-        LOG.info("onDownloadStateChanged(" + contactId + "," + downloadId + "," + state);
-        if(TalkClientDownload.State.COMPLETE.toString().equals(state)) {
-            reload();
-        }
+    public void onDownloadRemoved(int contactId, int downloadId) throws RemoteException {
+        LOG.info("onDownloadRemoved(" + contactId + "," + downloadId + ")");
+        reload();
     }
 
     @Override

@@ -24,9 +24,12 @@ import com.hoccer.talk.client.ITalkClientListener;
 
 import android.os.IBinder;
 import android.os.RemoteException;
+import com.hoccer.talk.client.ITalkTransferListener;
 import com.hoccer.talk.client.TalkClientConfiguration;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import org.apache.log4j.Logger;
 
 /**
@@ -89,7 +92,9 @@ public class TalkClientService extends Service {
 
         mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()));
         mClient.setAvatarDirectory(avatarsDir.toString());
-        mClient.registerListener(new ClientListener());
+        ClientListener clientListener = new ClientListener();
+        mClient.registerListener(clientListener);
+        mClient.getTransferAgent().registerListener(clientListener);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -360,7 +365,7 @@ public class TalkClientService extends Service {
         }
     }
 
-    private class ClientListener implements ITalkClientListener {
+    private class ClientListener implements ITalkClientListener, ITalkTransferListener {
         @Override
         public void onClientStateChange(HoccerTalkClient client, int state) {
             LOG.info("onClientStateChange(" + HoccerTalkClient.stateToString(state) + ")");
@@ -542,6 +547,74 @@ public class TalkClientService extends Service {
                     }
                 }
             }
+        }
+
+        @Override
+        public void onDownloadStarted(TalkClientDownload download) {
+            LOG.info("onDownloadStarted(" + download.getClientDownloadId() + ")");
+            checkBinders();
+            int downloadId = download.getClientDownloadId();
+            for(Connection connection: mConnections) {
+                if(connection.hasListener()) {
+                    try {
+                        connection.getListener().onDownloadAdded(0, downloadId); // XXX
+                    } catch (RemoteException e) {
+                        LOG.error("callback error", e);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onDownloadProgress(TalkClientDownload download) {
+        }
+
+        @Override
+        public void onDownloadFinished(TalkClientDownload download) {
+            LOG.info("onDownloadFinished(" + download.getClientDownloadId() + ")");
+            checkBinders();
+            int downloadId = download.getClientDownloadId();
+            for(Connection connection: mConnections) {
+                if(connection.hasListener()) {
+                    try {
+                        connection.getListener().onDownloadRemoved(0, downloadId); // XXX
+                    } catch (RemoteException e) {
+                        LOG.error("callback error", e);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onDownloadStateChanged(TalkClientDownload download) {
+            LOG.info("onDownloadStateChanged(" + download.getClientDownloadId() + ")");
+            checkBinders();
+            int downloadId = download.getClientDownloadId();
+            for(Connection connection: mConnections) {
+                if(connection.hasListener()) {
+                    try {
+                        connection.getListener().onDownloadStateChanged(0, downloadId, download.getState().toString()); // XXX
+                    } catch (RemoteException e) {
+                        LOG.error("callback error", e);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onUploadStarted(TalkClientUpload upload) {
+        }
+
+        @Override
+        public void onUploadProgress(TalkClientUpload upload) {
+        }
+
+        @Override
+        public void onUploadFinished(TalkClientUpload upload) {
+        }
+
+        @Override
+        public void onUploadStateChanged(TalkClientUpload upload) {
         }
     }
 
