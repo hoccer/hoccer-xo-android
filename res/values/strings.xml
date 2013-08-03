@@ -9,6 +9,72 @@
     <string name="menu_reconnect">Reconnect</string>
     <string name="menu_quit">Quit</string>
 
+    <!-- fragent contacts -->
+
+    <string name="contacts_find_contacts_button">Add new contact</string>
+    <string name="contacts_create_group_button">Create new group</string>
+
+    <!-- fragment messaging -->
+
+    <string name="messaging_composer_text"></string>
+    <string name="messaging_composer_attach">Attach</string>
+    <string name="messaging_composer_send">Send</string>
+    <string name="messaging_composer_text_hint">message...</string>
+
+    <!-- fragment pairing -->
+
+    <string name="share_token_id">Give this token to someone:</string>
+    <string name="someones_token_code">Or enter a token given to YOU here:</string>
+    <string name="pairing_code_hint">tap here to enter code</string>
+    <string name="pairing_token_pair">Pair with given token</string>
+
+    <!-- fragement profile -->
+
+    <string name="profile_avatar_set_button">Change my image</string>
+    <string name="profile_name_text">Username</string>
+    <string name="profile_status_text">status</string>
+    <string name="profile_name_edit">Change name</string>
+    <string name="profile_name_set_button">Set new username</string>
+    <string name="profile_status_edit">Hello there!</string>
+    <string name="profile_status_set_button">Set new status</string>
+    <string name="profile_user_block_status">Block status</string>
+    <string name="profile_user_block_button">Block this user</string>
+    <string name="profile_user_depair_button">Depair this user</string>
+    <string name="profile_user_delete_button">Delete this user</string>
+    <string name="profile_group_join_button">Join group</string>
+    <string name="profile_group_invite_button">Invite users to this Group</string>
+    <string name="profile_group_leave_button">Leave this Group</string>
+    <string name="profile_group_kick_button">Kick user from this Group</string>
+    <string name="profile_group_disband_button">Disband this Group</string>
+    <string name="profile_group_delete_button">Delete this Group</string>
+
+    <!-- fragment status -->
+
+    <string name="status_text">status</string>
+
+    <!-- item contact -->
+
+    <string name="contact_name">New XO User</string>
+    <string name="contact_status">Hello there!</string>
+
+
+    <!-- item contact client -->
+
+    <string name="contact_profile_button">Profile</string>
+
+
+    <!-- item conversation incoming -->
+
+    <string name="message_text">Your message text</string>
+
+
+    <!-- item message -->
+
+    <string name="item_sender_name">Kay</string>
+    <string name="item_content">Nupf!</string>
+
+
+
     <string-array name="preference_log_level_names">
       <item>Info</item>
       <item>Debug</item>

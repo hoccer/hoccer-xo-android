@@ -13,14 +13,14 @@
     
     <Button
         android:id="@+id/contacts_find_contacts_button"
-        android:text="Find Contacts"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="@string/contacts_find_contacts_button" />
 
     <Button
         android:id="@+id/contacts_create_group_button"
-        android:text="Create a group"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="@string/contacts_create_group_button" />
     
 </LinearLayout>

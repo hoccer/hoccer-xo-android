@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@id/item_sender_icon"
-        android:text="Pia"/>
+        android:text="@string/item_sender_name"/>
     
     <TextView
         android:id="@+id/item_content"
@@ -28,6 +28,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/item_sender_name"
         android:layout_toRightOf="@id/item_sender_icon"
-        android:text="Fnord."/>
+        android:text="@string/item_content"/>
 
 </RelativeLayout>

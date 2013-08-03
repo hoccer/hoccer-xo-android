@@ -7,18 +7,19 @@
   <TextView
           android:layout_height="wrap_content"
           android:layout_width="match_parent"
-          android:text="Give this pairing code to someone else:"
+          android:text="@string/share_token_id"
           android:textAlignment="center"/>
 
   <TextView
           android:id="@+id/pairing_token_text"
           android:layout_height="wrap_content"
-          android:layout_width="match_parent"/>
+          android:layout_width="match_parent" style="@android:style/TextAppearance.DeviceDefault.Medium"
+          android:autoText="false"/>
 
   <TextView
           android:layout_height="wrap_content"
           android:layout_width="match_parent"
-          android:text="Or enter someone elses code here:"/>
+          android:text="@string/someones_token_code"/>
 
   <EditText
           android:id="@+id/pairing_token_edit"
@@ -26,12 +27,12 @@
           android:layout_width="match_parent"
           android:inputType="text|textNoSuggestions"
           android:imeOptions="actionDone"
-          android:hint="Pairing code"/>
+          android:hint="@string/pairing_code_hint"/>
 
   <Button
           android:id="@+id/pairing_token_pair"
           android:layout_height="wrap_content"
           android:layout_width="match_parent"
-          android:text="Pair with token"/>
+          android:text="@string/pairing_token_pair"/>
 
 </LinearLayout>

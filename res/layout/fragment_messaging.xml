@@ -23,13 +23,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textShortMessage"
-            android:hint="Message"/>
+            android:hint="@string/messaging_composer_text_hint"/>
         
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:text="Attachments go here"/>
+            android:text="@string/messaging_composer_text"/>
         
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,13 +37,13 @@
             android:orientation="horizontal">
             <Button
                 android:id="@+id/messaging_composer_attach"
-                android:text="Attach"
+                android:text="@string/messaging_composer_attach"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"/>
             <Button
                 android:id="@+id/messaging_composer_send"
-                android:text="Send"
+                android:text="@string/messaging_composer_send"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"/>
