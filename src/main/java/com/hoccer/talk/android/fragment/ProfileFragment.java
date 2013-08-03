@@ -1,5 +1,6 @@
 package com.hoccer.talk.android.fragment;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.view.KeyEvent;
@@ -15,11 +16,14 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkFragment;
+import com.hoccer.talk.android.content.ContentRegistry;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkRelationship;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.sql.SQLException;
 
 /**
@@ -164,6 +168,7 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         }
         if(v == mAvatarSetButton) {
             LOG.info("onClick(avatarSetButton)");
+            getTalkActivity().selectAvatar();
         }
     }
 
@@ -225,6 +230,25 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         }
         if(contact.isSelf()) {
             LOG.info("contact " + contact.getClientContactId() + " is self");
+        }
+
+        mAvatarImage.setImageResource(R.drawable.ic_launcher);
+        if(contact.isClient() || contact.isGroup()) {
+            TalkClientDownload avatarDownload = contact.getAvatarDownload();
+            if(avatarDownload != null) {
+                try {
+                    getTalkDatabase().refreshClientDownload(avatarDownload);
+                } catch (SQLException e) {
+                    LOG.error("SQL error", e);
+                }
+                if(avatarDownload.getState() == TalkClientDownload.State.COMPLETE) {
+                    File avatarFile = avatarDownload.getAvatarFile(getAvatarDirectory());
+                    Drawable drawable = Drawable.createFromPath(avatarFile.toString());
+                    mAvatarImage.setImageDrawable(drawable);
+                } else {
+                    mAvatarImage.setImageResource(R.drawable.ic_launcher);
+                }
+            }
         }
 
         boolean canEditName = contact.isSelf() || contact.isGroupAdmin();

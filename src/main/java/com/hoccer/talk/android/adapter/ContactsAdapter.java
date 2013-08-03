@@ -296,8 +296,4 @@ public class ContactsAdapter extends TalkAdapter {
         }
     }
 
-    File getAvatarDirectory() {
-        return new File(mActivity.getFilesDir(), "avatars");
-    }
-
 }

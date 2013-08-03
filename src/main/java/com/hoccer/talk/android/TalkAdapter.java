@@ -7,6 +7,8 @@ import android.widget.BaseAdapter;
 import com.hoccer.talk.android.service.ITalkClientServiceListener;
 import com.hoccer.talk.client.TalkClientDatabase;
 
+import java.io.File;
+
 public abstract class TalkAdapter extends BaseAdapter implements ITalkClientServiceListener {
 
     protected TalkActivity mActivity;
@@ -38,6 +40,10 @@ public abstract class TalkAdapter extends BaseAdapter implements ITalkClientServ
     @Override
     public IBinder asBinder() {
         return null;
+    }
+
+    public File getAvatarDirectory() {
+        return new File(mActivity.getFilesDir(), "avatars");
     }
 
     @Override

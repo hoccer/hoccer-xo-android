@@ -10,6 +10,8 @@ import com.hoccer.talk.android.service.ITalkClientServiceListener;
 import com.hoccer.talk.client.TalkClientDatabase;
 import org.apache.log4j.Logger;
 
+import java.io.File;
+
 /**
  * Base class for fragments working with the talk client
  *
@@ -30,6 +32,10 @@ public class TalkFragment extends SherlockFragment implements ITalkClientService
     @Override
     public IBinder asBinder() {
         return null;
+    }
+
+    public File getAvatarDirectory() {
+        return new File(mActivity.getFilesDir(), "avatars");
     }
 
     public TalkActivity getTalkActivity() {

@@ -9,9 +9,12 @@ import android.widget.TextView;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.TalkAdapter;
+import com.hoccer.talk.android.content.ContentObject;
+import com.hoccer.talk.android.content.ContentView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -186,10 +189,22 @@ public class ConversationAdapter extends TalkAdapter {
         } else {
             avatar.setImageResource(R.drawable.ic_launcher);
         }
-    }
 
-    File getAvatarDirectory() {
-        return new File(mActivity.getFilesDir(), "avatars");
-    }
+        ContentView content = (ContentView)view.findViewById(R.id.message_content);
 
+        ContentObject contentObject = null;
+        TalkClientUpload attachmentUpload = message.getAttachmentUpload();
+        if(attachmentUpload != null) {
+        } else {
+            TalkClientDownload attachmentDownload = message.getAttachmentDownload();
+            if(attachmentDownload != null) {
+
+            }
+        }
+        if(contentObject == null) {
+            content.setVisibility(View.GONE);
+        } else {
+            content.setVisibility(View.VISIBLE);
+        }
+    }
 }

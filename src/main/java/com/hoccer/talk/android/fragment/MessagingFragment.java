@@ -106,6 +106,7 @@ public class MessagingFragment extends TalkFragment
         }
         if(v == mAttachButton) {
             LOG.info("onClick(AttachButton)");
+            getTalkActivity().selectAttachment();
         }
     }
 

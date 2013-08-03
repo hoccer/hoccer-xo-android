@@ -20,6 +20,9 @@ import com.actionbarsherlock.view.MenuItem;
 import com.hoccer.talk.android.activity.*;
 import com.hoccer.talk.android.adapter.ContactsAdapter;
 import com.hoccer.talk.android.adapter.ConversationAdapter;
+import com.hoccer.talk.android.content.ContentObject;
+import com.hoccer.talk.android.content.ContentRegistry;
+import com.hoccer.talk.android.content.ContentSelection;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
 import com.hoccer.talk.android.service.ITalkClientService;
 import com.hoccer.talk.android.service.ITalkClientServiceListener;
@@ -29,6 +32,7 @@ import com.hoccer.talk.client.TalkClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +50,9 @@ import java.util.concurrent.TimeUnit;
  *  - Methods for constructing view adapters
  */
 public abstract class TalkActivity extends SherlockFragmentActivity implements ITalkActivity {
+
+    public final static int REQUEST_SELECT_AVATAR = 23;
+    public final static int REQUEST_SELECT_ATTACHMENT = 42;
 
     protected Logger LOG = null;
 
@@ -70,6 +77,8 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     ArrayList<TalkFragment> mTalkFragments = new ArrayList<TalkFragment>();
 
     ArrayList<ITalkClientServiceListener> mListeners = new ArrayList<ITalkClientServiceListener>();
+
+    ContentSelection mAvatarSelection = null;
 
     public TalkActivity() {
         LOG = Logger.getLogger(getClass());
@@ -203,6 +212,19 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == REQUEST_SELECT_AVATAR) {
+            if(mAvatarSelection != null) {
+                ContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection, data);
+                if(co != null) {
+                    LOG.info("got content: " + co.getContentUrl());
+                }
+            }
+        }
     }
 
     /**
@@ -491,6 +513,18 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
             return v;
         }
 
+    }
+
+    public File getAvatarDirectory() {
+        return new File(this.getFilesDir(), "avatars");
+    }
+
+    public void selectAvatar() {
+        mAvatarSelection = ContentRegistry.get(this).selectAvatar(this, REQUEST_SELECT_AVATAR);
+    }
+
+    public void selectAttachment() {
+        ContentRegistry.get(this).selectAttachment(this, REQUEST_SELECT_ATTACHMENT);
     }
 
 }
