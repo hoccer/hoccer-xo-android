@@ -14,7 +14,8 @@
           android:id="@+id/pairing_token_text"
           android:layout_height="wrap_content"
           android:layout_width="match_parent" style="@android:style/TextAppearance.DeviceDefault.Medium"
-          android:autoText="false"/>
+          android:autoText="false"
+          android:inputType="textNoSuggestions"/>
 
   <TextView
           android:layout_height="wrap_content"
