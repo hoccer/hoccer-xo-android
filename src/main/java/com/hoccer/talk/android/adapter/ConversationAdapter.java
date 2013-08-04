@@ -203,10 +203,10 @@ public class ConversationAdapter extends TalkAdapter {
         }
         if(contentObject == null) {
             contentView.setVisibility(View.GONE);
-            contentView.displayContent(mActivity, contentObject);
+            contentView.clear();
         } else {
             contentView.setVisibility(View.VISIBLE);
-            contentView.clear();
+            contentView.displayContent(mActivity, contentObject);
         }
     }
 }
