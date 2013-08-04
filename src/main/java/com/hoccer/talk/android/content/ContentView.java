@@ -29,7 +29,9 @@ public class ContentView extends LinearLayout {
     }
 
     public void displayContent(Activity activity, ContentObject object) {
-        LOG.info("displayContent(" + object.getContentUrl() + ")");
+        if(object.getContentUrl() != null) {
+            LOG.info("displayContent(" + object.getContentUrl() + ")");
+        }
         mContent.removeAllViews();
         View view = mRegistry.createViewForContent(activity, object);
         mContent.addView(view);
