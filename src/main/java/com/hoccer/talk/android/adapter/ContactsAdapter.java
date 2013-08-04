@@ -304,10 +304,6 @@ public class ContactsAdapter extends TalkAdapter {
     private void updateClientContact(final View view, final TalkClientContact contact) {
         TalkPresence presence = contact.getClientPresence();
         TextView connectedView = (TextView) view.findViewById(R.id.contact_connected);
-        LOG.info("gotpresence " + (presence != null));
-        if(presence != null) {
-            LOG.info("connstatus " + presence.getConnectionStatus());
-        }
         if(presence != null && presence.getConnectionStatus().equals("online")) {
             connectedView.setVisibility(View.VISIBLE);
         } else {
