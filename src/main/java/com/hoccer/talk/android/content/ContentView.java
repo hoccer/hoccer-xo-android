@@ -38,7 +38,6 @@ public class ContentView extends LinearLayout {
     }
 
     public void clear() {
-        LOG.info("clear()");
         mContent.removeAllViews();
     }
 
