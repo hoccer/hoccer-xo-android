@@ -759,8 +759,11 @@ public class TalkClientService extends Service {
                 public void run() {
                     LOG.info("[" + mId + "] pairing");
                     try {
-                        mClient.performTokenPairing(token);
-                        mListener.onTokenPairingSucceeded(token);
+                        if(mClient.performTokenPairing(token)) {
+                            mListener.onTokenPairingSucceeded(token);
+                        } else {
+                            mListener.onTokenPairingFailed(token);
+                        }
                         LOG.info("[" + mId + "] pairing ok");
                     } catch (Throwable t) {
                         LOG.error("[" + mId + "] pairing failed", t);

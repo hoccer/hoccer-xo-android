@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.hoccer.talk.android.R;
@@ -180,8 +181,10 @@ public class PairingFragment extends TalkFragment {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    Toast.makeText(getTalkActivity(), "Pairing failed", Toast.LENGTH_SHORT).show();
                     mTokenEdit.setEnabled(true);
-                    mTokenPairButton.setEnabled(true);
+                    mTokenEdit.setText("");
+                    mTokenPairButton.setEnabled(false);
                 }
             });
         }
@@ -193,6 +196,7 @@ public class PairingFragment extends TalkFragment {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    Toast.makeText(getTalkActivity(), "Pairing succeeded", Toast.LENGTH_SHORT).show();
                     mTokenEdit.setEnabled(true);
                     mTokenEdit.setText("");
                     mTokenPairButton.setEnabled(false);
