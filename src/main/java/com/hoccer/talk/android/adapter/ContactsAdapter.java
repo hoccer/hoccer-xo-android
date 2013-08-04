@@ -12,6 +12,7 @@ import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.TalkAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.model.TalkPresence;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -240,6 +241,7 @@ public class ContactsAdapter extends TalkAdapter {
                 v = mInflater.inflate(R.layout.item_contact_client, null);
             }
             updateContact(v, (TalkClientContact)getItem(position));
+            updateClientContact(v, (TalkClientContact)getItem(position));
             break;
         case VIEW_TYPE_GROUP:
             if(v == null) {
@@ -273,10 +275,13 @@ public class ContactsAdapter extends TalkAdapter {
                 mActivity.showContactConversation(contact);
             }
         });
+
         TextView nameView = (TextView) view.findViewById(R.id.contact_name);
         nameView.setText(contact.getName());
+
         TextView statusView = (TextView) view.findViewById(R.id.contact_status);
         statusView.setText(contact.getStatus());
+
         Button profileButton = (Button) view.findViewById(R.id.contact_profile_button);
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -293,6 +298,20 @@ public class ContactsAdapter extends TalkAdapter {
             File avatarFile = download.getAvatarFile(getAvatarDirectory());
             Drawable drawable = Drawable.createFromPath(avatarFile.toString());
             iconView.setImageDrawable(drawable);
+        }
+    }
+
+    private void updateClientContact(final View view, final TalkClientContact contact) {
+        TalkPresence presence = contact.getClientPresence();
+        TextView connectedView = (TextView) view.findViewById(R.id.contact_connected);
+        LOG.info("gotpresence " + (presence != null));
+        if(presence != null) {
+            LOG.info("connstatus " + presence.getConnectionStatus());
+        }
+        if(presence != null && presence.getConnectionStatus().equals("online")) {
+            connectedView.setVisibility(View.VISIBLE);
+        } else {
+            connectedView.setVisibility(View.GONE);
         }
     }
 

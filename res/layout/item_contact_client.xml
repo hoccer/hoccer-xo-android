@@ -17,6 +17,13 @@
         android:layout_toRightOf="@id/contact_icon"/>
 
     <TextView
+        android:id="@+id/contact_connected"
+        android:text=" ⇄"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/contact_name"/>
+
+    <TextView
         android:id="@+id/contact_status"
         android:text="@string/contact_status"
         android:layout_width="wrap_content"
