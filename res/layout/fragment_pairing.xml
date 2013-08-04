@@ -16,6 +16,7 @@
           android:layout_width="match_parent" style="@android:style/TextAppearance.DeviceDefault.Medium"
           android:autoText="false"
           android:inputType="textNoSuggestions" android:phoneNumber="false" android:singleLine="false"
+          android:gravity="center"
           android:textColor="#eeedff" android:textStyle="bold" android:typeface="serif"/>
 
   <TextView

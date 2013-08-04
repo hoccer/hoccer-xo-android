@@ -17,7 +17,7 @@
     <!-- fragment messaging -->
 
     <string name="messaging_composer_text"></string>
-    <string name="messaging_composer_attach">Attach</string>
+    <string name="messaging_composer_attach">Add attachment</string>
     <string name="messaging_composer_send">Send</string>
     <string name="messaging_composer_text_hint">message...</string>
 
