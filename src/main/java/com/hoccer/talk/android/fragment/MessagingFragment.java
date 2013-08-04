@@ -21,6 +21,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import com.hoccer.talk.android.adapter.ConversationAdapter;
+import com.hoccer.talk.android.content.ContentObject;
+import com.hoccer.talk.android.content.ContentView;
 import com.hoccer.talk.client.TalkClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientMessage;
@@ -40,7 +42,11 @@ public class MessagingFragment extends TalkFragment
 
     EditText mTextEdit;
     Button mSendButton;
-    Button mAttachButton;
+    Button mAttachmentSelectButton;
+    Button mAttachmentClearButton;
+
+    ContentView mAttachmentView;
+    ContentObject mAttachment;
 
     TalkClientContact mContact;
 
@@ -60,8 +66,13 @@ public class MessagingFragment extends TalkFragment
         mSendButton = (Button)v.findViewById(R.id.messaging_composer_send);
         mSendButton.setOnClickListener(this);
 
-        mAttachButton = (Button)v.findViewById(R.id.messaging_composer_attach);
-        mAttachButton.setOnClickListener(this);
+        mAttachmentSelectButton = (Button)v.findViewById(R.id.messaging_composer_attachment_select);
+        mAttachmentSelectButton.setOnClickListener(this);
+
+        mAttachmentClearButton = (Button)v.findViewById(R.id.messaging_composer_attachment_clear);
+        mAttachmentClearButton.setOnClickListener(this);
+
+        mAttachmentView = (ContentView)v.findViewById(R.id.messaging_composer_attachment);
 
 		return v;
 	}
@@ -101,12 +112,16 @@ public class MessagingFragment extends TalkFragment
     @Override
     public void onClick(View v) {
         if(v == mSendButton) {
-            LOG.info("onClick(SendButton)");
+            LOG.info("onClick(sendButton)");
             sendComposedMessage();
         }
-        if(v == mAttachButton) {
-            LOG.info("onClick(AttachButton)");
+        if(v == mAttachmentSelectButton) {
+            LOG.info("onClick(attachmentSelectButton)");
             getTalkActivity().selectAttachment();
+        }
+        if(v == mAttachmentClearButton) {
+            LOG.info("onClick(attachmentClearButton)");
+            clearAttachment();
         }
     }
 
@@ -122,6 +137,12 @@ public class MessagingFragment extends TalkFragment
         return true;
     }
 
+    @Override
+    public void onAttachmentSelected(ContentObject contentObject) {
+        LOG.info("onAttachmentSelected(" + contentObject.getContentUrl() + ")");
+        showAttachment(contentObject);
+    }
+
     public void converseWithContact(TalkClientContact contact) {
         LOG.info("converseWithContact(" + contact.getClientContactId() + ")");
         mContact = contact;
@@ -131,7 +152,9 @@ public class MessagingFragment extends TalkFragment
     }
 
     private void clearComposedMessage() {
+        LOG.info("clearComposedMessage()");
         mTextEdit.setText(null);
+        clearAttachment();
     }
 
     void refreshContact() {
@@ -144,6 +167,22 @@ public class MessagingFragment extends TalkFragment
                 e.printStackTrace();
             }
         }
+    }
+
+    private void showAttachment(ContentObject contentObject) {
+        LOG.info("showAttachment(" + contentObject.getContentUrl() + ")");
+        mAttachment = contentObject;
+        mAttachmentView.displayContent(getTalkActivity(), contentObject);
+        mAttachmentView.setVisibility(View.VISIBLE);
+        mAttachmentClearButton.setVisibility(View.VISIBLE);
+    }
+
+    private void clearAttachment() {
+        LOG.info("clearAttachment()");
+        mAttachmentView.clear();
+        mAttachmentView.setVisibility(View.GONE);
+        mAttachmentClearButton.setVisibility(View.GONE);
+        mAttachment = null;
     }
 
     private void sendComposedMessage() {

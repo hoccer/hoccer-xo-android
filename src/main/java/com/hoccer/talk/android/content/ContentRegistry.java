@@ -13,6 +13,7 @@ import android.widget.SimpleAdapter;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.content.audio.AudioSelector;
 import com.hoccer.talk.android.content.image.ImageSelector;
+import com.hoccer.talk.android.content.image.ImageViewer;
 import com.hoccer.talk.android.util.IntentHelper;
 import org.apache.log4j.Logger;
 
@@ -43,7 +44,24 @@ public class ContentRegistry {
 
     public ContentRegistry(Context context) {
         mContext = context;
-        initializeSelectors();
+        initialize();
+    }
+
+    public ContentViewer selectViewerForContent(ContentObject contentObject) {
+        for(ContentViewer viewer: mViewers) {
+            if(viewer.canViewObject(contentObject)) {
+                return viewer;
+            }
+        }
+        return null;
+    }
+
+    public View createViewForContent(Activity activity, ContentObject contentObject) {
+        ContentViewer viewer = selectViewerForContent(contentObject);
+        if(viewer != null) {
+            return viewer.getViewForObject(activity, contentObject);
+        }
+        return null;
     }
 
     public ContentSelection selectAvatar(Activity activity, int requestCode) {
@@ -60,8 +78,9 @@ public class ContentRegistry {
     private static final String KEY_ICON = "icon";
     private static final String KEY_NAME = "name";
     private static final String KEY_INTENT = "intent";
+    private static final String KEY_SELECTOR = "selector";
 
-    public void selectAttachment(final Activity activity, final int requestCode) {
+    public ContentSelection selectAttachment(final Activity activity, final int requestCode) {
 
         final List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
         for(ContentSelector selector: mSelectors) {
@@ -69,6 +88,7 @@ public class ContentRegistry {
             if(IntentHelper.isIntentResolvable(selectionIntent, activity)) {
                 Map<String, Object> fields = new HashMap<String, Object>();
                 fields.put(KEY_INTENT, selectionIntent);
+                fields.put(KEY_SELECTOR, selector);
                 fields.put(KEY_ICON, IntentHelper.getIconForIntent(selectionIntent, activity));
                 fields.put(KEY_NAME, selector.getName());
                 options.add(fields);
@@ -90,11 +110,15 @@ public class ContentRegistry {
             }
         });
 
+        final ContentSelection cs = new ContentSelection(activity);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Map<String, Object> sel = options.get(which);
+                ContentSelector selector = (ContentSelector)sel.get(KEY_SELECTOR);
+                cs.setSelector(selector);
                 Intent intent = (Intent)sel.get(KEY_INTENT);
                 activity.startActivityForResult(intent, requestCode);
             }
@@ -103,13 +127,25 @@ public class ContentRegistry {
         Dialog dialog = builder.create();
         dialog.setCancelable(true);
         dialog.show();
+
+        return cs;
     }
 
-    private void initializeSelectors() {
+    public ContentObject createSelectedAttachment(ContentSelection selection, Intent intent) {
+        ContentSelector selector = selection.getSelector();
+        if(selector != null) {
+            return selector.createObjectFromSelectionResult(selection.getActivity(), intent);
+        }
+        return null;
+    }
+
+    private void initialize() {
         mAvatarSelector = new ImageSelector();
 
         mSelectors.add(new ImageSelector());
         mSelectors.add(new AudioSelector());
+
+        mViewers.add(new ImageViewer());
     }
 
 }

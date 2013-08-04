@@ -2,11 +2,25 @@ package com.hoccer.talk.android.content;
 
 public class ContentObject {
 
+    enum State {
+        UPLOAD_SELECTED,
+    }
+
+    State mState;
+
     String mContentUrl;
 
     String mMimeType;
 
     String mMediaType;
+
+    public State getState() {
+        return mState;
+    }
+
+    public void setState(State state) {
+        this.mState = state;
+    }
 
     public String getContentUrl() {
         return mContentUrl;

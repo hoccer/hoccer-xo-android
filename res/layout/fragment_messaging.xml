@@ -47,18 +47,31 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <com.hoccer.talk.android.content.ContentView
+            android:id="@+id/messaging_composer_attachment"
+            android:visibility="gone"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <Button
-                android:id="@+id/messaging_composer_attach"
-                android:text="@string/messaging_composer_attach"
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"/>
 
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            <Button
+                    android:id="@+id/messaging_composer_attachment_select"
+                    android:text="@string/messaging_composer_attachment_select"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            <Button
+                    android:id="@+id/messaging_composer_attachment_clear"
+                    android:text="@string/messaging_composer_attachment_clear"
+                    android:visibility="gone"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
         </LinearLayout>
+
         
     </LinearLayout>
 

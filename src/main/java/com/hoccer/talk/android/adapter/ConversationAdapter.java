@@ -190,7 +190,7 @@ public class ConversationAdapter extends TalkAdapter {
             avatar.setImageResource(R.drawable.ic_launcher);
         }
 
-        ContentView content = (ContentView)view.findViewById(R.id.message_content);
+        ContentView contentView = (ContentView)view.findViewById(R.id.message_content);
 
         ContentObject contentObject = null;
         TalkClientUpload attachmentUpload = message.getAttachmentUpload();
@@ -202,9 +202,11 @@ public class ConversationAdapter extends TalkAdapter {
             }
         }
         if(contentObject == null) {
-            content.setVisibility(View.GONE);
+            contentView.setVisibility(View.GONE);
+            contentView.displayContent(mActivity, contentObject);
         } else {
-            content.setVisibility(View.VISIBLE);
+            contentView.setVisibility(View.VISIBLE);
+            contentView.clear();
         }
     }
 }

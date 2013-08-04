@@ -79,6 +79,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     ArrayList<ITalkClientServiceListener> mListeners = new ArrayList<ITalkClientServiceListener>();
 
     ContentSelection mAvatarSelection = null;
+    ContentSelection mAttachmentSelection = null;
 
     public TalkActivity() {
         LOG = Logger.getLogger(getClass());
@@ -222,6 +223,18 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
                 ContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection, data);
                 if(co != null) {
                     LOG.info("got content: " + co.getContentUrl());
+                    for(TalkFragment fragment: mTalkFragments) {
+                        fragment.onAvatarSelected(co);
+                    }
+                }
+            }
+        }
+        if(requestCode == REQUEST_SELECT_ATTACHMENT) {
+            ContentObject co = ContentRegistry.get(this).createSelectedAttachment(mAttachmentSelection, data);
+            if(co != null) {
+                LOG.info("got content: " + co.getContentUrl());
+                for(TalkFragment fragment: mTalkFragments) {
+                    fragment.onAttachmentSelected(co);
                 }
             }
         }
@@ -524,7 +537,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     }
 
     public void selectAttachment() {
-        ContentRegistry.get(this).selectAttachment(this, REQUEST_SELECT_ATTACHMENT);
+        mAttachmentSelection = ContentRegistry.get(this).selectAttachment(this, REQUEST_SELECT_ATTACHMENT);
     }
 
 }

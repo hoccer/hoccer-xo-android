@@ -5,6 +5,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.service.ITalkClientService;
 import com.hoccer.talk.android.service.ITalkClientServiceListener;
 import com.hoccer.talk.client.TalkClientDatabase;
@@ -83,6 +84,12 @@ public class TalkFragment extends SherlockFragment implements ITalkClientService
     }
 
     public void onServiceDisconnected() {
+    }
+
+    public void onAttachmentSelected(ContentObject contentObject) {
+    }
+
+    public void onAvatarSelected(ContentObject contentObject) {
     }
 
     @Override

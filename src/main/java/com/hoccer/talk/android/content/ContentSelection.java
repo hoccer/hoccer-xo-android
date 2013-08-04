@@ -8,6 +8,10 @@ public class ContentSelection {
 
     ContentSelector mSelector;
 
+    public ContentSelection(Activity activity) {
+        mActivity = activity;
+    }
+
     public ContentSelection(Activity activity, ContentSelector selector) {
         mActivity = activity;
         mSelector = selector;
@@ -19,6 +23,10 @@ public class ContentSelection {
 
     public ContentSelector getSelector() {
         return mSelector;
+    }
+
+    public void setSelector(ContentSelector selector) {
+        this.mSelector = selector;
     }
 
 }
