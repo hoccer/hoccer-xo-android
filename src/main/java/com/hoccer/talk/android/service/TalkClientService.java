@@ -1,6 +1,7 @@
 package com.hoccer.talk.android.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -89,6 +90,14 @@ public class TalkClientService extends Service {
 
         File avatarsDir = new File(getFilesDir(), "avatars");
         avatarsDir.mkdirs();
+        File avatarsNomedia = new File(avatarsDir, ".nomedia");
+        if(!avatarsNomedia.exists()) {
+            try {
+                avatarsNomedia.createNewFile();
+            } catch (IOException e) {
+                LOG.error("could not create nomedia marker", e);
+            }
+        }
 
         mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()));
         mClient.setAvatarDirectory(avatarsDir.toString());
