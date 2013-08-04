@@ -50,4 +50,6 @@ interface ITalkClientService {
     /** Unblock given contact */
     void unblockContact(int contactId);
 
+    void requestDownload(int clientDownloadId);
+
 }

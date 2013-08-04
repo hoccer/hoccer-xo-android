@@ -99,8 +99,20 @@ public class TalkClientService extends Service {
             }
         }
 
+        File attachmentDir = new File(getFilesDir(), "attachments");
+        attachmentDir.mkdirs();
+        File attachmentNomedia = new File(attachmentDir, ".nomedia");
+        if(!attachmentNomedia.exists()) {
+            try {
+                attachmentNomedia.createNewFile();
+            } catch (IOException e) {
+                LOG.error("could not create nomedia marker", e);
+            }
+        }
+
         mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()));
         mClient.setAvatarDirectory(avatarsDir.toString());
+        mClient.setAttachmentDirectory(attachmentDir.toString());
         ClientListener clientListener = new ClientListener();
         mClient.registerListener(clientListener);
         mClient.getTransferAgent().registerListener(clientListener);
@@ -821,6 +833,17 @@ public class TalkClientService extends Service {
                 e.printStackTrace();
             }
         }
+
+        @Override
+        public void requestDownload(int clientDownloadId) throws RemoteException {
+            LOG.info("[" + mId + "] requestDownload(" + clientDownloadId + ")");
+            try {
+                mClient.requestDownload(mClient.getDatabase().findClientDownloadById(clientDownloadId));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
 }
