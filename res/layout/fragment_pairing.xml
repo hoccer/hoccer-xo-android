@@ -15,7 +15,8 @@
           android:layout_height="wrap_content"
           android:layout_width="match_parent" style="@android:style/TextAppearance.DeviceDefault.Medium"
           android:autoText="false"
-          android:inputType="textNoSuggestions"/>
+          android:inputType="textNoSuggestions" android:phoneNumber="false" android:singleLine="false"
+          android:textColor="#eeedff" android:textStyle="bold" android:typeface="serif"/>
 
   <TextView
           android:layout_height="wrap_content"
