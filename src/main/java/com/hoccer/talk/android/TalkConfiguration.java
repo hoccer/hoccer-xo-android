@@ -41,4 +41,11 @@ public class TalkConfiguration {
     /** Timeout after which the client service terminates automatically (seconds) */
     public static final int SERVICE_KEEPALIVE_TIMEOUT       = 1800;
 
+    /** SD-card directory for our files */
+    public static final String SDCARD_DIRECTORY = "Hoccer XO";
+
+    /* SD-card subdirectories */
+    public static final String SDCARD_FILES = "Files";
+    public static final String SDCARD_LOGS = "Logs";
+
 }

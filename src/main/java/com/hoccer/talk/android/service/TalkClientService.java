@@ -49,6 +49,9 @@ public class TalkClientService extends Service {
 
     private static final AtomicInteger ID_COUNTER = new AtomicInteger();
 
+    public static String HACK_AVATAR_DIRECTORY = "";
+    public static String HACK_ATTACHMENT_DIRECTORY = "";
+
     /** Executor for ourselves and the client */
     ScheduledExecutorService mExecutor;
 
@@ -90,6 +93,7 @@ public class TalkClientService extends Service {
 
         File avatarsDir = new File(getFilesDir(), "avatars");
         avatarsDir.mkdirs();
+        HACK_AVATAR_DIRECTORY = avatarsDir.toString();
         File avatarsNomedia = new File(avatarsDir, ".nomedia");
         if(!avatarsNomedia.exists()) {
             try {
@@ -101,6 +105,7 @@ public class TalkClientService extends Service {
 
         File attachmentDir = new File(getFilesDir(), "attachments");
         attachmentDir.mkdirs();
+        HACK_ATTACHMENT_DIRECTORY = attachmentDir.toString();
         File attachmentNomedia = new File(attachmentDir, ".nomedia");
         if(!attachmentNomedia.exists()) {
             try {
@@ -113,6 +118,7 @@ public class TalkClientService extends Service {
         mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()));
         mClient.setAvatarDirectory(avatarsDir.toString());
         mClient.setAttachmentDirectory(attachmentDir.toString());
+        mClient.setFilesDirectory(TalkApplication.getFilesDirectory().toString());
         ClientListener clientListener = new ClientListener();
         mClient.registerListener(clientListener);
         mClient.getTransferAgent().registerListener(clientListener);

@@ -23,6 +23,8 @@ public class TalkApplication extends Application {
 
     private static Logger LOG = null;
 
+    private static File EXTERNAL_STORAGE = null;
+
     private static ScheduledExecutorService EXECUTOR = null;
 
     private SharedPreferences mPreferences;
@@ -41,9 +43,24 @@ public class TalkApplication extends Application {
         return EXECUTOR;
     }
 
+    private static File getDataDirectory() {
+        return new File(EXTERNAL_STORAGE, TalkConfiguration.SDCARD_DIRECTORY);
+    }
+
+    public static File getFilesDirectory() {
+        return new File(getDataDirectory(), TalkConfiguration.SDCARD_FILES);
+    }
+
+    private static File getLogsDirectory() {
+        return new File(getDataDirectory(), TalkConfiguration.SDCARD_LOGS);
+    }
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+        // get external storage root
+        EXTERNAL_STORAGE = Environment.getExternalStorageDirectory();
 
         // initialize logging system
         initLogging();
@@ -80,6 +97,9 @@ public class TalkApplication extends Application {
         } catch (Exception e) {
             LOG.error("error initializing SSL keystore", e);
         }
+
+        // set up data directory
+        ensureFilesDirectory();
     }
 
     @Override
@@ -113,8 +133,8 @@ public class TalkApplication extends Application {
 
         // create file appender
         try {
-            String file = Environment.getExternalStorageDirectory() + File.separator + "hoccer-talk.log";
-            mFileAppender = new RollingFileAppender(TalkConfiguration.LOG_FILE_LAYOUT, file);
+            File file = new File(getLogsDirectory(), "xo.log");
+            mFileAppender = new RollingFileAppender(TalkConfiguration.LOG_FILE_LAYOUT, file.toString());
             mFileAppender.setMaximumFileSize(TalkConfiguration.LOG_FILE_SIZE);
             mFileAppender.setMaxBackupIndex(TalkConfiguration.LOG_FILE_COUNT);
         } catch (IOException e) {
@@ -145,6 +165,25 @@ public class TalkApplication extends Application {
         configureLogSd();
     }
 
+    private void ensureDirectory(File directory) {
+        if(!directory.exists()) {
+            Log.i(TAG, "[storage] creating directory " + directory.toString());
+            directory.mkdirs();
+        }
+    }
+
+    private File ensureLogsDirectory() {
+        File logDirectory = getLogsDirectory();
+        ensureDirectory(logDirectory);
+        return logDirectory;
+    }
+
+    private File ensureFilesDirectory() {
+        File logDirectory = getFilesDirectory();
+        ensureDirectory(logDirectory);
+        return logDirectory;
+    }
+
     private void configureLogLevel() {
         String levelString = mPreferences.getString("preference_log_level", "INFO");
         Log.i(TAG, "[logging] setting log level to " + levelString);
@@ -156,6 +195,7 @@ public class TalkApplication extends Application {
         boolean enabled = mPreferences.getBoolean("preference_log_sd", false);
         Log.i(TAG, "[logging] " + (enabled ? "enabling" : "disabling") + " logging to SD card");
         if(enabled) {
+            ensureLogsDirectory();
             mRootLogger.addAppender(mFileAppender);
         } else {
             mRootLogger.removeAppender(mFileAppender);
