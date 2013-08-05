@@ -12,21 +12,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import android.app.Service;
 import android.content.*;
+import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.preference.PreferenceManager;
 import com.google.android.gcm.GCMRegistrar;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkConfiguration;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
 import com.hoccer.talk.android.push.TalkPushService;
-import com.hoccer.talk.client.HoccerTalkClient;
-import com.hoccer.talk.client.ITalkClientListener;
+import com.hoccer.talk.client.*;
 
 import android.os.IBinder;
 import android.os.RemoteException;
-import com.hoccer.talk.client.ITalkTransferListener;
-import com.hoccer.talk.client.TalkClientConfiguration;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
@@ -609,6 +608,19 @@ public class TalkClientService extends Service {
                         LOG.error("callback error", e);
                     }
                 }
+            }
+            if(download.getType().equals(TalkTransfer.Type.ATTACHMENT)) {
+                String path = download.getAttachmentDecryptedFile(new File(mClient.getFilesDirectory())).toString();
+                String type = download.getContentType();
+                LOG.info("triggering media scan of " + path);
+                MediaScannerConnection.scanFile(TalkClientService.this, new String[]{path}, new String[]{type},
+                        new MediaScannerConnection.OnScanCompletedListener() {
+                            @Override
+                            public void onScanCompleted(String path, Uri uri) {
+                                LOG.info("completed scan of path " + path);
+                                LOG.info("content uri is " + uri.toString());
+                            }
+                        });
             }
         }
 
