@@ -198,7 +198,7 @@ public class ConversationAdapter extends TalkAdapter {
         } else {
             TalkClientDownload attachmentDownload = message.getAttachmentDownload();
             if(attachmentDownload != null) {
-
+                contentObject = ContentObject.forDownload(attachmentDownload);
             }
         }
         if(contentObject == null) {

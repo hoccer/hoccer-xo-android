@@ -1,7 +1,11 @@
 package com.hoccer.talk.android.content;
 
+import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.service.TalkClientService;
 import com.hoccer.talk.client.model.TalkClientDownload;
+import org.apache.log4j.Logger;
+
+import java.io.File;
 
 /**
  * Represents the content behind an attachment
@@ -16,19 +20,23 @@ import com.hoccer.talk.client.model.TalkClientDownload;
  */
 public class ContentObject {
 
+    private static final Logger LOG = Logger.getLogger(ContentObject.class);
+
     public static ContentObject forDownload(TalkClientDownload download) {
         ContentObject co = new ContentObject();
         TalkClientDownload.State state = download.getState();
         TalkClientDownload.Type type = download.getType();
         co.setMimeType(download.getContentType());
+        co.setMediaType(download.getMediaType());
         switch (type) {
         case AVATAR:
-            co.setContentUrl(TalkClientService.HACK_AVATAR_DIRECTORY + download.getFile());
+            co.setContentUrl(TalkClientService.HACK_AVATAR_DIRECTORY + File.separator + download.getFile());
             break;
         case ATTACHMENT:
-            co.setContentUrl(TalkClientService.HACK_ATTACHMENT_DIRECTORY + download.getFile());
+            co.setContentUrl(TalkApplication.getFilesDirectory() + File.separator + download.getFile());
             break;
         }
+        LOG.info("content " + co.getContentUrl() + " in state " + state);
         switch (state) {
         case NEW:
             co.setState(State.DOWNLOAD_NEW);
@@ -37,9 +45,11 @@ public class ContentObject {
             co.setState(State.DOWNLOAD_COMPLETE);
             break;
         case STARTED:
+        case DECRYPTING:
             co.setState(State.DOWNLOAD_STARTED);
             break;
         case FAILED:
+        default:
             co.setState(State.DOWNLOAD_FAILED);
             break;
         }
