@@ -230,16 +230,11 @@ public class MessagingFragment extends TalkFragment
         // log to help debugging
         LOG.info("created message with id " + clientMessage.getClientMessageId() + " and tag " + message.getMessageTag());
 
-        getTalkActivity().getBackgroundExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    getTalkService().performDeliveries();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        try {
+            getTalkService().performDeliveries();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
         // clear the composer UI to prepare it for the next message
         clearComposedMessage();
