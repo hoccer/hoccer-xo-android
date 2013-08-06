@@ -13,6 +13,7 @@ import com.actionbarsherlock.view.Window;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.fragment.MessagingFragment;
+import com.hoccer.talk.android.fragment.ProfileFragment;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -27,6 +28,9 @@ public class MessagingActivity extends TalkActivity {
 
     ActionBar mActionBar;
 
+    FragmentManager mFragmentManager;
+    MessagingFragment mFragment;
+
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_messaging;
@@ -37,6 +41,8 @@ public class MessagingActivity extends TalkActivity {
         super.onCreate(savedInstanceState);
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
+        mFragmentManager = getSupportFragmentManager();
+        mFragment = (MessagingFragment) mFragmentManager.findFragmentById(R.id.activity_messaging_fragment);
     }
 
     @Override
@@ -52,7 +58,9 @@ public class MessagingActivity extends TalkActivity {
             }
             try {
                 TalkClientContact contact = getTalkClientDatabase().findClientContactById(contactId);
-                converseWithContact(contact);
+                if(contact != null) {
+                    converseWithContact(contact);
+                }
             } catch (SQLException e) {
                 LOG.error("NO EXTRA", e);
             }
@@ -63,12 +71,8 @@ public class MessagingActivity extends TalkActivity {
     }
 
     public void converseWithContact(TalkClientContact contact) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
-        MessagingFragment fragment = (MessagingFragment)fragmentManager.findFragmentById(R.id.activity_messaging_fragment);
-        fragment.converseWithContact(contact);
-
         mActionBar.setTitle(contact.getName());
+        mFragment.converseWithContact(contact);
 
         /*
         TalkClientDownload download = contact.getAvatarDownload();
