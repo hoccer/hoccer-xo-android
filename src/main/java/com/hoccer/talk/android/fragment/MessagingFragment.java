@@ -212,6 +212,7 @@ public class MessagingFragment extends TalkFragment
             delivery.setReceiverId(mContact.getClientId());
         }
 
+        clientMessage.setSeen(true);
         clientMessage.setText(messageText);
         clientMessage.setMessageTag(messageTag);
         clientMessage.setConversationContact(mContact);

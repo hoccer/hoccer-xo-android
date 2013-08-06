@@ -4,20 +4,26 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.*;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import com.google.android.gcm.GCMRegistrar;
+import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkConfiguration;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
@@ -48,6 +54,8 @@ public class TalkClientService extends Service {
 
     private static final AtomicInteger ID_COUNTER = new AtomicInteger();
 
+    private static final int NOTIFICATION_UNSEEN_MESSAGES = 0;
+
     public static String HACK_AVATAR_DIRECTORY = "";
     public static String HACK_ATTACHMENT_DIRECTORY = "";
 
@@ -76,6 +84,13 @@ public class TalkClientService extends Service {
     boolean mPreviousConnectionState = false;
     /** Type of previous connection */
     int mPreviousConnectionType = -1;
+
+    /** Notification manager */
+    NotificationManager mNotificationManager;
+    /** Time of last notification (for cancellation backoff) */
+    long mNotificationTimestamp;
+    /** Future for cancelling the active notification */
+    ScheduledFuture<?> mNotificationCancel;
 
     boolean mGcmSupported;
 
@@ -118,8 +133,10 @@ public class TalkClientService extends Service {
         mClient.setAvatarDirectory(avatarsDir.toString());
         mClient.setAttachmentDirectory(attachmentDir.toString());
         mClient.setFilesDirectory(TalkApplication.getFilesDirectory().toString());
+
         ClientListener clientListener = new ClientListener();
         mClient.registerListener(clientListener);
+        mClient.registerUnseenListener(clientListener);
         mClient.getTransferAgent().registerListener(clientListener);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -137,6 +154,8 @@ public class TalkClientService extends Service {
 
         registerConnectivityReceiver();
         handleConnectivityChange(mConnectivityManager.getActiveNetworkInfo());
+
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 	}
 
     @Override
@@ -379,6 +398,100 @@ public class TalkClientService extends Service {
         }
     }
 
+    private void updateNotification(List<TalkClientMessage> unseenMessages, boolean notify) {
+        LOG.info("updatingNotification()");
+        TalkClientDatabase db = mClient.getDatabase();
+
+        long now = System.currentTimeMillis();
+        long passed = Math.max(0, now - mNotificationTimestamp);
+
+        // backed-off cancel if we got nothing
+        if(unseenMessages == null || unseenMessages.isEmpty()) {
+            LOG.info("no unseen messages");
+            long cancelTime = mNotificationTimestamp + 2000;
+            long delay = Math.max(0, cancelTime - now);
+            mExecutor.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    mNotificationManager.cancel(NOTIFICATION_UNSEEN_MESSAGES);
+                }
+            }, delay, TimeUnit.MILLISECONDS);
+            return;
+        }
+
+        if(passed < 5000) {
+            notify = false;
+        }
+
+        mNotificationTimestamp = now;
+
+        // collect conversation contacts and sort messages accordingly
+        List<TalkClientContact> contacts = new ArrayList<TalkClientContact>();
+        Map<Integer, TalkClientContact> contactsById = new HashMap<Integer, TalkClientContact>();
+        Map<Integer, List<TalkClientMessage>> messagesByContactId = new HashMap<Integer, List<TalkClientMessage>>();
+        for(TalkClientMessage message: unseenMessages) {
+            TalkClientContact contact = message.getConversationContact();
+            int contactId = contact.getClientContactId();
+            List<TalkClientMessage> messageVector;
+            if(contactsById.containsKey(contactId)) {
+                contact = contactsById.get(contactId);
+                messageVector = messagesByContactId.get(contactId);
+            } else {
+                messageVector = new ArrayList<TalkClientMessage>();
+                contactsById.put(contactId, contact);
+                messagesByContactId.put(contactId, messageVector);
+                contacts.add(contact);
+                try {
+                    db.refreshClientContact(contact);
+                } catch (SQLException e) {
+                    LOG.error("sql error", e);
+                }
+            }
+            messageVector.add(message);
+        }
+
+        LOG.info("found " + unseenMessages.size() + " messages from " + contacts.size() + " contacts");
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+
+        int numUnseen = unseenMessages.size();
+
+        builder.setSmallIcon(R.drawable.ic_launcher);
+
+        if(notify) {
+            LOG.info("configuring vibrate");
+            builder.setDefaults(Notification.DEFAULT_ALL);
+        }
+
+        //Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+        //builder.setLargeIcon(largeIcon);
+
+        if(contacts.size() == 1) {
+            TalkClientContact singleContact = contacts.get(0);
+            if(unseenMessages.size() == 1) {
+                if(singleContact.isGroup()) {
+                    builder.setContentTitle("New message in group " + singleContact.getName());
+                } else {
+                    builder.setContentTitle("New message from " + singleContact.getName());
+                }
+            } else {
+                if(singleContact.isGroup()) {
+                    builder.setContentTitle(numUnseen + " new messages in group " + singleContact.getName());
+                } else {
+                    builder.setContentTitle(numUnseen + " new messages from " + singleContact.getName());
+                }
+            }
+        } else {
+            builder.setContentTitle(numUnseen + " new messages");
+        }
+
+        Notification notification = builder.build();
+
+        LOG.info("notifying " + notification.toString());
+
+        mNotificationManager.notify(NOTIFICATION_UNSEEN_MESSAGES, notification);
+    }
+
     private void checkBinders() {
         for(Connection connection: mConnections) {
             boolean listenerAlive = true;
@@ -391,7 +504,7 @@ public class TalkClientService extends Service {
         }
     }
 
-    private class ClientListener implements ITalkClientListener, ITalkTransferListener {
+    private class ClientListener implements ITalkClientListener, ITalkTransferListener, ITalkUnseenListener {
         @Override
         public void onClientStateChange(HoccerTalkClient client, int state) {
             LOG.info("onClientStateChange(" + HoccerTalkClient.stateToString(state) + ")");
@@ -654,6 +767,11 @@ public class TalkClientService extends Service {
 
         @Override
         public void onUploadStateChanged(TalkClientUpload upload) {
+        }
+
+        @Override
+        public void onUnseenMessages(List<TalkClientMessage> unseenMessages, boolean notify) {
+            updateNotification(unseenMessages, notify);
         }
     }
 
