@@ -36,6 +36,7 @@ public class ImageSelector extends ContentSelector {
         String filePath = cursor.getString(dataIndex);
 
         ContentObject contentObject = new ContentObject();
+        contentObject.setState(ContentObject.State.UPLOAD_SELECTED);
         contentObject.setMediaType("image");
         contentObject.setMimeType(fileType);
         contentObject.setContentUrl(filePath);

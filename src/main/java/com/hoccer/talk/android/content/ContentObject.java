@@ -56,7 +56,7 @@ public class ContentObject {
         return co;
     }
 
-    enum State {
+    public enum State {
         UPLOAD_SELECTED,
         DOWNLOAD_NEW,
         DOWNLOAD_STARTED,

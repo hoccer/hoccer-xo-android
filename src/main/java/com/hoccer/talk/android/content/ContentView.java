@@ -45,19 +45,18 @@ public class ContentView extends LinearLayout {
 
         LOG.info("content state " + state.toString());
 
-        if(state.equals(ContentObject.State.DOWNLOAD_NEW)
-                || state.equals(ContentObject.State.UPLOAD_SELECTED)) {
+        if(state.equals(ContentObject.State.DOWNLOAD_NEW)) {
             mContentDownload.setVisibility(VISIBLE);
         } else {
             mContentDownload.setVisibility(GONE);
         }
 
-        if(state.equals(ContentObject.State.DOWNLOAD_COMPLETE)) {
+        if(state.equals(ContentObject.State.DOWNLOAD_COMPLETE) || state.equals(ContentObject.State.UPLOAD_SELECTED)) {
             mContent.setVisibility(VISIBLE);
             mContent.removeAllViews();
             View view = mRegistry.createViewForContent(activity, object);
             if(view != null) {
-                LOG.info("adding view");
+                LOG.info("adding content view");
                 view.setVisibility(VISIBLE);
                 mContent.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             }
