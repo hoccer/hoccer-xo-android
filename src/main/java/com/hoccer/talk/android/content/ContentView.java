@@ -45,7 +45,8 @@ public class ContentView extends LinearLayout {
 
         LOG.info("content state " + state.toString());
 
-        if(state.equals(ContentObject.State.DOWNLOAD_NEW)) {
+        if(state.equals(ContentObject.State.DOWNLOAD_NEW)
+                || state.equals(ContentObject.State.UPLOAD_SELECTED)) {
             mContentDownload.setVisibility(VISIBLE);
         } else {
             mContentDownload.setVisibility(GONE);
