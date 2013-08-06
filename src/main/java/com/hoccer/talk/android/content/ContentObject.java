@@ -30,10 +30,10 @@ public class ContentObject {
         co.setMediaType(download.getMediaType());
         switch (type) {
         case AVATAR:
-            co.setContentUrl(TalkClientService.HACK_AVATAR_DIRECTORY + File.separator + download.getFile());
+            co.setContentUrl(TalkClientService.HACK_AVATAR_DIRECTORY + File.separator + download.getDownloadFile());
             break;
         case ATTACHMENT:
-            co.setContentUrl(TalkApplication.getFilesDirectory() + File.separator + download.getFile());
+            co.setContentUrl(TalkApplication.getFilesDirectory() + File.separator + download.getDownloadFile());
             break;
         }
         LOG.info("content " + co.getContentUrl() + " in state " + state);
