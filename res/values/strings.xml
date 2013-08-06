@@ -55,7 +55,8 @@
 
     <!-- item contact -->
 
-    <string name="contact_name">New XO User</string>
+    <string name="contact_name_new_client">New Friend</string>
+    <string name="contact_name_new_group">New Group</string>
     <string name="contact_status">Hello there!</string>
 
 
