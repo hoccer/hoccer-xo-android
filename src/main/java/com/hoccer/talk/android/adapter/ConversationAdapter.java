@@ -1,5 +1,7 @@
 package com.hoccer.talk.android.adapter;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.RemoteException;
 import android.view.View;
@@ -16,12 +18,17 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +44,10 @@ public class ConversationAdapter extends TalkAdapter {
 
     TalkClientContact mContact;
 
-    List<TalkClientMessage> mMessages;
+    List<TalkClientMessage> mMessages = new ArrayList<TalkClientMessage>();
+
+    Map<Integer, TalkClientContact> mContacts = new HashMap<Integer, TalkClientContact>();
+    Map<Integer, TalkClientDownload> mDownloads = new HashMap<Integer, TalkClientDownload>();
 
     long mLastReload = 0;
     ScheduledFuture<?> mReloadFuture;
@@ -103,13 +113,23 @@ public class ConversationAdapter extends TalkAdapter {
     }
 
     private void performReload() {
+        mContacts = new HashMap<Integer, TalkClientContact>();
+        mDownloads = new HashMap<Integer, TalkClientDownload>();
         if(mContact == null) {
             mMessages = new ArrayList<TalkClientMessage>();
         } else {
             try {
+                mDatabase.refreshClientContact(mContact);
                 mMessages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
+                LOG.info("found " + mMessages.size() + " messages");
+                for(TalkClientMessage message: mMessages) {
+                    LOG.info("loading related for " + message.getClientMessageId());
+                    reloadRelated(message);
+                }
             } catch (SQLException e) {
                 LOG.error("sql error", e);
+            } catch (Throwable e) {
+                LOG.error("error reloading", e);
             }
         }
         runOnUiThread(new Runnable() {
@@ -118,6 +138,42 @@ public class ConversationAdapter extends TalkAdapter {
                 notifyDataSetInvalidated();
             }
         });
+    }
+
+    private void reloadRelated(TalkClientMessage message) throws SQLException {
+        TalkClientContact sender = message.getSenderContact();
+        if(sender != null) {
+            int contactId = sender.getClientContactId();
+            if(mContacts.containsKey(contactId)) {
+                sender = mContacts.get(contactId);
+                message.setSenderContact(sender);
+            } else {
+                mDatabase.refreshClientContact(sender);
+                mContacts.put(contactId, sender);
+            }
+            TalkClientDownload avatarDownload = sender.getAvatarDownload();
+            if(avatarDownload != null) {
+                int avatarDownloadId = avatarDownload.getClientDownloadId();
+                if(mDownloads.containsKey(avatarDownloadId)) {
+                    avatarDownload = mDownloads.get(avatarDownloadId);
+                    sender.setAvatarDownload(avatarDownload);
+                } else {
+                    mDatabase.refreshClientDownload(avatarDownload);
+                    mDownloads.put(avatarDownloadId, avatarDownload);
+                }
+            }
+        }
+        TalkClientContact conversation = message.getConversationContact();
+        if(conversation != null) {
+            int contactId = conversation.getClientContactId();
+            if(mContacts.containsKey(contactId)) {
+                conversation = mContacts.get(contactId);
+                message.setConversationContact(conversation);
+            } else {
+                mDatabase.refreshClientContact(conversation);
+                mContacts.put(contactId, conversation);
+            }
+        }
     }
 
     @Override
@@ -194,12 +250,6 @@ public class ConversationAdapter extends TalkAdapter {
             markMessageAsSeen(message);
         }
 
-        try {
-            mDatabase.refreshClientContact(sendingContact);
-        } catch (SQLException e) {
-            LOG.error("sql error", e);
-        }
-
         TextView text = (TextView)view.findViewById(R.id.message_text);
         String textString = message.getText();
         if(textString == null) {
@@ -208,27 +258,21 @@ public class ConversationAdapter extends TalkAdapter {
             text.setText(textString);
         }
 
-        ImageView avatar = (ImageView)view.findViewById(R.id.message_avatar);
+        final ImageView avatar = (ImageView)view.findViewById(R.id.message_avatar);
         if(sendingContact != null) {
             TalkClientDownload avatarDownload = sendingContact.getAvatarDownload();
             if(avatarDownload != null) {
-                try {
-                    mDatabase.refreshClientDownload(avatarDownload);
-                } catch (SQLException e) {
-                    LOG.error("SQL error", e);
-                }
                 if(avatarDownload.getState().equals(TalkClientDownload.State.COMPLETE)) {
                     File avatarFile = avatarDownload.getAvatarFile(getAvatarDirectory());
-                    Drawable drawable = Drawable.createFromPath(avatarFile.toString());
-                    avatar.setImageDrawable(drawable);
+                    loadAvatar(avatar, "file://" + avatarFile.toString());
                 } else {
-                    avatar.setImageResource(R.drawable.ic_launcher);
+                    loadAvatar(avatar, "content://" + R.drawable.ic_launcher);
                 }
             } else {
-                avatar.setImageResource(R.drawable.ic_launcher);
+                loadAvatar(avatar, "content://" + R.drawable.ic_launcher);
             }
         } else {
-            avatar.setImageResource(R.drawable.ic_launcher);
+            loadAvatar(avatar, "content://" + R.drawable.ic_launcher);
         }
 
         ContentView contentView = (ContentView)view.findViewById(R.id.message_content);
@@ -249,6 +293,10 @@ public class ConversationAdapter extends TalkAdapter {
             contentView.setVisibility(View.VISIBLE);
             contentView.displayContent(mActivity, contentObject);
         }
+    }
+
+    private void loadAvatar(ImageView view, String url) {
+        ImageLoader.getInstance().displayImage(url, view);
     }
 
     private void markMessageAsSeen(final TalkClientMessage message) {
