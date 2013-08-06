@@ -135,7 +135,7 @@ public class ConversationAdapter extends TalkAdapter {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                notifyDataSetInvalidated();
+                notifyDataSetChanged();
             }
         });
     }
