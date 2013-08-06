@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.TalkAdapter;
+import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.content.ContentView;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -21,6 +22,9 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class ConversationAdapter extends TalkAdapter {
 
@@ -34,6 +38,9 @@ public class ConversationAdapter extends TalkAdapter {
     TalkClientContact mContact;
 
     List<TalkClientMessage> mMessages;
+
+    long mLastReload = 0;
+    ScheduledFuture<?> mReloadFuture;
 
     public ConversationAdapter(TalkActivity activity) {
         super(activity);
@@ -66,6 +73,36 @@ public class ConversationAdapter extends TalkAdapter {
 
     @Override
     public void reload() {
+        ScheduledExecutorService executor = TalkApplication.getExecutor();
+        long now = System.currentTimeMillis();
+        long since = now - mLastReload;
+        if(since < 1000) {
+            long delay = Math.max(0, (mLastReload + 1000) - now);
+            if(mReloadFuture != null) {
+                mReloadFuture.cancel(false);
+            }
+            mReloadFuture = executor.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    mLastReload = System.currentTimeMillis();
+                    performReload();
+                }
+            }, delay, TimeUnit.MILLISECONDS);
+        } else {
+            if(mReloadFuture != null) {
+                mReloadFuture.cancel(false);
+            }
+            mReloadFuture = executor.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    performReload();
+                }
+            }, 0, TimeUnit.MILLISECONDS);
+            mLastReload = now;
+        }
+    }
+
+    private void performReload() {
         if(mContact == null) {
             mMessages = new ArrayList<TalkClientMessage>();
         } else {
@@ -154,11 +191,7 @@ public class ConversationAdapter extends TalkAdapter {
         TalkClientContact sendingContact = message.getSenderContact();
 
         if(!message.isSeen()) {
-            try {
-                mActivity.getService().markAsSeen(message.getClientMessageId());
-            } catch (RemoteException e) {
-                LOG.error("remote error", e);
-            }
+            markMessageAsSeen(message);
         }
 
         try {
@@ -216,5 +249,18 @@ public class ConversationAdapter extends TalkAdapter {
             contentView.setVisibility(View.VISIBLE);
             contentView.displayContent(mActivity, contentObject);
         }
+    }
+
+    private void markMessageAsSeen(final TalkClientMessage message) {
+        mActivity.getBackgroundExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mActivity.getService().markAsSeen(message.getClientMessageId());
+                } catch (RemoteException e) {
+                    LOG.error("remote error", e);
+                }
+            }
+        });
     }
 }
