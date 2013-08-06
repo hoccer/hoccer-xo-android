@@ -157,18 +157,6 @@ public class MessagingFragment extends TalkFragment
         clearAttachment();
     }
 
-    void refreshContact() {
-        TalkClientDatabase db = getTalkDatabase();
-
-        if(mContact != null) {
-            try {
-                mContact = db.findClientContactById(mContact.getClientContactId());
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private void showAttachment(ContentObject contentObject) {
         LOG.info("showAttachment(" + contentObject.getContentUrl() + ")");
         mAttachment = contentObject;
