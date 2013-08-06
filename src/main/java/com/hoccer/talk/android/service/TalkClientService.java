@@ -399,16 +399,18 @@ public class TalkClientService extends Service {
     }
 
     private void updateNotification(List<TalkClientMessage> unseenMessages, boolean notify) {
-        LOG.info("updatingNotification()");
+        LOG.info("updateNotification()");
         TalkClientDatabase db = mClient.getDatabase();
 
+        // determine where we are in time
         long now = System.currentTimeMillis();
         long passed = Math.max(0, now - mNotificationTimestamp);
 
-        // backed-off cancel if we got nothing
+        // cancel present notification if everything has been seen
+        // we back off here to prevent interruption of any in-progress alarms
         if(unseenMessages == null || unseenMessages.isEmpty()) {
-            LOG.info("no unseen messages");
-            long cancelTime = mNotificationTimestamp + 2000;
+            LOG.debug("no unseen messages");
+            long cancelTime = mNotificationTimestamp + TalkConfiguration.NOTIFICATION_CANCEL_BACKOFF;
             long delay = Math.max(0, cancelTime - now);
             mExecutor.schedule(new Runnable() {
                 @Override
@@ -419,27 +421,22 @@ public class TalkClientService extends Service {
             return;
         }
 
-        if(passed < 5000) {
+        // do not sound alarms overly often (sound, vibrate)
+        if(passed < TalkConfiguration.NOTIFICATION_ALARM_BACKOFF) {
             notify = false;
         }
 
+        // we are commited to notifying, update timestamp
         mNotificationTimestamp = now;
 
         // collect conversation contacts and sort messages accordingly
         List<TalkClientContact> contacts = new ArrayList<TalkClientContact>();
         Map<Integer, TalkClientContact> contactsById = new HashMap<Integer, TalkClientContact>();
-        Map<Integer, List<TalkClientMessage>> messagesByContactId = new HashMap<Integer, List<TalkClientMessage>>();
         for(TalkClientMessage message: unseenMessages) {
             TalkClientContact contact = message.getConversationContact();
             int contactId = contact.getClientContactId();
-            List<TalkClientMessage> messageVector;
-            if(contactsById.containsKey(contactId)) {
-                contact = contactsById.get(contactId);
-                messageVector = messagesByContactId.get(contactId);
-            } else {
-                messageVector = new ArrayList<TalkClientMessage>();
+            if(!contactsById.containsKey(contactId)) {
                 contactsById.put(contactId, contact);
-                messagesByContactId.put(contactId, messageVector);
                 contacts.add(contact);
                 try {
                     db.refreshClientContact(contact);
@@ -447,47 +444,54 @@ public class TalkClientService extends Service {
                     LOG.error("sql error", e);
                 }
             }
-            messageVector.add(message);
         }
 
-        LOG.info("found " + unseenMessages.size() + " messages from " + contacts.size() + " contacts");
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-
+        // for easy reference
         int numUnseen = unseenMessages.size();
+        int numContacts = contacts.size();
 
+        // log about what we got
+        LOG.debug("notifying " + numUnseen + " messages from " + numContacts + " contacts");
+
+        // build the notification
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        // always set the small icon (should be different depending on if we have a large one)
         builder.setSmallIcon(R.drawable.ic_launcher);
-
+        // determine if alarms should be sounded
         if(notify) {
             builder.setDefaults(Notification.DEFAULT_ALL);
         }
-
-        //Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
-        //builder.setLargeIcon(largeIcon);
-
+        // fill in content
         if(contacts.size() == 1) {
             TalkClientContact singleContact = contacts.get(0);
+            // title is always the contact name
+            builder.setContentTitle(singleContact.getName());
+            // text depends on number of messages
             if(unseenMessages.size() == 1) {
-                if(singleContact.isGroup()) {
-                    builder.setContentTitle("New message in group " + singleContact.getName());
-                } else {
-                    builder.setContentTitle("New message from " + singleContact.getName());
-                }
+                TalkClientMessage singleMessage = unseenMessages.get(0);
+                builder.setContentText(singleMessage.getText());
             } else {
-                if(singleContact.isGroup()) {
-                    builder.setContentTitle(numUnseen + " new messages in group " + singleContact.getName());
-                } else {
-                    builder.setContentTitle(numUnseen + " new messages from " + singleContact.getName());
-                }
+                builder.setContentText(numUnseen + " new messages");
             }
         } else {
-            builder.setContentTitle(numUnseen + " new messages");
+            // concatenate contact names
+            StringBuilder sb = new StringBuilder();
+            int last = contacts.size() - 1;
+            for(int i = 0; i < contacts.size(); i++) {
+                TalkClientContact contact = contacts.get(i);
+                sb.append(contact.getName());
+                if(i < last) {
+                    sb.append(", ");
+                }
+            }
+            // set fields
+            builder.setContentTitle(sb.toString());
+            builder.setContentText(numUnseen + " new messages");
         }
 
+        // finish up
         Notification notification = builder.build();
-
-        LOG.info("notifying " + notification.toString());
-
+        LOG.info("notification " + notification.toString());
         mNotificationManager.notify(NOTIFICATION_UNSEEN_MESSAGES, notification);
     }
 
