@@ -296,7 +296,7 @@ public class ContactsAdapter extends TalkAdapter {
         }
         TextView unseenView = (TextView) view.findViewById(R.id.contact_unseen_messages);
         if(unseenMessages > 0) {
-            unseenView.setText("(" + unseenMessages + ")");
+            unseenView.setText(" (" + unseenMessages + ")");
             unseenView.setVisibility(View.VISIBLE);
         } else {
             unseenView.setVisibility(View.GONE);
