@@ -52,4 +52,6 @@ interface ITalkClientService {
 
     void requestDownload(int clientDownloadId);
 
+    void markAsSeen(int messageId);
+
 }

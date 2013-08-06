@@ -122,6 +122,12 @@ public class ContactsAdapter extends TalkAdapter {
     }
 
     @Override
+    public void onMessageAdded(int contactId, int messageId) throws RemoteException {
+        LOG.info("onMessageAdded(" + contactId + "," + messageId + ")");
+        reload();
+    }
+
+    @Override
     public int getViewTypeCount() {
         return VIEW_TYPE_COUNT;
     }
@@ -281,6 +287,20 @@ public class ContactsAdapter extends TalkAdapter {
 
         TextView statusView = (TextView) view.findViewById(R.id.contact_status);
         statusView.setText(contact.getStatus());
+
+        long unseenMessages = 0;
+        try {
+            unseenMessages = mDatabase.findUnseenMessageCountByContactId(contact.getClientContactId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        TextView unseenView = (TextView) view.findViewById(R.id.contact_unseen_messages);
+        if(unseenMessages > 0) {
+            unseenView.setText("(" + unseenMessages + ")");
+            unseenView.setVisibility(View.VISIBLE);
+        } else {
+            unseenView.setVisibility(View.GONE);
+        }
 
         Button profileButton = (Button) view.findViewById(R.id.contact_profile_button);
         profileButton.setOnClickListener(new View.OnClickListener() {

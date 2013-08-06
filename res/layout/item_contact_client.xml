@@ -24,6 +24,13 @@
         android:layout_toRightOf="@id/contact_name"/>
 
     <TextView
+        android:id="@+id/contact_unseen_messages"
+        android:text=" (1)"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/contact_connected"/>
+
+    <TextView
         android:id="@+id/contact_status"
         android:text="@string/contact_status"
         android:layout_width="wrap_content"

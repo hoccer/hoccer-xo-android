@@ -153,6 +153,14 @@ public class ConversationAdapter extends TalkAdapter {
     private void updateViewCommon(View view, TalkClientMessage message) {
         TalkClientContact sendingContact = message.getSenderContact();
 
+        if(!message.isSeen()) {
+            try {
+                mActivity.getService().markAsSeen(message.getClientMessageId());
+            } catch (RemoteException e) {
+                LOG.error("remote error", e);
+            }
+        }
+
         try {
             mDatabase.refreshClientContact(sendingContact);
         } catch (SQLException e) {

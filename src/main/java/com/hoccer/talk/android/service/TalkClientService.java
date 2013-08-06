@@ -862,6 +862,15 @@ public class TalkClientService extends Service {
             }
         }
 
+        @Override
+        public void markAsSeen(int clientMessageId) throws RemoteException {
+            LOG.info("[" + mId + "] markAsSeen(" + clientMessageId + ")");
+            try {
+                mClient.markAsSeen(mClient.getDatabase().findClientMessageById(clientMessageId));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
