@@ -121,9 +121,9 @@ public class ConversationAdapter extends TalkAdapter {
             try {
                 mDatabase.refreshClientContact(mContact);
                 mMessages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
-                LOG.info("found " + mMessages.size() + " messages");
+                LOG.debug("found " + mMessages.size() + " messages");
                 for(TalkClientMessage message: mMessages) {
-                    LOG.info("loading related for " + message.getClientMessageId());
+                    LOG.debug("loading related for " + message.getClientMessageId());
                     reloadRelated(message);
                 }
             } catch (SQLException e) {
