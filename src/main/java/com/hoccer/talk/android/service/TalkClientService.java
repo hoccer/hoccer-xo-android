@@ -459,7 +459,6 @@ public class TalkClientService extends Service {
         builder.setSmallIcon(R.drawable.ic_launcher);
 
         if(notify) {
-            LOG.info("configuring vibrate");
             builder.setDefaults(Notification.DEFAULT_ALL);
         }
 
