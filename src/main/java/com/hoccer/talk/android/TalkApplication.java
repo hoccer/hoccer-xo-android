@@ -7,6 +7,9 @@ import android.util.Log;
 
 import android.app.Application;
 import com.hoccer.talk.client.HttpClientWithKeystore;
+import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import org.apache.log4j.*;
 import org.apache.log4j.spi.LoggingEvent;
 
@@ -97,6 +100,13 @@ public class TalkApplication extends Application {
         } catch (Exception e) {
             LOG.error("error initializing SSL keystore", e);
         }
+
+        // configure image loader
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+                .threadPoolSize(2)
+                .memoryCache(new LruMemoryCache(8 * 1024 * 1024))
+                .build();
+        ImageLoader.getInstance().init(config);
 
         // set up data directory
         ensureFilesDirectory();

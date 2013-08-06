@@ -44,7 +44,14 @@
             </exclusion>
           </exclusions>
         </dependency>
-        
+
+        <!-- Universal image loader -->
+        <dependency>
+            <groupId>com.nostra13.universalimageloader</groupId>
+            <artifactId>universal-image-loader</artifactId>
+            <version>1.8.6</version>
+        </dependency>
+
         <!-- Talk client library -->
         <dependency>
           <groupId>hoccer</groupId>
