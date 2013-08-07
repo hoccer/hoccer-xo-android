@@ -456,10 +456,17 @@ public class TalkClientService extends Service {
         // build the notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         // always set the small icon (should be different depending on if we have a large one)
-        builder.setSmallIcon(R.drawable.ic_launcher);
+        builder.setSmallIcon(R.drawable.ic_notification);
+        // large icon XXX
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+        builder.setLargeIcon(largeIcon);
         // determine if alarms should be sounded
         if(notify) {
             builder.setDefaults(Notification.DEFAULT_ALL);
+        }
+        // set total number of messages of more than one
+        if(numUnseen > 1) {
+            builder.setNumber(numUnseen);
         }
         // fill in content
         if(contacts.size() == 1) {
