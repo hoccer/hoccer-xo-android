@@ -157,6 +157,10 @@ public class TalkFragment extends SherlockFragment implements ITalkClientService
     }
 
     @Override
+    public void onDownloadProgress(int contactId, int downloadId) throws RemoteException {
+    }
+
+    @Override
     public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
     }
 }

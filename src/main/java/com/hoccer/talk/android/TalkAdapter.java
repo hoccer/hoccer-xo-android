@@ -111,6 +111,10 @@ public abstract class TalkAdapter extends BaseAdapter implements ITalkClientServ
     }
 
     @Override
+    public void onDownloadProgress(int contactId, int downloadId) throws RemoteException {
+    }
+
+    @Override
     public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
     }
 

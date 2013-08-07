@@ -709,6 +709,18 @@ public class TalkClientService extends Service {
 
         @Override
         public void onDownloadProgress(TalkClientDownload download) {
+            LOG.info("onDownloadProgress(" + download.getClientDownloadId() + ")");
+            checkBinders();
+            int downloadId = download.getClientDownloadId();
+            for(Connection connection: mConnections) {
+                if(connection.hasListener()) {
+                    try {
+                        connection.getListener().onDownloadProgress(0, downloadId); // XXX
+                    } catch (RemoteException e) {
+                        LOG.error("callback error", e);
+                    }
+                }
+            }
         }
 
         @Override

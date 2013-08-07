@@ -32,6 +32,7 @@ interface ITalkClientServiceListener {
 
     void onDownloadAdded(int contactId, int downloadId);
     void onDownloadRemoved(int contactId, int downloadId);
+    void onDownloadProgress(int contactId, int downloadId);
     void onDownloadStateChanged(int contactId, int downloadId, String state);
 
 }
