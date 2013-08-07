@@ -30,6 +30,7 @@ public class ContactsFragment extends TalkFragment implements View.OnClickListen
 
 	ListView mContactList;
     Button mFindContactsButton;
+    Button mScanBarcodeButton;
     Button mCreateGroupButton;
 
     public ContactsFragment() {
@@ -57,6 +58,10 @@ public class ContactsFragment extends TalkFragment implements View.OnClickListen
         // button leading to pairing activity
         mFindContactsButton = (Button)v.findViewById(R.id.contacts_find_contacts_button);
         mFindContactsButton.setOnClickListener(this);
+
+        // button for scanning pairing codes
+        mScanBarcodeButton = (Button)v.findViewById(R.id.contacts_scan_barcode_button);
+        mScanBarcodeButton.setOnClickListener(this);
 
         // button for creating new groups
         mCreateGroupButton = (Button)v.findViewById(R.id.contacts_create_group_button);
@@ -90,6 +95,9 @@ public class ContactsFragment extends TalkFragment implements View.OnClickListen
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
+        }
+        if(v == mScanBarcodeButton) {
+            getTalkActivity().scanBarcode();
         }
     }
 

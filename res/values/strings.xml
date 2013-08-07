@@ -12,6 +12,7 @@
     <!-- fragent contacts -->
 
     <string name="contacts_find_contacts_button">Add new contact</string>
+    <string name="contacts_scan_barcode_button">Scan barcode</string>
     <string name="contacts_create_group_button">Create new group</string>
 
     <!-- fragment messaging -->

@@ -18,6 +18,12 @@
         android:text="@string/contacts_find_contacts_button" />
 
     <Button
+        android:id="@+id/contacts_scan_barcode_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/contacts_scan_barcode_button" />
+
+    <Button
         android:id="@+id/contacts_create_group_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

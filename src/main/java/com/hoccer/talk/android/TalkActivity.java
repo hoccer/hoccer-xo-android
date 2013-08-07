@@ -17,6 +17,8 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.hoccer.talk.android.activity.*;
 import com.hoccer.talk.android.adapter.ContactsAdapter;
 import com.hoccer.talk.android.adapter.ConversationAdapter;
@@ -53,6 +55,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
 
     public final static int REQUEST_SELECT_AVATAR = 23;
     public final static int REQUEST_SELECT_ATTACHMENT = 42;
+    public final static int REQUEST_SCAN_BARCODE = IntentIntegrator.REQUEST_CODE; // XXX dirty
 
     protected Logger LOG = null;
 
@@ -76,10 +79,17 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     /** List of all talk fragments */
     ArrayList<TalkFragment> mTalkFragments = new ArrayList<TalkFragment>();
 
+    /** Client listeners */
     ArrayList<ITalkClientServiceListener> mListeners = new ArrayList<ITalkClientServiceListener>();
 
+    /** Ongoing avatar selection */
     ContentSelection mAvatarSelection = null;
+
+    /** Ongoing attachment selection */
     ContentSelection mAttachmentSelection = null;
+
+    /** ZXing wrapper service */
+    IntentIntegrator mBarcodeService = null;
 
     public TalkActivity() {
         LOG = Logger.getLogger(getClass());
@@ -133,6 +143,9 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
         // get and configure the action bar
         mActionBar = getSupportActionBar();
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+
+        // get the barcode scanning service
+        mBarcodeService = new IntentIntegrator(this);
     }
 
     @Override
@@ -215,6 +228,8 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
         return true;
     }
 
+    private String mBarcodeToken = null;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -227,22 +242,38 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
             if(mAvatarSelection != null) {
                 ContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection, data);
                 if(co != null) {
-                    LOG.info("got content: " + co.getContentUrl());
+                    LOG.info("selected avatar: " + co.getContentUrl());
                     for(TalkFragment fragment: mTalkFragments) {
                         fragment.onAvatarSelected(co);
                     }
                 }
             }
+            return;
         }
+
         if(requestCode == REQUEST_SELECT_ATTACHMENT) {
             ContentObject co = ContentRegistry.get(this).createSelectedAttachment(mAttachmentSelection, data);
             if(co != null) {
-                LOG.info("got content: " + co.getContentUrl());
+                LOG.info("selected attachment: " + co.getContentUrl());
                 for(TalkFragment fragment: mTalkFragments) {
                     fragment.onAttachmentSelected(co);
                 }
             }
+            return;
         }
+
+        if(requestCode == REQUEST_SCAN_BARCODE) {
+            IntentResult barcode = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+            if(barcode != null) {
+                LOG.info("scanned barcode: " + barcode.getContents());
+                String code = barcode.getContents();
+                if(code.startsWith("hxo://")) {
+                    mBarcodeToken = code.replace("hxo://", "");
+                }
+            }
+            return;
+        }
+
     }
 
     /**
@@ -304,10 +335,18 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
             try {
                 mService.wake();
             } catch (RemoteException e) {
-                e.printStackTrace();  // XXX
+                LOG.error("remote error", e);
             }
             for(TalkFragment fragment: mTalkFragments) {
                 fragment.onServiceConnected();
+            }
+            if(mBarcodeToken != null) {
+                try {
+                    mService.pairUsingToken(mBarcodeToken);
+                } catch (RemoteException e) {
+                    LOG.error("remote error", e);
+                }
+                mBarcodeToken = null;
             }
         }
         @Override
@@ -549,6 +588,10 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
 
     public void selectAttachment() {
         mAttachmentSelection = ContentRegistry.get(this).selectAttachment(this, REQUEST_SELECT_ATTACHMENT);
+    }
+
+    public void scanBarcode() {
+        mBarcodeService.initiateScan(IntentIntegrator.QR_CODE_TYPES);
     }
 
 }
