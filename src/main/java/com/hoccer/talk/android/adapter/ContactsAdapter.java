@@ -12,6 +12,7 @@ import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.TalkAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.model.TalkPresence;
 import org.apache.log4j.Logger;
 
@@ -285,14 +286,11 @@ public class ContactsAdapter extends TalkAdapter {
         TextView nameView = (TextView) view.findViewById(R.id.contact_name);
         nameView.setText(contact.getName());
 
-        TextView statusView = (TextView) view.findViewById(R.id.contact_status);
-        statusView.setText(contact.getStatus());
-
         long unseenMessages = 0;
         try {
             unseenMessages = mDatabase.findUnseenMessageCountByContactId(contact.getClientContactId());
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("sql error", e);
         }
         TextView unseenView = (TextView) view.findViewById(R.id.contact_unseen_messages);
         if(unseenMessages > 0) {
@@ -300,6 +298,20 @@ public class ContactsAdapter extends TalkAdapter {
             unseenView.setVisibility(View.VISIBLE);
         } else {
             unseenView.setVisibility(View.GONE);
+        }
+
+        TextView lastMessageText = (TextView) view.findViewById(R.id.contact_last_message);
+        try {
+            TalkClientMessage lastMessage = mDatabase.findLatestMessageByContactId(contact.getClientContactId());
+            if(lastMessage != null) {
+                lastMessageText.setVisibility(View.VISIBLE);
+                lastMessageText.setText(lastMessage.getText());
+            } else {
+                lastMessageText.setVisibility(View.GONE);
+            }
+        } catch (SQLException e) {
+            LOG.error("sql error", e);
+            lastMessageText.setVisibility(View.GONE);
         }
 
         Button profileButton = (Button) view.findViewById(R.id.contact_profile_button);
