@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.RemoteException;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -41,9 +42,9 @@ public class MessagingFragment extends TalkFragment
 	ListView mMessageList;
 
     EditText mTextEdit;
-    Button mSendButton;
-    Button mAttachmentSelectButton;
-    Button mAttachmentClearButton;
+    ImageButton mSendButton;
+    ImageButton mAttachmentSelectButton;
+    ImageButton mAttachmentClearButton;
 
     ContentView mAttachmentView;
     ContentObject mAttachment;
@@ -63,13 +64,13 @@ public class MessagingFragment extends TalkFragment
 
         mTextEdit = (EditText)v.findViewById(R.id.messaging_composer_text);
 
-        mSendButton = (Button)v.findViewById(R.id.messaging_composer_send);
+        mSendButton = (ImageButton)v.findViewById(R.id.messaging_composer_send);
         mSendButton.setOnClickListener(this);
 
-        mAttachmentSelectButton = (Button)v.findViewById(R.id.messaging_composer_attachment_select);
+        mAttachmentSelectButton = (ImageButton)v.findViewById(R.id.messaging_composer_attachment_select);
         mAttachmentSelectButton.setOnClickListener(this);
 
-        mAttachmentClearButton = (Button)v.findViewById(R.id.messaging_composer_attachment_clear);
+        mAttachmentClearButton = (ImageButton)v.findViewById(R.id.messaging_composer_attachment_clear);
         mAttachmentClearButton.setOnClickListener(this);
 
         mAttachmentView = (ContentView)v.findViewById(R.id.messaging_composer_attachment);
@@ -77,24 +78,6 @@ public class MessagingFragment extends TalkFragment
 
 		return v;
 	}
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        LOG.info("onCreateOptionsMenu()");
-        super.onCreateOptionsMenu(menu, inflater);
-
-        SherlockFragmentActivity activity = getSherlockActivity();
-
-        inflater.inflate(R.menu.fragment_messaging, menu);
-
-        SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        if (searchView != null) {
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(activity.getComponentName()));
-            searchView.setIconifiedByDefault(false);
-            searchView.setOnQueryTextListener(this);
-        }
-    }
 
     @Override
     public void onResume() {
@@ -163,6 +146,7 @@ public class MessagingFragment extends TalkFragment
         mAttachment = contentObject;
         mAttachmentView.displayContent(getTalkActivity(), contentObject);
         mAttachmentView.setVisibility(View.VISIBLE);
+        mAttachmentSelectButton.setVisibility(View.GONE);
         mAttachmentClearButton.setVisibility(View.VISIBLE);
     }
 
@@ -170,6 +154,7 @@ public class MessagingFragment extends TalkFragment
         LOG.info("clearAttachment()");
         mAttachmentView.clear();
         mAttachmentView.setVisibility(View.GONE);
+        mAttachmentSelectButton.setVisibility(View.VISIBLE);
         mAttachmentClearButton.setVisibility(View.GONE);
         mAttachment = null;
     }

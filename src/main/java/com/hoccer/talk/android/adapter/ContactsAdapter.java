@@ -5,6 +5,7 @@ import android.os.RemoteException;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.hoccer.talk.android.R;
@@ -314,7 +315,7 @@ public class ContactsAdapter extends TalkAdapter {
             lastMessageText.setVisibility(View.GONE);
         }
 
-        Button profileButton = (Button) view.findViewById(R.id.contact_profile_button);
+        ImageButton profileButton = (ImageButton) view.findViewById(R.id.contact_profile_button);
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -325,7 +326,11 @@ public class ContactsAdapter extends TalkAdapter {
         TalkClientDownload download = contact.getAvatarDownload();
         ImageView iconView = (ImageView) view.findViewById(R.id.contact_icon);
         if(download == null || !download.getState().equals(TalkClientDownload.State.COMPLETE)) {
-            iconView.setImageResource(R.drawable.ic_launcher);
+            if(contact.isGroup()) {
+                iconView.setImageResource(R.drawable.avatar_default_group);
+            } else {
+                iconView.setImageResource(R.drawable.avatar_default_contact);
+            }
         } else {
             File avatarFile = download.getAvatarFile(getAvatarDirectory());
             Drawable drawable = Drawable.createFromPath(avatarFile.toString());

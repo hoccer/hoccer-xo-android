@@ -7,7 +7,7 @@
     
     <com.hoccer.talk.android.views.AspectImageView
         android:id="@+id/contact_icon"
-        android:src="@drawable/ic_launcher"
+        android:src="@drawable/avatar_default_group"
         android:scaleType="centerCrop"
         custom:aspectRatio="1.0"
         android:layout_width="50dp"
@@ -35,9 +35,10 @@
         android:layout_toRightOf="@id/contact_icon"
         android:layout_below="@id/contact_name"/>
 
-    <Button
+    <ImageButton
         android:id="@+id/contact_profile_button"
         android:text="@string/contact_profile_button"
+        android:src="@drawable/ic_social_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"/>

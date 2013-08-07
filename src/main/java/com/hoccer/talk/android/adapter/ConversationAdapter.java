@@ -272,21 +272,22 @@ public class ConversationAdapter extends TalkAdapter {
         }
 
         final ImageView avatar = (ImageView)view.findViewById(R.id.message_avatar);
+        String avatarUrl = "content://" + R.drawable.avatar_default_contact;
         if(sendingContact != null) {
+            if(sendingContact.isGroup()) {
+                avatarUrl = "content://" + R.drawable.avatar_default_group;
+            } else {
+                avatarUrl = "content://" + R.drawable.avatar_default_contact;
+            }
             TalkClientDownload avatarDownload = sendingContact.getAvatarDownload();
             if(avatarDownload != null) {
                 if(avatarDownload.getState().equals(TalkClientDownload.State.COMPLETE)) {
                     File avatarFile = avatarDownload.getAvatarFile(getAvatarDirectory());
-                    loadAvatar(avatar, "file://" + avatarFile.toString());
-                } else {
-                    loadAvatar(avatar, "content://" + R.drawable.ic_launcher);
+                    avatarUrl = "file://" + avatarFile.toString();
                 }
-            } else {
-                loadAvatar(avatar, "content://" + R.drawable.ic_launcher);
             }
-        } else {
-            loadAvatar(avatar, "content://" + R.drawable.ic_launcher);
         }
+        loadAvatar(avatar, avatarUrl);
 
         ContentView contentView = (ContentView)view.findViewById(R.id.message_content);
 

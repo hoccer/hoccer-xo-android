@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -37,7 +36,6 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -189,25 +187,34 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        LOG.info("onCreateOptionsMenu()");
-        getSupportMenuInflater().inflate(R.menu.common, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         LOG.info("onOptionsItemSelected(" + item.toString() + ")");
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 break;
-            case R.id.menu_myprofile:
+            case R.id.menu_my_profile:
                 try {
                     showContactProfile(mDatabase.findSelfContact(false));
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                break;
+            case R.id.menu_pair:
+                showPairing();
+                break;
+            case R.id.menu_new_group:
+                try {
+                    getTalkClientService().createGroup();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case R.id.menu_scan_code:
+                scanBarcode();
+                break;
+            case R.id.menu_show_code:
+                // XXX
                 break;
             case R.id.menu_settings:
                 showPreferences();

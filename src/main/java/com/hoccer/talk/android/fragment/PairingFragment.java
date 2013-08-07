@@ -65,12 +65,6 @@ public class PairingFragment extends TalkFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        LOG.info("onCreateOptionsMenu()");
-        inflater.inflate(R.menu.fragment_pairing, menu);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         LOG.info("onResume()");

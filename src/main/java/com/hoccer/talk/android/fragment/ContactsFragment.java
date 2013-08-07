@@ -24,14 +24,11 @@ import java.sql.SQLException;
  * This currently shows only contact data but should also be able to show
  * recent conversations for use as a "conversations" view.
  */
-public class ContactsFragment extends TalkFragment implements View.OnClickListener {
+public class ContactsFragment extends TalkFragment {
 
 	private static final Logger LOG = Logger.getLogger(ContactsFragment.class);
 
 	ListView mContactList;
-    Button mFindContactsButton;
-    Button mScanBarcodeButton;
-    Button mCreateGroupButton;
 
     public ContactsFragment() {
     }
@@ -55,26 +52,8 @@ public class ContactsFragment extends TalkFragment implements View.OnClickListen
             }
         });
 
-        // button leading to pairing activity
-        mFindContactsButton = (Button)v.findViewById(R.id.contacts_find_contacts_button);
-        mFindContactsButton.setOnClickListener(this);
-
-        // button for scanning pairing codes
-        mScanBarcodeButton = (Button)v.findViewById(R.id.contacts_scan_barcode_button);
-        mScanBarcodeButton.setOnClickListener(this);
-
-        // button for creating new groups
-        mCreateGroupButton = (Button)v.findViewById(R.id.contacts_create_group_button);
-        mCreateGroupButton.setOnClickListener(this);
-
 		return v;
 	}
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        LOG.info("onCreateOptionsMenu()");
-        inflater.inflate(R.menu.fragment_contacts, menu);
-    }
 
 	@Override
 	public void onResume() {
@@ -82,23 +61,6 @@ public class ContactsFragment extends TalkFragment implements View.OnClickListen
         LOG.info("onResume()");
         // do this late so activity has database initialized
         mContactList.setAdapter(getTalkActivity().makeContactListAdapter());
-    }
-
-    @Override
-    public void onClick(View v) {
-        if(v == mFindContactsButton) {
-            getTalkActivity().showPairing();
-        }
-        if(v == mCreateGroupButton) {
-            try {
-                getTalkService().createGroup();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        if(v == mScanBarcodeButton) {
-            getTalkActivity().scanBarcode();
-        }
     }
 
     @Override

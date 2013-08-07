@@ -15,35 +15,49 @@
         android:stackFromBottom="true"/>
 
     <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text="@string/messaging_composer_text"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="@string/messaging_composer_text"/>
     
     <LinearLayout
         android:id="@+id/messaging_composer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <EditText
-                    android:id="@+id/messaging_composer_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:inputType="textShortMessage"
-                    android:hint="@string/messaging_composer_text_hint"/>
+            <ImageButton
+                android:id="@+id/messaging_composer_attachment_select"
+                android:src="@drawable/ic_content_attachment"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
-            <Button
+            <ImageButton
+                android:id="@+id/messaging_composer_attachment_clear"
+                android:src="@drawable/ic_navigation_cancel"
+                android:visibility="gone"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:id="@+id/messaging_composer_text"
+                android:inputType="textShortMessage"
+                android:hint="@string/messaging_composer_text_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <ImageButton
                 android:id="@+id/messaging_composer_send"
-                android:text="@string/messaging_composer_send"
-                android:layout_weight="1"
+                android:src="@drawable/ic_social_send_now"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
@@ -57,26 +71,6 @@
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
-        <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-            <Button
-                    android:id="@+id/messaging_composer_attachment_select"
-                    android:text="@string/messaging_composer_attachment_select"
-                    android:layout_weight="1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            <Button
-                    android:id="@+id/messaging_composer_attachment_clear"
-                    android:text="@string/messaging_composer_attachment_clear"
-                    android:visibility="gone"
-                    android:layout_weight="1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-        </LinearLayout>
-
         
     </LinearLayout>
 

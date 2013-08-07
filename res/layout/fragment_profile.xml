@@ -12,7 +12,7 @@
     android:layout_gravity="center_horizontal"
     custom:aspectRatio="1.0"
     android:scaleType="centerCrop"
-    android:src="@drawable/ic_launcher"
+    android:src="@drawable/avatar_default_contact_large"
     android:id="@+id/profile_avatar_image"/>
 
   <Button
@@ -27,12 +27,6 @@
     android:layout_width="match_parent"
     android:text="@string/profile_name_text"/>
 
-  <TextView
-    android:id="@+id/profile_status_text"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:text="@string/profile_status_text"/>
-
   <EditText
     android:id="@+id/profile_name_edit"
     android:layout_height="wrap_content"
@@ -46,20 +40,6 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:text="@string/profile_name_set_button"/>
-
-  <EditText
-    android:id="@+id/profile_status_edit"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:inputType="text"
-    android:imeOptions="actionDone"
-    android:hint="@string/profile_status_edit"/>
-
-  <Button
-    android:id="@+id/profile_status_set_button"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:text="@string/profile_status_set_button"/>
 
   <TextView
     android:id="@+id/profile_user_block_status"

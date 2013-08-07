@@ -3,19 +3,25 @@
 
     <string name="app_name">Hoccer XO</string>
 
-    <string name="menu_myprofile">My profile</string>
+    <!-- Menu entries -->
+
+    <string name="menu_my_profile">My profile</string>
+    <string name="menu_pair">Pair with someone</string>
+    <string name="menu_new_group">Create group</string>
+    <string name="menu_show_code">Show code</string>
+    <string name="menu_scan_code">Scan code</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
     <string name="menu_reconnect">Reconnect</string>
     <string name="menu_quit">Quit</string>
 
-    <!-- fragent contacts -->
+    <!-- Contacts view -->
 
     <string name="contacts_find_contacts_button">Add new contact</string>
     <string name="contacts_scan_barcode_button">Scan barcode</string>
     <string name="contacts_create_group_button">Create new group</string>
 
-    <!-- fragment messaging -->
+    <!-- Messaging view -->
 
     <string name="messaging_composer_text"></string>
     <string name="messaging_composer_attachment_select">Add attachment</string>
@@ -23,14 +29,14 @@
     <string name="messaging_composer_send">Send</string>
     <string name="messaging_composer_text_hint">message...</string>
 
-    <!-- fragment pairing -->
+    <!-- Pairing view -->
 
     <string name="share_token_id">Give this token to someone:</string>
     <string name="someones_token_code">Or enter a token given to YOU here:</string>
     <string name="pairing_code_hint">tap here to enter code</string>
     <string name="pairing_token_pair">Pair with given token</string>
 
-    <!-- fragement profile -->
+    <!-- Profile view -->
 
     <string name="profile_avatar_set_button">Change my image</string>
     <string name="profile_name_text">Username</string>

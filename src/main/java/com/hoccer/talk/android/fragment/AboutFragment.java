@@ -83,12 +83,6 @@ public class AboutFragment extends TalkFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        LOG.info("onCreateOptionsMenu()");
-        inflater.inflate(R.menu.fragment_about, menu);
-    }
-
-    @Override
     public void onResume() {
         LOG.info("onResume()");
         super.onResume();

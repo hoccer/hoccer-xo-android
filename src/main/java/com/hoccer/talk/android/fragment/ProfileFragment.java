@@ -37,10 +37,6 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     EditText mNameEdit;
     Button   mNameSetButton;
 
-    TextView mStatusText;
-    EditText mStatusEdit;
-    Button   mStatusSetButton;
-
     ImageView mAvatarImage;
     Button    mAvatarSetButton;
 
@@ -82,12 +78,6 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         mNameEdit.setOnEditorActionListener(this);
         mNameSetButton = (Button)v.findViewById(R.id.profile_name_set_button);
         mNameSetButton.setOnClickListener(this);
-        // status
-        mStatusText = (TextView)v.findViewById(R.id.profile_status_text);
-        mStatusEdit = (EditText)v.findViewById(R.id.profile_status_edit);
-        mStatusEdit.setOnEditorActionListener(this);
-        mStatusSetButton = (Button)v.findViewById(R.id.profile_status_set_button);
-        mStatusSetButton.setOnClickListener(this);
         // client operations
         mUserBlockStatus = (TextView)v.findViewById(R.id.profile_user_block_status);
         mUserBlockButton = (Button)v.findViewById(R.id.profile_user_block_button);
@@ -114,20 +104,10 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        LOG.info("onCreateOptionsMenu()");
-        inflater.inflate(R.menu.fragment_profile, menu);
-    }
-
-    @Override
     public void onClick(View v) {
         if(v == mNameSetButton) {
             LOG.info("onClick(nameSetButton)");
             updateName();
-        }
-        if(v == mStatusSetButton) {
-            LOG.info("onClick(statusSetButton)");
-            updateStatus();
         }
         if(v == mUserBlockButton) {
             LOG.info("onClick(userBlockButton)");
@@ -181,13 +161,6 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
                 return true;
             }
         }
-        if(v == mStatusEdit) {
-            if(actionId == EditorInfo.IME_ACTION_DONE) {
-                LOG.info("onEditorAction(nameEdit,IME_ACTION_DONE)");
-                updateName();
-                return true;
-            }
-        }
         return false;
     }
 
@@ -232,7 +205,11 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
             LOG.info("contact " + contact.getClientContactId() + " is self");
         }
 
-        mAvatarImage.setImageResource(R.drawable.ic_launcher);
+        if(contact.isGroup()) {
+            mAvatarImage.setImageResource(R.drawable.avatar_default_group_large);
+        } else {
+            mAvatarImage.setImageResource(R.drawable.avatar_default_contact_large);
+        }
         if(contact.isClient() || contact.isGroup()) {
             TalkClientDownload avatarDownload = contact.getAvatarDownload();
             if(avatarDownload != null) {
@@ -245,8 +222,6 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
                     File avatarFile = avatarDownload.getAvatarFile(getAvatarDirectory());
                     Drawable drawable = Drawable.createFromPath(avatarFile.toString());
                     mAvatarImage.setImageDrawable(drawable);
-                } else {
-                    mAvatarImage.setImageResource(R.drawable.ic_launcher);
                 }
             }
         }
@@ -258,16 +233,6 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         mNameText.setVisibility(canEditName ? View.GONE : View.VISIBLE);
         mNameEdit.setVisibility(canEditName ? View.VISIBLE : View.GONE);
         mNameSetButton.setVisibility(canEditName ? View.VISIBLE : View.GONE);
-        // status
-        int statusTextVisibility = contact.isClient() ? View.VISIBLE : View.GONE;
-        int statusEditVisibility = contact.isSelf() ? View.VISIBLE : View.GONE;
-        if(contact.isGroup()) {
-            statusTextVisibility = View.GONE;
-            statusEditVisibility = View.GONE;
-        }
-        mStatusText.setVisibility(statusTextVisibility);
-        mStatusEdit.setVisibility(statusEditVisibility);
-        mStatusSetButton.setVisibility(statusEditVisibility);
         // client operations
         int clientVisibility = contact.isClient() ? View.VISIBLE : View.GONE;
         int clientRelatedVisibility = contact.isClientRelated() ? View.VISIBLE : View.GONE;
@@ -292,8 +257,6 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
             if(presence != null) {
                 mNameText.setText(presence.getClientName());
                 mNameEdit.setText(presence.getClientName());
-                mStatusText.setText(presence.getClientStatus() + " (" + presence.getConnectionStatus() + ")");
-                mStatusEdit.setText(presence.getClientStatus());
             }
             if(contact.isClient()) {
                 TalkRelationship relationship = contact.getClientRelationship();
@@ -314,17 +277,6 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         try {
             if(mContact.isSelf()) {
                 getTalkService().setClientName(mNameEdit.getText().toString());
-            }
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void updateStatus() {
-        LOG.info("updateStatus()");
-        try {
-            if(mContact.isSelf()) {
-                getTalkService().setClientStatus(mStatusEdit.getText().toString());
             }
         } catch (RemoteException e) {
             e.printStackTrace();

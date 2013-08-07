@@ -1,3 +1,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <item
+        android:id="@+id/menu_pair"
+        android:orderInCategory="220"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_pair"
+        android:icon="@drawable/ic_social_add_person"/>
+
+    <item
+        android:id="@+id/menu_new_group"
+        android:orderInCategory="230"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_new_group"
+        android:icon="@drawable/ic_social_add_group"/>
+
 </menu>
