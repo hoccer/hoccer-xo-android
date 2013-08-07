@@ -103,8 +103,6 @@ public class TalkApplication extends Application {
 
         // configure image loader
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-                .threadPoolSize(2)
-                .memoryCache(new LruMemoryCache(8 * 1024 * 1024))
                 .build();
         ImageLoader.getInstance().init(config);
 
