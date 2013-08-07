@@ -550,34 +550,6 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
         startActivity(new Intent(this, PreferenceActivity.class));
     }
 
-    public class ContactListAdapter extends ArrayAdapter<TalkClientContact> {
-        LayoutInflater mInflater;
-
-        public ContactListAdapter(Context context) {
-            super(context, R.id.contact_name);
-            mInflater = getLayoutInflater();
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View v = convertView;
-
-            if(v == null) {
-                v = mInflater.inflate(R.layout.item_contact, null);
-            }
-
-            TalkClientContact contact = getItem(position);
-
-            TextView nameView = (TextView)v.findViewById(R.id.contact_name);
-            nameView.setText(contact.getName());
-            TextView statusView = (TextView)v.findViewById(R.id.contact_status);
-            statusView.setText(contact.getStatus());
-
-            return v;
-        }
-
-    }
-
     public File getAvatarDirectory() {
         return new File(this.getFilesDir(), "avatars");
     }
