@@ -6,13 +6,13 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
-    <ImageView android:id="@+id/item_appselect_icon"
+    <ImageView android:id="@+id/select_content_icon"
                android:src="@drawable/ic_launcher"
                android:layout_weight="1"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"/>
 
-    <TextView android:id="@+id/item_appselect_text"
+    <TextView android:id="@+id/select_content_text"
               android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
               android:text="App Name"
               android:layout_weight="2"

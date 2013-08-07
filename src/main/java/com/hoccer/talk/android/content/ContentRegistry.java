@@ -95,14 +95,14 @@ public class ContentRegistry {
             }
         }
 
-        SimpleAdapter adapter = new SimpleAdapter(activity, options, R.layout.item_appselect,
+        SimpleAdapter adapter = new SimpleAdapter(activity, options, R.layout.select_content,
                 new String[]{KEY_ICON, KEY_NAME},
-                new int[]{R.id.item_appselect_icon, R.id.item_appselect_text});
+                new int[]{R.id.select_content_icon, R.id.select_content_text});
         adapter.setViewBinder(new SimpleAdapter.ViewBinder() {
             @Override
             public boolean setViewValue(View view, Object data, String textRepresentation) {
                 if (view instanceof ImageView) {
-                    ImageView image = (ImageView)view.findViewById(R.id.item_appselect_icon);
+                    ImageView image = (ImageView)view.findViewById(R.id.select_content_icon);
                     image.setImageDrawable((Drawable)data);
                     return true;
                 }
