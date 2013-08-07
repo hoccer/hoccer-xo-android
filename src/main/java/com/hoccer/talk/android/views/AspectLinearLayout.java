@@ -46,7 +46,6 @@ public class AspectLinearLayout extends LinearLayout {
                 0, 0);
         try {
             mMaxHeight = a.getDimensionPixelSize(R.styleable.AspectLimits_maxHeight, -1);
-            LOG.info("MAXHEIGHT " + mMaxHeight);
         } finally {
             a.recycle();
         }
