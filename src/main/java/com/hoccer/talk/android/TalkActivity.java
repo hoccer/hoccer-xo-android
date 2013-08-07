@@ -218,6 +218,11 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if(data == null) {
+            return;
+        }
+
         if(requestCode == REQUEST_SELECT_AVATAR) {
             if(mAvatarSelection != null) {
                 ContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection, data);
