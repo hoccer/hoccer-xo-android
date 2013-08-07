@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<com.hoccer.talk.android.views.AspectLinearLayout
               xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:custom="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              custom:maxHeight="500dp">
 
     <LinearLayout
             android:id="@+id/content_content"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <ImageView android:src="@drawable/ic_launcher"
-                   android:adjustViewBounds="true"
+        <ImageView
+                   android:src="@drawable/ic_launcher"
+                   android:scaleType="fitCenter"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"/>
     </LinearLayout>
@@ -33,8 +36,13 @@
     <LinearLayout
             android:id="@+id/content_downloading"
             android:visibility="gone"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+        <TextView
+            android:text="@string/content_downloading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <ProgressBar
             android:id="@+id/content_downloading_progress"
             style="@android:style/Widget.ProgressBar.Horizontal"
@@ -53,4 +61,4 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
-</LinearLayout>
+</com.hoccer.talk.android.views.AspectLinearLayout>

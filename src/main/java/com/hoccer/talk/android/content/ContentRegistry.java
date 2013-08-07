@@ -56,10 +56,10 @@ public class ContentRegistry {
         return null;
     }
 
-    public View createViewForContent(Activity activity, ContentObject contentObject) {
+    public View createViewForContent(Activity activity, ContentObject contentObject, ContentView view) {
         ContentViewer viewer = selectViewerForContent(contentObject);
         if(viewer != null) {
-            return viewer.getViewForObject(activity, contentObject);
+            return viewer.getViewForObject(activity, contentObject, view);
         }
         return null;
     }

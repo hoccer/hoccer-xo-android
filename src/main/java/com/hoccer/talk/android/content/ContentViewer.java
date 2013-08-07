@@ -10,6 +10,6 @@ public abstract class ContentViewer {
 
     public abstract boolean canViewObject(ContentObject object);
 
-    public abstract View getViewForObject(Context context, ContentObject object);
+    public abstract View getViewForObject(Context context, ContentObject object, ContentView view);
 
 }

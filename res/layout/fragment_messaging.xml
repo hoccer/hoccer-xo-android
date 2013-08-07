@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
     
     <ListView
         android:id="@+id/messaging_message_list"
@@ -49,8 +51,11 @@
 
         <com.hoccer.talk.android.content.ContentView
             android:id="@+id/messaging_composer_attachment"
-            android:visibility="gone"
-            android:layout_width="match_parent"
+            android:visibility="visible"
+            custom:maxHeight="150dp"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <LinearLayout

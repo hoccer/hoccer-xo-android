@@ -24,7 +24,10 @@ public class ImageSelector extends ContentSelector {
     @Override
     public ContentObject createObjectFromSelectionResult(Context context, Intent intent) {
         Uri selectedContent = intent.getData();
-        String[] filePathColumn = {MediaStore.Images.Media.MIME_TYPE, MediaStore.Images.Media.DATA};
+        String[] filePathColumn = {MediaStore.Images.Media.MIME_TYPE,
+                                   MediaStore.Images.Media.DATA,
+                                   MediaStore.Images.Media.WIDTH,
+                                   MediaStore.Images.Media.HEIGHT};
 
         Cursor cursor = context.getContentResolver().query(
                            selectedContent, filePathColumn, null, null, null);
@@ -34,12 +37,17 @@ public class ImageSelector extends ContentSelector {
         String fileType = cursor.getString(typeIndex);
         int dataIndex = cursor.getColumnIndex(filePathColumn[1]);
         String filePath = cursor.getString(dataIndex);
+        int widthIndex = cursor.getColumnIndex(filePathColumn[2]);
+        int fileWidth = cursor.getInt(widthIndex);
+        int heightIndex = cursor.getColumnIndex(filePathColumn[3]);
+        int fileHeight = cursor.getInt(heightIndex);
 
         ContentObject contentObject = new ContentObject();
         contentObject.setState(ContentObject.State.UPLOAD_SELECTED);
         contentObject.setMediaType("image");
         contentObject.setMimeType(fileType);
         contentObject.setContentUrl(filePath);
+        contentObject.setAspectRatio(((float)fileWidth) / ((float)fileHeight));
 
         cursor.close();
 

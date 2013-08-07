@@ -53,6 +53,12 @@ public class ContentObject {
             co.setState(State.DOWNLOAD_FAILED);
             break;
         }
+        int contentLength = download.getContentLength();
+        if(contentLength != -1) {
+            co.setTransferLength(contentLength);
+            co.setTransferProgress((int)download.getDownloadProgress());
+        }
+        co.setAspectRatio(download.getAspectRatio());
         return co;
     }
 
@@ -71,6 +77,12 @@ public class ContentObject {
     String mMimeType;
 
     String mMediaType;
+
+    double mAspectRatio;
+
+    int mTransferProgress;
+
+    int mTransferLength;
 
     public State getState() {
         return mState;
@@ -104,4 +116,27 @@ public class ContentObject {
         this.mMediaType = mediaType;
     }
 
+    public double getAspectRatio() {
+        return mAspectRatio;
+    }
+
+    public void setAspectRatio(double mAspectRatio) {
+        this.mAspectRatio = mAspectRatio;
+    }
+
+    public int getTransferProgress() {
+        return mTransferProgress;
+    }
+
+    public void setTransferProgress(int mTransferProgress) {
+        this.mTransferProgress = mTransferProgress;
+    }
+
+    public int getTransferLength() {
+        return mTransferLength;
+    }
+
+    public void setTransferLength(int mTransferLength) {
+        this.mTransferLength = mTransferLength;
+    }
 }

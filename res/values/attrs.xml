@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AspectView">
+       <attr name="aspectRatio" format="float"/>
+    </declare-styleable>
+    <declare-styleable name="AspectLimits">
+        <attr name="maxHeight" format="dimension"/>
+    </declare-styleable>
+</resources>

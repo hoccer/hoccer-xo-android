@@ -3,14 +3,15 @@ package com.hoccer.talk.android.content;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import com.hoccer.talk.android.R;
+import com.hoccer.talk.android.views.AspectLinearLayout;
 import org.apache.log4j.Logger;
 
-public class ContentView extends LinearLayout {
+public class ContentView extends AspectLinearLayout {
 
     private static final Logger LOG = Logger.getLogger(ContentView.class);
 
@@ -21,6 +22,8 @@ public class ContentView extends LinearLayout {
     LinearLayout mContentDownloading;
     LinearLayout mContentUnavailable;
     LinearLayout mContentDownload;
+
+    ProgressBar mDownloadingProgress;
 
     public ContentView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -34,6 +37,7 @@ public class ContentView extends LinearLayout {
         mContentDownloading = (LinearLayout)findViewById(R.id.content_downloading);
         mContentDownload = (LinearLayout)findViewById(R.id.content_download);
         mContentUnavailable = (LinearLayout)findViewById(R.id.content_unavailable);
+        mDownloadingProgress = (ProgressBar)findViewById(R.id.content_downloading_progress);
     }
 
     public void displayContent(Activity activity, ContentObject object) {
@@ -45,6 +49,11 @@ public class ContentView extends LinearLayout {
 
         LOG.info("content state " + state.toString());
 
+        if(object.getAspectRatio() != 0.0) {
+            LOG.info("content aspect ratio " + object.getAspectRatio());
+            setAspectRatio(object.getAspectRatio());
+        }
+
         if(state.equals(ContentObject.State.DOWNLOAD_NEW)) {
             mContentDownload.setVisibility(VISIBLE);
         } else {
@@ -54,7 +63,7 @@ public class ContentView extends LinearLayout {
         if(state.equals(ContentObject.State.DOWNLOAD_COMPLETE) || state.equals(ContentObject.State.UPLOAD_SELECTED)) {
             mContent.setVisibility(VISIBLE);
             mContent.removeAllViews();
-            View view = mRegistry.createViewForContent(activity, object);
+            View view = mRegistry.createViewForContent(activity, object, this);
             if(view != null) {
                 LOG.info("adding content view");
                 view.setVisibility(VISIBLE);
@@ -66,6 +75,15 @@ public class ContentView extends LinearLayout {
 
         if(state.equals(ContentObject.State.DOWNLOAD_STARTED)) {
             mContentDownloading.setVisibility(VISIBLE);
+            int length = object.getTransferLength();
+            if(length > 0) {
+                mDownloadingProgress.setIndeterminate(false);
+                mDownloadingProgress.setMax(length);
+                mDownloadingProgress.setProgress(object.getTransferProgress());
+            } else {
+                mDownloadingProgress.setIndeterminate(true);
+            }
+
         } else {
             mContentDownloading.setVisibility(GONE);
         }

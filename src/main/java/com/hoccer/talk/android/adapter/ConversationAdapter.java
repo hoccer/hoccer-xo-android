@@ -77,7 +77,12 @@ public class ConversationAdapter extends TalkAdapter {
     }
 
     @Override
-    public void onDownloadRemoved(int contactId, int downloadId) throws RemoteException {
+    public void onDownloadProgress(int contactId, int downloadId) throws RemoteException {
+        reload();
+    }
+
+    @Override
+    public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
         reload();
     }
 
@@ -113,65 +118,68 @@ public class ConversationAdapter extends TalkAdapter {
     }
 
     private void performReload() {
-        mContacts = new HashMap<Integer, TalkClientContact>();
-        mDownloads = new HashMap<Integer, TalkClientDownload>();
-        if(mContact == null) {
-            mMessages = new ArrayList<TalkClientMessage>();
-        } else {
+
+        if(mContact != null) {
             try {
                 mDatabase.refreshClientContact(mContact);
-                mMessages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
-                LOG.debug("found " + mMessages.size() + " messages");
-                for(TalkClientMessage message: mMessages) {
+                final Map<Integer, TalkClientContact> newContacts = new HashMap<Integer, TalkClientContact>();
+                final Map<Integer, TalkClientDownload> newDownloads = new HashMap<Integer, TalkClientDownload>();
+                final List<TalkClientMessage> newMessages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
+                LOG.debug("found " + newMessages.size() + " messages");
+                for(TalkClientMessage message: newMessages) {
                     LOG.debug("loading related for " + message.getClientMessageId());
-                    reloadRelated(message);
+                    reloadRelated(message, newContacts, newDownloads);
                 }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mContacts = newContacts;
+                        mDownloads = newDownloads;
+                        mMessages = newMessages;
+                        notifyDataSetChanged();
+                    }
+                });
+
             } catch (SQLException e) {
                 LOG.error("sql error", e);
             } catch (Throwable e) {
                 LOG.error("error reloading", e);
             }
         }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                notifyDataSetChanged();
-            }
-        });
     }
 
-    private void reloadRelated(TalkClientMessage message) throws SQLException {
+    private void reloadRelated(TalkClientMessage message, Map<Integer, TalkClientContact> newContacts, Map<Integer, TalkClientDownload> newDownloads) throws SQLException {
         TalkClientContact sender = message.getSenderContact();
         if(sender != null) {
             int contactId = sender.getClientContactId();
-            if(mContacts.containsKey(contactId)) {
-                sender = mContacts.get(contactId);
+            if(newContacts.containsKey(contactId)) {
+                sender = newContacts.get(contactId);
                 message.setSenderContact(sender);
             } else {
                 mDatabase.refreshClientContact(sender);
-                mContacts.put(contactId, sender);
+                newContacts.put(contactId, sender);
             }
             TalkClientDownload avatarDownload = sender.getAvatarDownload();
             if(avatarDownload != null) {
                 int avatarDownloadId = avatarDownload.getClientDownloadId();
-                if(mDownloads.containsKey(avatarDownloadId)) {
-                    avatarDownload = mDownloads.get(avatarDownloadId);
+                if(newDownloads.containsKey(avatarDownloadId)) {
+                    avatarDownload = newDownloads.get(avatarDownloadId);
                     sender.setAvatarDownload(avatarDownload);
                 } else {
                     mDatabase.refreshClientDownload(avatarDownload);
-                    mDownloads.put(avatarDownloadId, avatarDownload);
+                    newDownloads.put(avatarDownloadId, avatarDownload);
                 }
             }
         }
         TalkClientContact conversation = message.getConversationContact();
         if(conversation != null) {
             int contactId = conversation.getClientContactId();
-            if(mContacts.containsKey(contactId)) {
-                conversation = mContacts.get(contactId);
+            if(newContacts.containsKey(contactId)) {
+                conversation = newContacts.get(contactId);
                 message.setConversationContact(conversation);
             } else {
                 mDatabase.refreshClientContact(conversation);
-                mContacts.put(contactId, conversation);
+                newContacts.put(contactId, conversation);
             }
         }
     }
@@ -253,9 +261,14 @@ public class ConversationAdapter extends TalkAdapter {
         TextView text = (TextView)view.findViewById(R.id.message_text);
         String textString = message.getText();
         if(textString == null) {
-            text.setText("Unreadable"); // XXX
+            text.setText("<Unreadable>"); // XXX
         } else {
             text.setText(textString);
+            if(textString.length() > 0) {
+                text.setVisibility(View.VISIBLE);
+            } else {
+                text.setVisibility(View.GONE);
+            }
         }
 
         final ImageView avatar = (ImageView)view.findViewById(R.id.message_avatar);

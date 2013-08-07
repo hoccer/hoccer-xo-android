@@ -76,6 +76,9 @@
     <string name="item_content">Nupf!</string>
 
 
+    <string name="content_downloading">Downloading...</string>
+
+
 
     <string-array name="preference_log_level_names">
       <item>Info</item>

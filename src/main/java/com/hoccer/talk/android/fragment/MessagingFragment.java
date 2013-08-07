@@ -73,6 +73,7 @@ public class MessagingFragment extends TalkFragment
         mAttachmentClearButton.setOnClickListener(this);
 
         mAttachmentView = (ContentView)v.findViewById(R.id.messaging_composer_attachment);
+        mAttachmentView.setVisibility(View.GONE);
 
 		return v;
 	}
