@@ -28,7 +28,7 @@
         android:layout_toRightOf="@id/contact_name"/>
 
     <TextView
-        android:id="@+id/contact_latest_message"
+        android:id="@+id/contact_last_message"
         android:text="Lorem ipsum dolor..."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
