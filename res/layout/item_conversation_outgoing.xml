@@ -24,6 +24,7 @@
         android:id="@+id/message_content"
         android:gravity="center"
         android:layout_width="match_parent"
+        android:layout_toLeftOf="@id/message_avatar"
         android:layout_below="@id/message_text"
         android:layout_height="wrap_content"/>
 

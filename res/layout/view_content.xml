@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <com.hoccer.talk.android.views.AspectLinearLayout
               xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:custom="http://schemas.android.com/apk/res-auto"
@@ -9,28 +8,33 @@
               custom:maxHeight="500dp">
 
     <LinearLayout
-            android:id="@+id/content_content"
+            android:id="@+id/content_download"
             android:orientation="vertical"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <ImageView
-                   android:src="@drawable/ic_launcher"
-                   android:scaleType="fitCenter"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"/>
+        <Button
+                android:id="@+id/content_download_request"
+                android:text="Download"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
-            android:id="@+id/content_download"
+            android:id="@+id/content_uploading"
             android:visibility="gone"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/content_download_request"
-            android:text="Download"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        <TextView
+                android:text="@string/content_uploading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        <ProgressBar
+                android:id="@+id/content_uploading_progress"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
@@ -40,14 +44,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         <TextView
-            android:text="@string/content_downloading"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                android:text="@string/content_downloading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         <ProgressBar
-            android:id="@+id/content_downloading_progress"
-            style="@android:style/Widget.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                android:id="@+id/content_downloading_progress"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
@@ -56,9 +60,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         <TextView
-            android:text="Unavailable"
+                android:text="Unavailable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/content_content"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
+        <ImageView
+                android:src="@drawable/ic_launcher"
+                android:scaleType="fitCenter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
     </LinearLayout>
 
 </com.hoccer.talk.android.views.AspectLinearLayout>
