@@ -7,7 +7,7 @@ import android.util.Log;
 
 import android.app.Application;
 import com.hoccer.talk.client.HttpClientWithKeystore;
-import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
+import com.hoccer.talk.client.model.TalkClientDownload;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import org.apache.log4j.*;
@@ -28,6 +28,8 @@ public class TalkApplication extends Application {
 
     private static File EXTERNAL_STORAGE = null;
 
+    private static File INTERNAL_STORAGE = null;
+
     private static ScheduledExecutorService EXECUTOR = null;
 
     private SharedPreferences mPreferences;
@@ -46,24 +48,56 @@ public class TalkApplication extends Application {
         return EXECUTOR;
     }
 
-    private static File getDataDirectory() {
-        return new File(EXTERNAL_STORAGE, TalkConfiguration.SDCARD_DIRECTORY);
+    private static File getLogDirectory() {
+        return EXTERNAL_STORAGE;
     }
 
-    public static File getFilesDirectory() {
-        return new File(getDataDirectory(), TalkConfiguration.SDCARD_FILES);
+    public static File getAttachmentDirectory() {
+        return new File(EXTERNAL_STORAGE, TalkConfiguration.EXTERNAL_ATTACHMENTS);
     }
 
-    private static File getLogsDirectory() {
-        return new File(getDataDirectory(), TalkConfiguration.SDCARD_LOGS);
+    public static File getEncryptedUploadDirectory() {
+        return new File(INTERNAL_STORAGE, TalkConfiguration.INTERNAL_DOWNLOADS);
     }
+
+    public static File getEncryptedDownloadDirectory() {
+        return new File(INTERNAL_STORAGE, TalkConfiguration.INTERNAL_DOWNLOADS);
+    }
+
+    public static File getAvatarDirectory() {
+        return new File(INTERNAL_STORAGE, TalkConfiguration.INTERNAL_AVATARS);
+    }
+
+    public static File getAvatarLocation(TalkClientDownload download) {
+        if(download.getState() == TalkClientDownload.State.COMPLETE) {
+            String dataFile = download.getDataFile();
+            if(dataFile != null) {
+                return new File(getAvatarDirectory(), dataFile);
+            }
+        }
+        return null;
+    }
+
+    public static File getAttachmentLocation(TalkClientDownload download) {
+        if(download.getState() == TalkClientDownload.State.COMPLETE) {
+            File attachmentDir = getAttachmentDirectory();
+            ensureDirectory(attachmentDir);
+            String dataFile = download.getDataFile();
+            if(dataFile != null) {
+                return new File(attachmentDir, dataFile);
+            }
+        }
+        return null;
+    }
+
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
-        // get external storage root
+        // get storage roots
         EXTERNAL_STORAGE = Environment.getExternalStorageDirectory();
+        INTERNAL_STORAGE = this.getFilesDir();
 
         // initialize logging system
         initLogging();
@@ -106,8 +140,15 @@ public class TalkApplication extends Application {
                 .build();
         ImageLoader.getInstance().init(config);
 
-        // set up data directory
-        ensureFilesDirectory();
+        // set up directories
+        LOG.info("internal storage at " + INTERNAL_STORAGE.toString());
+        LOG.info("external storage at " + EXTERNAL_STORAGE.toString());
+        ensureDirectory(getAvatarDirectory());
+        ensureNomedia(getAvatarDirectory());
+        ensureDirectory(getEncryptedUploadDirectory());
+        ensureNomedia(getEncryptedUploadDirectory());
+        ensureDirectory(getEncryptedDownloadDirectory());
+        ensureNomedia(getEncryptedUploadDirectory());
     }
 
     @Override
@@ -141,7 +182,7 @@ public class TalkApplication extends Application {
 
         // create file appender
         try {
-            File file = new File(getLogsDirectory(), "xo.log");
+            File file = new File(getLogDirectory(), TalkConfiguration.LOG_FILE_NAME);
             mFileAppender = new RollingFileAppender(TalkConfiguration.LOG_FILE_LAYOUT, file.toString());
             mFileAppender.setMaximumFileSize(TalkConfiguration.LOG_FILE_SIZE);
             mFileAppender.setMaxBackupIndex(TalkConfiguration.LOG_FILE_COUNT);
@@ -173,23 +214,25 @@ public class TalkApplication extends Application {
         configureLogSd();
     }
 
-    private void ensureDirectory(File directory) {
+    private static void ensureDirectory(File directory) {
         if(!directory.exists()) {
-            Log.i(TAG, "[storage] creating directory " + directory.toString());
+            LOG.info("creating directory " + directory.toString());
             directory.mkdirs();
         }
     }
 
-    private File ensureLogsDirectory() {
-        File logDirectory = getLogsDirectory();
-        ensureDirectory(logDirectory);
-        return logDirectory;
-    }
-
-    private File ensureFilesDirectory() {
-        File logDirectory = getFilesDirectory();
-        ensureDirectory(logDirectory);
-        return logDirectory;
+    private static void ensureNomedia(File directory) {
+        if(directory.exists()) {
+            File nomedia = new File(directory, ".nomedia");
+            if(!nomedia.exists()) {
+                LOG.info("creating nomedia marker " + nomedia.toString());
+                try {
+                    nomedia.createNewFile();
+                } catch (IOException e) {
+                    LOG.error("error creating " + nomedia.toString(), e);
+                }
+            }
+        }
     }
 
     private void configureLogLevel() {
@@ -203,7 +246,7 @@ public class TalkApplication extends Application {
         boolean enabled = mPreferences.getBoolean("preference_log_sd", false);
         Log.i(TAG, "[logging] " + (enabled ? "enabling" : "disabling") + " logging to SD card");
         if(enabled) {
-            ensureLogsDirectory();
+            ensureDirectory(getLogDirectory());
             mRootLogger.addAppender(mFileAppender);
         } else {
             mRootLogger.removeAppender(mFileAppender);

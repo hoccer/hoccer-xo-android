@@ -5,11 +5,11 @@ import org.apache.log4j.PatternLayout;
 
 public class TalkConfiguration {
 
-    /** SD-card directory for our files */
-    public static final String SDCARD_DIRECTORY = "Hoccer XO";
-    /* SD-card subdirectories */
-    public static final String SDCARD_FILES = "Files";
-    public static final String SDCARD_LOGS = "Logs";
+    public static final String EXTERNAL_ATTACHMENTS = "Hoccer XO";
+
+    public static final String INTERNAL_AVATARS = "avatars";
+    public static final String INTERNAL_DOWNLOADS = "downloads";
+    public static final String INTERNAL_UPLOADS = "uploads";
 
     /** Notification alarm back-off (msecs) */
     public static final long NOTIFICATION_ALARM_BACKOFF = 5000;
@@ -27,6 +27,8 @@ public class TalkConfiguration {
 
     /** The layout for android logcat */
     public static final Layout LOG_LOGCAT_LAYOUT = new PatternLayout("[%t] %-5p %c - %m%n");
+    /** Base name of log files */
+    public static final String LOG_FILE_NAME = "xo.log";
     /** The maximum number of log files to keep */
     public static final int LOG_FILE_COUNT = 10;
     /** The maximum size of each log file */

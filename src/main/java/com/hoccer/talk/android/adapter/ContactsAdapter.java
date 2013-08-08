@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.TalkAdapter;
+import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
@@ -323,18 +324,20 @@ public class ContactsAdapter extends TalkAdapter {
             }
         });
 
-        TalkClientDownload download = contact.getAvatarDownload();
+        TalkClientDownload avatarDownload = contact.getAvatarDownload();
         ImageView iconView = (ImageView) view.findViewById(R.id.contact_icon);
-        if(download == null || !download.getState().equals(TalkClientDownload.State.COMPLETE)) {
+        if(avatarDownload == null || !avatarDownload.getState().equals(TalkClientDownload.State.COMPLETE)) {
             if(contact.isGroup()) {
                 iconView.setImageResource(R.drawable.avatar_default_group);
             } else {
                 iconView.setImageResource(R.drawable.avatar_default_contact);
             }
         } else {
-            File avatarFile = download.getAvatarFile(getAvatarDirectory());
-            Drawable drawable = Drawable.createFromPath(avatarFile.toString());
-            iconView.setImageDrawable(drawable);
+            File avatarFile = TalkApplication.getAvatarLocation(avatarDownload);
+            if(avatarFile != null) {
+                Drawable drawable = Drawable.createFromPath(avatarFile.toString());
+                iconView.setImageDrawable(drawable);
+            }
         }
     }
 

@@ -56,9 +56,6 @@ public class TalkClientService extends Service {
 
     private static final int NOTIFICATION_UNSEEN_MESSAGES = 0;
 
-    public static String HACK_AVATAR_DIRECTORY = "";
-    public static String HACK_ATTACHMENT_DIRECTORY = "";
-
     /** Executor for ourselves and the client */
     ScheduledExecutorService mExecutor;
 
@@ -105,34 +102,11 @@ public class TalkClientService extends Service {
 
         mConnections = new ArrayList<Connection>();
 
-        File avatarsDir = new File(getFilesDir(), "avatars");
-        avatarsDir.mkdirs();
-        HACK_AVATAR_DIRECTORY = avatarsDir.toString();
-        File avatarsNomedia = new File(avatarsDir, ".nomedia");
-        if(!avatarsNomedia.exists()) {
-            try {
-                avatarsNomedia.createNewFile();
-            } catch (IOException e) {
-                LOG.error("could not create nomedia marker", e);
-            }
-        }
-
-        File attachmentDir = new File(getFilesDir(), "attachments");
-        attachmentDir.mkdirs();
-        HACK_ATTACHMENT_DIRECTORY = attachmentDir.toString();
-        File attachmentNomedia = new File(attachmentDir, ".nomedia");
-        if(!attachmentNomedia.exists()) {
-            try {
-                attachmentNomedia.createNewFile();
-            } catch (IOException e) {
-                LOG.error("could not create nomedia marker", e);
-            }
-        }
-
         mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()));
-        mClient.setAvatarDirectory(avatarsDir.toString());
-        mClient.setAttachmentDirectory(attachmentDir.toString());
-        mClient.setFilesDirectory(TalkApplication.getFilesDirectory().toString());
+        mClient.setAvatarDirectory(TalkApplication.getAvatarDirectory().toString());
+        mClient.setAttachmentDirectory(TalkApplication.getAttachmentDirectory().toString());
+        mClient.setEncryptedUploadDirectory(TalkApplication.getEncryptedUploadDirectory().toString());
+        mClient.setEncryptedDownloadDirectory(TalkApplication.getEncryptedDownloadDirectory().toString());
 
         ClientListener clientListener = new ClientListener();
         mClient.registerListener(clientListener);
@@ -745,7 +719,7 @@ public class TalkClientService extends Service {
                 }
             }
             if(download.getType().equals(TalkTransfer.Type.ATTACHMENT)) {
-                String path = download.getAttachmentDecryptedFile(new File(mClient.getFilesDirectory())).toString();
+                String path = TalkApplication.getAttachmentLocation(download).toString();
                 String type = download.getContentType();
                 LOG.info("triggering media scan of " + path);
                 MediaScannerConnection.scanFile(TalkClientService.this, new String[]{path}, new String[]{type},

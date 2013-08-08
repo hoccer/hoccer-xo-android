@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.hoccer.talk.android.R;
+import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkFragment;
 import com.hoccer.talk.android.content.ContentRegistry;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -219,9 +220,11 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
                     LOG.error("SQL error", e);
                 }
                 if(avatarDownload.getState() == TalkClientDownload.State.COMPLETE) {
-                    File avatarFile = avatarDownload.getAvatarFile(getAvatarDirectory());
-                    Drawable drawable = Drawable.createFromPath(avatarFile.toString());
-                    mAvatarImage.setImageDrawable(drawable);
+                    File avatarFile = TalkApplication.getAvatarLocation(avatarDownload);
+                    if(avatarFile != null) {
+                        Drawable drawable = Drawable.createFromPath(avatarFile.toString());
+                        mAvatarImage.setImageDrawable(drawable);
+                    }
                 }
             }
         }

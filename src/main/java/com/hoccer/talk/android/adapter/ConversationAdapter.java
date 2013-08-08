@@ -282,8 +282,10 @@ public class ConversationAdapter extends TalkAdapter {
             TalkClientDownload avatarDownload = sendingContact.getAvatarDownload();
             if(avatarDownload != null) {
                 if(avatarDownload.getState().equals(TalkClientDownload.State.COMPLETE)) {
-                    File avatarFile = avatarDownload.getAvatarFile(getAvatarDirectory());
-                    avatarUrl = "file://" + avatarFile.toString();
+                    File avatarFile = TalkApplication.getAvatarLocation(avatarDownload);
+                    if(avatarFile != null) {
+                        avatarUrl = "file://" + avatarFile.toString();
+                    }
                 }
             }
         }
