@@ -296,6 +296,7 @@ public class ConversationAdapter extends TalkAdapter {
         ContentObject contentObject = null;
         TalkClientUpload attachmentUpload = message.getAttachmentUpload();
         if(attachmentUpload != null) {
+            contentObject = ContentObject.forUpload(attachmentUpload);
         } else {
             TalkClientDownload attachmentDownload = message.getAttachmentDownload();
             if(attachmentDownload != null) {

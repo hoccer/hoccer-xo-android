@@ -43,7 +43,6 @@ public class ImageSelector extends ContentSelector {
         int fileHeight = cursor.getInt(heightIndex);
 
         ContentObject contentObject = new ContentObject();
-        contentObject.setState(ContentObject.State.UPLOAD_SELECTED);
         contentObject.setMediaType("image");
         contentObject.setMimeType(fileType);
         contentObject.setContentUrl(filePath);

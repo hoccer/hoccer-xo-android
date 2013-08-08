@@ -22,8 +22,11 @@ public class ContentView extends AspectLinearLayout {
     LinearLayout mContentDownloading;
     LinearLayout mContentUnavailable;
     LinearLayout mContentDownload;
+    LinearLayout mContentUploading;
 
     ProgressBar mDownloadingProgress;
+    ProgressBar mUploadingProgress;
+
 
     public ContentView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -37,7 +40,9 @@ public class ContentView extends AspectLinearLayout {
         mContentDownloading = (LinearLayout)findViewById(R.id.content_downloading);
         mContentDownload = (LinearLayout)findViewById(R.id.content_download);
         mContentUnavailable = (LinearLayout)findViewById(R.id.content_unavailable);
+        mContentUploading = (LinearLayout)findViewById(R.id.content_uploading);
         mDownloadingProgress = (ProgressBar)findViewById(R.id.content_downloading_progress);
+        mUploadingProgress = (ProgressBar)findViewById(R.id.content_uploading_progress);
     }
 
     public void displayContent(Activity activity, ContentObject object) {
@@ -47,11 +52,10 @@ public class ContentView extends AspectLinearLayout {
 
         ContentObject.State state = object.getState();
 
-        LOG.info("content state " + state.toString());
-
         if(object.getAspectRatio() != 0.0) {
-            LOG.info("content aspect ratio " + object.getAspectRatio());
             setAspectRatio(object.getAspectRatio());
+        } else {
+            setAspectRatio(0.0);
         }
 
         if(state.equals(ContentObject.State.DOWNLOAD_NEW)) {
@@ -60,12 +64,11 @@ public class ContentView extends AspectLinearLayout {
             mContentDownload.setVisibility(GONE);
         }
 
-        if(state.equals(ContentObject.State.DOWNLOAD_COMPLETE) || state.equals(ContentObject.State.UPLOAD_SELECTED)) {
+        if(object.isAvailable()) {
             mContent.setVisibility(VISIBLE);
             mContent.removeAllViews();
             View view = mRegistry.createViewForContent(activity, object, this);
             if(view != null) {
-                LOG.info("adding content view");
                 view.setVisibility(VISIBLE);
                 mContent.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             }
@@ -83,9 +86,22 @@ public class ContentView extends AspectLinearLayout {
             } else {
                 mDownloadingProgress.setIndeterminate(true);
             }
-
         } else {
             mContentDownloading.setVisibility(GONE);
+        }
+
+        if(state.equals(ContentObject.State.UPLOAD_STARTED)) {
+            mContentUploading.setVisibility(VISIBLE);
+            int length = object.getTransferLength();
+            if(length > 0) {
+                mUploadingProgress.setIndeterminate(false);
+                mUploadingProgress.setMax(length);
+                mUploadingProgress.setProgress(object.getTransferProgress());
+            } else {
+                mUploadingProgress.setIndeterminate(true);
+            }
+        } else {
+            mContentUploading.setVisibility(GONE);
         }
 
         if(state.equals(ContentObject.State.DOWNLOAD_FAILED)) {

@@ -27,6 +27,10 @@ interface ITalkClientService {
     /** Set status in client presence */
     void setClientStatus(String newStatus);
 
+    /** Set new avatar */
+    void setClientAvatar(int uploadId);
+
+
     /** Generate a pairing token */
     String generatePairingToken();
     /** Pair using token */

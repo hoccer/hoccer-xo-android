@@ -8,6 +8,7 @@ import android.util.Log;
 import android.app.Application;
 import com.hoccer.talk.client.HttpClientWithKeystore;
 import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import org.apache.log4j.*;
@@ -57,7 +58,7 @@ public class TalkApplication extends Application {
     }
 
     public static File getEncryptedUploadDirectory() {
-        return new File(INTERNAL_STORAGE, TalkConfiguration.INTERNAL_DOWNLOADS);
+        return new File(INTERNAL_STORAGE, TalkConfiguration.INTERNAL_UPLOADS);
     }
 
     public static File getEncryptedDownloadDirectory() {
@@ -78,6 +79,14 @@ public class TalkApplication extends Application {
         return null;
     }
 
+    public static File getAvatarLocation(TalkClientUpload upload) {
+        String dataFile = upload.getDataFile();
+        if(dataFile != null) {
+            return new File(dataFile);
+        }
+        return null;
+    }
+
     public static File getAttachmentLocation(TalkClientDownload download) {
         if(download.getState() == TalkClientDownload.State.COMPLETE) {
             File attachmentDir = getAttachmentDirectory();
@@ -86,6 +95,14 @@ public class TalkApplication extends Application {
             if(dataFile != null) {
                 return new File(attachmentDir, dataFile);
             }
+        }
+        return null;
+    }
+
+    public static File getAttachmentLocation(TalkClientUpload upload) {
+        String dataFile = upload.getDataFile();
+        if(dataFile != null) {
+            return new File(dataFile);
         }
         return null;
     }

@@ -17,11 +17,14 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkFragment;
+import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.content.ContentRegistry;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkRelationship;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -40,6 +43,8 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
 
     ImageView mAvatarImage;
     Button    mAvatarSetButton;
+    ContentObject mAvatarToSet;
+
 
     TextView mUserBlockStatus;
     Button   mUserBlockButton;
@@ -165,22 +170,46 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         return false;
     }
 
-    public void showProfile(TalkClientContact contact) {
-        showProfile(contact, false);
+    @Override
+    public void onAvatarSelected(ContentObject contentObject) {
+        LOG.info("onAvatarSelected(" + contentObject.getContentUrl() + ")");
+        mAvatarToSet = contentObject;
     }
 
-    public void showProfile(TalkClientContact contact, boolean refresh) {
-        LOG.info("showProfile(" + contact.getClientContactId() + ")");
+    @Override
+    public void onServiceConnected() {
+        LOG.info("onServiceConnected()");
 
-        if(refresh) {
-            try {
-                contact = getTalkDatabase().findClientContactById(contact.getClientContactId());
-            } catch (SQLException e) {
-                LOG.error("sql error", e);
-            }
+        final ContentObject newAvatar = mAvatarToSet;
+        mAvatarToSet = null;
+        if(newAvatar != null) {
+            TalkApplication.getExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    LOG.info("creating avatar upload");
+                    TalkClientUpload upload = ContentObject.createAvatarUpload(newAvatar);
+                    try {
+                        LOG.info("saving upload in db");
+                        getTalkDatabase().saveClientUpload(upload);
+                        LOG.info("telling the client");
+                        getTalkService().setClientAvatar(upload.getClientUploadId());
+                    } catch (SQLException e) {
+                        LOG.error("sql error", e);
+                    } catch (RemoteException e) {
+                        LOG.error("remote error", e);
+                    }
+                }
+            });
         }
+    }
 
+    public void showProfile(TalkClientContact contact) {
         mContact = contact;
+        refreshContact();
+    }
+
+    private void update(TalkClientContact contact) {
+        LOG.info("update(" + contact.getClientContactId() + ")");
 
         if(contact.isGroup()) {
             LOG.info("contact " + contact.getClientContactId() + " is group");
@@ -206,10 +235,11 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
             LOG.info("contact " + contact.getClientContactId() + " is self");
         }
 
+        String avatarUrl = null;
         if(contact.isGroup()) {
-            mAvatarImage.setImageResource(R.drawable.avatar_default_group_large);
+            avatarUrl = "content://" + R.drawable.avatar_default_group_large;
         } else {
-            mAvatarImage.setImageResource(R.drawable.avatar_default_contact_large);
+            avatarUrl = "content://" + R.drawable.avatar_default_contact_large;
         }
         if(contact.isClient() || contact.isGroup()) {
             TalkClientDownload avatarDownload = contact.getAvatarDownload();
@@ -221,13 +251,20 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
                 }
                 if(avatarDownload.getState() == TalkClientDownload.State.COMPLETE) {
                     File avatarFile = TalkApplication.getAvatarLocation(avatarDownload);
-                    if(avatarFile != null) {
-                        Drawable drawable = Drawable.createFromPath(avatarFile.toString());
-                        mAvatarImage.setImageDrawable(drawable);
-                    }
+                    avatarUrl = "file://" + avatarFile.toString();
                 }
             }
         }
+        if(contact.isSelf()) {
+            TalkClientUpload avatarUpload = contact.getAvatarUpload();
+            if(avatarUpload != null) {
+                if(avatarUpload.getState() == TalkClientUpload.State.COMPLETE) {
+                    File avatarFile = TalkApplication.getAvatarLocation(avatarUpload);
+                    avatarUrl = "file://" + avatarFile.toString();
+                }
+            }
+        }
+        ImageLoader.getInstance().displayImage(avatarUrl, mAvatarImage);
 
         boolean canEditName = contact.isSelf() || contact.isGroupAdmin();
         // avatar
@@ -278,8 +315,10 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     private void updateName() {
         LOG.info("updateName()");
         try {
-            if(mContact.isSelf()) {
-                getTalkService().setClientName(mNameEdit.getText().toString());
+            if(mContact != null) {
+                if(mContact.isSelf()) {
+                    getTalkService().setClientName(mNameEdit.getText().toString());
+                }
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -314,7 +353,7 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
             try {
                 getTalkService().unblockContact(mContact.getClientContactId());
             } catch (RemoteException e) {
-                e.printStackTrace();
+                LOG.error("sql error", e);
             }
         }
     }
@@ -322,10 +361,29 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     private void refreshContact() {
         LOG.info("refreshContact()");
         if(mContact != null) {
+            LOG.info("updating from db");
+            try {
+                getTalkDatabase().refreshClientContact(mContact);
+                if(mContact.isClient() || mContact.isGroup()) {
+                    TalkClientDownload avatarDownload = mContact.getAvatarDownload();
+                    if(avatarDownload != null) {
+                        getTalkDatabase().refreshClientDownload(avatarDownload);
+                    }
+                }
+                if(mContact.isSelf()) {
+                    TalkClientUpload avatarUpload = mContact.getAvatarUpload();
+                    if(avatarUpload != null) {
+                        getTalkDatabase().refreshClientUpload(avatarUpload);
+                    }
+                }
+            } catch (SQLException e) {
+                LOG.error("SQL error", e);
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    showProfile(mContact, true);
+                    LOG.info("updating ui");
+                    update(mContact);
                 }
             });
         }
@@ -363,4 +421,23 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         }
     }
 
+    @Override
+    public void onUploadStateChanged(int contactId, int uploadId, String state) throws RemoteException {
+        LOG.info("onUploadStateChanged(" + contactId + "," + uploadId + "," + state + ")");
+        if(state == TalkClientUpload.State.COMPLETE.toString()) {
+            if(mContact != null) {
+                refreshContact();
+            }
+        }
+    }
+
+    @Override
+    public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
+        LOG.info("onDownloadStateChanged(" + contactId + "," + downloadId + "," + state + ")");
+        if(state == TalkClientUpload.State.COMPLETE.toString()) {
+            if(mContact != null) {
+                refreshContact();
+            }
+        }
+    }
 }

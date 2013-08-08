@@ -751,18 +751,66 @@ public class TalkClientService extends Service {
 
         @Override
         public void onUploadStarted(TalkClientUpload upload) {
+            LOG.info("onUploadStarted(" + upload.getClientUploadId() + ")");
+            checkBinders();
+            int downloadId = upload.getClientUploadId();
+            for(Connection connection: mConnections) {
+                if(connection.hasListener()) {
+                    try {
+                        connection.getListener().onUploadAdded(0, downloadId); // XXX
+                    } catch (RemoteException e) {
+                        LOG.error("callback error", e);
+                    }
+                }
+            }
         }
 
         @Override
         public void onUploadProgress(TalkClientUpload upload) {
+            LOG.info("onUploadProgress(" + upload.getClientUploadId() + ")");
+            checkBinders();
+            int downloadId = upload.getClientUploadId();
+            for(Connection connection: mConnections) {
+                if(connection.hasListener()) {
+                    try {
+                        connection.getListener().onUploadProgress(0, downloadId); // XXX
+                    } catch (RemoteException e) {
+                        LOG.error("callback error", e);
+                    }
+                }
+            }
         }
 
         @Override
         public void onUploadFinished(TalkClientUpload upload) {
+            LOG.info("onUploadFinished(" + upload.getClientUploadId() + ")");
+            checkBinders();
+            int downloadId = upload.getClientUploadId();
+            for(Connection connection: mConnections) {
+                if(connection.hasListener()) {
+                    try {
+                        connection.getListener().onUploadRemoved(0, downloadId); // XXX
+                    } catch (RemoteException e) {
+                        LOG.error("callback error", e);
+                    }
+                }
+            }
         }
 
         @Override
         public void onUploadStateChanged(TalkClientUpload upload) {
+            LOG.info("onUploadStateChanged(" + upload.getClientUploadId() + ")");
+            checkBinders();
+            int downloadId = upload.getClientUploadId();
+            for(Connection connection: mConnections) {
+                if(connection.hasListener()) {
+                    try {
+                        connection.getListener().onUploadStateChanged(0, downloadId, upload.getState().toString()); // XXX
+                    } catch (RemoteException e) {
+                        LOG.error("callback error", e);
+                    }
+                }
+            }
         }
 
         @Override
@@ -809,6 +857,16 @@ public class TalkClientService extends Service {
         public void setClientStatus(String newStatus) throws RemoteException {
             LOG.info("[" + mId + "] setClientStatus(" + newStatus + ")");
             mClient.setClientString(null, newStatus);
+        }
+
+        @Override
+        public void setClientAvatar(int uploadId) throws RemoteException {
+            LOG.info("[" + mId + "] setClientAvatar(" + uploadId + ")");
+            try {
+                mClient.setClientAvatar(mClient.getDatabase().findClientUploadById(uploadId));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override

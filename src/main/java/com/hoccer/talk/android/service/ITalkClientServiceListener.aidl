@@ -30,6 +30,11 @@ interface ITalkClientServiceListener {
     void onMessageRemoved(int contactId, int messageId);
     void onMessageStateChanged(int contactId, int messageId);
 
+    void onUploadAdded(int contactId, int downloadId);
+    void onUploadRemoved(int contactId, int downloadId);
+    void onUploadProgress(int contactId, int downloadId);
+    void onUploadStateChanged(int contactId, int downloadId, String state);
+
     void onDownloadAdded(int contactId, int downloadId);
     void onDownloadRemoved(int contactId, int downloadId);
     void onDownloadProgress(int contactId, int downloadId);

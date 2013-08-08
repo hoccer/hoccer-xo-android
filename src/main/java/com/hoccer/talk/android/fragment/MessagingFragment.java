@@ -27,6 +27,7 @@ import com.hoccer.talk.android.content.ContentView;
 import com.hoccer.talk.client.TalkClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientMessage;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.model.TalkDelivery;
 import com.hoccer.talk.model.TalkMessage;
 import org.apache.log4j.Logger;
@@ -193,7 +194,16 @@ public class MessagingFragment extends TalkFragment
         clientMessage.setMessage(message);
         clientMessage.setOutgoingDelivery(delivery);
 
+        TalkClientUpload upload = null;
+        if(mAttachment != null) {
+            upload = ContentObject.createAttachmentUpload(mAttachment);
+            clientMessage.setAttachmentUpload(upload);
+        }
+
         try {
+            if(upload != null) {
+                db.saveClientUpload(upload);
+            }
             db.saveMessage(message);
             db.saveDelivery(delivery);
             db.saveClientMessage(clientMessage);

@@ -3,6 +3,7 @@ package com.hoccer.talk.android.content;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.service.TalkClientService;
 import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -21,6 +22,70 @@ import java.io.File;
 public class ContentObject {
 
     private static final Logger LOG = Logger.getLogger(ContentObject.class);
+
+    public static TalkClientUpload createAvatarUpload(ContentObject object) {
+        TalkClientUpload upload = new TalkClientUpload();
+        upload.initializeAsAvatar(object.getContentUrl(), object.getMimeType());
+        return upload;
+    }
+
+    public static TalkClientUpload createAttachmentUpload(ContentObject object) {
+        TalkClientUpload upload = new TalkClientUpload();
+        upload.initializeAsAttachment(object.getContentUrl(), object.getMimeType(), object.getMediaType(), object.getAspectRatio());
+        return upload;
+    }
+
+    public static ContentObject forUpload(TalkClientUpload upload) {
+        LOG.info("content object for upload " + upload.getClientUploadId());
+
+        ContentObject co = new ContentObject();
+        TalkClientUpload.State state = upload.getState();
+        TalkClientUpload.Type type = upload.getType();
+        co.setMimeType(upload.getContentType());
+        co.setMediaType(upload.getMediaType());
+        switch (type) {
+            case AVATAR:
+                File avatarLocation = TalkApplication.getAvatarLocation(upload);
+                if(avatarLocation != null) {
+                    LOG.info("co from avatar " + avatarLocation.toString());
+                    co.setContentUrl(avatarLocation.toString());
+                }
+                break;
+            case ATTACHMENT:
+                File attachmentLocation = TalkApplication.getAttachmentLocation(upload);
+                if(attachmentLocation != null) {
+                    LOG.info("co from attachment " + attachmentLocation.toString());
+                    co.setContentUrl(attachmentLocation.toString());
+                }
+                break;
+        }
+        LOG.info("content " + co.getContentUrl() + " in state " + state);
+        co.setAvailable(true);
+        switch (state) {
+            case NEW:
+                co.setState(State.UPLOAD_NEW);
+                break;
+            case COMPLETE:
+                co.setState(State.UPLOAD_COMPLETE);
+                break;
+            case REGISTERED:
+            case ENCRYPTED:
+            case STARTED:
+                co.setState(State.UPLOAD_STARTED);
+                break;
+            case FAILED:
+            default:
+                co.setState(State.UPLOAD_FAILED);
+                break;
+        }
+        int contentLength = upload.getEncryptedLength();
+        if(contentLength != -1) {
+            co.setTransferLength(contentLength);
+            co.setTransferProgress((int)upload.getProgress());
+        }
+        co.setAspectRatio(upload.getAspectRatio());
+        return co;
+    }
 
     public static ContentObject forDownload(TalkClientDownload download) {
         ContentObject co = new ContentObject();
@@ -50,6 +115,7 @@ public class ContentObject {
             co.setState(State.DOWNLOAD_NEW);
             break;
         case COMPLETE:
+            co.setAvailable(true);
             co.setState(State.DOWNLOAD_COMPLETE);
             break;
         case STARTED:
@@ -72,6 +138,10 @@ public class ContentObject {
 
     public enum State {
         UPLOAD_SELECTED,
+        UPLOAD_NEW,
+        UPLOAD_COMPLETE,
+        UPLOAD_FAILED,
+        UPLOAD_STARTED,
         DOWNLOAD_NEW,
         DOWNLOAD_STARTED,
         DOWNLOAD_FAILED,
@@ -91,6 +161,8 @@ public class ContentObject {
     int mTransferProgress;
 
     int mTransferLength;
+
+    boolean mAvailable;
 
     public State getState() {
         return mState;
@@ -146,5 +218,13 @@ public class ContentObject {
 
     public void setTransferLength(int mTransferLength) {
         this.mTransferLength = mTransferLength;
+    }
+
+    public boolean isAvailable() {
+        return mAvailable;
+    }
+
+    public void setAvailable(boolean mAvailable) {
+        this.mAvailable = mAvailable;
     }
 }

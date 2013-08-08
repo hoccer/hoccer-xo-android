@@ -459,6 +459,30 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
             }
         }
         @Override
+        public void onUploadAdded(int contactId, int downloadId) throws RemoteException {
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onUploadAdded(contactId, downloadId);
+            }
+        }
+        @Override
+        public void onUploadRemoved(int contactId, int downloadId) throws RemoteException {
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onUploadRemoved(contactId, downloadId);
+            }
+        }
+        @Override
+        public void onUploadProgress(int contactId, int downloadId) throws RemoteException {
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onUploadProgress(contactId, downloadId);
+            }
+        }
+        @Override
+        public void onUploadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onUploadStateChanged(contactId, downloadId, state);
+            }
+        }
+        @Override
         public void onDownloadAdded(int contactId, int downloadId) throws RemoteException {
             for(ITalkClientServiceListener listener: mListeners) {
                 listener.onDownloadAdded(contactId, downloadId);

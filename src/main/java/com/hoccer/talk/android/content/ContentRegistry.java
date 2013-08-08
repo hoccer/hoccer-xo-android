@@ -134,7 +134,10 @@ public class ContentRegistry {
     public ContentObject createSelectedAttachment(ContentSelection selection, Intent intent) {
         ContentSelector selector = selection.getSelector();
         if(selector != null) {
-            return selector.createObjectFromSelectionResult(selection.getActivity(), intent);
+            ContentObject object = selector.createObjectFromSelectionResult(selection.getActivity(), intent);
+            object.setState(ContentObject.State.UPLOAD_SELECTED);
+            object.setAvailable(true);
+            return object;
         }
         return null;
     }
