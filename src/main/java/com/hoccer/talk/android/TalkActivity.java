@@ -214,7 +214,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
                 scanBarcode();
                 break;
             case R.id.menu_show_code:
-                // XXX
+                showBarcode();
                 break;
             case R.id.menu_settings:
                 showPreferences();
@@ -571,6 +571,27 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
 
     public void scanBarcode() {
         mBarcodeService.initiateScan(IntentIntegrator.QR_CODE_TYPES);
+    }
+
+    public void showBarcode() {
+        TalkApplication.getExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                final String token;
+                try {
+                    token = getTalkClientService().generatePairingToken();
+                } catch (RemoteException e) {
+                    LOG.error("could not generate token", e);
+                    return;
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBarcodeService.shareText("hxo://" + token);
+                    }
+                });
+            }
+        });
     }
 
 }
