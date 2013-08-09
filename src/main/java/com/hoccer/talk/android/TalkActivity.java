@@ -581,10 +581,6 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
         startActivity(new Intent(this, PreferenceActivity.class));
     }
 
-    public File getAvatarDirectory() {
-        return new File(this.getFilesDir(), "avatars");
-    }
-
     public void selectAvatar() {
         LOG.debug("selectAvatar()");
         mAvatarSelection = ContentRegistry.get(this).selectAvatar(this, REQUEST_SELECT_AVATAR);

@@ -18,8 +18,6 @@ import java.sql.SQLException;
  */
 public class ProfileActivity extends TalkActivity {
 
-    private static final Logger LOG = Logger.getLogger(ProfileActivity.class);
-
     ActionBar mActionBar;
 
     ProfileFragment mFragment;

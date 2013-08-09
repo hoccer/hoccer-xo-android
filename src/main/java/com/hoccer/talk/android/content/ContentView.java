@@ -16,8 +16,6 @@ public class ContentView extends AspectLinearLayout {
 
     private static final Logger LOG = Logger.getLogger(ContentView.class);
 
-    int mMaxHeight = -1;
-
     ContentRegistry mRegistry;
 
     ContentObject mObject;
@@ -37,14 +35,6 @@ public class ContentView extends AspectLinearLayout {
         super(context, attrs);
         mRegistry = ContentRegistry.get(context.getApplicationContext());
         initView(context);
-    }
-
-    public int getMaxHeight() {
-        return mMaxHeight;
-    }
-
-    public void setmMaxHeight(int mMaxHeight) {
-        this.mMaxHeight = mMaxHeight;
     }
 
     private void initView(Context context) {

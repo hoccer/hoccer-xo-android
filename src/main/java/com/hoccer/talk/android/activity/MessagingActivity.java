@@ -76,30 +76,6 @@ public class MessagingActivity extends TalkActivity {
         LOG.debug("converseWithContact(" + contact + ")");
         mActionBar.setTitle(contact.getName());
         mFragment.converseWithContact(contact);
-
-        /*
-        TalkClientDownload download = contact.getAvatarDownload();
-        if(download == null || !download.getState().equals(TalkClientDownload.State.COMPLETE)) {
-            mActionBar.setLogo(R.drawable.ic_launcher);
-        } else {
-            File avatarFile = download.getAvatarFile(getAvatarDirectory());
-            ImageLoader.getInstance().loadImage("file://" + avatarFile,
-                    new SimpleImageLoadingListener() {
-                        @Override
-                        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                            mActionBar.setLogo(new BitmapDrawable(loadedImage)); // XXX apply resources
-                        }
-                        @Override
-                        public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-                            mActionBar.setLogo(R.drawable.ic_launcher);
-                        }
-                        @Override
-                        public void onLoadingCancelled(String imageUri, View view) {
-                            mActionBar.setLogo(R.drawable.ic_launcher);
-                        }
-                    });
-        }
-        */
     }
 
 }
