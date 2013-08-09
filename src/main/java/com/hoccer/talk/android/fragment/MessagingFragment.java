@@ -47,8 +47,9 @@ public class MessagingFragment extends TalkFragment
     TextWatcher mTextWatcher;
 
     ImageButton mSendButton;
+    ImageButton mClearButton;
+
     ImageButton mAttachmentSelectButton;
-    ImageButton mAttachmentClearButton;
 
     ContentView mAttachmentView;
     ContentObject mAttachment;
@@ -86,8 +87,9 @@ public class MessagingFragment extends TalkFragment
         mAttachmentSelectButton = (ImageButton)v.findViewById(R.id.messaging_composer_attachment_select);
         mAttachmentSelectButton.setOnClickListener(this);
 
-        mAttachmentClearButton = (ImageButton)v.findViewById(R.id.messaging_composer_attachment_clear);
-        mAttachmentClearButton.setOnClickListener(this);
+        mClearButton = (ImageButton)v.findViewById(R.id.messaging_composer_clear);
+        mClearButton.setVisibility(View.GONE);
+        mClearButton.setOnClickListener(this);
 
         mAttachmentView = (ContentView)v.findViewById(R.id.messaging_composer_attachment);
         mAttachmentView.setVisibility(View.GONE);
@@ -117,7 +119,9 @@ public class MessagingFragment extends TalkFragment
             }
             @Override
             public void afterTextChanged(Editable s) {
-                mSendButton.setEnabled(isComposed() || s.toString().length() > 0);
+                boolean enable = isComposed() || s.toString().length() > 0;
+                mSendButton.setEnabled(enable);
+                mClearButton.setVisibility(enable ? View.VISIBLE : View.GONE);
             }
         };
         mTextEdit.addTextChangedListener(mTextWatcher);
@@ -143,9 +147,9 @@ public class MessagingFragment extends TalkFragment
             LOG.info("onClick(attachmentSelectButton)");
             getTalkActivity().selectAttachment();
         }
-        if(v == mAttachmentClearButton) {
+        if(v == mClearButton) {
             LOG.info("onClick(attachmentClearButton)");
-            clearAttachment();
+            clearComposedMessage();
         }
     }
 
@@ -183,6 +187,7 @@ public class MessagingFragment extends TalkFragment
         LOG.info("clearComposedMessage()");
         mTextEdit.setText(null);
         mSendButton.setEnabled(false);
+        mClearButton.setVisibility(View.GONE);
         clearAttachment();
     }
 
@@ -192,8 +197,8 @@ public class MessagingFragment extends TalkFragment
         mAttachmentView.displayContent(getTalkActivity(), contentObject);
         mAttachmentView.setVisibility(View.VISIBLE);
         mAttachmentSelectButton.setVisibility(View.GONE);
-        mAttachmentClearButton.setVisibility(View.VISIBLE);
         mSendButton.setEnabled(isComposed());
+        mClearButton.setVisibility(isComposed() ? View.VISIBLE : View.GONE);
     }
 
     private void clearAttachment() {
@@ -201,7 +206,6 @@ public class MessagingFragment extends TalkFragment
         mAttachmentView.clear();
         mAttachmentView.setVisibility(View.GONE);
         mAttachmentSelectButton.setVisibility(View.VISIBLE);
-        mAttachmentClearButton.setVisibility(View.GONE);
         mAttachment = null;
     }
 

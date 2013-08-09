@@ -13,11 +13,6 @@
         android:layout_height="0dp"
         android:transcriptMode="normal"
         android:stackFromBottom="true"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"/>
     
     <LinearLayout
         android:id="@+id/messaging_composer"
@@ -31,16 +26,16 @@
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/messaging_composer_attachment_select"
-                android:src="@drawable/ic_content_attachment"
+                android:id="@+id/messaging_composer_clear"
+                android:src="@drawable/ic_navigation_cancel"
+                android:visibility="gone"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
             <ImageButton
-                android:id="@+id/messaging_composer_attachment_clear"
-                android:src="@drawable/ic_navigation_cancel"
-                android:visibility="gone"
+                android:id="@+id/messaging_composer_attachment_select"
+                android:src="@drawable/ic_content_attachment"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -49,6 +44,7 @@
                 android:id="@+id/messaging_composer_text"
                 android:inputType="textLongMessage"
                 android:hint="@string/messaging_composer_text_hint"
+                android:lines="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
@@ -70,7 +66,7 @@
             android:layout_weight="1"
             android:layout_gravity="center_horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"/>
         
     </LinearLayout>
 
