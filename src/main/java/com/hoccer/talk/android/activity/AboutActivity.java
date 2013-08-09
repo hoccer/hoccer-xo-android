@@ -13,6 +13,7 @@ public class AboutActivity extends TalkActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

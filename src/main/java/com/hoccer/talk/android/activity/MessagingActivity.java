@@ -38,6 +38,7 @@ public class MessagingActivity extends TalkActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
@@ -47,6 +48,7 @@ public class MessagingActivity extends TalkActivity {
 
     @Override
     protected void onResume() {
+        LOG.debug("onResume()");
         super.onResume();
 
         Intent intent = getIntent();
@@ -71,6 +73,7 @@ public class MessagingActivity extends TalkActivity {
     }
 
     public void converseWithContact(TalkClientContact contact) {
+        LOG.debug("converseWithContact(" + contact + ")");
         mActionBar.setTitle(contact.getName());
         mFragment.converseWithContact(contact);
 

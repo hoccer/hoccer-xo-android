@@ -13,7 +13,7 @@ public class ContactsActivity extends TalkActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        LOG.info("onCreateOptionsMenu()");
+        LOG.debug("onCreateOptionsMenu()");
         getSupportMenuInflater().inflate(R.menu.common, menu);
         getSupportMenuInflater().inflate(R.menu.fragment_contacts, menu);
         return true;

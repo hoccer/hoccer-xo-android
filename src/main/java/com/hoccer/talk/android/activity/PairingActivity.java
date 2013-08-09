@@ -21,6 +21,7 @@ public class PairingActivity extends TalkActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

@@ -57,13 +57,13 @@ public class TalkFragment extends SherlockFragment implements ITalkClientService
 
     @Override
     public void onAttach(Activity activity) {
-        LOG.info("onAttach()");
+        LOG.debug("onAttach()");
         super.onAttach(activity);
 
         if(activity instanceof TalkActivity) {
             mActivity = (TalkActivity)activity;
         } else {
-            throw new RuntimeException("Talk fragments need to be in a talk activity");
+            throw new RuntimeException("talk fragments need to be in a talk activity");
         }
 
         mActivity.registerTalkFragment(this);
@@ -71,7 +71,7 @@ public class TalkFragment extends SherlockFragment implements ITalkClientService
 
     @Override
     public void onDetach() {
-        LOG.info("onDetach()");
+        LOG.debug("onDetach()");
         super.onDetach();
 
         if(mActivity != null) {
@@ -79,6 +79,8 @@ public class TalkFragment extends SherlockFragment implements ITalkClientService
             mActivity = null;
         }
     }
+
+
 
     public void onServiceConnected() {
     }

@@ -60,7 +60,7 @@ public class MessagingFragment extends TalkFragment
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		LOG.info("onCreateView()");
+		LOG.debug("onCreateView()");
         super.onCreateView(inflater, container, savedInstanceState);
 
 		View v = inflater.inflate(R.layout.fragment_messaging, container, false);
@@ -99,8 +99,9 @@ public class MessagingFragment extends TalkFragment
 
     @Override
     public void onResume() {
+        LOG.debug("onResume()");
         super.onResume();
-        LOG.info("onResume()");
+
         // do this late so activity has database initialized
         if(mAdapter == null) {
             mAdapter = getTalkActivity().makeConversationAdapter();
@@ -109,6 +110,7 @@ public class MessagingFragment extends TalkFragment
             }
         }
         mMessageList.setAdapter(mAdapter);
+
         // watch message editor
         mTextWatcher = new TextWatcher() {
             @Override
@@ -129,8 +131,10 @@ public class MessagingFragment extends TalkFragment
 
     @Override
     public void onPause() {
+        LOG.debug("onPause()");
         super.onPause();
-        LOG.info("onPause()");
+
+        // unregister text watcher
         if(mTextWatcher != null) {
             mTextEdit.removeTextChangedListener(mTextWatcher);
             mTextWatcher = null;
@@ -140,39 +144,39 @@ public class MessagingFragment extends TalkFragment
     @Override
     public void onClick(View v) {
         if(v == mSendButton) {
-            LOG.info("onClick(sendButton)");
+            LOG.debug("onClick(sendButton)");
             sendComposedMessage();
         }
         if(v == mAttachmentSelectButton) {
-            LOG.info("onClick(attachmentSelectButton)");
+            LOG.debug("onClick(attachmentSelectButton)");
             getTalkActivity().selectAttachment();
         }
         if(v == mClearButton) {
-            LOG.info("onClick(attachmentClearButton)");
+            LOG.debug("onClick(attachmentClearButton)");
             clearComposedMessage();
         }
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        LOG.info("onQueryTextChange(\"" + newText + "\")");
+        LOG.debug("onQueryTextChange(\"" + newText + "\")");
         return true;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        LOG.info("onQueryTextSubmit(\"" + query + "\")");
+        LOG.debug("onQueryTextSubmit(\"" + query + "\")");
         return true;
     }
 
     @Override
     public void onAttachmentSelected(ContentObject contentObject) {
-        LOG.info("onAttachmentSelected(" + contentObject.getContentUrl() + ")");
+        LOG.debug("onAttachmentSelected(" + contentObject.getContentUrl() + ")");
         showAttachment(contentObject);
     }
 
     public void converseWithContact(TalkClientContact contact) {
-        LOG.info("converseWithContact(" + contact.getClientContactId() + ")");
+        LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
         mContact = contact;
         if(mAdapter != null) {
             mAdapter.converseWithContact(contact);
@@ -184,7 +188,7 @@ public class MessagingFragment extends TalkFragment
     }
 
     private void clearComposedMessage() {
-        LOG.info("clearComposedMessage()");
+        LOG.debug("clearComposedMessage()");
         mTextEdit.setText(null);
         mSendButton.setEnabled(false);
         mClearButton.setVisibility(View.GONE);
@@ -192,7 +196,7 @@ public class MessagingFragment extends TalkFragment
     }
 
     private void showAttachment(ContentObject contentObject) {
-        LOG.info("showAttachment(" + contentObject.getContentUrl() + ")");
+        LOG.debug("showAttachment(" + contentObject.getContentUrl() + ")");
         mAttachment = contentObject;
         mAttachmentView.displayContent(getTalkActivity(), contentObject);
         mAttachmentView.setVisibility(View.VISIBLE);
@@ -202,7 +206,7 @@ public class MessagingFragment extends TalkFragment
     }
 
     private void clearAttachment() {
-        LOG.info("clearAttachment()");
+        LOG.debug("clearAttachment()");
         mAttachmentView.clear();
         mAttachmentView.setVisibility(View.GONE);
         mAttachmentSelectButton.setVisibility(View.VISIBLE);

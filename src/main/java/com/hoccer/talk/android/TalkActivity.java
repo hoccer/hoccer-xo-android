@@ -123,8 +123,8 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
-        LOG.info("onCreate()");
 
         // set up database connection
         mDatabase = new TalkClientDatabase(AndroidTalkDatabase.getInstance(this.getApplicationContext()));
@@ -148,8 +148,8 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
 
     @Override
     protected void onResume() {
+        LOG.debug("onResume()");
         super.onResume();
-        LOG.info("onResume()");
 
         // launch a new background executor
         mBackgroundExecutor = TalkApplication.getExecutor();
@@ -163,8 +163,8 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
 
     @Override
     protected void onPause() {
+        LOG.debug("onPause()");
         super.onPause();
-        LOG.info("onPause()");
 
         // stop keeping the service alive
         shutdownKeepAlive();
@@ -182,13 +182,13 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
 
     @Override
     protected void onDestroy() {
+        LOG.debug("onDestroy()");
         super.onDestroy();
-        LOG.info("onDestroy()");
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        LOG.info("onOptionsItemSelected(" + item.toString() + ")");
+        LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
@@ -239,6 +239,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        LOG.debug("onActivityResult(" + requestCode + "," + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
 
         if(data == null) {
@@ -249,7 +250,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
             if(mAvatarSelection != null) {
                 ContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection, data);
                 if(co != null) {
-                    LOG.info("selected avatar: " + co.getContentUrl());
+                    LOG.debug("selected avatar " + co.getContentUrl());
                     for(TalkFragment fragment: mTalkFragments) {
                         fragment.onAvatarSelected(co);
                     }
@@ -261,7 +262,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
         if(requestCode == REQUEST_SELECT_ATTACHMENT) {
             ContentObject co = ContentRegistry.get(this).createSelectedAttachment(mAttachmentSelection, data);
             if(co != null) {
-                LOG.info("selected attachment: " + co.getContentUrl());
+                LOG.debug("selected attachment " + co.getContentUrl());
                 for(TalkFragment fragment: mTalkFragments) {
                     fragment.onAttachmentSelected(co);
                 }
@@ -272,7 +273,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
         if(requestCode == REQUEST_SCAN_BARCODE) {
             IntentResult barcode = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             if(barcode != null) {
-                LOG.info("scanned barcode: " + barcode.getContents());
+                LOG.debug("scanned barcode: " + barcode.getContents());
                 String code = barcode.getContents();
                 if(code.startsWith("hxo://")) {
                     mBarcodeToken = code.replace("hxo://", "");
@@ -323,8 +324,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
             try {
                 mService.setListener(new MainServiceListener());
             } catch (RemoteException e) {
-                // XXX fault
-                e.printStackTrace();
+                LOG.error("remote exception", e);
             }
         }
     }
@@ -335,7 +335,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     public class MainServiceConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            LOG.info("onServiceConnected()");
+            LOG.debug("onServiceConnected()");
             mService = (ITalkClientService)service;
             scheduleKeepAlive();
             attachServiceListener();
@@ -358,7 +358,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
         }
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            LOG.info("onServiceDisconnected()");
+            LOG.debug("onServiceDisconnected()");
             shutdownKeepAlive();
             mService = null;
             for(TalkFragment fragment: mTalkFragments) {
@@ -549,7 +549,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
 
     @Override
     public void showContactProfile(TalkClientContact contact) {
-        LOG.info("showContactProfile(" + contact.getClientContactId() + ")");
+        LOG.debug("showContactProfile(" + contact.getClientContactId() + ")");
         Intent intent = new Intent(this, ProfileActivity.class);
         intent.putExtra("clientContactId", contact.getClientContactId());
         startActivity(intent);
@@ -557,7 +557,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
 
     @Override
     public void showContactConversation(TalkClientContact contact) {
-        LOG.info("showContactConversation(" + contact.getClientContactId() + ")");
+        LOG.debug("showContactConversation(" + contact.getClientContactId() + ")");
         Intent intent = new Intent(this, MessagingActivity.class);
         intent.putExtra("clientContactId", contact.getClientContactId());
         startActivity(intent);
@@ -565,19 +565,19 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
 
     @Override
     public void showPairing() {
-        LOG.info("showPairing()");
+        LOG.debug("showPairing()");
         startActivity(new Intent(this, PairingActivity.class));
     }
 
     @Override
     public void showAbout() {
-        LOG.info("showAbout()");
+        LOG.debug("showAbout()");
         startActivity(new Intent(this, AboutActivity.class));
     }
 
     @Override
     public void showPreferences() {
-        LOG.info("showPreferences()");
+        LOG.debug("showPreferences()");
         startActivity(new Intent(this, PreferenceActivity.class));
     }
 
@@ -586,18 +586,22 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     }
 
     public void selectAvatar() {
+        LOG.debug("selectAvatar()");
         mAvatarSelection = ContentRegistry.get(this).selectAvatar(this, REQUEST_SELECT_AVATAR);
     }
 
     public void selectAttachment() {
+        LOG.debug("selectAttachment()");
         mAttachmentSelection = ContentRegistry.get(this).selectAttachment(this, REQUEST_SELECT_ATTACHMENT);
     }
 
     public void scanBarcode() {
+        LOG.debug("scanBarcode()");
         mBarcodeService.initiateScan(IntentIntegrator.QR_CODE_TYPES);
     }
 
     public void showBarcode() {
+        LOG.debug("showBarcode()");
         TalkApplication.getExecutor().execute(new Runnable() {
             @Override
             public void run() {
