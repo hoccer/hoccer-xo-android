@@ -201,6 +201,7 @@ public class MessagingFragment extends TalkFragment
         }
 
         try {
+            clientMessage.setSenderContact(db.findSelfContact(false));
             if(upload != null) {
                 db.saveClientUpload(upload);
             }
