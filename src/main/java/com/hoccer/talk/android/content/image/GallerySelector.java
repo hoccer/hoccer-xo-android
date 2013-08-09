@@ -45,7 +45,9 @@ public class GallerySelector implements IContentSelector {
         contentObject.setMediaType("image");
         contentObject.setMimeType(fileType);
         contentObject.setContentUrl(filePath);
-        contentObject.setAspectRatio(((float)fileWidth) / ((float)fileHeight));
+        if(fileWidth > 0 && fileHeight > 0) {
+            contentObject.setAspectRatio(((float)fileWidth) / ((float)fileHeight));
+        }
 
         cursor.close();
 

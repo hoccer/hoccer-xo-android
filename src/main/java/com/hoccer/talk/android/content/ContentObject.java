@@ -164,6 +164,10 @@ public class ContentObject {
 
     boolean mAvailable;
 
+    public ContentObject() {
+        mAspectRatio = 1.0;
+    }
+
     public State getState() {
         return mState;
     }
