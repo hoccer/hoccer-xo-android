@@ -43,7 +43,8 @@ public class ImageViewer extends ContentViewer {
         if(contentView.getMaxHeight() >= 0) {
             view.setMaxHeight(contentView.getMaxHeight());
         }
-        view.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        view.setAdjustViewBounds(true);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         ImageLoader.getInstance().displayImage("file://" + object.getContentUrl(), view, new ImageLoadingListener() {
             @Override

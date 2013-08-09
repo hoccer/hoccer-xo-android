@@ -2,6 +2,7 @@ package com.hoccer.talk.android.content;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import org.apache.log4j.Logger;
 public class ContentView extends AspectLinearLayout {
 
     private static final Logger LOG = Logger.getLogger(ContentView.class);
+
+    int mMaxHeight = -1;
 
     ContentRegistry mRegistry;
 
@@ -31,7 +34,16 @@ public class ContentView extends AspectLinearLayout {
     public ContentView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRegistry = ContentRegistry.get(context.getApplicationContext());
+        //applyAttributes(context, attrs);
         initView(context);
+    }
+
+    public int getMaxHeight() {
+        return mMaxHeight;
+    }
+
+    public void setmMaxHeight(int mMaxHeight) {
+        this.mMaxHeight = mMaxHeight;
     }
 
     private void initView(Context context) {
@@ -43,6 +55,19 @@ public class ContentView extends AspectLinearLayout {
         mContentUploading = (LinearLayout)findViewById(R.id.content_uploading);
         mDownloadingProgress = (ProgressBar)findViewById(R.id.content_downloading_progress);
         mUploadingProgress = (ProgressBar)findViewById(R.id.content_uploading_progress);
+    }
+
+    private void applyAttributes(Context context, AttributeSet attrs) {
+        TypedArray a;
+        a = context.getTheme().obtainStyledAttributes(
+                attrs,
+                R.styleable.AspectLimits,
+                0, 0);
+        try {
+            mMaxHeight = a.getDimensionPixelSize(R.styleable.AspectLimits_maxHeight, -1);
+        } finally {
+            a.recycle();
+        }
     }
 
     public void displayContent(Activity activity, ContentObject object) {

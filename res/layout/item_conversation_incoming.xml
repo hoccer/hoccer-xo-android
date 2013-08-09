@@ -24,6 +24,7 @@
     <com.hoccer.talk.android.content.ContentView
         android:id="@+id/message_content"
         android:gravity="center"
+        custom:maxHeight="500dp"
         android:layout_width="match_parent"
         android:layout_toRightOf="@id/message_avatar"
         android:layout_below="@id/message_text"

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.hoccer.talk.android.views.AspectLinearLayout
+<RelativeLayout
               xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:custom="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/content_root"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              custom:maxHeight="500dp">
+              android:layout_height="wrap_content">
 
     <LinearLayout
             android:id="@+id/content_download"
@@ -22,7 +21,7 @@
 
     <LinearLayout
             android:id="@+id/content_uploading"
-            android:visibility="gone"
+            android:visibility="visible"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -77,4 +76,4 @@
                 android:layout_height="wrap_content"/>
     </LinearLayout>
 
-</com.hoccer.talk.android.views.AspectLinearLayout>
+</RelativeLayout>
