@@ -10,9 +10,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.Service;
+import android.app.*;
 import android.content.*;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,6 +24,8 @@ import com.google.android.gcm.GCMRegistrar;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkConfiguration;
+import com.hoccer.talk.android.activity.ContactsActivity;
+import com.hoccer.talk.android.activity.MessagingActivity;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
 import com.hoccer.talk.android.push.TalkPushService;
 import com.hoccer.talk.client.*;
@@ -86,8 +86,6 @@ public class TalkClientService extends Service {
     NotificationManager mNotificationManager;
     /** Time of last notification (for cancellation backoff) */
     long mNotificationTimestamp;
-    /** Future for cancelling the active notification */
-    ScheduledFuture<?> mNotificationCancel;
 
     boolean mGcmSupported;
 
@@ -445,6 +443,14 @@ public class TalkClientService extends Service {
         // fill in content
         if(contacts.size() == 1) {
             TalkClientContact singleContact = contacts.get(0);
+            // create pending intent
+            Intent messagingIntent = new Intent(this, MessagingActivity.class);
+            messagingIntent.putExtra("clientContactId", singleContact.getClientContactId());
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addParentStack(ContactsActivity.class);
+            stackBuilder.addNextIntent(messagingIntent);
+            PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pendingIntent);
             // title is always the contact name
             builder.setContentTitle(singleContact.getName());
             // text depends on number of messages
@@ -455,6 +461,12 @@ public class TalkClientService extends Service {
                 builder.setContentText(numUnseen + " new messages");
             }
         } else {
+            // create pending intent
+            Intent contactsIntent = new Intent(this, ContactsActivity.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addNextIntent(contactsIntent);
+            PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pendingIntent);
             // concatenate contact names
             StringBuilder sb = new StringBuilder();
             int last = contacts.size() - 1;
