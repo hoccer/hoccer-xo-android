@@ -36,7 +36,6 @@ public class ContentView extends AspectLinearLayout {
     public ContentView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRegistry = ContentRegistry.get(context.getApplicationContext());
-        //applyAttributes(context, attrs);
         initView(context);
     }
 
@@ -57,19 +56,6 @@ public class ContentView extends AspectLinearLayout {
         mContentUploading = (LinearLayout)findViewById(R.id.content_uploading);
         mDownloadingProgress = (ProgressBar)findViewById(R.id.content_downloading_progress);
         mUploadingProgress = (ProgressBar)findViewById(R.id.content_uploading_progress);
-    }
-
-    private void applyAttributes(Context context, AttributeSet attrs) {
-        TypedArray a;
-        a = context.getTheme().obtainStyledAttributes(
-                attrs,
-                R.styleable.AspectLimits,
-                0, 0);
-        try {
-            mMaxHeight = a.getDimensionPixelSize(R.styleable.AspectLimits_maxHeight, -1);
-        } finally {
-            a.recycle();
-        }
     }
 
     public void displayContent(Activity activity, ContentObject object) {
