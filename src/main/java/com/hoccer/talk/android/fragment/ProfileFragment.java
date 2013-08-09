@@ -32,8 +32,11 @@ import java.sql.SQLException;
 
 /**
  * Fragment for display and editing of profiles
+ *
+ * TODO relax defensive programming
  */
-public class ProfileFragment extends TalkFragment implements View.OnClickListener, TextView.OnEditorActionListener {
+public class ProfileFragment extends TalkFragment
+        implements View.OnClickListener, TextView.OnEditorActionListener {
 
     private static final Logger LOG = Logger.getLogger(ProfileFragment.class);
 
@@ -42,9 +45,7 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     Button   mNameSetButton;
 
     ImageView mAvatarImage;
-    Button    mAvatarSetButton;
     ContentObject mAvatarToSet;
-
 
     TextView mUserBlockStatus;
     Button   mUserBlockButton;
@@ -76,14 +77,15 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
 
         // avatar
         mAvatarImage = (ImageView)v.findViewById(R.id.profile_avatar_image);
-        mAvatarSetButton = (Button)v.findViewById(R.id.profile_avatar_set_button);
-        mAvatarSetButton.setOnClickListener(this);
+        mAvatarImage.setOnClickListener(this);
+
         // name
         mNameText = (TextView)v.findViewById(R.id.profile_name_text);
         mNameEdit = (EditText)v.findViewById(R.id.profile_name_edit);
         mNameEdit.setOnEditorActionListener(this);
         mNameSetButton = (Button)v.findViewById(R.id.profile_name_set_button);
         mNameSetButton.setOnClickListener(this);
+
         // client operations
         mUserBlockStatus = (TextView)v.findViewById(R.id.profile_user_block_status);
         mUserBlockButton = (Button)v.findViewById(R.id.profile_user_block_button);
@@ -92,6 +94,7 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         mUserDepairButton.setOnClickListener(this);
         mUserDeleteButton = (Button)v.findViewById(R.id.profile_user_delete_button);
         mUserDeleteButton.setOnClickListener(this);
+
         // group operations
         mGroupJoinButton = (Button)v.findViewById(R.id.profile_group_join_button);
         mGroupJoinButton.setOnClickListener(this);
@@ -111,9 +114,17 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
+        if(v == mAvatarImage) {
+            LOG.info("onClick(avatarSetButton)");
+            if(mContact != null && mContact.isSelf()) {
+                getTalkActivity().selectAvatar();
+            }
+        }
         if(v == mNameSetButton) {
             LOG.info("onClick(nameSetButton)");
-            updateName();
+            if(mContact != null && mContact.isSelf()) {
+                updateName();
+            }
         }
         if(v == mUserBlockButton) {
             LOG.info("onClick(userBlockButton)");
@@ -134,7 +145,7 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
                 try {
                     getTalkService().joinGroup(mContact.getClientContactId());
                 } catch (RemoteException e) {
-                    e.printStackTrace();
+                    LOG.error("remote error", e);
                 }
             }
         }
@@ -144,17 +155,15 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
                 try {
                     getTalkService().leaveGroup(mContact.getClientContactId());
                 } catch (RemoteException e) {
-                    e.printStackTrace();
+                    LOG.error("remote error", e);
                 }
             }
         }
         if(v == mUserDepairButton) {
             LOG.info("onClick(userDepairButton)");
-            depairContact();
-        }
-        if(v == mAvatarSetButton) {
-            LOG.info("onClick(avatarSetButton)");
-            getTalkActivity().selectAvatar();
+            if(mContact != null) {
+                depairContact();
+            }
         }
     }
 
@@ -204,36 +213,15 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     }
 
     public void showProfile(TalkClientContact contact) {
+        if(contact != null) {
+            LOG.info("showProfile(" + contact.getClientContactId() + ")");
+        }
         mContact = contact;
         refreshContact();
     }
 
     private void update(TalkClientContact contact) {
         LOG.info("update(" + contact.getClientContactId() + ")");
-
-        if(contact.isGroup()) {
-            LOG.info("contact " + contact.getClientContactId() + " is group");
-            if(contact.isGroupRegistered()) {
-                LOG.info("contact " + contact.getClientContactId() + " group registered as " + contact.getGroupId());
-            } else {
-                LOG.info("contact " + contact.getClientContactId() + " is unregistered");
-            }
-            if(contact.isGroupJoined()) {
-                LOG.info("contact " + contact.getClientContactId() + " is joined");
-            }
-            if(contact.isGroupAdmin()) {
-                LOG.info("contact " + contact.getClientContactId() + " is admin");
-            }
-            if(contact.isGroupInvited()) {
-                LOG.info("contact " + contact.getClientContactId() + " is invited");
-            }
-        }
-        if(contact.isClient()) {
-            LOG.info("contact " + contact.getClientContactId() + " is client " + contact.getClientId());
-        }
-        if(contact.isSelf()) {
-            LOG.info("contact " + contact.getClientContactId() + " is self");
-        }
 
         String avatarUrl = null;
         if(contact.isGroup()) {
@@ -244,11 +232,6 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         if(contact.isClient() || contact.isGroup()) {
             TalkClientDownload avatarDownload = contact.getAvatarDownload();
             if(avatarDownload != null) {
-                try {
-                    getTalkDatabase().refreshClientDownload(avatarDownload);
-                } catch (SQLException e) {
-                    LOG.error("SQL error", e);
-                }
                 if(avatarDownload.getState() == TalkClientDownload.State.COMPLETE) {
                     File avatarFile = TalkApplication.getAvatarLocation(avatarDownload);
                     avatarUrl = "file://" + avatarFile.toString();
@@ -267,8 +250,6 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
         ImageLoader.getInstance().displayImage(avatarUrl, mAvatarImage);
 
         boolean canEditName = contact.isSelf() || contact.isGroupAdmin();
-        // avatar
-        mAvatarSetButton.setVisibility(canEditName ? View.VISIBLE : View.GONE);
         // name
         mNameText.setVisibility(canEditName ? View.GONE : View.VISIBLE);
         mNameEdit.setVisibility(canEditName ? View.VISIBLE : View.GONE);
@@ -315,10 +296,8 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
     private void updateName() {
         LOG.info("updateName()");
         try {
-            if(mContact != null) {
-                if(mContact.isSelf()) {
-                    getTalkService().setClientName(mNameEdit.getText().toString());
-                }
+            if(mContact != null && mContact.isSelf()) {
+                getTalkService().setClientName(mNameEdit.getText().toString());
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -440,4 +419,5 @@ public class ProfileFragment extends TalkFragment implements View.OnClickListene
             }
         }
     }
+
 }

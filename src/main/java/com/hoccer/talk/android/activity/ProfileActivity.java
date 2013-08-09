@@ -9,14 +9,19 @@ import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.fragment.MessagingFragment;
 import com.hoccer.talk.android.fragment.ProfileFragment;
 import com.hoccer.talk.client.model.TalkClientContact;
+import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
 
+/**
+ * Activity wrapping a profile fragment
+ */
 public class ProfileActivity extends TalkActivity {
+
+    private static final Logger LOG = Logger.getLogger(ProfileActivity.class);
 
     ActionBar mActionBar;
 
-    FragmentManager mFragmentManager;
     ProfileFragment mFragment;
 
     @Override
@@ -26,39 +31,37 @@ public class ProfileActivity extends TalkActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
+
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
-        mFragmentManager = getSupportFragmentManager();
-        mFragment = (ProfileFragment)mFragmentManager.findFragmentById(R.id.activity_profile_fragment);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        mFragment = (ProfileFragment)fragmentManager.findFragmentById(R.id.activity_profile_fragment);
     }
 
     @Override
     protected void onResume() {
+        LOG.debug("onResume()");
         super.onResume();
 
         Intent intent = getIntent();
         if(intent != null && intent.hasExtra("clientContactId")) {
             int contactId = intent.getIntExtra("clientContactId", -1);
-            if(contactId == -1) {
-                LOG.error("Invalid ccid");
-                return;
-            }
             try {
                 TalkClientContact contact = getTalkClientDatabase().findClientContactById(contactId);
                 if(contact != null) {
                     showProfile(contact);
                 }
             } catch (SQLException e) {
-                LOG.error("NO EXTRA", e);
+                LOG.error("sql error", e);
             }
-
-        } else {
-            LOG.info("NO EXTRA");
         }
     }
 
     public void showProfile(TalkClientContact contact) {
+        LOG.debug("showProfile(" + contact.getClientContactId() + ")");
         mActionBar.setTitle(contact.getName());
         mFragment.showProfile(contact);
     }
