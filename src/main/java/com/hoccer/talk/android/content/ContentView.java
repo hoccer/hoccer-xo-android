@@ -20,7 +20,9 @@ public class ContentView extends AspectLinearLayout {
 
     ContentRegistry mRegistry;
 
-    LinearLayout mContent;
+    ContentObject mObject;
+
+    LinearLayout mContentWrapper;
 
     LinearLayout mContentDownloading;
     LinearLayout mContentUnavailable;
@@ -48,7 +50,7 @@ public class ContentView extends AspectLinearLayout {
 
     private void initView(Context context) {
         addView(inflate(context, R.layout.view_content, null));
-        mContent = (LinearLayout)findViewById(R.id.content_content);
+        mContentWrapper = (LinearLayout)findViewById(R.id.content_content);
         mContentDownloading = (LinearLayout)findViewById(R.id.content_downloading);
         mContentDownload = (LinearLayout)findViewById(R.id.content_download);
         mContentUnavailable = (LinearLayout)findViewById(R.id.content_unavailable);
@@ -75,6 +77,23 @@ public class ContentView extends AspectLinearLayout {
             LOG.info("displayContent(" + object.getContentUrl() + ")");
         }
 
+        boolean changed = true;
+        if(mObject != null) {
+            String oldUrl = mObject.getContentUrl();
+            String newUrl = object.getContentUrl();
+            if(oldUrl != null && newUrl != null) {
+                if(oldUrl.equals(newUrl)) {
+                    changed = false;
+                }
+            }
+        }
+
+        if(changed) {
+            mContentWrapper.removeAllViews();
+        }
+
+        mObject = object;
+
         ContentObject.State state = object.getState();
 
         if(object.getAspectRatio() != 0.0) {
@@ -90,15 +109,16 @@ public class ContentView extends AspectLinearLayout {
         }
 
         if(object.isAvailable()) {
-            mContent.setVisibility(VISIBLE);
-            mContent.removeAllViews();
-            View view = mRegistry.createViewForContent(activity, object, this);
-            if(view != null) {
-                view.setVisibility(VISIBLE);
-                mContent.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            mContentWrapper.setVisibility(VISIBLE);
+            if(changed || mContentWrapper.getChildCount() == 0) {
+                View view = mRegistry.createViewForContent(activity, object, this);
+                if(view != null) {
+                    view.setVisibility(VISIBLE);
+                    mContentWrapper.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                }
             }
         } else {
-            mContent.setVisibility(GONE);
+            mContentWrapper.setVisibility(GONE);
         }
 
         if(state.equals(ContentObject.State.DOWNLOAD_STARTED)) {
@@ -137,7 +157,7 @@ public class ContentView extends AspectLinearLayout {
     }
 
     public void clear() {
-        mContent.removeAllViews();
+        mContentWrapper.removeAllViews();
     }
 
 }
