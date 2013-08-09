@@ -87,6 +87,16 @@ public class ConversationAdapter extends TalkAdapter {
     }
 
     @Override
+    public void onUploadProgress(int contactId, int downloadId) throws RemoteException {
+        reload();
+    }
+
+    @Override
+    public void onUploadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
+        reload();
+    }
+
+    @Override
     public void reload() {
         ScheduledExecutorService executor = TalkApplication.getExecutor();
         long now = System.currentTimeMillis();
@@ -159,15 +169,23 @@ public class ConversationAdapter extends TalkAdapter {
                 mDatabase.refreshClientContact(sender);
                 newContacts.put(contactId, sender);
             }
-            TalkClientDownload avatarDownload = sender.getAvatarDownload();
-            if(avatarDownload != null) {
-                int avatarDownloadId = avatarDownload.getClientDownloadId();
-                if(newDownloads.containsKey(avatarDownloadId)) {
-                    avatarDownload = newDownloads.get(avatarDownloadId);
-                    sender.setAvatarDownload(avatarDownload);
-                } else {
-                    mDatabase.refreshClientDownload(avatarDownload);
-                    newDownloads.put(avatarDownloadId, avatarDownload);
+            if(sender.isClient() || sender.isGroup()) {
+                TalkClientDownload avatarDownload = sender.getAvatarDownload();
+                if(avatarDownload != null) {
+                    int avatarDownloadId = avatarDownload.getClientDownloadId();
+                    if(newDownloads.containsKey(avatarDownloadId)) {
+                        avatarDownload = newDownloads.get(avatarDownloadId);
+                        sender.setAvatarDownload(avatarDownload);
+                    } else {
+                        mDatabase.refreshClientDownload(avatarDownload);
+                        newDownloads.put(avatarDownloadId, avatarDownload);
+                    }
+                }
+            }
+            if(sender.isSelf()) {
+                TalkClientUpload avatarUpload = sender.getAvatarUpload();
+                if(avatarUpload != null) {
+                    mDatabase.refreshClientUpload(avatarUpload);
                 }
             }
         }
@@ -279,12 +297,25 @@ public class ConversationAdapter extends TalkAdapter {
             } else {
                 avatarUrl = "content://" + R.drawable.avatar_default_contact;
             }
-            TalkClientDownload avatarDownload = sendingContact.getAvatarDownload();
-            if(avatarDownload != null) {
-                if(avatarDownload.getState().equals(TalkClientDownload.State.COMPLETE)) {
-                    File avatarFile = TalkApplication.getAvatarLocation(avatarDownload);
-                    if(avatarFile != null) {
-                        avatarUrl = "file://" + avatarFile.toString();
+            if(sendingContact.isGroup() || sendingContact.isClient()) {
+                TalkClientDownload avatarDownload = sendingContact.getAvatarDownload();
+                if(avatarDownload != null) {
+                    if(avatarDownload.getState().equals(TalkClientDownload.State.COMPLETE)) {
+                        File avatarFile = TalkApplication.getAvatarLocation(avatarDownload);
+                        if(avatarFile != null) {
+                            avatarUrl = "file://" + avatarFile.toString();
+                        }
+                    }
+                }
+            }
+            if(sendingContact.isSelf()) {
+                TalkClientUpload avatarUpload = sendingContact.getAvatarUpload();
+                if(avatarUpload != null) {
+                    if(avatarUpload.getState().equals(TalkClientUpload.State.COMPLETE)) {
+                        File avatarFile = TalkApplication.getAvatarLocation(avatarUpload);
+                        if(avatarFile != null) {
+                            avatarUrl = "file://" + avatarFile.toString();
+                        }
                     }
                 }
             }
