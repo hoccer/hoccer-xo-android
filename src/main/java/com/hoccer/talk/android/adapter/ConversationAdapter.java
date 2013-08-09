@@ -101,8 +101,8 @@ public class ConversationAdapter extends TalkAdapter {
         ScheduledExecutorService executor = TalkApplication.getExecutor();
         long now = System.currentTimeMillis();
         long since = now - mLastReload;
-        if(since < 1000) {
-            long delay = Math.max(0, (mLastReload + 1000) - now);
+        if(since < 200) {
+            long delay = Math.max(0, (mLastReload + 200) - now);
             if(mReloadFuture != null) {
                 mReloadFuture.cancel(false);
             }
@@ -135,9 +135,7 @@ public class ConversationAdapter extends TalkAdapter {
                 final Map<Integer, TalkClientContact> newContacts = new HashMap<Integer, TalkClientContact>();
                 final Map<Integer, TalkClientDownload> newDownloads = new HashMap<Integer, TalkClientDownload>();
                 final List<TalkClientMessage> newMessages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
-                LOG.debug("found " + newMessages.size() + " messages");
                 for(TalkClientMessage message: newMessages) {
-                    LOG.debug("loading related for " + message.getClientMessageId());
                     reloadRelated(message, newContacts, newDownloads);
                 }
                 runOnUiThread(new Runnable() {

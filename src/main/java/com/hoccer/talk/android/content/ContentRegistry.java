@@ -11,8 +11,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import com.hoccer.talk.android.R;
-import com.hoccer.talk.android.content.audio.AudioSelector;
-import com.hoccer.talk.android.content.image.ImageSelector;
+import com.hoccer.talk.android.content.audio.MusicSelector;
+import com.hoccer.talk.android.content.audio.AudioViewer;
+import com.hoccer.talk.android.content.image.GallerySelector;
 import com.hoccer.talk.android.content.image.ImageViewer;
 import com.hoccer.talk.android.util.IntentHelper;
 import org.apache.log4j.Logger;
@@ -37,18 +38,18 @@ public class ContentRegistry {
 
     Context mContext;
 
-    ContentSelector mAvatarSelector;
+    IContentSelector mAvatarSelector;
 
-    List<ContentSelector> mSelectors = new ArrayList<ContentSelector>();
-    List<ContentViewer>   mViewers = new ArrayList<ContentViewer>();
+    List<IContentSelector> mSelectors = new ArrayList<IContentSelector>();
+    List<IContentViewer>   mViewers = new ArrayList<IContentViewer>();
 
     public ContentRegistry(Context context) {
         mContext = context;
         initialize();
     }
 
-    public ContentViewer selectViewerForContent(ContentObject contentObject) {
-        for(ContentViewer viewer: mViewers) {
+    public IContentViewer selectViewerForContent(ContentObject contentObject) {
+        for(IContentViewer viewer: mViewers) {
             if(viewer.canViewObject(contentObject)) {
                 return viewer;
             }
@@ -57,7 +58,7 @@ public class ContentRegistry {
     }
 
     public View createViewForContent(Activity activity, ContentObject contentObject, ContentView view) {
-        ContentViewer viewer = selectViewerForContent(contentObject);
+        IContentViewer viewer = selectViewerForContent(contentObject);
         if(viewer != null) {
             return viewer.getViewForObject(activity, contentObject, view);
         }
@@ -83,7 +84,7 @@ public class ContentRegistry {
     public ContentSelection selectAttachment(final Activity activity, final int requestCode) {
 
         final List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
-        for(ContentSelector selector: mSelectors) {
+        for(IContentSelector selector: mSelectors) {
             Intent selectionIntent = selector.createSelectionIntent(activity);
             if(IntentHelper.isIntentResolvable(selectionIntent, activity)) {
                 Map<String, Object> fields = new HashMap<String, Object>();
@@ -117,7 +118,7 @@ public class ContentRegistry {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Map<String, Object> sel = options.get(which);
-                ContentSelector selector = (ContentSelector)sel.get(KEY_SELECTOR);
+                IContentSelector selector = (IContentSelector)sel.get(KEY_SELECTOR);
                 cs.setSelector(selector);
                 Intent intent = (Intent)sel.get(KEY_INTENT);
                 activity.startActivityForResult(intent, requestCode);
@@ -132,7 +133,7 @@ public class ContentRegistry {
     }
 
     public ContentObject createSelectedAttachment(ContentSelection selection, Intent intent) {
-        ContentSelector selector = selection.getSelector();
+        IContentSelector selector = selection.getSelector();
         if(selector != null) {
             ContentObject object = selector.createObjectFromSelectionResult(selection.getActivity(), intent);
             object.setState(ContentObject.State.UPLOAD_SELECTED);
@@ -143,12 +144,15 @@ public class ContentRegistry {
     }
 
     private void initialize() {
-        mAvatarSelector = new ImageSelector();
+        mAvatarSelector = new GallerySelector();
 
-        mSelectors.add(new ImageSelector());
-        mSelectors.add(new AudioSelector());
+        mSelectors.add(new GallerySelector());
+        mSelectors.add(new MusicSelector());
+        //mSelectors.add(new CameraSelector());
+        //mSelectors.add(new RingtoneSelector());
 
         mViewers.add(new ImageViewer());
+        mViewers.add(new AudioViewer());
     }
 
 }

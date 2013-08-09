@@ -6,9 +6,11 @@ import java.util.UUID;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.RemoteException;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.widget.*;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -20,7 +22,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import com.hoccer.talk.android.adapter.ConversationAdapter;
 import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.content.ContentView;
@@ -43,6 +44,8 @@ public class MessagingFragment extends TalkFragment
 	ListView mMessageList;
 
     EditText mTextEdit;
+    TextWatcher mTextWatcher;
+
     ImageButton mSendButton;
     ImageButton mAttachmentSelectButton;
     ImageButton mAttachmentClearButton;
@@ -64,8 +67,20 @@ public class MessagingFragment extends TalkFragment
 		mMessageList = (ListView)v.findViewById(R.id.messaging_message_list);
 
         mTextEdit = (EditText)v.findViewById(R.id.messaging_composer_text);
+        mTextEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_DONE) {
+                    if(isComposed()) {
+                        sendComposedMessage();
+                    }
+                }
+                return false;
+            }
+        });
 
         mSendButton = (ImageButton)v.findViewById(R.id.messaging_composer_send);
+        mSendButton.setEnabled(false);
         mSendButton.setOnClickListener(this);
 
         mAttachmentSelectButton = (ImageButton)v.findViewById(R.id.messaging_composer_attachment_select);
@@ -92,6 +107,30 @@ public class MessagingFragment extends TalkFragment
             }
         }
         mMessageList.setAdapter(mAdapter);
+        // watch message editor
+        mTextWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                mSendButton.setEnabled(isComposed() || s.toString().length() > 0);
+            }
+        };
+        mTextEdit.addTextChangedListener(mTextWatcher);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LOG.info("onPause()");
+        if(mTextWatcher != null) {
+            mTextEdit.removeTextChangedListener(mTextWatcher);
+            mTextWatcher = null;
+        }
     }
 
     @Override
@@ -136,9 +175,14 @@ public class MessagingFragment extends TalkFragment
         }
     }
 
+    private boolean isComposed() {
+        return mTextEdit.getText().length() > 0 || mAttachment != null;
+    }
+
     private void clearComposedMessage() {
         LOG.info("clearComposedMessage()");
         mTextEdit.setText(null);
+        mSendButton.setEnabled(false);
         clearAttachment();
     }
 
@@ -149,6 +193,7 @@ public class MessagingFragment extends TalkFragment
         mAttachmentView.setVisibility(View.VISIBLE);
         mAttachmentSelectButton.setVisibility(View.GONE);
         mAttachmentClearButton.setVisibility(View.VISIBLE);
+        mSendButton.setEnabled(isComposed());
     }
 
     private void clearAttachment() {

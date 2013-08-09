@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
-public abstract class ContentSelector {
+public interface IContentSelector {
 
     public abstract String getName();
 

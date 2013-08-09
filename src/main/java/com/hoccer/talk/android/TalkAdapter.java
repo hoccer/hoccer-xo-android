@@ -1,5 +1,6 @@
 package com.hoccer.talk.android;
 
+import android.content.res.Resources;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ public abstract class TalkAdapter extends BaseAdapter implements ITalkClientServ
     protected TalkActivity mActivity;
     protected TalkClientDatabase mDatabase;
 
+    protected Resources mResources;
     protected LayoutInflater mInflater;
 
 
@@ -21,6 +23,7 @@ public abstract class TalkAdapter extends BaseAdapter implements ITalkClientServ
         mActivity = activity;
         mDatabase = mActivity.getTalkClientDatabase();
         mInflater = mActivity.getLayoutInflater();
+        mResources = mActivity.getResources();
     }
 
     public void register() {

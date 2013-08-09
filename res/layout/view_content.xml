@@ -9,6 +9,7 @@
     <LinearLayout
             android:id="@+id/content_content"
             android:orientation="vertical"
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         <ImageView
@@ -16,6 +17,15 @@
                 android:scaleType="fitCenter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/content_actions"
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
     </LinearLayout>
 
     <LinearLayout

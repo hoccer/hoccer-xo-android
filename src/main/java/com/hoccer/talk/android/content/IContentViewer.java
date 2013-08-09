@@ -6,7 +6,7 @@ import android.view.View;
 
 import java.util.zip.Inflater;
 
-public abstract class ContentViewer {
+public interface IContentViewer {
 
     public abstract boolean canViewObject(ContentObject object);
 

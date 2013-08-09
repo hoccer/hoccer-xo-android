@@ -8,6 +8,7 @@
     <TextView
         android:id="@+id/message_text"
         android:text="@string/message_text"
+        android:layout_margin="2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
@@ -15,6 +16,7 @@
         android:id="@+id/message_avatar"
         android:src="@drawable/avatar_default_contact"
         android:layout_alignParentRight="true"
+        android:layout_margin="2dp"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
@@ -25,6 +27,7 @@
         android:gravity="center"
         custom:maxHeight="500dp"
         android:layout_width="match_parent"
+        android:layout_margin="2dp"
         android:layout_toLeftOf="@id/message_avatar"
         android:layout_below="@id/message_text"
         android:layout_height="wrap_content"/>

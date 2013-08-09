@@ -1,27 +1,19 @@
 package com.hoccer.talk.android.content.image;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.content.ContentView;
-import com.hoccer.talk.android.content.ContentViewer;
-import com.hoccer.talk.android.views.AspectImageView;
+import com.hoccer.talk.android.content.IContentViewer;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import org.apache.log4j.Logger;
 
-import java.util.zip.Inflater;
-
-public class ImageViewer extends ContentViewer {
+public class ImageViewer implements IContentViewer {
 
     private static final Logger LOG = Logger.getLogger(ImageViewer.class);
 

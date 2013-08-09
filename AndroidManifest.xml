@@ -72,7 +72,8 @@
 
         <activity
                 android:name=".activity.MessagingActivity"
-                android:label="@string/app_name">
+                android:label="@string/app_name"
+                android:windowSoftInputMode="stateHidden">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".MainActivity"/>

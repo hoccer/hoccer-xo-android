@@ -1,5 +1,6 @@
 package com.hoccer.talk.android.adapter;
 
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.RemoteException;
 import android.view.View;
@@ -162,7 +163,7 @@ public class ContactsAdapter extends TalkAdapter {
         int offset = 0;
         if(!mClientContacts.isEmpty()) {
             if(position == offset) {
-                return "Clients";
+                return mResources.getString(R.string.contacts_category_friends);
             }
             offset += 1;
             int clientPos = position - offset;
@@ -173,7 +174,7 @@ public class ContactsAdapter extends TalkAdapter {
         }
         if(!mGroupContacts.isEmpty()) {
             if(position == offset) {
-                return "Groups";
+                return mResources.getString(R.string.contacts_category_groups);
             }
             offset += 1;
             int groupPos = position - offset;
@@ -182,7 +183,7 @@ public class ContactsAdapter extends TalkAdapter {
             }
             offset += mGroupContacts.size();
         }
-        return "XXX";
+        return "";
     }
 
     @Override
@@ -296,7 +297,7 @@ public class ContactsAdapter extends TalkAdapter {
         }
         TextView unseenView = (TextView) view.findViewById(R.id.contact_unseen_messages);
         if(unseenMessages > 0) {
-            unseenView.setText(" (" + unseenMessages + ")");
+            unseenView.setText(Long.toString(unseenMessages));
             unseenView.setVisibility(View.VISIBLE);
         } else {
             unseenView.setVisibility(View.GONE);

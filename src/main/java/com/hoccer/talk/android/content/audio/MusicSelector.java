@@ -3,18 +3,16 @@ package com.hoccer.talk.android.content.audio;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import com.hoccer.talk.android.content.ContentObject;
-import com.hoccer.talk.android.content.ContentSelector;
-import com.hoccer.talk.android.util.IntentHelper;
+import com.hoccer.talk.android.content.IContentSelector;
 
-public class AudioSelector extends ContentSelector {
+public class MusicSelector implements IContentSelector {
 
     @Override
     public String getName() {
-        return "Audio";
+        return "Music";
     }
 
     @Override
@@ -25,7 +23,8 @@ public class AudioSelector extends ContentSelector {
     @Override
     public ContentObject createObjectFromSelectionResult(Context context, Intent intent) {
         Uri selectedContent = intent.getData();
-        String[] filePathColumn = {MediaStore.Audio.Media.MIME_TYPE, MediaStore.Audio.Media.DATA};
+        String[] filePathColumn = {MediaStore.Audio.Media.MIME_TYPE,
+                                   MediaStore.Audio.Media.DATA};
 
         Cursor cursor = context.getContentResolver().query(
                 selectedContent, filePathColumn, null, null, null);
@@ -37,7 +36,8 @@ public class AudioSelector extends ContentSelector {
         String filePath = cursor.getString(dataIndex);
 
         ContentObject contentObject = new ContentObject();
-        contentObject.setMediaType(fileType);
+        contentObject.setMediaType("audio");
+        contentObject.setMimeType(fileType);
         contentObject.setContentUrl(filePath);
         cursor.close();
 

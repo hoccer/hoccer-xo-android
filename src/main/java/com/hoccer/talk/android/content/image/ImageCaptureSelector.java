@@ -6,31 +6,30 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import com.hoccer.talk.android.content.ContentObject;
-import com.hoccer.talk.android.content.ContentSelector;
-import com.hoccer.talk.android.util.IntentHelper;
+import com.hoccer.talk.android.content.IContentSelector;
 
-public class ImageSelector extends ContentSelector {
+public class ImageCaptureSelector implements IContentSelector {
 
     @Override
     public String getName() {
-        return "Image";
+        return "Take photo";
     }
 
     @Override
     public Intent createSelectionIntent(Context context) {
-        return new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        return new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
     }
 
     @Override
     public ContentObject createObjectFromSelectionResult(Context context, Intent intent) {
         Uri selectedContent = intent.getData();
         String[] filePathColumn = {MediaStore.Images.Media.MIME_TYPE,
-                                   MediaStore.Images.Media.DATA,
-                                   MediaStore.Images.Media.WIDTH,
-                                   MediaStore.Images.Media.HEIGHT};
+                                    MediaStore.Images.Media.DATA,
+                                    MediaStore.Images.Media.WIDTH,
+                                    MediaStore.Images.Media.HEIGHT};
 
         Cursor cursor = context.getContentResolver().query(
-                           selectedContent, filePathColumn, null, null, null);
+                selectedContent, filePathColumn, null, null, null);
         cursor.moveToFirst();
 
         int typeIndex = cursor.getColumnIndex(filePathColumn[0]);
@@ -50,7 +49,5 @@ public class ImageSelector extends ContentSelector {
 
         cursor.close();
 
-        return contentObject;
-    }
-
+        return contentObject;    }
 }

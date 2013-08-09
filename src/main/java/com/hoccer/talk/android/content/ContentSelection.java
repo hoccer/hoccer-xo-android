@@ -6,13 +6,13 @@ public class ContentSelection {
 
     Activity mActivity;
 
-    ContentSelector mSelector;
+    IContentSelector mSelector;
 
     public ContentSelection(Activity activity) {
         mActivity = activity;
     }
 
-    public ContentSelection(Activity activity, ContentSelector selector) {
+    public ContentSelection(Activity activity, IContentSelector selector) {
         mActivity = activity;
         mSelector = selector;
     }
@@ -21,11 +21,11 @@ public class ContentSelection {
         return mActivity;
     }
 
-    public ContentSelector getSelector() {
+    public IContentSelector getSelector() {
         return mSelector;
     }
 
-    public void setSelector(ContentSelector selector) {
+    public void setSelector(IContentSelector selector) {
         this.mSelector = selector;
     }
 

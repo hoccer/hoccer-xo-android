@@ -10,19 +10,18 @@ import android.os.Bundle;
 import android.widget.SimpleAdapter;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.hoccer.talk.android.R;
-import com.hoccer.talk.android.content.ContentSelector;
+import com.hoccer.talk.android.content.IContentSelector;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AttachDialogFragment extends SherlockDialogFragment
     implements DialogInterface.OnClickListener {
 
     Listener mListener;
 
-    List<ContentSelector> mSelectors = new ArrayList<ContentSelector>();
+    List<IContentSelector> mSelectors = new ArrayList<IContentSelector>();
 
     public AttachDialogFragment() {
     }
@@ -66,7 +65,7 @@ public class AttachDialogFragment extends SherlockDialogFragment
 
     private void makeSelectorAdapter(Context context) {
         List<HashMap<String,Object>> allData = new ArrayList<HashMap<String, Object>>();
-        for(ContentSelector selector: mSelectors) {
+        for(IContentSelector selector: mSelectors) {
             Intent intent = selector.createSelectionIntent(context);
             if(intent != null) {
                 HashMap<String, Object> data = new HashMap<String, Object>();
@@ -82,7 +81,7 @@ public class AttachDialogFragment extends SherlockDialogFragment
     }
 
     public interface Listener {
-        public void onAttachDialogSelected(ContentSelector selector);
+        public void onAttachDialogSelected(IContentSelector selector);
         public void onAttachDialogCanceled();
     }
 
