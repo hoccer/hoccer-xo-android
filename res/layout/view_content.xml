@@ -7,6 +7,18 @@
               android:layout_height="wrap_content">
 
     <LinearLayout
+            android:id="@+id/content_content"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <ImageView
+                android:src="@drawable/ic_launcher"
+                android:scaleType="fitCenter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
             android:id="@+id/content_download"
             android:orientation="vertical"
             android:visibility="gone"
@@ -21,9 +33,11 @@
 
     <LinearLayout
             android:id="@+id/content_uploading"
-            android:visibility="visible"
+            android:visibility="gone"
             android:orientation="vertical"
-            android:layout_width="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         <TextView
                 android:text="@string/content_uploading"
@@ -40,7 +54,9 @@
             android:id="@+id/content_downloading"
             android:visibility="gone"
             android:orientation="vertical"
-            android:layout_width="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         <TextView
                 android:text="@string/content_downloading"
@@ -60,18 +76,6 @@
             android:layout_height="wrap_content">
         <TextView
                 android:text="Unavailable"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-    <LinearLayout
-            android:id="@+id/content_content"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        <ImageView
-                android:src="@drawable/ic_launcher"
-                android:scaleType="fitCenter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
     </LinearLayout>
