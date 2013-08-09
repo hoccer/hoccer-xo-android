@@ -36,7 +36,7 @@ public class ContactsFragment extends TalkFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		LOG.info("onCreateView()");
+		LOG.debug("onCreateView()");
 		View v = inflater.inflate(R.layout.fragment_contacts, container, false);
 
         // the contact list itself

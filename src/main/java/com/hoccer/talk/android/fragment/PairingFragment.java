@@ -43,7 +43,7 @@ public class PairingFragment extends TalkFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        LOG.info("onCreate()");
+        LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -51,7 +51,8 @@ public class PairingFragment extends TalkFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        LOG.info("onCreateView()");
+        LOG.debug("onCreateView()");
+
         View view = inflater.inflate(R.layout.fragment_pairing, container, false);
 
         mTokenText = (TextView)view.findViewById(R.id.pairing_token_text);
@@ -66,8 +67,8 @@ public class PairingFragment extends TalkFragment {
 
     @Override
     public void onResume() {
+        LOG.debug("onResume()");
         super.onResume();
-        LOG.info("onResume()");
 
         // request a new token and show it
         TalkApplication.getExecutor().schedule(new Runnable() {
@@ -134,7 +135,7 @@ public class PairingFragment extends TalkFragment {
 
     @Override
     public void onPause() {
-        LOG.info("onPause()");
+        LOG.debug("onPause()");
         // remove the text watcher
         if(mTextWatcher != null) {
             mTokenEdit.removeTextChangedListener(mTextWatcher);
@@ -148,12 +149,12 @@ public class PairingFragment extends TalkFragment {
     }
 
     public void initializeWithReceivedToken(String token) {
-        LOG.info("initializeWithReceivedToken(" + token + ")");
+        LOG.debug("initializeWithReceivedToken(" + token + ")");
         mTokenEdit.setText(token);
     }
 
     private void performPairing(String token) {
-        LOG.info("performPairing(" + token + ")");
+        LOG.debug("performPairing(" + token + ")");
         mActiveToken = token;
         mTokenEdit.setEnabled(false);
         mTokenPairButton.setEnabled(false);
@@ -171,6 +172,7 @@ public class PairingFragment extends TalkFragment {
 
     @Override
     public void onTokenPairingFailed(String token) {
+        LOG.debug("onTokenPairingFailed()");
         if(token.equals(mActiveToken)) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -186,6 +188,7 @@ public class PairingFragment extends TalkFragment {
 
     @Override
     public void onTokenPairingSucceeded(String token) {
+        LOG.debug("onTokenPairingSucceeded()");
         if(token.equals(mActiveToken)) {
             runOnUiThread(new Runnable() {
                 @Override

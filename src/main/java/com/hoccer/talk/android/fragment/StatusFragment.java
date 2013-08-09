@@ -20,7 +20,7 @@ public class StatusFragment extends TalkFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        LOG.info("onCreateView()");
+        LOG.debug("onCreateView()");
 
         View v = inflater.inflate(R.layout.fragment_status, container, false);
 
@@ -31,6 +31,8 @@ public class StatusFragment extends TalkFragment {
 
     @Override
     public void onServiceConnected() {
+        LOG.debug("onServiceConnected()");
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -42,6 +44,8 @@ public class StatusFragment extends TalkFragment {
 
     @Override
     public void onServiceDisconnected() {
+        LOG.debug("onServiceDisconnected()");
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -51,11 +55,14 @@ public class StatusFragment extends TalkFragment {
     }
 
     @Override
-    public void onClientStateChanged(final int state) {
+    public void onClientStateChanged(int state) {
+        final String stateString = HoccerTalkClient.stateToString(state);
+        LOG.debug("onClientStateChanged(" + stateString + ")");
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mStatusText.setText(HoccerTalkClient.stateToString(state));
+                mStatusText.setText(stateString);
             }
         });
     }

@@ -45,7 +45,7 @@ public class AboutFragment extends TalkFragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        LOG.info("onCreate()");
+        LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -53,7 +53,7 @@ public class AboutFragment extends TalkFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        LOG.info("onCreateView()");
+        LOG.debug("onCreateView()");
 
         // inflate the layout
         View v = inflater.inflate(R.layout.fragment_about, container, false);
@@ -84,7 +84,7 @@ public class AboutFragment extends TalkFragment {
 
     @Override
     public void onResume() {
-        LOG.info("onResume()");
+        LOG.debug("onResume()");
         super.onResume();
         // load our target URL
         mAboutWebView.loadUrl(ABOUT_URL);

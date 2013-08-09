@@ -63,7 +63,7 @@ public class ProfileFragment extends TalkFragment
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        LOG.info("onCreate()");
+        LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -71,7 +71,7 @@ public class ProfileFragment extends TalkFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        LOG.info("onCreateView()");
+        LOG.debug("onCreateView()");
 
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
 
@@ -115,19 +115,19 @@ public class ProfileFragment extends TalkFragment
     @Override
     public void onClick(View v) {
         if(v == mAvatarImage) {
-            LOG.info("onClick(avatarSetButton)");
+            LOG.debug("onClick(avatarSetButton)");
             if(mContact != null && mContact.isSelf()) {
                 getTalkActivity().selectAvatar();
             }
         }
         if(v == mNameSetButton) {
-            LOG.info("onClick(nameSetButton)");
+            LOG.debug("onClick(nameSetButton)");
             if(mContact != null && mContact.isSelf()) {
                 updateName();
             }
         }
         if(v == mUserBlockButton) {
-            LOG.info("onClick(userBlockButton)");
+            LOG.debug("onClick(userBlockButton)");
             if(mContact != null && mContact.isClient()) {
                 TalkRelationship relationship = mContact.getClientRelationship();
                 if(relationship != null) {
@@ -140,7 +140,7 @@ public class ProfileFragment extends TalkFragment
             }
         }
         if(v == mGroupJoinButton) {
-            LOG.info("onClick(groupJoinButton)");
+            LOG.debug("onClick(groupJoinButton)");
             if(mContact != null && mContact.isGroup()) {
                 try {
                     getTalkService().joinGroup(mContact.getClientContactId());
@@ -150,7 +150,7 @@ public class ProfileFragment extends TalkFragment
             }
         }
         if(v == mGroupLeaveButton) {
-            LOG.info("onClick(groupLeaveButton)");
+            LOG.debug("onClick(groupLeaveButton)");
             if(mContact != null && mContact.isGroup()) {
                 try {
                     getTalkService().leaveGroup(mContact.getClientContactId());
@@ -160,7 +160,7 @@ public class ProfileFragment extends TalkFragment
             }
         }
         if(v == mUserDepairButton) {
-            LOG.info("onClick(userDepairButton)");
+            LOG.debug("onClick(userDepairButton)");
             if(mContact != null) {
                 depairContact();
             }
@@ -171,7 +171,7 @@ public class ProfileFragment extends TalkFragment
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if(v == mNameEdit) {
             if(actionId == EditorInfo.IME_ACTION_DONE) {
-                LOG.info("onEditorAction(nameEdit,IME_ACTION_DONE)");
+                LOG.debug("onEditorAction(nameEdit,IME_ACTION_DONE)");
                 updateName();
                 return true;
             }
@@ -181,13 +181,13 @@ public class ProfileFragment extends TalkFragment
 
     @Override
     public void onAvatarSelected(ContentObject contentObject) {
-        LOG.info("onAvatarSelected(" + contentObject.getContentUrl() + ")");
+        LOG.debug("onAvatarSelected(" + contentObject.getContentUrl() + ")");
         mAvatarToSet = contentObject;
     }
 
     @Override
     public void onServiceConnected() {
-        LOG.info("onServiceConnected()");
+        LOG.debug("onServiceConnected()");
 
         final ContentObject newAvatar = mAvatarToSet;
         mAvatarToSet = null;
@@ -198,9 +198,7 @@ public class ProfileFragment extends TalkFragment
                     LOG.info("creating avatar upload");
                     TalkClientUpload upload = ContentObject.createAvatarUpload(newAvatar);
                     try {
-                        LOG.info("saving upload in db");
                         getTalkDatabase().saveClientUpload(upload);
-                        LOG.info("telling the client");
                         getTalkService().setClientAvatar(upload.getClientUploadId());
                     } catch (SQLException e) {
                         LOG.error("sql error", e);
@@ -214,14 +212,14 @@ public class ProfileFragment extends TalkFragment
 
     public void showProfile(TalkClientContact contact) {
         if(contact != null) {
-            LOG.info("showProfile(" + contact.getClientContactId() + ")");
+            LOG.debug("showProfile(" + contact.getClientContactId() + ")");
         }
         mContact = contact;
         refreshContact();
     }
 
     private void update(TalkClientContact contact) {
-        LOG.info("update(" + contact.getClientContactId() + ")");
+        LOG.debug("update(" + contact.getClientContactId() + ")");
 
         String avatarUrl = null;
         if(contact.isGroup()) {
@@ -294,7 +292,7 @@ public class ProfileFragment extends TalkFragment
     }
 
     private void updateName() {
-        LOG.info("updateName()");
+        LOG.debug("updateName()");
         try {
             if(mContact != null && mContact.isSelf()) {
                 getTalkService().setClientName(mNameEdit.getText().toString());
@@ -305,7 +303,7 @@ public class ProfileFragment extends TalkFragment
     }
 
     private void depairContact() {
-        LOG.info("depairContact()");
+        LOG.debug("depairContact()");
         if(mContact != null) {
             try {
                 getTalkService().depairContact(mContact.getClientContactId());
@@ -316,7 +314,7 @@ public class ProfileFragment extends TalkFragment
     }
 
     private void blockContact() {
-        LOG.info("blockContact()");
+        LOG.debug("blockContact()");
         if(mContact != null) {
             try {
                 getTalkService().blockContact(mContact.getClientContactId());
@@ -327,7 +325,7 @@ public class ProfileFragment extends TalkFragment
     }
 
     private void unblockContact() {
-        LOG.info("unblockContact()");
+        LOG.debug("unblockContact()");
         if(mContact != null) {
             try {
                 getTalkService().unblockContact(mContact.getClientContactId());
@@ -338,9 +336,9 @@ public class ProfileFragment extends TalkFragment
     }
 
     private void refreshContact() {
-        LOG.info("refreshContact()");
+        LOG.debug("refreshContact()");
         if(mContact != null) {
-            LOG.info("updating from db");
+            LOG.debug("updating from db");
             try {
                 getTalkDatabase().refreshClientContact(mContact);
                 if(mContact.isClient() || mContact.isGroup()) {
@@ -361,7 +359,7 @@ public class ProfileFragment extends TalkFragment
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    LOG.info("updating ui");
+                    LOG.debug("updating ui");
                     update(mContact);
                 }
             });
@@ -370,7 +368,7 @@ public class ProfileFragment extends TalkFragment
 
     @Override
     public void onClientPresenceChanged(int contactId) {
-        LOG.info("onClientPresenceChanged(" + contactId + ")");
+        LOG.debug("onClientPresenceChanged(" + contactId + ")");
         if(mContact != null && mContact.getClientContactId() == contactId) {
             refreshContact();
         }
@@ -378,7 +376,7 @@ public class ProfileFragment extends TalkFragment
 
     @Override
     public void onClientRelationshipChanged(int contactId) {
-        LOG.info("onClientRelationshipChanged(" + contactId + ")");
+        LOG.debug("onClientRelationshipChanged(" + contactId + ")");
         if(mContact != null && mContact.getClientContactId() == contactId) {
             refreshContact();
         }
@@ -386,7 +384,7 @@ public class ProfileFragment extends TalkFragment
 
     @Override
     public void onGroupPresenceChanged(int contactId) {
-        LOG.info("onGroupPresenceChanged(" + contactId + ")");
+        LOG.debug("onGroupPresenceChanged(" + contactId + ")");
         if(mContact != null && mContact.getClientContactId() == contactId) {
             refreshContact();
         }
@@ -394,7 +392,7 @@ public class ProfileFragment extends TalkFragment
 
     @Override
     public void onGroupMembershipChanged(int contactId) {
-        LOG.info("onGroupMembershipChanged(" + contactId + ")");
+        LOG.debug("onGroupMembershipChanged(" + contactId + ")");
         if(mContact != null && mContact.getClientContactId() == contactId) {
             refreshContact();
         }
@@ -402,7 +400,7 @@ public class ProfileFragment extends TalkFragment
 
     @Override
     public void onUploadStateChanged(int contactId, int uploadId, String state) throws RemoteException {
-        LOG.info("onUploadStateChanged(" + contactId + "," + uploadId + "," + state + ")");
+        LOG.debug("onUploadStateChanged(" + contactId + "," + uploadId + "," + state + ")");
         if(state == TalkClientUpload.State.COMPLETE.toString()) {
             if(mContact != null) {
                 refreshContact();
@@ -412,7 +410,7 @@ public class ProfileFragment extends TalkFragment
 
     @Override
     public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
-        LOG.info("onDownloadStateChanged(" + contactId + "," + downloadId + "," + state + ")");
+        LOG.debug("onDownloadStateChanged(" + contactId + "," + downloadId + "," + state + ")");
         if(state == TalkClientUpload.State.COMPLETE.toString()) {
             if(mContact != null) {
                 refreshContact();
