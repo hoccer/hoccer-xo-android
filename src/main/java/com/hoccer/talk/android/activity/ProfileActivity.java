@@ -45,15 +45,21 @@ public class ProfileActivity extends TalkActivity {
         super.onResume();
 
         Intent intent = getIntent();
+
+        // handle show intent
         if(intent != null && intent.hasExtra("clientContactId")) {
             int contactId = intent.getIntExtra("clientContactId", -1);
-            try {
-                TalkClientContact contact = getTalkClientDatabase().findClientContactById(contactId);
-                if(contact != null) {
-                    showProfile(contact);
+            if(contactId == -1) {
+                LOG.error("invalid contact id");
+            } else {
+                try {
+                    TalkClientContact contact = getTalkClientDatabase().findClientContactById(contactId);
+                    if(contact != null) {
+                        showProfile(contact);
+                    }
+                } catch (SQLException e) {
+                    LOG.error("sql error", e);
                 }
-            } catch (SQLException e) {
-                LOG.error("sql error", e);
             }
         }
     }

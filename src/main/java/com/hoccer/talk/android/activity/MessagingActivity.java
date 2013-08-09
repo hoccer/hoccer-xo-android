@@ -28,7 +28,6 @@ public class MessagingActivity extends TalkActivity {
 
     ActionBar mActionBar;
 
-    FragmentManager mFragmentManager;
     MessagingFragment mFragment;
 
     @Override
@@ -40,10 +39,14 @@ public class MessagingActivity extends TalkActivity {
     protected void onCreate(Bundle savedInstanceState) {
         LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
+
+        // set up action bar specifics
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
-        mFragmentManager = getSupportFragmentManager();
-        mFragment = (MessagingFragment) mFragmentManager.findFragmentById(R.id.activity_messaging_fragment);
+
+        // get our primary fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        mFragment = (MessagingFragment) fragmentManager.findFragmentById(R.id.activity_messaging_fragment);
     }
 
     @Override
@@ -52,23 +55,22 @@ public class MessagingActivity extends TalkActivity {
         super.onResume();
 
         Intent intent = getIntent();
+
+        // handle converse intent
         if(intent != null && intent.hasExtra("clientContactId")) {
             int contactId = intent.getIntExtra("clientContactId", -1);
             if(contactId == -1) {
-                LOG.error("Invalid ccid");
-                return;
-            }
-            try {
-                TalkClientContact contact = getTalkClientDatabase().findClientContactById(contactId);
-                if(contact != null) {
-                    converseWithContact(contact);
+                LOG.error("invalid contact id");
+            } else {
+                try {
+                    TalkClientContact contact = getTalkClientDatabase().findClientContactById(contactId);
+                    if(contact != null) {
+                        converseWithContact(contact);
+                    }
+                } catch (SQLException e) {
+                    LOG.error("sql error", e);
                 }
-            } catch (SQLException e) {
-                LOG.error("NO EXTRA", e);
             }
-
-        } else {
-            LOG.info("NO EXTRA");
         }
     }
 
