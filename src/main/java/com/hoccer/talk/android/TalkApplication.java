@@ -1,6 +1,7 @@
 package com.hoccer.talk.android;
 
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -124,6 +125,7 @@ public class TalkApplication extends Application {
 
         // get logger for this class
         LOG = Logger.getLogger(TalkApplication.class);
+        LOG.info("running on sdk version " + Build.VERSION.SDK_INT);
 
         // install a default exception handler
         mPreviousHandler = Thread.getDefaultUncaughtExceptionHandler();
