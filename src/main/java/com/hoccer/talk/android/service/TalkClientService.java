@@ -443,13 +443,16 @@ public class TalkClientService extends Service {
         // fill in content
         if(contacts.size() == 1) {
             TalkClientContact singleContact = contacts.get(0);
-            // create pending intent
+            // create intent to start the messaging activity for the right contact
             Intent messagingIntent = new Intent(this, MessagingActivity.class);
             messagingIntent.putExtra("clientContactId", singleContact.getClientContactId());
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addParentStack(ContactsActivity.class);
-            stackBuilder.addNextIntent(messagingIntent);
-            PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            // make a pending intent with correct back-stack
+            PendingIntent pendingIntent =
+                    TaskStackBuilder.create(this)
+                        .addParentStack(ContactsActivity.class)
+                        .addNextIntentWithParentStack(messagingIntent)
+                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            // add the intent to the notification
             builder.setContentIntent(pendingIntent);
             // title is always the contact name
             builder.setContentTitle(singleContact.getName());
@@ -463,9 +466,10 @@ public class TalkClientService extends Service {
         } else {
             // create pending intent
             Intent contactsIntent = new Intent(this, ContactsActivity.class);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addNextIntent(contactsIntent);
-            PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent =
+                    TaskStackBuilder.create(this)
+                        .addNextIntent(contactsIntent)
+                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
             builder.setContentIntent(pendingIntent);
             // concatenate contact names
             StringBuilder sb = new StringBuilder();
