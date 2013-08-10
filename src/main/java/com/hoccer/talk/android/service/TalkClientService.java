@@ -831,7 +831,11 @@ public class TalkClientService extends Service {
 
         @Override
         public void onUnseenMessages(List<TalkClientMessage> unseenMessages, boolean notify) {
-            updateNotification(unseenMessages, notify);
+            try {
+                updateNotification(unseenMessages, notify);
+            } catch (Throwable t) {
+                LOG.error("exception updating notification", t);
+            }
         }
     }
 
