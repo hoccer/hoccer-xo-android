@@ -1,27 +1,15 @@
 package com.hoccer.talk.android.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.view.View;
-import android.widget.ImageView;
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.view.Window;
+import com.actionbarsherlock.view.MenuItem;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.fragment.MessagingFragment;
-import com.hoccer.talk.android.fragment.ProfileFragment;
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.client.model.TalkClientDownload;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 
-import java.io.File;
-import java.net.MalformedURLException;
 import java.sql.SQLException;
 
 public class MessagingActivity extends TalkActivity {
@@ -30,9 +18,16 @@ public class MessagingActivity extends TalkActivity {
 
     MessagingFragment mFragment;
 
+    TalkClientContact mContact;
+
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_messaging;
+    }
+
+    @Override
+    protected int getMenuResource() {
+        return R.menu.fragment_messaging;
     }
 
     @Override
@@ -76,8 +71,24 @@ public class MessagingActivity extends TalkActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_profile_client:
+            case R.id.menu_profile_group:
+                if(mContact != null) {
+                    showContactProfile(mContact);
+                }
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
+
     public void converseWithContact(TalkClientContact contact) {
         LOG.debug("converseWithContact(" + contact + ")");
+        mContact = contact;
         mActionBar.setTitle(contact.getName());
         mFragment.converseWithContact(contact);
     }

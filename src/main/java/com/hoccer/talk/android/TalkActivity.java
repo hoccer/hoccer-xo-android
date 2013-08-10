@@ -98,6 +98,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     }
 
     protected abstract int getLayoutResource();
+    protected abstract int getMenuResource();
 
     public ScheduledExecutorService getBackgroundExecutor() {
         return mBackgroundExecutor;
@@ -188,6 +189,14 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
     protected void onDestroy() {
         LOG.debug("onDestroy()");
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        LOG.debug("onCreateOptionsMenu()");
+        getSupportMenuInflater().inflate(R.menu.common, menu);
+        getSupportMenuInflater().inflate(getMenuResource(), menu);
+        return true;
     }
 
     @Override

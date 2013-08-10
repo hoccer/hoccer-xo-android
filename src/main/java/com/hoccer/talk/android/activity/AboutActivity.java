@@ -12,6 +12,11 @@ public class AboutActivity extends TalkActivity {
     }
 
     @Override
+    protected int getMenuResource() {
+        return R.menu.fragment_about;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);

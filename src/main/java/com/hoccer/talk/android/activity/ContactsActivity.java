@@ -1,5 +1,6 @@
 package com.hoccer.talk.android.activity;
 
+import android.os.Bundle;
 import com.actionbarsherlock.view.Menu;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
@@ -12,11 +13,8 @@ public class ContactsActivity extends TalkActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        LOG.debug("onCreateOptionsMenu()");
-        getSupportMenuInflater().inflate(R.menu.common, menu);
-        getSupportMenuInflater().inflate(R.menu.fragment_contacts, menu);
-        return true;
+    protected int getMenuResource() {
+        return R.menu.fragment_contacts;
     }
 
 }

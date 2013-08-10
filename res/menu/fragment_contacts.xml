@@ -1,17 +1,29 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/menu_scan_code"
+        android:title="@string/menu_scan_code"
+        android:showAsAction="never"
+        android:orderInCategory="200"/>
+
+    <item
+        android:id="@+id/menu_show_code"
+        android:title="@string/menu_show_code"
+        android:showAsAction="never"
+        android:orderInCategory="210"/>
+
+    <item
         android:id="@+id/menu_pair"
-        android:orderInCategory="220"
-        android:showAsAction="ifRoom"
         android:title="@string/menu_pair"
-        android:icon="@drawable/ic_social_add_person"/>
+        android:icon="@drawable/ic_social_add_person"
+        android:showAsAction="ifRoom"
+        android:orderInCategory="220"/>
 
     <item
         android:id="@+id/menu_new_group"
-        android:orderInCategory="230"
-        android:showAsAction="ifRoom"
         android:title="@string/menu_new_group"
-        android:icon="@drawable/ic_social_add_group"/>
+        android:icon="@drawable/ic_social_add_group"
+        android:showAsAction="ifRoom"
+        android:orderInCategory="230"/>
 
 </menu>

@@ -1,38 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
         android:id="@+id/menu_my_profile"
-        android:orderInCategory="210"
+        android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/menu_my_profile"/>
 
     <item
-        android:id="@+id/menu_scan_code"
-        android:orderInCategory="220"
-        android:showAsAction="never"
-        android:title="@string/menu_scan_code"/>
-
-    <item
-        android:id="@+id/menu_show_code"
-        android:orderInCategory="230"
-        android:showAsAction="never"
-        android:title="@string/menu_show_code"/>
-
-    <item
         android:id="@+id/menu_reconnect"
-        android:orderInCategory="600"
+        android:orderInCategory="900"
         android:showAsAction="never"
         android:title="@string/menu_reconnect"/>
 
     <item
         android:id="@+id/menu_about"
-        android:orderInCategory="700"
+        android:orderInCategory="910"
         android:showAsAction="never"
         android:title="@string/menu_about"/>
 
     <item
         android:id="@+id/menu_settings"
-        android:orderInCategory="800"
+        android:orderInCategory="920"
         android:showAsAction="never"
         android:title="@string/menu_settings"/>
 

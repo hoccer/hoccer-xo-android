@@ -6,10 +6,8 @@ import android.support.v4.app.FragmentManager;
 import com.actionbarsherlock.app.ActionBar;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
-import com.hoccer.talk.android.fragment.MessagingFragment;
 import com.hoccer.talk.android.fragment.ProfileFragment;
 import com.hoccer.talk.client.model.TalkClientContact;
-import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
 
@@ -25,6 +23,11 @@ public class ProfileActivity extends TalkActivity {
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_profile;
+    }
+
+    @Override
+    protected int getMenuResource() {
+        return R.menu.fragment_profile;
     }
 
     @Override
