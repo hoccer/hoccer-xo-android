@@ -340,7 +340,7 @@ public class ProfileFragment extends TalkFragment
         if(mContact != null) {
             LOG.debug("updating from db");
             try {
-                getTalkDatabase().refreshClientContact(mContact);
+                mContact = getTalkDatabase().findClientContactById(mContact.getClientContactId());
                 if(mContact.isClient() || mContact.isGroup()) {
                     TalkClientDownload avatarDownload = mContact.getAvatarDownload();
                     if(avatarDownload != null) {
@@ -402,9 +402,7 @@ public class ProfileFragment extends TalkFragment
     public void onUploadStateChanged(int contactId, int uploadId, String state) throws RemoteException {
         LOG.debug("onUploadStateChanged(" + contactId + "," + uploadId + "," + state + ")");
         if(state == TalkClientUpload.State.COMPLETE.toString()) {
-            if(mContact != null) {
-                refreshContact();
-            }
+            refreshContact();
         }
     }
 
@@ -412,9 +410,7 @@ public class ProfileFragment extends TalkFragment
     public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
         LOG.debug("onDownloadStateChanged(" + contactId + "," + downloadId + "," + state + ")");
         if(state == TalkClientUpload.State.COMPLETE.toString()) {
-            if(mContact != null) {
-                refreshContact();
-            }
+            refreshContact();
         }
     }
 
