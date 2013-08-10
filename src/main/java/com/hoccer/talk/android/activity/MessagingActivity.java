@@ -40,9 +40,11 @@ public class MessagingActivity extends TalkActivity {
         LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
 
-        // set up action bar specifics
+        // get action bar (for setting title)
         mActionBar = getSupportActionBar();
-        mActionBar.setDisplayHomeAsUpEnabled(true);
+
+        // enable up navigation
+        enableUpNavigation();
 
         // get our primary fragment
         FragmentManager fragmentManager = getSupportFragmentManager();

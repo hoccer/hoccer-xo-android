@@ -32,8 +32,9 @@ public class ProfileActivity extends TalkActivity {
         LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
 
+        enableUpNavigation();
+
         mActionBar = getSupportActionBar();
-        mActionBar.setDisplayHomeAsUpEnabled(true);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         mFragment = (ProfileFragment)fragmentManager.findFragmentById(R.id.activity_profile_fragment);

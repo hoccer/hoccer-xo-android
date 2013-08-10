@@ -7,6 +7,8 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,6 +90,8 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
 
     /** ZXing wrapper service */
     IntentIntegrator mBarcodeService = null;
+
+    boolean mUpEnabled = false;
 
     public TalkActivity() {
         LOG = Logger.getLogger(getClass());
@@ -191,7 +195,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
         LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                navigateUp();
                 break;
             case R.id.menu_my_profile:
                 try {
@@ -282,6 +286,30 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
             return;
         }
 
+    }
+
+    protected void enableUpNavigation() {
+        LOG.info("enableUpNavigation()");
+        mUpEnabled = true;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void navigateUp() {
+        LOG.info("navigateUp()");
+        if(mUpEnabled) {
+            Intent upIntent = NavUtils.getParentActivityIntent(this);
+            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                // we are not on our own task stack, so create one
+                TaskStackBuilder.create(this)
+                        // add parents to back stack
+                        .addNextIntentWithParentStack(upIntent)
+                                // navigate up to next parent
+                        .startActivities();
+            } else {
+                // we are on our own task stack, so navigate upwards
+                NavUtils.navigateUpTo(this, upIntent);
+            }
+        }
     }
 
     /**
