@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
@@ -72,7 +73,24 @@ public class MessagingActivity extends TalkActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        LOG.debug("onCreateOptionsMenu()");
+        boolean result = super.onCreateOptionsMenu(menu);
+
+        // select client/group profile entry for appropriate icon
+        if(mContact != null) {
+            MenuItem clientItem = menu.findItem(R.id.menu_profile_client);
+            clientItem.setVisible(mContact.isClient());
+            MenuItem groupItem = menu.findItem(R.id.menu_profile_group);
+            groupItem.setVisible(mContact.isGroup());
+        }
+
+        return result;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
         switch (item.getItemId()) {
             case R.id.menu_profile_client:
             case R.id.menu_profile_group:
@@ -87,10 +105,12 @@ public class MessagingActivity extends TalkActivity {
     }
 
     public void converseWithContact(TalkClientContact contact) {
-        LOG.debug("converseWithContact(" + contact + ")");
+        LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
         mContact = contact;
         mActionBar.setTitle(contact.getName());
         mFragment.converseWithContact(contact);
+        // invalidate menu so that profile buttons get disabled/enabled
+        invalidateOptionsMenu();
     }
 
 }
