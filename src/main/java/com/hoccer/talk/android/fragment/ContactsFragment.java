@@ -57,15 +57,15 @@ public class ContactsFragment extends TalkFragment {
 
 	@Override
 	public void onResume() {
+        LOG.debug("onResume()");
         super.onResume();
-        LOG.info("onResume()");
         // do this late so activity has database initialized
         mContactList.setAdapter(getTalkActivity().makeContactListAdapter());
     }
 
     @Override
     public void onGroupCreationSucceeded(int contactId) {
-        LOG.info("onGroupCreationSucceeded(" + contactId + ")");
+        LOG.debug("onGroupCreationSucceeded(" + contactId + ")");
         try {
             TalkClientContact contact = getTalkDatabase().findClientContactById(contactId);
             if(contact != null) {

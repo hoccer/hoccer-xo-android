@@ -134,7 +134,6 @@ public abstract class TalkActivity extends SherlockFragmentActivity implements I
         // set up database connection
         mDatabase = new TalkClientDatabase(AndroidTalkDatabase.getInstance(this.getApplicationContext()));
         try {
-            LOG.info("opening client database");
             mDatabase.initialize();
         } catch (SQLException e) {
             LOG.error("sql error", e);
