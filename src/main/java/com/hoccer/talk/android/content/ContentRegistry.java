@@ -40,16 +40,36 @@ public class ContentRegistry {
 
     IContentSelector mAvatarSelector;
 
-    List<IContentSelector> mSelectors = new ArrayList<IContentSelector>();
-    List<IContentViewer>   mViewers = new ArrayList<IContentViewer>();
+    List<IContentSelector> mAttachmentSelectors = new ArrayList<IContentSelector>();
+    List<IContentViewer> mAttachmentViewers = new ArrayList<IContentViewer>();
 
     public ContentRegistry(Context context) {
         mContext = context;
         initialize();
     }
 
+    private void initialize() {
+        mAvatarSelector = new GallerySelector();
+
+        initializeSelector(new GallerySelector());
+        initializeSelector(new MusicSelector());
+
+        mAttachmentViewers.add(new ImageViewer());
+        mAttachmentViewers.add(new AudioViewer());
+    }
+
+    private void initializeSelector(IContentSelector selector) {
+        Intent intent = selector.createSelectionIntent(mContext);
+        if(IntentHelper.isIntentResolvable(intent, mContext)) {
+            LOG.info("content selector "  + selector.getName() + " / "+ selector.getClass().getSimpleName() + " activated");
+            mAttachmentSelectors.add(selector);
+        } else {
+            LOG.warn("content selector "  + selector.getName() + " / "+ selector.getClass().getSimpleName() + " not supported");
+        }
+    }
+
     public IContentViewer selectViewerForContent(ContentObject contentObject) {
-        for(IContentViewer viewer: mViewers) {
+        for(IContentViewer viewer: mAttachmentViewers) {
             if(viewer.canViewObject(contentObject)) {
                 return viewer;
             }
@@ -84,7 +104,7 @@ public class ContentRegistry {
     public ContentSelection selectAttachment(final Activity activity, final int requestCode) {
 
         final List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
-        for(IContentSelector selector: mSelectors) {
+        for(IContentSelector selector: mAttachmentSelectors) {
             Intent selectionIntent = selector.createSelectionIntent(activity);
             if(IntentHelper.isIntentResolvable(selectionIntent, activity)) {
                 Map<String, Object> fields = new HashMap<String, Object>();
@@ -141,18 +161,6 @@ public class ContentRegistry {
             return object;
         }
         return null;
-    }
-
-    private void initialize() {
-        mAvatarSelector = new GallerySelector();
-
-        mSelectors.add(new GallerySelector());
-        mSelectors.add(new MusicSelector());
-        //mSelectors.add(new CameraSelector());
-        //mSelectors.add(new RingtoneSelector());
-
-        mViewers.add(new ImageViewer());
-        mViewers.add(new AudioViewer());
     }
 
 }
