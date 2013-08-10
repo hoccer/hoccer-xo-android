@@ -1,7 +1,6 @@
 package com.hoccer.talk.android.content;
 
 import com.hoccer.talk.android.TalkApplication;
-import com.hoccer.talk.android.service.TalkClientService;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import org.apache.log4j.Logger;

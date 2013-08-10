@@ -1,23 +1,22 @@
 package com.hoccer.talk.android.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import android.app.*;
-import android.content.*;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -29,15 +28,29 @@ import com.hoccer.talk.android.activity.ContactsActivity;
 import com.hoccer.talk.android.activity.MessagingActivity;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
 import com.hoccer.talk.android.push.TalkPushService;
-import com.hoccer.talk.client.*;
-
-import android.os.IBinder;
-import android.os.RemoteException;
+import com.hoccer.talk.client.HoccerTalkClient;
+import com.hoccer.talk.client.ITalkClientListener;
+import com.hoccer.talk.client.ITalkTransferListener;
+import com.hoccer.talk.client.ITalkUnseenListener;
+import com.hoccer.talk.client.TalkClientConfiguration;
+import com.hoccer.talk.client.TalkClientDatabase;
+import com.hoccer.talk.client.TalkTransfer;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import org.apache.log4j.Logger;
+
+import java.net.URI;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Android service for Hoccer Talk

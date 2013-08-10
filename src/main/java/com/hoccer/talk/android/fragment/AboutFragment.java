@@ -8,20 +8,15 @@
 
 package com.hoccer.talk.android.fragment;
 
-import android.content.Context;
-import android.os.Environment;
-import android.webkit.*;
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.hoccer.talk.android.R;
-import com.hoccer.talk.android.ITalkActivity;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkFragment;
 import org.apache.log4j.Logger;
 

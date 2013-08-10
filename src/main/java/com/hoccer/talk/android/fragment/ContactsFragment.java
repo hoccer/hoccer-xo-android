@@ -1,18 +1,13 @@
 package com.hoccer.talk.android.fragment;
 
-import android.os.RemoteException;
-import android.widget.AdapterView;
-import android.widget.Button;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.hoccer.talk.android.R;
-import com.hoccer.talk.android.TalkFragment;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import com.hoccer.talk.android.R;
+import com.hoccer.talk.android.TalkFragment;
 import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
 

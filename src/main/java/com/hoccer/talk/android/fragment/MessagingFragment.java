@@ -1,27 +1,21 @@
 package com.hoccer.talk.android.fragment;
 
-import java.sql.SQLException;
-import java.util.UUID;
-
-import android.app.SearchManager;
-import android.content.Context;
+import android.os.Bundle;
 import android.os.RemoteException;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
-import android.view.inputmethod.EditorInfo;
-import android.widget.*;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.widget.SearchView;
-import com.hoccer.talk.android.R;
-import com.hoccer.talk.android.TalkFragment;
-
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.TextView;
+import com.actionbarsherlock.widget.SearchView;
+import com.hoccer.talk.android.R;
+import com.hoccer.talk.android.TalkFragment;
 import com.hoccer.talk.android.adapter.ConversationAdapter;
 import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.content.ContentView;
@@ -32,6 +26,9 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.model.TalkDelivery;
 import com.hoccer.talk.model.TalkMessage;
 import org.apache.log4j.Logger;
+
+import java.sql.SQLException;
+import java.util.UUID;
 
 /**
  * Fragment for conversations

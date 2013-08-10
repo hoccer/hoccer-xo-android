@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.IBinder;
 import android.os.RemoteException;
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.service.ITalkClientService;
 import com.hoccer.talk.android.service.ITalkClientServiceListener;

@@ -1,10 +1,5 @@
 package com.hoccer.talk.android.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +9,12 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-
 import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 public class IntentHelper {
 

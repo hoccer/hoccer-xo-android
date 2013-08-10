@@ -3,7 +3,6 @@ package com.hoccer.talk.android.views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import com.hoccer.talk.android.R;
 import org.apache.log4j.Logger;

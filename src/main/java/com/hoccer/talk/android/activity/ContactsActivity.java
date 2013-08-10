@@ -1,7 +1,5 @@
 package com.hoccer.talk.android.activity;
 
-import android.os.Bundle;
-import com.actionbarsherlock.view.Menu;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
 
