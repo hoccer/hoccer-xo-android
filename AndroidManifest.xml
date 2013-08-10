@@ -4,31 +4,25 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <!-- We run on 2.3.3 (10) and up, we use features from up to 4.2 (17) -->
     <uses-sdk
         android:minSdkVersion="10"
         android:targetSdkVersion="17"/>
 
     <!-- Obviously, we need internet access -->
     <uses-permission android:name="android.permission.INTERNET"/>
-
     <!-- We monitor connection status while we want to communicate -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
     <!-- We also use GCM -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-
     <!-- GCM requires a Google account. -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-
     <!-- GCM uses this -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
     <!-- Notification vibration -->
     <uses-permission android:name="android.permission.VIBRATE" />
-
     <!-- For attachments, also used for logging -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <!-- Our own GCM permission -->
     <uses-permission android:name="com.hoccer.talk.android.permission.C2D_MESSAGE"/>
 
@@ -37,6 +31,7 @@
             android:name="com.hoccer.talk.android.permission.C2D_MESSAGE"
             android:protectionLevel="signature"/>
 
+    <!-- Declare our application -->
     <application
         android:name=".TalkApplication"
         android:allowBackup="false"
@@ -105,7 +100,7 @@
                     android:value=".activity.ContactsActivity"/>
         </activity>
 
-        <!-- connection and delivery service -->
+        <!-- Connection and delivery service -->
         <service android:name=".service.TalkClientService"/>
 
         <!-- GCM push service -->
