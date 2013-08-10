@@ -20,6 +20,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import com.google.android.gcm.GCMRegistrar;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkApplication;
