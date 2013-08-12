@@ -9,6 +9,8 @@
         android:id="@+id/message_text"
         android:text="@string/message_text"
         android:layout_margin="2dp"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@id/message_avatar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
