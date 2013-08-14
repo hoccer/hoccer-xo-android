@@ -57,6 +57,8 @@ public class AspectImageView extends ImageView {
             int width = getMeasuredWidth();
             // force aspect ratio
             int height = Math.round((int)(width / mAspectRatio));
+            height = Math.min(height, getMaxHeight());
+
             setMeasuredDimension(width, height);
         }
     }

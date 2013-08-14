@@ -1,13 +1,16 @@
 package com.hoccer.talk.android.content.image;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.content.ContentView;
 import com.hoccer.talk.android.content.IContentViewer;
+import com.hoccer.talk.android.views.AspectImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
@@ -31,13 +34,17 @@ public class ImageViewer implements IContentViewer {
             return null;
         }
         LOG.info("constructing image view");
-        ImageView view = new ImageView(context);
-        if(contentView.getMaxHeight() >= 0) {
-            view.setMaxHeight(contentView.getMaxHeight());
-        }
+        AspectImageView view = new AspectImageView(context);
+
+        Resources resources = context.getResources();
+        int maxHeight = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 300.0f, resources.getDisplayMetrics()));
+
+        view.setMaxHeight(maxHeight);
         view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        view.setAspectRatio(object.getAspectRatio());
         view.setAdjustViewBounds(true);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
         ImageLoader.getInstance().displayImage("file://" + object.getContentUrl(), view, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String imageUri, View view) {

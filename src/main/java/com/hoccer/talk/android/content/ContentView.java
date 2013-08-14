@@ -8,10 +8,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import com.hoccer.talk.android.R;
-import com.hoccer.talk.android.views.AspectLinearLayout;
 import org.apache.log4j.Logger;
 
-public class ContentView extends AspectLinearLayout {
+public class ContentView extends LinearLayout {
 
     private static final Logger LOG = Logger.getLogger(ContentView.class);
 
@@ -70,12 +69,6 @@ public class ContentView extends AspectLinearLayout {
         mObject = object;
 
         ContentObject.State state = object.getState();
-
-        if(object.getAspectRatio() != 0.0) {
-            setAspectRatio(object.getAspectRatio());
-        } else {
-            setAspectRatio(0.0);
-        }
 
         if(state.equals(ContentObject.State.DOWNLOAD_NEW)) {
             mContentDownload.setVisibility(VISIBLE);
