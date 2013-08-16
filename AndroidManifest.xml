@@ -9,6 +9,9 @@
         android:minSdkVersion="10"
         android:targetSdkVersion="17"/>
 
+    <!-- We can use the camera for capture -->
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+
     <!-- Obviously, we need internet access -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- We monitor connection status while we want to communicate -->
