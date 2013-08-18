@@ -8,7 +8,7 @@ import android.provider.MediaStore;
 import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.content.IContentSelector;
 
-public class ImageCaptureSelector implements IContentSelector {
+public class CaptureSelector implements IContentSelector {
 
     @Override
     public String getName() {
@@ -49,5 +49,7 @@ public class ImageCaptureSelector implements IContentSelector {
 
         cursor.close();
 
-        return contentObject;    }
+        return contentObject;
+    }
+
 }
