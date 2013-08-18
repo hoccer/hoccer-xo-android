@@ -37,7 +37,7 @@ public class ImageViewer implements IContentViewer {
         AspectImageView view = new AspectImageView(context);
 
         Resources resources = context.getResources();
-        int maxHeight = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, 300.0f, resources.getDisplayMetrics()));
+        int maxHeight = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 400.0f, resources.getDisplayMetrics()));
 
         view.setMaxHeight(maxHeight);
         view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
