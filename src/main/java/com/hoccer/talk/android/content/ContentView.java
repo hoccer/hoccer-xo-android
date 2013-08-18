@@ -28,6 +28,16 @@ public class ContentView extends LinearLayout {
     ProgressBar mDownloadingProgress;
     ProgressBar mUploadingProgress;
 
+    /**
+     * Maximum height for content view in DP.
+     *
+     * This is only used for views that have variable size,
+     * specifically images and videos, where the responsibility
+     * for applying this lies with the content selectors.
+     *
+     * Any container may set this ad libertum.
+     */
+    int mMaxContentHeight = Integer.MAX_VALUE;
 
     public ContentView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -44,6 +54,14 @@ public class ContentView extends LinearLayout {
         mContentUploading = (LinearLayout)findViewById(R.id.content_uploading);
         mDownloadingProgress = (ProgressBar)findViewById(R.id.content_downloading_progress);
         mUploadingProgress = (ProgressBar)findViewById(R.id.content_uploading_progress);
+    }
+
+    public int getMaxContentHeight() {
+        return mMaxContentHeight;
+    }
+
+    public void setMaxContentHeight(int maxContentHeight) {
+        this.mMaxContentHeight = maxContentHeight;
     }
 
     public void displayContent(Activity activity, ContentObject object) {

@@ -1,9 +1,7 @@
 package com.hoccer.talk.android.content.image;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -36,10 +34,10 @@ public class ImageViewer implements IContentViewer {
         LOG.info("constructing image view");
         AspectImageView view = new AspectImageView(context);
 
-        Resources resources = context.getResources();
-        int maxHeight = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 400.0f, resources.getDisplayMetrics()));
-
-        view.setMaxHeight(maxHeight);
+        int maxContentHeight = contentView.getMaxContentHeight();
+        if(maxContentHeight != Integer.MAX_VALUE) {
+            view.setMaxHeight(maxContentHeight);
+        }
         view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         view.setAspectRatio(object.getAspectRatio());
         view.setAdjustViewBounds(true);

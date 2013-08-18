@@ -89,6 +89,8 @@ public class MessagingFragment extends TalkFragment
         mClearButton.setOnClickListener(this);
 
         mAttachmentView = (ContentView)v.findViewById(R.id.messaging_composer_attachment);
+        int displayHeight = getResources().getDisplayMetrics().heightPixels;
+        mAttachmentView.setMaxContentHeight(Math.round(displayHeight * 0.3f)); // XXX better place
         mAttachmentView.setVisibility(View.GONE);
 
 		return v;

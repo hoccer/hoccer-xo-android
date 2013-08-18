@@ -317,6 +317,10 @@ public class ConversationAdapter extends TalkAdapter {
 
         ContentView contentView = (ContentView)view.findViewById(R.id.message_content);
 
+        int displayHeight = mResources.getDisplayMetrics().heightPixels;
+        // XXX better place for this? also we might want to use the measured height of our list view
+        contentView.setMaxContentHeight(Math.round(displayHeight * 0.8f));
+
         ContentObject contentObject = null;
         TalkClientUpload attachmentUpload = message.getAttachmentUpload();
         if(attachmentUpload != null) {
