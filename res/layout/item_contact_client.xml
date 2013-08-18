@@ -10,8 +10,8 @@
         android:src="@drawable/avatar_default_contact"
         android:scaleType="centerCrop"
         custom:aspectRatio="1.0"
-        android:layout_margin="2dp"
-        android:layout_width="50dp"
+        android:padding="2dp"
+        android:layout_width="54dp"
         android:layout_height="wrap_content"/>
     
     <TextView
