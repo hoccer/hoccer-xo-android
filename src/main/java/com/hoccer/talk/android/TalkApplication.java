@@ -165,12 +165,13 @@ public class TalkApplication extends Application {
         // set up directories
         LOG.info("internal storage at " + INTERNAL_STORAGE.toString());
         LOG.info("external storage at " + EXTERNAL_STORAGE.toString());
+        ensureDirectory(getAttachmentDirectory());
         ensureDirectory(getAvatarDirectory());
         ensureNomedia(getAvatarDirectory());
         ensureDirectory(getEncryptedUploadDirectory());
         ensureNomedia(getEncryptedUploadDirectory());
         ensureDirectory(getEncryptedDownloadDirectory());
-        ensureNomedia(getEncryptedUploadDirectory());
+        ensureNomedia(getEncryptedDownloadDirectory());
     }
 
     @Override
