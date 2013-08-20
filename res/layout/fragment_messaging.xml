@@ -27,7 +27,7 @@
 
             <ImageButton
                 android:id="@+id/messaging_composer_clear"
-                android:src="@drawable/ic_navigation_cancel"
+                android:src="@drawable/ic_light_navigation_cancel"
                 android:visibility="gone"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
@@ -35,7 +35,7 @@
 
             <ImageButton
                 android:id="@+id/messaging_composer_attachment_select"
-                android:src="@drawable/ic_content_attachment"
+                android:src="@drawable/ic_light_content_attachment"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -51,7 +51,7 @@
 
             <ImageButton
                 android:id="@+id/messaging_composer_send"
-                android:src="@drawable/ic_social_send_now"
+                android:src="@drawable/ic_light_social_send_now"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>

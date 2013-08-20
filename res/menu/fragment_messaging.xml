@@ -12,7 +12,7 @@
     <item
         android:id="@+id/menu_profile_client"
         android:title="@string/menu_profile"
-        android:icon="@drawable/ic_social_person"
+        android:icon="@drawable/ic_dark_social_person"
         android:visible="true"
         android:showAsAction="ifRoom"
         android:orderInCategory="200"/>
@@ -20,7 +20,7 @@
     <item
         android:id="@+id/menu_profile_group"
         android:title="@string/menu_profile"
-        android:icon="@drawable/ic_social_group"
+        android:icon="@drawable/ic_dark_social_group"
         android:visible="false"
         android:showAsAction="ifRoom"
         android:orderInCategory="210"/>

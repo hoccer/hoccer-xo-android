@@ -15,14 +15,14 @@
     <item
         android:id="@+id/menu_pair"
         android:title="@string/menu_pair"
-        android:icon="@drawable/ic_social_add_person"
+        android:icon="@drawable/ic_dark_social_add_person"
         android:showAsAction="ifRoom"
         android:orderInCategory="220"/>
 
     <item
         android:id="@+id/menu_new_group"
         android:title="@string/menu_new_group"
-        android:icon="@drawable/ic_social_add_group"
+        android:icon="@drawable/ic_dark_social_add_group"
         android:showAsAction="ifRoom"
         android:orderInCategory="230"/>
 

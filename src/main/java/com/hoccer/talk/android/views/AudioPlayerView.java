@@ -54,10 +54,10 @@ public class AudioPlayerView
         if(v == mPlayPause) {
             LOG.info("onClick(PlayPause)");
             if(mPlayer.isPlaying()) {
-                mPlayPause.setImageResource(R.drawable.ic_av_play);
+                mPlayPause.setImageResource(R.drawable.ic_light_av_play);
                 mPlayer.pause();
             } else {
-                mPlayPause.setImageResource(R.drawable.ic_av_pause);
+                mPlayPause.setImageResource(R.drawable.ic_light_av_pause);
                 mPlayer.start();
             }
         }
@@ -66,7 +66,7 @@ public class AudioPlayerView
     public void setFile(String path) {
         LOG.info("setFile(" + path + ")");
         mPlayPause.setEnabled(false);
-        mPlayPause.setImageResource(R.drawable.ic_av_play);
+        mPlayPause.setImageResource(R.drawable.ic_light_av_play);
         if(mPlayer.isPlaying()) {
             mPlayer.stop();
         }
@@ -82,7 +82,7 @@ public class AudioPlayerView
     public boolean onError(MediaPlayer mp, int what, int extra) {
         LOG.info("onError(" + what + "," + extra + ")");
         mPlayPause.setEnabled(false);
-        mPlayPause.setImageResource(R.drawable.ic_av_play);
+        mPlayPause.setImageResource(R.drawable.ic_light_av_play);
         return false;
     }
 
@@ -90,13 +90,13 @@ public class AudioPlayerView
     public void onPrepared(MediaPlayer mp) {
         LOG.info("onPrepared()");
         mPlayPause.setEnabled(true);
-        mPlayPause.setImageResource(R.drawable.ic_av_play);
+        mPlayPause.setImageResource(R.drawable.ic_light_av_play);
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
         LOG.info("onCompletion()");
-        mPlayPause.setImageResource(R.drawable.ic_av_play);
+        mPlayPause.setImageResource(R.drawable.ic_light_av_play);
     }
 
 }
