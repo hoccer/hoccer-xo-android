@@ -15,6 +15,7 @@ import com.hoccer.talk.android.content.audio.AudioViewer;
 import com.hoccer.talk.android.content.audio.MusicSelector;
 import com.hoccer.talk.android.content.image.GallerySelector;
 import com.hoccer.talk.android.content.image.ImageViewer;
+import com.hoccer.talk.android.content.vcard.ContactSelector;
 import com.hoccer.talk.android.util.IntentHelper;
 import org.apache.log4j.Logger;
 
@@ -53,6 +54,7 @@ public class ContentRegistry {
 
         initializeSelector(new GallerySelector());
         initializeSelector(new MusicSelector());
+        initializeSelector(new ContactSelector());
 
         mAttachmentViewers.add(new ImageViewer());
         mAttachmentViewers.add(new AudioViewer());
