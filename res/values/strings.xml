@@ -89,6 +89,17 @@
     <string name="content_uploading">Uploading...</string>
 
 
+    <string name="client_state_idle">Idle</string>
+    <string name="client_state_inactive">Inactive</string>
+    <string name="client_state_active">Ready</string>
+    <string name="client_state_syncing">Synchronizing</string>
+    <string name="client_state_reconnecting">Reconnecting</string>
+    <string name="client_state_registering">Registering</string>
+    <string name="client_state_login">Logging in</string>
+    <string name="client_state_connecting">Connecting</string>
+    <string name="client_state_unknown">Unknown</string>
+
+
     <string-array name="preference_log_level_names">
       <item>Info</item>
       <item>Debug</item>
