@@ -156,8 +156,10 @@ public class ContentRegistry {
         IContentSelector selector = selection.getSelector();
         if(selector != null) {
             ContentObject object = selector.createObjectFromSelectionResult(selection.getActivity(), intent);
-            object.setState(ContentObject.State.SELECTED);
-            object.setAvailable(true);
+            if(object != null) {
+                object.setState(ContentObject.State.SELECTED);
+                object.setAvailable(true);
+            }
             return object;
         }
         return null;
