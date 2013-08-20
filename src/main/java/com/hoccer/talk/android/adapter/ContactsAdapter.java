@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable;
 import android.os.RemoteException;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.hoccer.talk.android.R;
@@ -146,10 +145,10 @@ public class ContactsAdapter extends TalkAdapter {
         count += mGroupContacts.size();
 
         if(!mClientContacts.isEmpty()) {
-            count += 1;
+            //count += 1;
         }
         if(!mGroupContacts.isEmpty()) {
-            count += 1;
+            //count += 1;
         }
 
         return count;
@@ -159,10 +158,10 @@ public class ContactsAdapter extends TalkAdapter {
     public Object getItem(int position) {
         int offset = 0;
         if(!mClientContacts.isEmpty()) {
-            if(position == offset) {
-                return mResources.getString(R.string.contacts_category_friends);
-            }
-            offset += 1;
+//            if(position == offset) {
+//                return mResources.getString(R.string.contacts_category_friends);
+//            }
+//            offset += 1;
             int clientPos = position - offset;
             if(clientPos >= 0 && clientPos < mClientContacts.size()) {
                 return mClientContacts.get(clientPos);
@@ -170,10 +169,10 @@ public class ContactsAdapter extends TalkAdapter {
             offset += mClientContacts.size();
         }
         if(!mGroupContacts.isEmpty()) {
-            if(position == offset) {
-                return mResources.getString(R.string.contacts_category_groups);
-            }
-            offset += 1;
+//            if(position == offset) {
+//                return mResources.getString(R.string.contacts_category_groups);
+//            }
+//            offset += 1;
             int groupPos = position - offset;
             if(groupPos >= 0 && groupPos < mGroupContacts.size()) {
                 return mGroupContacts.get(groupPos);
@@ -187,10 +186,10 @@ public class ContactsAdapter extends TalkAdapter {
     public int getItemViewType(int position) {
         int offset = 0;
         if(!mClientContacts.isEmpty()) {
-            if(position == offset) {
-                return VIEW_TYPE_SEPARATOR;
-            }
-            offset += 1;
+//            if(position == offset) {
+//                return VIEW_TYPE_SEPARATOR;
+//            }
+//            offset += 1;
             int clientPos = position - offset;
             if(clientPos >= 0 && clientPos < mClientContacts.size()) {
                 return VIEW_TYPE_CLIENT;
@@ -198,10 +197,10 @@ public class ContactsAdapter extends TalkAdapter {
             offset += mClientContacts.size();
         }
         if(!mGroupContacts.isEmpty()) {
-            if(position == offset) {
-                return VIEW_TYPE_SEPARATOR;
-            }
-            offset += 1;
+//            if(position == offset) {
+//                return VIEW_TYPE_SEPARATOR;
+//            }
+//            offset += 1;
             int groupPos = position - offset;
             if(groupPos >= 0 && groupPos < mGroupContacts.size()) {
                 return VIEW_TYPE_GROUP;
@@ -220,17 +219,17 @@ public class ContactsAdapter extends TalkAdapter {
 
         int offset = 0;
         if(!mClientContacts.isEmpty()) {
-            if(position == offset) {
-                return ITEM_ID_CLIENT_HEADER;
-            }
-            offset += 1;
+//            if(position == offset) {
+//                return ITEM_ID_CLIENT_HEADER;
+//            }
+//            offset += 1;
             offset += mClientContacts.size();
         }
         if(!mGroupContacts.isEmpty()) {
-            if(position == offset) {
-                return ITEM_ID_GROUP_HEADER;
-            }
-            offset += 1;
+//            if(position == offset) {
+//                return ITEM_ID_GROUP_HEADER;
+//            }
+//            offset += 1;
             offset += mGroupContacts.size();
         }
         return ITEM_ID_UNKNOWN;
@@ -314,16 +313,22 @@ public class ContactsAdapter extends TalkAdapter {
             lastMessageText.setVisibility(View.GONE);
         }
 
-        ImageButton profileButton = (ImageButton) view.findViewById(R.id.contact_profile_button);
-        profileButton.setOnClickListener(new View.OnClickListener() {
+//        ImageButton profileButton = (ImageButton) view.findViewById(R.id.contact_profile_button);
+//        profileButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mActivity.showContactProfile(contact);
+//            }
+//        });
+
+        TalkClientDownload avatarDownload = contact.getAvatarDownload();
+        ImageView iconView = (ImageView) view.findViewById(R.id.contact_icon);
+        iconView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mActivity.showContactProfile(contact);
             }
         });
-
-        TalkClientDownload avatarDownload = contact.getAvatarDownload();
-        ImageView iconView = (ImageView) view.findViewById(R.id.contact_icon);
         if(avatarDownload == null || !avatarDownload.getState().equals(TalkClientDownload.State.COMPLETE)) {
             if(contact.isGroup()) {
                 iconView.setImageResource(R.drawable.avatar_default_group);
