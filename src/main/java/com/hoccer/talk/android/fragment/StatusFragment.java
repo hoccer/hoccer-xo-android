@@ -1,6 +1,7 @@
 package com.hoccer.talk.android.fragment;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,7 @@ public class StatusFragment extends TalkFragment {
             @Override
             public void run() {
                 int state = getTalkActivity().getClientState();
-                mStatusText.setText(HoccerTalkClient.stateToString(state));
+                applyClientState(state);
             }
         });
     }
@@ -47,22 +48,39 @@ public class StatusFragment extends TalkFragment {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mStatusText.setText("Backend disconnected");
+                mStatusText.setText("Internal error");
             }
         });
     }
 
     @Override
-    public void onClientStateChanged(int state) {
-        final String stateString = HoccerTalkClient.stateToString(state);
+    public void onClientStateChanged(final int state) {
+        String stateString = HoccerTalkClient.stateToString(state);
         LOG.debug("onClientStateChanged(" + stateString + ")");
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mStatusText.setText(stateString);
+                applyClientState(state);
             }
         });
+    }
+
+    private void applyClientState(int state) {
+        final String stateString = HoccerTalkClient.stateToString(state);
+
+        mStatusText.setText(stateString);
+
+        final FragmentTransaction tr =
+                getActivity()
+                        .getSupportFragmentManager()
+                        .beginTransaction();
+        if (stateString.equals("active")) {
+            tr.hide(StatusFragment.this);
+        } else {
+            tr.show(StatusFragment.this);
+        }
+        tr.commit();
     }
 
 }
