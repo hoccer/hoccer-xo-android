@@ -8,6 +8,7 @@
     <com.hoccer.talk.android.views.AspectImageView
         android:id="@+id/contact_icon"
         android:src="@drawable/avatar_default_contact"
+        android:clickable="true"
         android:scaleType="centerCrop"
         custom:aspectRatio="1.0"
         android:padding="2dp"
@@ -36,30 +37,20 @@
         android:id="@+id/contact_unseen_messages"
         android:text="5"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-        android:textColor="@android:color/secondary_text_light"
+        android:textColor="@android:color/secondary_text_dark"
         android:layout_margin="2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/contact_connected"/>
 
-    <ImageButton
-        android:id="@+id/contact_profile_button"
-        android:text="@string/contact_profile_button"
-        android:src="@drawable/ic_light_social_person"
-        android:layout_margin="2dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"/>
-
     <TextView
         android:id="@+id/contact_last_message"
         android:text="Lorem ipsum dolor..."
-        android:textColor="@android:color/primary_text_light"
+        android:textColor="@android:color/secondary_text_dark"
         android:layout_margin="2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/contact_icon"
-        android:layout_toLeftOf="@id/contact_profile_button"
         android:layout_below="@id/contact_name"/>
 
 </RelativeLayout>

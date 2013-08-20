@@ -32,6 +32,18 @@
         android:layout_margin="2dp"
         android:layout_toLeftOf="@id/message_avatar"
         android:layout_below="@id/message_text"
+        android:layout_height="wrap_content">
+    </com.hoccer.talk.android.content.ContentView>
+
+    <TextView
+        android:id="@+id/message_time"
+        android:text="13:23"
+        android:textColor="@android:color/secondary_text_dark"
+        android:layout_below="@id/message_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/message_avatar"
+        android:gravity="right"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
 </RelativeLayout>
