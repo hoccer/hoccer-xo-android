@@ -2,13 +2,10 @@ package com.hoccer.talk.android.fragment;
 
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.hoccer.talk.android.R;
@@ -32,13 +29,12 @@ import java.sql.SQLException;
  * TODO relax defensive programming
  */
 public class ProfileFragment extends TalkFragment
-        implements View.OnClickListener, TextView.OnEditorActionListener {
+        implements View.OnClickListener {
 
     private static final Logger LOG = Logger.getLogger(ProfileFragment.class);
 
     TextView mNameText;
-    EditText mNameEdit;
-    Button   mNameSetButton;
+    Button   mNameEditButton;
 
     ImageView mAvatarImage;
     ContentObject mAvatarToSet;
@@ -77,10 +73,8 @@ public class ProfileFragment extends TalkFragment
 
         // name
         mNameText = (TextView)v.findViewById(R.id.profile_name_text);
-        mNameEdit = (EditText)v.findViewById(R.id.profile_name_edit);
-        mNameEdit.setOnEditorActionListener(this);
-        mNameSetButton = (Button)v.findViewById(R.id.profile_name_set_button);
-        mNameSetButton.setOnClickListener(this);
+        mNameEditButton = (Button)v.findViewById(R.id.profile_name_edit_button);
+        mNameEditButton.setOnClickListener(this);
 
         // client operations
         mUserBlockStatus = (TextView)v.findViewById(R.id.profile_user_block_status);
@@ -116,11 +110,9 @@ public class ProfileFragment extends TalkFragment
                 getTalkActivity().selectAvatar();
             }
         }
-        if(v == mNameSetButton) {
-            LOG.debug("onClick(nameSetButton)");
-            if(mContact != null && mContact.isSelf()) {
-                updateName();
-            }
+        if(v == mNameEditButton) {
+            LOG.debug("onClick(nameEditButton)");
+            /* XXX */
         }
         if(v == mUserBlockButton) {
             LOG.debug("onClick(userBlockButton)");
@@ -161,18 +153,6 @@ public class ProfileFragment extends TalkFragment
                 depairContact();
             }
         }
-    }
-
-    @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if(v == mNameEdit) {
-            if(actionId == EditorInfo.IME_ACTION_DONE) {
-                LOG.debug("onEditorAction(nameEdit,IME_ACTION_DONE)");
-                updateName();
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -243,11 +223,6 @@ public class ProfileFragment extends TalkFragment
         }
         ImageLoader.getInstance().displayImage(avatarUrl, mAvatarImage);
 
-        boolean canEditName = contact.isSelf() || contact.isGroupAdmin();
-        // name
-        mNameText.setVisibility(canEditName ? View.GONE : View.VISIBLE);
-        mNameEdit.setVisibility(canEditName ? View.VISIBLE : View.GONE);
-        mNameSetButton.setVisibility(canEditName ? View.VISIBLE : View.GONE);
         // client operations
         int clientVisibility = contact.isClient() ? View.VISIBLE : View.GONE;
         int clientRelatedVisibility = contact.isClientRelated() ? View.VISIBLE : View.GONE;
@@ -271,7 +246,6 @@ public class ProfileFragment extends TalkFragment
             TalkPresence presence = contact.getClientPresence();
             if(presence != null) {
                 mNameText.setText(presence.getClientName());
-                mNameEdit.setText(presence.getClientName());
             }
             if(contact.isClient()) {
                 TalkRelationship relationship = contact.getClientRelationship();
@@ -284,17 +258,6 @@ public class ProfileFragment extends TalkFragment
                     }
                 }
             }
-        }
-    }
-
-    private void updateName() {
-        LOG.debug("updateName()");
-        try {
-            if(mContact != null && mContact.isSelf()) {
-                getTalkService().setClientName(mNameEdit.getText().toString());
-            }
-        } catch (RemoteException e) {
-            e.printStackTrace();
         }
     }
 
