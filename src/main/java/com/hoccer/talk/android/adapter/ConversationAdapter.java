@@ -1,6 +1,7 @@
 package com.hoccer.talk.android.adapter;
 
 import android.os.RemoteException;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,6 +22,7 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -280,6 +282,21 @@ public class ConversationAdapter extends TalkAdapter {
             } else {
                 text.setVisibility(View.GONE);
             }
+        }
+
+        TextView timestamp = (TextView)view.findViewById(R.id.message_time);
+        Date time = message.getTimestamp();
+        if(time != null) {
+            timestamp.setVisibility(View.VISIBLE);
+            timestamp.setText(DateUtils.getRelativeDateTimeString(
+                    mActivity,
+                    message.getTimestamp().getTime(),
+                    DateUtils.MINUTE_IN_MILLIS,
+                    DateUtils.WEEK_IN_MILLIS,
+                    0
+            ));
+        } else {
+            timestamp.setVisibility(View.GONE);
         }
 
         final ImageView avatar = (ImageView)view.findViewById(R.id.message_avatar);
