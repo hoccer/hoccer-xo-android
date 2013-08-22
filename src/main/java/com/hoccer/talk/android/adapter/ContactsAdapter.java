@@ -1,6 +1,5 @@
 package com.hoccer.talk.android.adapter;
 
-import android.graphics.drawable.Drawable;
 import android.os.RemoteException;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.model.TalkPresence;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -329,19 +329,26 @@ public class ContactsAdapter extends TalkAdapter {
                 mActivity.showContactProfile(contact);
             }
         });
+        String avatarUri;
         if(avatarDownload == null || !avatarDownload.getState().equals(TalkClientDownload.State.COMPLETE)) {
             if(contact.isGroup()) {
-                iconView.setImageResource(R.drawable.avatar_default_group);
+                avatarUri = "content://" + R.drawable.avatar_default_group;
             } else {
-                iconView.setImageResource(R.drawable.avatar_default_contact);
+                avatarUri = "content://" + R.drawable.avatar_default_contact;
             }
         } else {
             File avatarFile = TalkApplication.getAvatarLocation(avatarDownload);
             if(avatarFile != null) {
-                Drawable drawable = Drawable.createFromPath(avatarFile.toString());
-                iconView.setImageDrawable(drawable);
+                avatarUri = "file://" + avatarFile.toString();
+            } else {
+                if(contact.isGroup()) {
+                    avatarUri = "content://" + R.drawable.avatar_default_group;
+                } else {
+                    avatarUri = "content://" + R.drawable.avatar_default_contact;
+                }
             }
         }
+        ImageLoader.getInstance().displayImage(avatarUri, iconView);
     }
 
     private void updateClientContact(final View view, final TalkClientContact contact) {
