@@ -104,6 +104,7 @@
     <string name="client_state_connecting">Connecting</string>
     <string name="client_state_unknown">Unknown</string>
 
+    <string name="selectattachment_title">Select attachment</string>
 
     <string name="setname_title">Change your name</string>
 

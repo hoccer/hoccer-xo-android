@@ -136,6 +136,14 @@ public class ContentRegistry {
         final ContentSelection cs = new ContentSelection(activity);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(R.string.selectattachment_title);
+        builder.setCancelable(true);
+        builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -148,7 +156,6 @@ public class ContentRegistry {
         });
 
         Dialog dialog = builder.create();
-        dialog.setCancelable(true);
         dialog.show();
 
         return cs;
