@@ -16,6 +16,7 @@ import com.hoccer.talk.android.dialog.SetNameDialog;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.talk.model.TalkGroup;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkRelationship;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -276,8 +277,14 @@ public class ProfileFragment extends TalkFragment
                 }
             }
         }
+        if(contact.isGroup()) {
+            TalkGroup groupPresence = contact.getGroupPresence();
+            if(groupPresence != null) {
+                mNameText.setText(groupPresence.getGroupName());
+            }
+        }
 
-        if(contact.isSelf()) {
+        if(contact.isSelf() || contact.isGroupAdmin()) {
             mNameEditButton.setVisibility(View.VISIBLE);
         } else {
             mNameEditButton.setVisibility(View.GONE);
