@@ -2,6 +2,7 @@ package com.hoccer.talk.android.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.v4.app.FragmentManager;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -109,8 +110,18 @@ public class MessagingActivity extends TalkActivity {
         mContact = contact;
         mActionBar.setTitle(contact.getName());
         mFragment.converseWithContact(contact);
+        if(mContact.isDeleted()) {
+            finish();
+        }
         // invalidate menu so that profile buttons get disabled/enabled
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onContactRemoved(int contactId) throws RemoteException {
+        if(mContact != null && mContact.getClientContactId() == contactId) {
+            finish();
+        }
     }
 
 }

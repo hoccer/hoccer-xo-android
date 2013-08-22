@@ -2,6 +2,7 @@ package com.hoccer.talk.android.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.v4.app.FragmentManager;
 import com.actionbarsherlock.app.ActionBar;
 import com.hoccer.talk.android.R;
@@ -19,6 +20,8 @@ public class ProfileActivity extends TalkActivity {
     ActionBar mActionBar;
 
     ProfileFragment mFragment;
+
+    TalkClientContact mContact;
 
     @Override
     protected int getLayoutResource() {
@@ -56,22 +59,48 @@ public class ProfileActivity extends TalkActivity {
             if(contactId == -1) {
                 LOG.error("invalid contact id");
             } else {
-                try {
-                    TalkClientContact contact = getTalkClientDatabase().findClientContactById(contactId);
-                    if(contact != null) {
-                        showProfile(contact);
-                    }
-                } catch (SQLException e) {
-                    LOG.error("sql error", e);
-                }
+                showProfile(refreshContact(contactId));
+            }
+        } else {
+            if(mContact != null) {
+                showProfile(refreshContact(mContact.getClientContactId()));
             }
         }
     }
 
-    public void showProfile(TalkClientContact contact) {
-        LOG.debug("showProfile(" + contact.getClientContactId() + ")");
-        mActionBar.setTitle(contact.getName());
-        mFragment.showProfile(contact);
+    private TalkClientContact refreshContact(int contactId) {
+        try {
+            return getTalkClientDatabase().findClientContactById(contactId);
+        } catch (SQLException e) {
+            LOG.error("sql error", e);
+        }
+        return null;
     }
 
+    public void showProfile(TalkClientContact contact) {
+        LOG.debug("showProfile(" + contact.getClientContactId() + ")");
+        mContact = contact;
+        if(mContact != null) {
+            mActionBar.setTitle(contact.getName());
+            mFragment.showProfile(contact);
+            if(contact.isDeleted()) {
+                finish();
+            }
+        }
+    }
+
+    @Override
+    public void hackReturnedFromDialog() {
+        super.hackReturnedFromDialog();
+        if(mContact != null) {
+            showProfile(refreshContact(mContact.getClientContactId()));
+        }
+    }
+
+    @Override
+    public void onContactRemoved(int contactId) throws RemoteException {
+        if(mContact != null && mContact.getClientContactId() == contactId) {
+            finish();
+        }
+    }
 }

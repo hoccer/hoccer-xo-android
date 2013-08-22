@@ -12,6 +12,7 @@ import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkFragment;
 import com.hoccer.talk.android.content.ContentObject;
+import com.hoccer.talk.android.dialog.SetNameDialog;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
@@ -33,8 +34,8 @@ public class ProfileFragment extends TalkFragment
 
     private static final Logger LOG = Logger.getLogger(ProfileFragment.class);
 
-    TextView mNameText;
-    Button   mNameEditButton;
+    TextView  mNameText;
+    ImageView mNameEditButton;
 
     ImageView mAvatarImage;
     ContentObject mAvatarToSet;
@@ -73,7 +74,8 @@ public class ProfileFragment extends TalkFragment
 
         // name
         mNameText = (TextView)v.findViewById(R.id.profile_name_text);
-        mNameEditButton = (Button)v.findViewById(R.id.profile_name_edit_button);
+        mNameText.setOnClickListener(this);
+        mNameEditButton = (ImageView)v.findViewById(R.id.profile_name_edit_button);
         mNameEditButton.setOnClickListener(this);
 
         // client operations
@@ -110,9 +112,12 @@ public class ProfileFragment extends TalkFragment
                 getTalkActivity().selectAvatar();
             }
         }
-        if(v == mNameEditButton) {
-            LOG.debug("onClick(nameEditButton)");
-            /* XXX */
+        if(v == mNameText || v == mNameEditButton) {
+            LOG.debug("onClick(nameText|nameEditButton)");
+            if(mContact != null && mContact.isSelf()) {
+                new SetNameDialog(getTalkActivity(), mContact.getName())
+                        .show(getFragmentManager(), "SetNameDialog");
+            }
         }
         if(v == mUserBlockButton) {
             LOG.debug("onClick(userBlockButton)");
@@ -147,10 +152,22 @@ public class ProfileFragment extends TalkFragment
                 }
             }
         }
+        if(v == mGroupDeleteButton) {
+            LOG.debug("onClick(groupDeleteButton)");
+            if(mContact != null) {
+                getTalkActivity().confirmDeleteContact(mContact);
+            }
+        }
         if(v == mUserDepairButton) {
             LOG.debug("onClick(userDepairButton)");
             if(mContact != null) {
-                depairContact();
+                getTalkActivity().confirmDepairContact(mContact);
+            }
+        }
+        if(v == mUserDeleteButton) {
+            LOG.debug("onClick(contactDeleteButton)");
+            if(mContact != null) {
+                getTalkActivity().confirmDeleteContact(mContact);
             }
         }
     }
@@ -259,16 +276,11 @@ public class ProfileFragment extends TalkFragment
                 }
             }
         }
-    }
 
-    private void depairContact() {
-        LOG.debug("depairContact()");
-        if(mContact != null) {
-            try {
-                getTalkService().depairContact(mContact.getClientContactId());
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+        if(contact.isSelf()) {
+            mNameEditButton.setVisibility(View.VISIBLE);
+        } else {
+            mNameEditButton.setVisibility(View.GONE);
         }
     }
 

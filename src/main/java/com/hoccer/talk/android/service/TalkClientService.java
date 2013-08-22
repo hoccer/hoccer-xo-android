@@ -1035,7 +1035,11 @@ public class TalkClientService extends Service {
         @Override
         public void deleteContact(int contactId) throws RemoteException {
             LOG.info("[" + mId + "] deleteContact(" + contactId + ")");
-            // XXX
+            try {
+                mClient.deleteContact(mClient.getDatabase().findClientContactById(contactId));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
