@@ -23,9 +23,11 @@
                 android:layout_gravity="center_horizontal"/>
 
             <LinearLayout
+                    android:id="@+id/profile_name_overlay"
                     android:background="#9F000000"
                     android:orientation="horizontal"
                     android:gravity="center|right"
+                    android:clickable="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true">
@@ -44,8 +46,8 @@
                 <ImageView
                     android:id="@+id/profile_name_edit_button"
                     android:src="@drawable/ic_dark_content_edit"
-                    android:scaleX="0.9"
-                    android:scaleY="0.9"
+                    android:scaleX="1.0"
+                    android:scaleY="1.0"
                     android:clickable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>

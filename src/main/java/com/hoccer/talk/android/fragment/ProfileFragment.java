@@ -7,12 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkFragment;
 import com.hoccer.talk.android.content.ContentObject;
-import com.hoccer.talk.android.dialog.NameDialog;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
@@ -35,6 +35,7 @@ public class ProfileFragment extends TalkFragment
 
     private static final Logger LOG = Logger.getLogger(ProfileFragment.class);
 
+    LinearLayout mNameOverlay;
     TextView  mNameText;
     ImageView mNameEditButton;
 
@@ -74,6 +75,8 @@ public class ProfileFragment extends TalkFragment
         mAvatarImage.setOnClickListener(this);
 
         // name
+        mNameOverlay = (LinearLayout)v.findViewById(R.id.profile_name_overlay);
+        mNameOverlay.setOnClickListener(this);
         mNameText = (TextView)v.findViewById(R.id.profile_name_text);
         mNameText.setOnClickListener(this);
         mNameEditButton = (ImageView)v.findViewById(R.id.profile_name_edit_button);
@@ -109,15 +112,14 @@ public class ProfileFragment extends TalkFragment
     public void onClick(View v) {
         if(v == mAvatarImage) {
             LOG.debug("onClick(avatarSetButton)");
-            if(mContact != null && mContact.isSelf()) {
-                getTalkActivity().selectAvatar();
+            if(mContact != null && (mContact.isSelf() || mContact.isGroupAdmin())) {
+                getTalkActivity().selectAvatar(); // XXX pass contact
             }
         }
-        if(v == mNameText || v == mNameEditButton) {
-            LOG.debug("onClick(nameText|nameEditButton)");
-            if(mContact != null && mContact.isSelf()) {
-                new NameDialog(getTalkActivity(), mContact.getName())
-                        .show(getFragmentManager(), "SetNameDialog");
+        if(v == mNameOverlay || v == mNameText || v == mNameEditButton) {
+            LOG.debug("onClick(nameOverlay|nameText|nameEditButton)");
+            if(mContact != null && (mContact.isSelf() || mContact.isGroupAdmin())) {
+                getTalkActivity().changeName(mContact);
             }
         }
         if(v == mUserBlockButton) {

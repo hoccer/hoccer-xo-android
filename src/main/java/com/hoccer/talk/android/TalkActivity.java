@@ -29,6 +29,7 @@ import com.hoccer.talk.android.dialog.ContactDeleteDialog;
 import com.hoccer.talk.android.dialog.ContactDepairDialog;
 import com.hoccer.talk.android.dialog.GroupInviteDialog;
 import com.hoccer.talk.android.dialog.GroupKickDialog;
+import com.hoccer.talk.android.dialog.NameDialog;
 import com.hoccer.talk.android.service.ITalkClientService;
 import com.hoccer.talk.android.service.ITalkClientServiceListener;
 import com.hoccer.talk.android.service.TalkClientService;
@@ -59,6 +60,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     public final static int REQUEST_SELECT_ATTACHMENT = 42;
     public final static int REQUEST_SCAN_BARCODE = IntentIntegrator.REQUEST_CODE; // XXX dirty
 
+    public final static String DIALOG_NAME = "NameDialog";
     public final static String DIALOG_CONTACT_DELETE = "ContactDeleteDialog";
     public final static String DIALOG_CONTACT_DEPAIR = "ContactDepairDialog";
     public final static String DIALOG_GROUP_KICK = "GroupKickDialog";
@@ -664,6 +666,11 @@ public abstract class TalkActivity extends SherlockFragmentActivity
 
     public void hackReturnedFromDialog() {
         LOG.debug("hackReturnedFromDialog()");
+    }
+
+    public void changeName(TalkClientContact contact) {
+        new NameDialog(this, contact.getName())
+                .show(getSupportFragmentManager(), DIALOG_NAME);
     }
 
     public void confirmDeleteContact(TalkClientContact contact) {
