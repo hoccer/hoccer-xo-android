@@ -41,6 +41,10 @@ public class GallerySelector implements IContentSelector {
         int heightIndex = cursor.getColumnIndex(filePathColumn[3]);
         int fileHeight = cursor.getInt(heightIndex);
 
+        if(filePath == null) {
+            return null;
+        }
+
         ContentObject contentObject = new ContentObject();
         contentObject.setMediaType("image");
         contentObject.setMimeType(fileType);

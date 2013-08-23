@@ -39,6 +39,10 @@ public class RingtoneSelector implements IContentSelector {
         int dataIndex = cursor.getColumnIndex(filePathColumn[1]);
         String filePath = cursor.getString(dataIndex);
 
+        if(filePath == null) {
+            return null;
+        }
+
         ContentObject contentObject = new ContentObject();
         contentObject.setMediaType("audio");
         contentObject.setMimeType(fileType);
