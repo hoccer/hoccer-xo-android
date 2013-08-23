@@ -21,6 +21,7 @@ import com.hoccer.talk.android.activity.PreferenceActivity;
 import com.hoccer.talk.android.activity.ProfileActivity;
 import com.hoccer.talk.android.adapter.ContactsAdapter;
 import com.hoccer.talk.android.adapter.ConversationAdapter;
+import com.hoccer.talk.android.adapter.RichContactsAdapter;
 import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.content.ContentRegistry;
 import com.hoccer.talk.android.content.ContentSelection;
@@ -587,7 +588,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
 
     @Override
     public TalkAdapter makeContactListAdapter() {
-        TalkAdapter adapter = new ContactsAdapter(this);
+        TalkAdapter adapter = new RichContactsAdapter(this);
         adapter.register();
         adapter.reload();
         return adapter;
