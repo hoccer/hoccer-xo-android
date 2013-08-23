@@ -17,9 +17,9 @@ public class TalkConfiguration {
     public static final long NOTIFICATION_CANCEL_BACKOFF = 2000;
 
     /** If true, GCM registration will be performed forcibly on every connect */
-    public static final boolean GCM_ALWAYS_REGISTER = false;
+    public static final boolean GCM_ALWAYS_REGISTER = true;
     /** If true, GCM registration should always be pushed to server */
-    public static final boolean GCM_ALWAYS_UPDATE = false;
+    public static final boolean GCM_ALWAYS_UPDATE = true;
     /** GCM sender id for push notifications */
     public static final String GCM_SENDER_ID = "1894273085";
     /** GCM server registration expiration (seconds) */
