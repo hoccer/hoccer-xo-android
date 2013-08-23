@@ -4,6 +4,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.RemoteException;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.hoccer.talk.android.R;
@@ -39,6 +42,22 @@ public class GroupInviteDialog extends SherlockDialogFragment {
         adapter.reload();
 
         ListView list = new ListView(mActivity);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Object object = parent.getItemAtPosition(position);
+                if(object != null && object instanceof TalkClientContact) {
+                    TalkClientContact contact = (TalkClientContact)object;
+                    try {
+                        mActivity.getTalkClientService()
+                                .inviteToGroup(mGroup.getClientContactId(),
+                                        contact.getClientContactId());
+                    } catch (RemoteException e) {
+                        LOG.error("remote error", e);
+                    }
+                }
+            }
+        });
         list.setAdapter(adapter);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
