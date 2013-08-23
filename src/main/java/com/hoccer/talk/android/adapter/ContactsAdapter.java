@@ -39,14 +39,30 @@ public class ContactsAdapter extends TalkAdapter {
         super(activity);
     }
 
+    Filter mFilter = null;
+
     List<TalkClientContact> mClientContacts = new ArrayList<TalkClientContact>();
     List<TalkClientContact> mGroupContacts = new ArrayList<TalkClientContact>();
+
+    public Filter getFilter() {
+        return mFilter;
+    }
+
+    public void setFilter(Filter filter) {
+        this.mFilter = filter;
+    }
 
     @Override
     public void reload() {
         try {
             mClientContacts = mDatabase.findAllClientContacts();
             mGroupContacts = mDatabase.findAllGroupContacts();
+
+            if(mFilter != null) {
+                mClientContacts = filter(mClientContacts, mFilter);
+                mGroupContacts = filter(mGroupContacts, mFilter);
+            }
+
             for(TalkClientContact contact: mClientContacts) {
                 TalkClientDownload avatarDownload = contact.getAvatarDownload();
                 if(avatarDownload != null) {
@@ -68,6 +84,16 @@ public class ContactsAdapter extends TalkAdapter {
                 notifyDataSetInvalidated();
             }
         });
+    }
+
+    private List<TalkClientContact> filter(List<TalkClientContact> in, Filter filter) {
+        ArrayList<TalkClientContact> res = new ArrayList<TalkClientContact>();
+        for(TalkClientContact contact: in) {
+            if(filter.shouldShow(contact)) {
+                res.add(contact);
+            }
+        }
+        return res;
     }
 
     @Override
@@ -359,6 +385,10 @@ public class ContactsAdapter extends TalkAdapter {
         } else {
             connectedView.setVisibility(View.GONE);
         }
+    }
+
+    public interface Filter {
+        public boolean shouldShow(TalkClientContact contact);
     }
 
 }
