@@ -40,13 +40,6 @@ public class RichContactsAdapter extends ContactsAdapter {
     }
 
     protected void updateContact(final View view, final TalkClientContact contact) {
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mActivity.showContactConversation(contact);
-            }
-        });
-
         TextView nameView = (TextView) view.findViewById(R.id.contact_name);
         nameView.setText(contact.getName());
 
