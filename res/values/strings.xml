@@ -114,6 +114,10 @@
     <string name="depaircontact_title">Depair contact?</string>
     <string name="depaircontact_question">Are you sure you want to depair this contact? You will not be able to communicate unless you repair.</string>
 
+    <string name="kick_title">Kick from group</string>
+
+    <string name="invite_title">Invite to group</string>
+
     <string-array name="preference_log_level_names">
       <item>Info</item>
       <item>Debug</item>

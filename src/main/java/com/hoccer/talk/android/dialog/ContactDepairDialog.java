@@ -11,15 +11,15 @@ import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
 
-public class DepairContactDialog extends SherlockDialogFragment {
+public class ContactDepairDialog extends SherlockDialogFragment {
 
-    private static final Logger LOG = Logger.getLogger(DepairContactDialog.class);
+    private static final Logger LOG = Logger.getLogger(ContactDepairDialog.class);
 
     TalkActivity mActivity;
 
     TalkClientContact mContact;
 
-    public DepairContactDialog(TalkActivity activity, TalkClientContact contact) {
+    public ContactDepairDialog(TalkActivity activity, TalkClientContact contact) {
         super();
         mActivity = activity;
         mContact = contact;

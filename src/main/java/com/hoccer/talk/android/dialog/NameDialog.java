@@ -5,47 +5,52 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.text.InputType;
+import android.widget.EditText;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
-import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
 
-public class DeleteContactDialog extends SherlockDialogFragment {
+public class NameDialog extends SherlockDialogFragment {
 
-    private static final Logger LOG = Logger.getLogger(DeleteContactDialog.class);
+    private static final Logger LOG = Logger.getLogger(NameDialog.class);
 
     TalkActivity mActivity;
 
-    TalkClientContact mContact;
+    String mOldName;
 
-    public DeleteContactDialog(TalkActivity activity, TalkClientContact contact) {
+    EditText mEdit;
+
+    public NameDialog(TalkActivity activity, String oldName) {
         super();
         mActivity = activity;
-        mContact = contact;
+        mOldName = oldName;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        mEdit = new EditText(mActivity);
+        mEdit.setText(mOldName);
+        mEdit.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getSherlockActivity());
 
-        builder.setTitle(R.string.deletecontact_title);
-        builder.setMessage(R.string.deletecontact_question);
+        builder.setTitle(R.string.setname_title);
         builder.setCancelable(true);
-        builder.setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
+        builder.setView(mEdit);
+        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(mContact != null) {
-                    try {
-                        mActivity.getTalkClientService().deleteContact(mContact.getClientContactId());
-                    } catch (RemoteException e) {
-                        LOG.error("remote error", e);
-                    }
+                try {
+                    mActivity.getService().setClientName(mEdit.getText().toString());
+                } catch (RemoteException e) {
+                    LOG.error("remote error", e);
                 }
                 mActivity.hackReturnedFromDialog();
             }
         });
-        builder.setNegativeButton(R.string.common_no, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

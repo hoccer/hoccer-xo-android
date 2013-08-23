@@ -12,7 +12,7 @@ import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkFragment;
 import com.hoccer.talk.android.content.ContentObject;
-import com.hoccer.talk.android.dialog.SetNameDialog;
+import com.hoccer.talk.android.dialog.NameDialog;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
@@ -116,7 +116,7 @@ public class ProfileFragment extends TalkFragment
         if(v == mNameText || v == mNameEditButton) {
             LOG.debug("onClick(nameText|nameEditButton)");
             if(mContact != null && mContact.isSelf()) {
-                new SetNameDialog(getTalkActivity(), mContact.getName())
+                new NameDialog(getTalkActivity(), mContact.getName())
                         .show(getFragmentManager(), "SetNameDialog");
             }
         }
@@ -157,6 +157,18 @@ public class ProfileFragment extends TalkFragment
             LOG.debug("onClick(groupDeleteButton)");
             if(mContact != null) {
                 getTalkActivity().confirmDeleteContact(mContact);
+            }
+        }
+        if(v == mGroupInviteButton) {
+            LOG.debug("onClick(groupInviteButton)");
+            if(mContact != null && mContact.isGroup()) {
+                getTalkActivity().selectGroupInvite(mContact);
+            }
+        }
+        if(v == mGroupKickButton) {
+            LOG.debug("onClick(groupKickButton)");
+            if(mContact != null && mContact.isGroup()) {
+                getTalkActivity().selectGroupKick(mContact);
             }
         }
         if(v == mUserDepairButton) {

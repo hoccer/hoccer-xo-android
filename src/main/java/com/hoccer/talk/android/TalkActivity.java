@@ -25,8 +25,10 @@ import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.content.ContentRegistry;
 import com.hoccer.talk.android.content.ContentSelection;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
-import com.hoccer.talk.android.dialog.DeleteContactDialog;
-import com.hoccer.talk.android.dialog.DepairContactDialog;
+import com.hoccer.talk.android.dialog.ContactDeleteDialog;
+import com.hoccer.talk.android.dialog.ContactDepairDialog;
+import com.hoccer.talk.android.dialog.GroupInviteDialog;
+import com.hoccer.talk.android.dialog.GroupKickDialog;
 import com.hoccer.talk.android.service.ITalkClientService;
 import com.hoccer.talk.android.service.ITalkClientServiceListener;
 import com.hoccer.talk.android.service.TalkClientService;
@@ -56,6 +58,11 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     public final static int REQUEST_SELECT_AVATAR = 23;
     public final static int REQUEST_SELECT_ATTACHMENT = 42;
     public final static int REQUEST_SCAN_BARCODE = IntentIntegrator.REQUEST_CODE; // XXX dirty
+
+    public final static String DIALOG_CONTACT_DELETE = "ContactDeleteDialog";
+    public final static String DIALOG_CONTACT_DEPAIR = "ContactDepairDialog";
+    public final static String DIALOG_GROUP_KICK = "GroupKickDialog";
+    public final static String DIALOG_GROUP_INVITE = "GroupInviteDialog";
 
     protected Logger LOG = null;
 
@@ -660,13 +667,23 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     }
 
     public void confirmDeleteContact(TalkClientContact contact) {
-        new DeleteContactDialog(this, contact)
-                .show(getSupportFragmentManager(), "DeleteContactDialog");
+        new ContactDeleteDialog(this, contact)
+                .show(getSupportFragmentManager(), DIALOG_CONTACT_DELETE);
     }
 
     public void confirmDepairContact(TalkClientContact contact) {
-        new DepairContactDialog(this, contact)
-                .show(getSupportFragmentManager(), "DepairContactDialog");
+        new ContactDepairDialog(this, contact)
+                .show(getSupportFragmentManager(), DIALOG_CONTACT_DEPAIR);
+    }
+
+    public void selectGroupInvite(TalkClientContact group) {
+        new GroupInviteDialog(this, group)
+                .show(getSupportFragmentManager(), DIALOG_GROUP_INVITE);
+    }
+
+    public void selectGroupKick(TalkClientContact group) {
+        new GroupKickDialog(this, group)
+                .show(getSupportFragmentManager(), DIALOG_GROUP_KICK);
     }
 
     /** Just a dummy so we can implement the listener interface */
