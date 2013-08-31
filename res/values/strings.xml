@@ -38,10 +38,13 @@
 
     <!-- Pairing view -->
 
-    <string name="share_token_id">Give this token to someone:</string>
-    <string name="someones_token_code">Or enter a token given to YOU here:</string>
-    <string name="pairing_code_hint">tap here to enter code</string>
-    <string name="pairing_token_pair">Pair with given token</string>
+    <string name="pairing_token_info">Give this token to someone:</string>
+    <string name="pairing_code_info">Enter a code given to you here:</string>
+    <string name="pairing_code_hint">Enter code</string>
+    <string name="pairing_token_pair">Pair using token</string>
+    <string name="pairing_qr_info">You can also pair using QR codes:</string>
+    <string name="pairing_qr_show">Show QR code</string>
+    <string name="pairing_qr_scan">Scan QR code</string>
 
     <!-- Profile view -->
 

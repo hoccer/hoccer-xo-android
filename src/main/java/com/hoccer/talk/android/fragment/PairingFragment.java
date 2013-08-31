@@ -26,12 +26,15 @@ import java.util.concurrent.TimeUnit;
  *
  * This offers various ways of finding new friends.
  */
-public class PairingFragment extends TalkFragment {
+public class PairingFragment extends TalkFragment implements View.OnClickListener {
 
     TextView mTokenText;
 
     EditText mTokenEdit;
     Button mTokenPairButton;
+
+    Button mQrShowButton;
+    Button mQrScanButton;
 
     ScheduledFuture<?> mTokenFuture;
 
@@ -59,6 +62,12 @@ public class PairingFragment extends TalkFragment {
         mTokenEdit.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
         mTokenPairButton = (Button)view.findViewById(R.id.pairing_token_pair);
+
+        mQrScanButton = (Button)view.findViewById(R.id.pairing_scan_qr);
+        mQrScanButton.setOnClickListener(this);
+
+        mQrShowButton = (Button)view.findViewById(R.id.pairing_show_qr);
+        mQrShowButton.setOnClickListener(this);
 
         return view;
     }
@@ -144,6 +153,18 @@ public class PairingFragment extends TalkFragment {
             mTokenFuture.cancel(true);
         }
         super.onPause();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v == mQrShowButton) {
+            LOG.debug("onClick(qrShow)");
+            getTalkActivity().showBarcode();
+        }
+        if(v == mQrScanButton) {
+            LOG.debug("onClick(qrScan)");
+            getTalkActivity().scanBarcode();
+        }
     }
 
     public void initializeWithReceivedToken(String token) {
