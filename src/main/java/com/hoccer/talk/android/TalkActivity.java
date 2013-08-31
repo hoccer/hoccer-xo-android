@@ -670,7 +670,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     }
 
     public void changeName(TalkClientContact contact) {
-        new NameDialog(this, contact.getName())
+        new NameDialog(this, contact)
                 .show(getSupportFragmentManager(), DIALOG_NAME);
     }
 

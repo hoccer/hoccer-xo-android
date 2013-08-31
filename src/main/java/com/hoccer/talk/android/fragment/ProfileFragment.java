@@ -207,7 +207,12 @@ public class ProfileFragment extends TalkFragment
                     TalkClientUpload upload = ContentObject.createAvatarUpload(newAvatar);
                     try {
                         getTalkDatabase().saveClientUpload(upload);
-                        getTalkService().setClientAvatar(upload.getClientUploadId());
+                        if(mContact.isSelf()) {
+                            getTalkService().setClientAvatar(upload.getClientUploadId());
+                        }
+                        if(mContact.isGroup()) {
+                            getTalkService().setGroupAvatar(mContact.getClientContactId(), upload.getClientUploadId());
+                        }
                     } catch (SQLException e) {
                         LOG.error("sql error", e);
                     } catch (RemoteException e) {

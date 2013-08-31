@@ -30,6 +30,12 @@ interface ITalkClientService {
     /** Set new avatar */
     void setClientAvatar(int uploadId);
 
+    /** Set group name */
+    void setGroupName(int contactId, String newName);
+
+    /** Set new group avatar */
+    void setGroupAvatar(int contactId, int uploadId);
+
 
     /** Generate a pairing token */
     String generatePairingToken();

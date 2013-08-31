@@ -10,6 +10,7 @@ import android.widget.EditText;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
+import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
 
 public class NameDialog extends SherlockDialogFragment {
@@ -18,14 +19,17 @@ public class NameDialog extends SherlockDialogFragment {
 
     TalkActivity mActivity;
 
+    TalkClientContact mContact;
+
     String mOldName;
 
     EditText mEdit;
 
-    public NameDialog(TalkActivity activity, String oldName) {
+    public NameDialog(TalkActivity activity, TalkClientContact contact) {
         super();
         mActivity = activity;
-        mOldName = oldName;
+        mContact = contact;
+        mOldName = mContact.getName();
     }
 
     @Override
@@ -43,7 +47,13 @@ public class NameDialog extends SherlockDialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    mActivity.getService().setClientName(mEdit.getText().toString());
+                    String newName = mEdit.getText().toString();
+                    if(mContact.isSelf()) {
+                        mActivity.getService().setClientName(newName);
+                    }
+                    if(mContact.isGroup()) {
+                        mActivity.getService().setGroupName(mContact.getClientContactId(), newName);
+                    }
                 } catch (RemoteException e) {
                     LOG.error("remote error", e);
                 }

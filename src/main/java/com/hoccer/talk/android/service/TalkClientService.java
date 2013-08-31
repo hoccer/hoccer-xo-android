@@ -899,7 +899,28 @@ public class TalkClientService extends Service {
             try {
                 mClient.setClientAvatar(mClient.getDatabase().findClientUploadById(uploadId));
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOG.error("sql error", e);
+            }
+        }
+
+        @Override
+        public void setGroupName(int contactId, String newName) throws RemoteException {
+            LOG.info("[" + mId + "] setGroupName(" + contactId + "," + newName + ")");
+            try {
+                mClient.setGroupName(mClient.getDatabase().findClientContactById(contactId), newName);
+            } catch (SQLException e) {
+                LOG.error("sql error", e);
+            }
+        }
+
+        @Override
+        public void setGroupAvatar(int contactId, int uploadId) throws RemoteException {
+            LOG.info("[" + mId + "] setGroupAvatar(" + contactId + "," + uploadId + ")");
+            try {
+                mClient.setGroupAvatar(mClient.getDatabase().findClientContactById(contactId),
+                                        mClient.getDatabase().findClientUploadById(uploadId));
+            } catch (SQLException e) {
+                LOG.error("sql error", e);
             }
         }
 
