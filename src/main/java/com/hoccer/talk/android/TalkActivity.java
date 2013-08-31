@@ -30,6 +30,7 @@ import com.hoccer.talk.android.dialog.ContactDeleteDialog;
 import com.hoccer.talk.android.dialog.ContactDepairDialog;
 import com.hoccer.talk.android.dialog.GroupInviteDialog;
 import com.hoccer.talk.android.dialog.GroupKickDialog;
+import com.hoccer.talk.android.dialog.GroupLeaveDialog;
 import com.hoccer.talk.android.dialog.NameDialog;
 import com.hoccer.talk.android.service.ITalkClientService;
 import com.hoccer.talk.android.service.ITalkClientServiceListener;
@@ -682,6 +683,11 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     public void confirmDepairContact(TalkClientContact contact) {
         new ContactDepairDialog(this, contact)
                 .show(getSupportFragmentManager(), DIALOG_CONTACT_DEPAIR);
+    }
+
+    public void confirmGroupLeave(TalkClientContact group) {
+        new GroupLeaveDialog(this, group)
+                .show(getSupportFragmentManager(), DIALOG_GROUP_KICK);
     }
 
     public void selectGroupInvite(TalkClientContact group) {

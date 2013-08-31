@@ -144,12 +144,8 @@ public class ProfileFragment extends TalkFragment
         }
         if(v == mGroupLeaveButton) {
             LOG.debug("onClick(groupLeaveButton)");
-            if(mContact != null && mContact.isGroup()) {
-                try {
-                    getTalkService().leaveGroup(mContact.getClientContactId());
-                } catch (RemoteException e) {
-                    LOG.error("remote error", e);
-                }
+            if(mContact != null && mContact.isGroupJoined() && !mContact.isGroupAdmin()) {
+                getTalkActivity().confirmGroupLeave(mContact);
             }
         }
         if(v == mGroupDeleteButton) {
@@ -268,9 +264,10 @@ public class ProfileFragment extends TalkFragment
         int groupJoinedVisibility = contact.isGroupJoined() ? View.VISIBLE : View.GONE;
         int groupInvitedVisibility = contact.isGroupInvited() ? View.VISIBLE : View.GONE;
         int groupAdminVisibility = contact.isGroupAdmin() ? View.VISIBLE : View.GONE;
+        int groupMemberVisibility = (contact.isGroupJoined() && !contact.isGroupAdmin()) ? View.VISIBLE : View.GONE;
         mGroupJoinButton.setVisibility(groupInvitedVisibility);
         mGroupInviteButton.setVisibility(groupAdminVisibility);
-        mGroupLeaveButton.setVisibility(groupJoinedVisibility);
+        mGroupLeaveButton.setVisibility(groupMemberVisibility);
         mGroupKickButton.setVisibility(groupAdminVisibility);
         mGroupDeleteButton.setVisibility(contact.isGroup() ? View.VISIBLE : View.GONE);
 
