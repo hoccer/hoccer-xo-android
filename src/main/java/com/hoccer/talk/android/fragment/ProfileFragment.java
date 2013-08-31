@@ -113,7 +113,7 @@ public class ProfileFragment extends TalkFragment
         if(v == mAvatarImage) {
             LOG.debug("onClick(avatarSetButton)");
             if(mContact != null && (mContact.isSelf() || mContact.isGroupAdmin())) {
-                getTalkActivity().selectAvatar(); // XXX pass contact
+                getTalkActivity().selectAvatar();
             }
         }
         if(v == mNameOverlay || v == mNameText || v == mNameEditButton) {
