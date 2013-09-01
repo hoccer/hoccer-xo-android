@@ -35,7 +35,7 @@ public class GroupKickDialog extends SherlockDialogFragment {
         adapter.setFilter(new ContactsAdapter.Filter() {
             @Override
             public boolean shouldShow(TalkClientContact contact) {
-                return contact.isClientRelated();
+                return contact.isClientGroupMember(mGroup);
             }
         });
         adapter.reload();

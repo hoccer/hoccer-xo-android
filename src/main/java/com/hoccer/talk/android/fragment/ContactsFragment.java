@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkListFragment;
+import com.hoccer.talk.android.adapter.ContactsAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
 
@@ -42,8 +43,23 @@ public class ContactsFragment extends TalkListFragment {
 	public void onResume() {
         LOG.debug("onResume()");
         super.onResume();
+
+        // create list adapter
+        ContactsAdapter adapter = getTalkActivity().makeContactListAdapter();
+
+        // filter out never-related contacts (which we know only via groups)
+        adapter.setFilter(new ContactsAdapter.Filter() {
+            @Override
+            public boolean shouldShow(TalkClientContact contact) {
+                LOG.info("contact " + contact.getName() + " related " + contact.isEverRelated());
+                return (contact.isGroup() && contact.isGroupInvolved())
+                        || (contact.isClient() && contact.isClientRelated())
+                        || contact.isEverRelated();
+            }
+        });
+
         // do this late so activity has database initialized
-        mContactList.setAdapter(getTalkActivity().makeContactListAdapter());
+        mContactList.setAdapter(adapter);
     }
 
     @Override

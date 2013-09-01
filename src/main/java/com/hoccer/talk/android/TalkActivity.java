@@ -588,8 +588,8 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     }
 
     @Override
-    public TalkAdapter makeContactListAdapter() {
-        TalkAdapter adapter = new RichContactsAdapter(this);
+    public ContactsAdapter makeContactListAdapter() {
+        ContactsAdapter adapter = new RichContactsAdapter(this);
         adapter.register();
         adapter.reload();
         return adapter;
