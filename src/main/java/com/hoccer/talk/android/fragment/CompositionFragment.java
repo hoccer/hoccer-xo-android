@@ -221,7 +221,7 @@ public class CompositionFragment extends TalkFragment implements View.OnClickLis
             db.saveDelivery(delivery);
             db.saveClientMessage(clientMessage);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("sql error", e);
         }
 
         // log to help debugging
@@ -230,7 +230,7 @@ public class CompositionFragment extends TalkFragment implements View.OnClickLis
         try {
             getTalkService().performDeliveries();
         } catch (RemoteException e) {
-            e.printStackTrace();
+            LOG.error("remote error", e);
         }
 
         // clear the composer UI to prepare it for the next message
