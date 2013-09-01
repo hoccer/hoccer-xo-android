@@ -88,7 +88,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     TalkClientDatabase mDatabase;
 
     /** List of all talk fragments */
-    ArrayList<TalkFragment> mTalkFragments = new ArrayList<TalkFragment>();
+    ArrayList<ITalkFragment> mTalkFragments = new ArrayList<ITalkFragment>();
 
     /** Client listeners */
     ArrayList<ITalkClientServiceListener> mListeners = new ArrayList<ITalkClientServiceListener>();
@@ -120,12 +120,12 @@ public abstract class TalkActivity extends SherlockFragmentActivity
         return mService;
     }
 
-    public void registerTalkFragment(TalkFragment fragment) {
+    public void registerTalkFragment(ITalkFragment fragment) {
         mTalkFragments.add(fragment);
         mListeners.add(fragment);
     }
 
-    public void unregisterTalkFragment(TalkFragment fragment) {
+    public void unregisterTalkFragment(ITalkFragment fragment) {
         mTalkFragments.remove(fragment);
         mListeners.remove(fragment);
     }
@@ -275,7 +275,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
                 ContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection, data);
                 if(co != null) {
                     LOG.debug("selected avatar " + co.getContentUrl());
-                    for(TalkFragment fragment: mTalkFragments) {
+                    for(ITalkFragment fragment: mTalkFragments) {
                         fragment.onAvatarSelected(co);
                     }
                 }
@@ -287,7 +287,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
             ContentObject co = ContentRegistry.get(this).createSelectedAttachment(mAttachmentSelection, data);
             if(co != null) {
                 LOG.debug("selected attachment " + co.getContentUrl());
-                for(TalkFragment fragment: mTalkFragments) {
+                for(ITalkFragment fragment: mTalkFragments) {
                     fragment.onAttachmentSelected(co);
                 }
             }
@@ -392,7 +392,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
             } catch (RemoteException e) {
                 LOG.error("remote error", e);
             }
-            for(TalkFragment fragment: mTalkFragments) {
+            for(ITalkFragment fragment: mTalkFragments) {
                 fragment.onServiceConnected();
             }
             if(mBarcodeToken != null) {
@@ -409,7 +409,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
             LOG.debug("onServiceDisconnected()");
             shutdownKeepAlive();
             mService = null;
-            for(TalkFragment fragment: mTalkFragments) {
+            for(ITalkFragment fragment: mTalkFragments) {
                 fragment.onServiceDisconnected();
             }
         }

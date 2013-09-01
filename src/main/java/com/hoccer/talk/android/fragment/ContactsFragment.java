@@ -4,10 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import com.hoccer.talk.android.R;
-import com.hoccer.talk.android.TalkFragment;
+import com.hoccer.talk.android.TalkListFragment;
 import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
 
@@ -19,7 +18,7 @@ import java.sql.SQLException;
  * This currently shows only contact data but should also be able to show
  * recent conversations for use as a "conversations" view.
  */
-public class ContactsFragment extends TalkFragment {
+public class ContactsFragment extends TalkListFragment {
 
 	private static final Logger LOG = Logger.getLogger(ContactsFragment.class);
 
@@ -34,18 +33,7 @@ public class ContactsFragment extends TalkFragment {
 		LOG.debug("onCreateView()");
 		View v = inflater.inflate(R.layout.fragment_contacts, container, false);
 
-        // the contact list itself
-		mContactList = (ListView)v.findViewById(R.id.contacts_contact_list);
-        mContactList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object item = parent.getItemAtPosition(position);
-                if(item instanceof TalkClientContact) {
-                    TalkClientContact contact = (TalkClientContact)item;
-                    getTalkActivity().showContactConversation(contact);
-                }
-            }
-        });
+		mContactList = (ListView)v.findViewById(android.R.id.list);
 
 		return v;
 	}
@@ -73,5 +61,17 @@ public class ContactsFragment extends TalkFragment {
 
     @Override
     public void onGroupCreationFailed() {
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        if(l == mContactList) {
+            Object item = mContactList.getItemAtPosition(position);
+            if(item instanceof TalkClientContact) {
+                TalkClientContact contact = (TalkClientContact)item;
+                getTalkActivity().showContactConversation(contact);
+            }
+        }
     }
 }

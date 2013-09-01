@@ -6,9 +6,27 @@
     android:orientation="vertical">
     
     <ListView
-        android:id="@+id/contacts_contact_list"
+        android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"/>
-    
+
+    <LinearLayout
+            android:id="@android:id/empty"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/contacts_empty_info"/>
+        <Button
+            android:id="@+id/contacts_pairing"
+            android:text="@string/contacts_empty_pairing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
 </LinearLayout>

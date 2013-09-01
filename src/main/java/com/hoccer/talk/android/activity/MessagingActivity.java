@@ -9,6 +9,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
+import com.hoccer.talk.android.fragment.CompositionFragment;
 import com.hoccer.talk.android.fragment.MessagingFragment;
 import com.hoccer.talk.client.model.TalkClientContact;
 
@@ -18,7 +19,8 @@ public class MessagingActivity extends TalkActivity {
 
     ActionBar mActionBar;
 
-    MessagingFragment mFragment;
+    MessagingFragment mMessagingFragment;
+    CompositionFragment mCompositionFragment;
 
     TalkClientContact mContact;
 
@@ -45,7 +47,8 @@ public class MessagingActivity extends TalkActivity {
 
         // get our primary fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
-        mFragment = (MessagingFragment) fragmentManager.findFragmentById(R.id.activity_messaging_fragment);
+        mMessagingFragment = (MessagingFragment) fragmentManager.findFragmentById(R.id.activity_messaging_fragment);
+        mCompositionFragment = (CompositionFragment) fragmentManager.findFragmentById(R.id.activity_messaging_composer);
     }
 
     @Override
@@ -109,7 +112,8 @@ public class MessagingActivity extends TalkActivity {
         LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
         mContact = contact;
         mActionBar.setTitle(contact.getName());
-        mFragment.converseWithContact(contact);
+        mMessagingFragment.converseWithContact(contact);
+        mCompositionFragment.converseWithContact(contact);
         if(mContact.isDeleted()) {
             finish();
         }
