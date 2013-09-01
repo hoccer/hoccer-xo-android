@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkListFragment;
@@ -19,9 +20,11 @@ import java.sql.SQLException;
  * This currently shows only contact data but should also be able to show
  * recent conversations for use as a "conversations" view.
  */
-public class ContactsFragment extends TalkListFragment {
+public class ContactsFragment extends TalkListFragment implements View.OnClickListener {
 
 	private static final Logger LOG = Logger.getLogger(ContactsFragment.class);
+
+    Button mAddUserButton;
 
 	ListView mContactList;
 
@@ -33,6 +36,9 @@ public class ContactsFragment extends TalkListFragment {
 			Bundle savedInstanceState) {
 		LOG.debug("onCreateView()");
 		View v = inflater.inflate(R.layout.fragment_contacts, container, false);
+
+        mAddUserButton = (Button)v.findViewById(R.id.contacts_pairing);
+        mAddUserButton.setOnClickListener(this);
 
 		mContactList = (ListView)v.findViewById(android.R.id.list);
 
@@ -77,6 +83,13 @@ public class ContactsFragment extends TalkListFragment {
 
     @Override
     public void onGroupCreationFailed() {
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v == mAddUserButton) {
+            getTalkActivity().showPairing();
+        }
     }
 
     @Override
