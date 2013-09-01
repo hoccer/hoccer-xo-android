@@ -384,9 +384,13 @@ public class TalkClientService extends Service {
         }
     }
 
-    private void updateNotification(List<TalkClientMessage> unseenMessages, boolean notify) {
+    private void updateNotification(List<TalkClientMessage> allUnseenMessages, boolean notify) {
         LOG.info("updateNotification()");
         TalkClientDatabase db = mClient.getDatabase();
+
+        // we re-collect messages to this to eliminate
+        // messages from deleted contacts that are still in the db (XXX)
+        List<TalkClientMessage> unseenMessages = new ArrayList<TalkClientMessage>();
 
         // determine where we are in time
         long now = System.currentTimeMillis();
@@ -394,16 +398,9 @@ public class TalkClientService extends Service {
 
         // cancel present notification if everything has been seen
         // we back off here to prevent interruption of any in-progress alarms
-        if(unseenMessages == null || unseenMessages.isEmpty()) {
+        if(allUnseenMessages == null || allUnseenMessages.isEmpty()) {
             LOG.debug("no unseen messages");
-            long cancelTime = mNotificationTimestamp + TalkConfiguration.NOTIFICATION_CANCEL_BACKOFF;
-            long delay = Math.max(0, cancelTime - now);
-            mExecutor.schedule(new Runnable() {
-                @Override
-                public void run() {
-                    mNotificationManager.cancel(NOTIFICATION_UNSEEN_MESSAGES);
-                }
-            }, delay, TimeUnit.MILLISECONDS);
+            cancelNotification();
             return;
         }
 
@@ -416,20 +413,31 @@ public class TalkClientService extends Service {
         mNotificationTimestamp = now;
 
         // collect conversation contacts and sort messages accordingly
+        // also removes messages from deleted clients
         List<TalkClientContact> contacts = new ArrayList<TalkClientContact>();
         Map<Integer, TalkClientContact> contactsById = new HashMap<Integer, TalkClientContact>();
-        for(TalkClientMessage message: unseenMessages) {
+        for(TalkClientMessage message: allUnseenMessages) {
             TalkClientContact contact = message.getConversationContact();
             int contactId = contact.getClientContactId();
             if(!contactsById.containsKey(contactId)) {
-                contactsById.put(contactId, contact);
-                contacts.add(contact);
                 try {
                     db.refreshClientContact(contact);
                 } catch (SQLException e) {
                     LOG.error("sql error", e);
                 }
+                if(!contact.isDeleted()) {
+                    contactsById.put(contactId, contact);
+                    contacts.add(contact);
+                    unseenMessages.add(message);
+                }
             }
+        }
+
+        // if we have no messages after culling then cancel notification
+        if(unseenMessages.isEmpty()) {
+            LOG.debug("no unseen messages");
+            cancelNotification();
+            return;
         }
 
         // for easy reference
@@ -504,6 +512,18 @@ public class TalkClientService extends Service {
         Notification notification = builder.build();
         LOG.info("notification " + notification.toString());
         mNotificationManager.notify(NOTIFICATION_UNSEEN_MESSAGES, notification);
+    }
+
+    private void cancelNotification() {
+        long now = System.currentTimeMillis();
+        long cancelTime = mNotificationTimestamp + TalkConfiguration.NOTIFICATION_CANCEL_BACKOFF;
+        long delay = Math.max(0, cancelTime - now);
+        mExecutor.schedule(new Runnable() {
+            @Override
+            public void run() {
+                mNotificationManager.cancel(NOTIFICATION_UNSEEN_MESSAGES);
+            }
+        }, delay, TimeUnit.MILLISECONDS);
     }
 
     private void checkBinders() {
