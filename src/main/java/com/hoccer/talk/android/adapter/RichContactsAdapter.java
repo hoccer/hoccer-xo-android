@@ -46,10 +46,12 @@ public class RichContactsAdapter extends ContactsAdapter {
         if(contact.isClient()) {
             TalkPresence presence = contact.getClientPresence();
             TextView connectedView = (TextView) view.findViewById(R.id.contact_connected);
-            if(presence != null && presence.getConnectionStatus().equals("online")) {
-                connectedView.setVisibility(View.VISIBLE);
-            } else {
-                connectedView.setVisibility(View.GONE);
+            if(connectedView != null) {
+                if(presence != null && presence.getConnectionStatus().equals("online")) {
+                    connectedView.setVisibility(View.VISIBLE);
+                } else {
+                    connectedView.setVisibility(View.GONE);
+                }
             }
         }
 
