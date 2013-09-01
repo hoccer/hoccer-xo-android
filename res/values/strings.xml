@@ -5,13 +5,13 @@
 
     <string name="demo_message">Lorem ipsum dolor...</string>
 
+    <!-- common strings -->
     <string name="common_ok">Ok</string>
     <string name="common_cancel">Cancel</string>
     <string name="common_yes">Yes</string>
     <string name="common_no">No</string>
 
     <!-- Menu entries -->
-
     <string name="menu_my_profile">My profile</string>
     <string name="menu_pair">Pair with someone</string>
     <string name="menu_new_group">Create group</string>
@@ -23,20 +23,25 @@
     <string name="menu_reconnect">Reconnect</string>
     <string name="menu_quit">Quit</string>
 
-    <!-- Contacts view -->
-
+    <!-- Contacts fragment -->
     <string name="contacts_category_friends">Friends</string>
     <string name="contacts_category_groups">Groups</string>
-
     <string name="contacts_empty_info">You have no contacts.</string>
     <string name="contacts_empty_pairing">Add a contact</string>
 
-    <!-- Messaging view -->
+    <!-- Contact list items -->
+    <string name="contact_name_new_client">New Friend</string>
+    <string name="contact_name_new_group">New Group</string>
+    <string name="contact_status">Hello there!</string>
 
-    <string name="messaging_composer_text_hint">Type message</string>
+    <!-- Composition fragment -->
+    <string name="composition_text_hint">Type message</string>
 
-    <!-- Pairing view -->
+    <!-- Messaging fragment -->
+    <string name="messaging_empty_info">No messages yet.</string>
+    <string name="messaging_invited_join">Join group</string>
 
+    <!-- Pairing fragment -->
     <string name="pairing_token_info">Give this token to someone:</string>
     <string name="pairing_code_info">Enter a code given to you here:</string>
     <string name="pairing_code_hint">Enter code</string>
@@ -45,8 +50,7 @@
     <string name="pairing_qr_show">Show QR code</string>
     <string name="pairing_qr_scan">Scan QR code</string>
 
-    <!-- Profile view -->
-
+    <!-- Profile fragment -->
     <string name="profile_avatar_set_button">Change my image</string>
     <string name="profile_name_text">Username</string>
     <string name="profile_status_text">status</string>
@@ -54,7 +58,7 @@
     <string name="profile_name_set_button">Set new username</string>
     <string name="profile_status_edit">Hello there!</string>
     <string name="profile_status_set_button">Set new status</string>
-    <string name="profile_user_block_status">Block status</string>
+    <string name="profile_user_block_status">This user is blocked. Unblock to receive messages.</string>
     <string name="profile_user_block_button">Block this user</string>
     <string name="profile_user_depair_button">Depair this user</string>
     <string name="profile_user_delete_button">Delete this user</string>
@@ -65,37 +69,14 @@
     <string name="profile_group_disband_button">Disband this Group</string>
     <string name="profile_group_delete_button">Delete this Group</string>
 
-    <!-- fragment status -->
-
-    <string name="status_text">status</string>
-
-    <!-- item contact -->
-
-    <string name="contact_name_new_client">New Friend</string>
-    <string name="contact_name_new_group">New Group</string>
-    <string name="contact_status">Hello there!</string>
-
-
-    <!-- item contact client -->
-
-    <string name="contact_profile_button">Profile</string>
-
-
-    <!-- item conversation incoming -->
-
+    <!-- Messages -->
     <string name="message_text">Your message text</string>
 
-
-    <!-- item message -->
-
-    <string name="item_sender_name">Kay</string>
-    <string name="item_content">Nupf!</string>
-
-
+    <!-- Content -->
     <string name="content_downloading">Downloading...</string>
     <string name="content_uploading">Uploading...</string>
 
-
+    <!-- Client states (used in status fragment) -->
     <string name="client_state_idle">Idle</string>
     <string name="client_state_inactive">Inactive</string>
     <string name="client_state_active">Ready</string>
@@ -106,24 +87,29 @@
     <string name="client_state_connecting">Connecting</string>
     <string name="client_state_unknown">Unknown</string>
 
+    <!-- Attachment type selection dialog -->
     <string name="selectattachment_title">Select attachment</string>
 
+    <!-- Name setting dialog -->
     <string name="setname_title">Change your name</string>
 
+    <!-- Contact deletion dialog -->
     <string name="deletecontact_title">Delete contact?</string>
     <string name="deletecontact_question">Are you sure you want to delete this contact? All messages from and to it will be deleted.</string>
 
+    <!-- Depair dialog -->
     <string name="depaircontact_title">Depair contact?</string>
     <string name="depaircontact_question">Are you sure you want to depair this contact? You will not be able to communicate unless you repair.</string>
 
+    <!-- Group kick selection dialog -->
     <string name="kick_title">Kick from group</string>
 
+    <!-- Group invite selection dialog -->
     <string name="invite_title">Invite to group</string>
 
+    <!-- Group leave dialog -->
     <string name="leave_title">Leave group</string>
     <string name="leave_question">Are you sure you want to leave this group? You will have to be re-invited to participate again.</string>
-    <string name="messaging_empty_info">No messages yet.</string>
-    <string name="messaging_invited_join">Join group</string>
 
     <string-array name="preference_log_level_names">
       <item>Info</item>

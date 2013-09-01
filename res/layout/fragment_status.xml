@@ -9,7 +9,7 @@
   <TextView
         android:id="@+id/status_text"
         android:gravity="center"
-        android:text="@string/status_text"
+        android:text="@string/client_state_inactive"
         android:textColor="@android:color/secondary_text_dark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
