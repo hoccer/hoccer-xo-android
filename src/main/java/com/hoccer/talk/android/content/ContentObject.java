@@ -27,6 +27,7 @@ public class ContentObject {
         SELECTED,
         /* content being downloaded in various states */
         DOWNLOAD_NEW,
+        DOWNLOAD_REQUESTED,
         DOWNLOAD_STARTED,
         DOWNLOAD_COMPLETE,
         DOWNLOAD_FAILED,
@@ -216,6 +217,9 @@ public class ContentObject {
             case COMPLETE:
                 co.setAvailable(true);
                 co.setState(State.DOWNLOAD_COMPLETE);
+                break;
+            case REQUESTED:
+                co.setState(State.DOWNLOAD_REQUESTED);
                 break;
             case STARTED:
             case DECRYPTING:

@@ -107,7 +107,7 @@ public class ContentView extends LinearLayout {
             mContentWrapper.setVisibility(GONE);
         }
 
-        if(state.equals(ContentObject.State.DOWNLOAD_STARTED)) {
+        if(state.equals(ContentObject.State.DOWNLOAD_STARTED) || state.equals(ContentObject.State.DOWNLOAD_REQUESTED)) {
             mContentDownloading.setVisibility(VISIBLE);
             int length = object.getTransferLength();
             if(length > 0) {
