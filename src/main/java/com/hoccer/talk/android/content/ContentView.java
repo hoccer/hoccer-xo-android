@@ -88,6 +88,8 @@ public class ContentView extends LinearLayout {
 
         ContentObject.State state = object.getState();
 
+        LOG.info("CO state " + state);
+
         if(state.equals(ContentObject.State.DOWNLOAD_NEW)) {
             mContentDownload.setVisibility(VISIBLE);
         } else {
@@ -107,10 +109,11 @@ public class ContentView extends LinearLayout {
             mContentWrapper.setVisibility(GONE);
         }
 
-        if(state.equals(ContentObject.State.DOWNLOAD_STARTED) || state.equals(ContentObject.State.DOWNLOAD_REQUESTED)) {
+        if(state.equals(ContentObject.State.DOWNLOAD_STARTED)
+                || state.equals(ContentObject.State.DOWNLOAD_REQUESTED)) {
             mContentDownloading.setVisibility(VISIBLE);
             int length = object.getTransferLength();
-            if(length > 0) {
+            if(length > 0 && state.equals(ContentObject.State.DOWNLOAD_STARTED)) {
                 mDownloadingProgress.setIndeterminate(false);
                 mDownloadingProgress.setMax(length);
                 mDownloadingProgress.setProgress(object.getTransferProgress());
