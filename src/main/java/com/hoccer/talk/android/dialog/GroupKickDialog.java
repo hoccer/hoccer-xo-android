@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -44,6 +45,17 @@ public class GroupKickDialog extends SherlockDialogFragment {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Object object = parent.getItemAtPosition(position);
+                if(object != null && object instanceof TalkClientContact) {
+                    TalkClientContact contact = (TalkClientContact)object;
+                    try {
+                        mActivity.getTalkClientService()
+                                .kickFromGroup(mGroup.getClientContactId(),
+                                        contact.getClientContactId());
+                    } catch (RemoteException e) {
+                        LOG.error("remote error", e);
+                    }
+                }
             }
         });
         list.setAdapter(adapter);

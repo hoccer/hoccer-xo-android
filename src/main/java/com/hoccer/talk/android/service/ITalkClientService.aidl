@@ -52,6 +52,7 @@ interface ITalkClientService {
     /** Create new group */
     void createGroup();
     void inviteToGroup(int groupContactId, int clientContactId);
+    void kickFromGroup(int groupContactId, int clientContactId);
     void joinGroup(int contactId);
     void leaveGroup(int contactId);
 

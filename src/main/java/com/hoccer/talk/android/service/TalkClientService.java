@@ -1010,6 +1010,18 @@ public class TalkClientService extends Service {
         }
 
         @Override
+        public void kickFromGroup(int groupContactId, int clientContactId) throws RemoteException {
+            LOG.info("[" + mId + "] kickFromGroup(" + groupContactId + "," + clientContactId + ")");
+            try {
+                mClient.kickClientFromGroup(
+                        mClient.getDatabase().findClientContactById(groupContactId).getGroupId(),
+                        mClient.getDatabase().findClientContactById(clientContactId).getClientId());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
         public void joinGroup(int contactId) throws RemoteException {
             LOG.info("[" + mId + "] joinGroup(" + contactId + ")");
             try {
