@@ -5,9 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.RemoteException;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.hoccer.talk.android.R;
 import com.hoccer.talk.android.TalkActivity;
@@ -32,7 +29,7 @@ public class GroupInviteDialog extends SherlockDialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        ContactsAdapter adapter = new SimpleContactsAdapter(mActivity);
+        final ContactsAdapter adapter = new SimpleContactsAdapter(mActivity);
         adapter.setFilter(new ContactsAdapter.Filter() {
             @Override
             public boolean shouldShow(TalkClientContact contact) {
@@ -41,11 +38,19 @@ public class GroupInviteDialog extends SherlockDialogFragment {
         });
         adapter.reload();
 
-        ListView list = new ListView(mActivity);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        builder.setTitle(R.string.invite_title);
+        builder.setCancelable(true);
+        builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object object = parent.getItemAtPosition(position);
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Object object = adapter.getItem(which);
                 if(object != null && object instanceof TalkClientContact) {
                     TalkClientContact contact = (TalkClientContact)object;
                     try {
@@ -56,18 +61,6 @@ public class GroupInviteDialog extends SherlockDialogFragment {
                         LOG.error("remote error", e);
                     }
                 }
-            }
-        });
-        list.setAdapter(adapter);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle(R.string.invite_title);
-        builder.setView(list);
-        builder.setCancelable(true);
-        builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
             }
         });
 
