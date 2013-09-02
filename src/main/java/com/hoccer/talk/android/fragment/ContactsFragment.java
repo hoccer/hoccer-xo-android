@@ -54,15 +54,15 @@ public class ContactsFragment extends TalkListFragment implements View.OnClickLi
         ContactsAdapter adapter = getTalkActivity().makeContactListAdapter();
 
         // filter out never-related contacts (which we know only via groups)
-        adapter.setFilter(new ContactsAdapter.Filter() {
-            @Override
-            public boolean shouldShow(TalkClientContact contact) {
-                LOG.info("contact " + contact.getName() + " related " + contact.isEverRelated());
-                return (contact.isGroup() && contact.isGroupInvolved())
-                        || (contact.isClient() && contact.isClientRelated())
-                        || contact.isEverRelated();
-            }
-        });
+//        adapter.setFilter(new ContactsAdapter.Filter() {
+//            @Override
+//            public boolean shouldShow(TalkClientContact contact) {
+//                LOG.info("contact " + contact.getName() + " related " + contact.isEverRelated());
+//                return (contact.isGroup() && contact.isGroupInvolved())
+//                        || (contact.isClient() && contact.isClientRelated())
+//                        || contact.isEverRelated();
+//            }
+//        });
 
         // do this late so activity has database initialized
         mContactList.setAdapter(adapter);
