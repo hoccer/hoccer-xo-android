@@ -110,6 +110,8 @@
     <!-- Group leave dialog -->
     <string name="leave_title">Leave group</string>
     <string name="leave_question">Are you sure you want to leave this group? You will have to be re-invited to participate again.</string>
+    <string name="common_group">Group</string>
+    <string name="common_friend">Friend</string>
 
     <string-array name="preference_log_level_names">
       <item>Info</item>

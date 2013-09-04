@@ -53,4 +53,13 @@
         android:layout_toRightOf="@id/contact_icon"
         android:layout_below="@id/contact_name"/>
 
+    <TextView
+        android:text="@string/common_friend"
+        android:textColor="@android:color/secondary_text_dark"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="2dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 </RelativeLayout>
