@@ -1,6 +1,6 @@
 package com.hoccer.talk.android.content.image;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +27,7 @@ public class ImageViewer implements IContentViewer {
     }
 
     @Override
-    public View getViewForObject(Context context, ContentObject object, ContentView contentView) {
+    public View getViewForObject(Activity context, ContentObject object, ContentView contentView) {
         if(!canViewObject(object)) {
             return null;
         }

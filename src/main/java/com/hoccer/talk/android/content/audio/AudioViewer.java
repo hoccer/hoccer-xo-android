@@ -1,6 +1,6 @@
 package com.hoccer.talk.android.content.audio;
 
-import android.content.Context;
+import android.app.Activity;
 import android.view.View;
 import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.content.ContentView;
@@ -18,7 +18,7 @@ public class AudioViewer implements IContentViewer {
     }
 
     @Override
-    public View getViewForObject(Context context, ContentObject object, ContentView view) {
+    public View getViewForObject(Activity context, ContentObject object, ContentView view) {
         if(!canViewObject(object)) {
             return null;
         }
