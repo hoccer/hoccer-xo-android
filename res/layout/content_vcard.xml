@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <com.hoccer.talk.android.views.AspectImageView
+            android:id="@+id/vcard_avatar"
+            android:src="@drawable/ic_launcher"
+            custom:aspectRatio="1.0"
+            android:scaleType="centerCrop"
+            android:padding="2dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"/>
+
+    <TextView
+            android:id="@+id/vcard_name"
+            android:text="Max Mustermann"
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:paddingTop="2dp"
+            android:layout_toRightOf="@id/vcard_avatar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <TextView
+            android:text="with all contact details"
+            android:textColor="@android:color/secondary_text_light"
+            android:layout_below="@id/vcard_name"
+            android:layout_toRightOf="@id/vcard_avatar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <ImageButton
+            android:id="@+id/vcard_view"
+            android:src="@drawable/ic_light_social_add_person"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+</RelativeLayout>

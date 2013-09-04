@@ -44,7 +44,7 @@ public class AudioPlayerView
         mPlayer.setOnErrorListener(this);
         mPlayer.setOnPreparedListener(this);
         mPlayer.setOnCompletionListener(this);
-        addView(inflate(context, R.layout.view_audio_player, null));
+        addView(inflate(context, R.layout.content_audio, null));
         mPlayPause = (ImageButton) findViewById(R.id.audio_play_pause);
         mPlayPause.setOnClickListener(this);
     }
