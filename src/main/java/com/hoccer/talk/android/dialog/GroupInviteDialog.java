@@ -33,7 +33,7 @@ public class GroupInviteDialog extends SherlockDialogFragment {
         adapter.setFilter(new ContactsAdapter.Filter() {
             @Override
             public boolean shouldShow(TalkClientContact contact) {
-                return contact.isClientRelated() && !contact.isClientGroupMember(mGroup);
+                return contact.isClientRelated() && !contact.isClientGroupInvited(mGroup) && !contact.isClientGroupJoined(mGroup);
             }
         });
         adapter.reload();
