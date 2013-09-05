@@ -28,7 +28,7 @@ public class TalkConfiguration {
     /** The layout for android logcat */
     public static final Layout LOG_LOGCAT_LAYOUT = new PatternLayout("[%t] %-5p %c - %m%n");
     /** Base name of log files */
-    public static final String LOG_FILE_NAME = "xo.log";
+    public static final String LOG_FILE_NAME = "hoccer-xo.log";
     /** The maximum number of log files to keep */
     public static final int LOG_FILE_COUNT = 10;
     /** The maximum size of each log file */
