@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import com.hoccer.talk.android.R;
+import com.hoccer.xo.R;
 import org.apache.log4j.Logger;
 
 public class ContentView extends LinearLayout {

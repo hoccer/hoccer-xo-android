@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hoccer.talk.android"
+    package="com.hoccer.xo"
     android:versionCode="10"
-    android:versionName="0.9" >
+    android:versionName="0.9.0" >
 
     <!-- We run on 2.3.3 (10) and up, we use features from up to 4.2 (17) -->
     <uses-sdk
@@ -39,7 +39,7 @@
 
     <!-- Declare our application -->
     <application
-        android:name=".TalkApplication"
+        android:name="com.hoccer.talk.android.TalkApplication"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -47,7 +47,7 @@
 
         <!-- Contact list - our main activity -->
         <activity
-                android:name=".activity.ContactsActivity"
+                android:name="com.hoccer.talk.android.activity.ContactsActivity"
                 android:label="@string/app_name">
             <!-- Show in launcher -->
             <intent-filter>
@@ -58,7 +58,7 @@
 
         <!-- Messaging activity -->
         <activity
-                android:name=".activity.MessagingActivity"
+                android:name="com.hoccer.talk.android.activity.MessagingActivity"
                 android:label="@string/app_name"
                 android:parentActivityName=".activity.ContactsActivity"
                 android:windowSoftInputMode="stateHidden">
@@ -69,7 +69,7 @@
 
         <!-- Profile activity -->
         <activity
-                android:name=".activity.ProfileActivity"
+                android:name="com.hoccer.talk.android.activity.ProfileActivity"
                 android:label="@string/app_name"
                 android:parentActivityName=".activity.ContactsActivity"
                 android:windowSoftInputMode="stateHidden">
@@ -80,7 +80,7 @@
 
         <!-- Pairing activity -->
         <activity
-                android:name=".activity.PairingActivity"
+                android:name="com.hoccer.talk.android.activity.PairingActivity"
                 android:label="@string/app_name"
                 android:parentActivityName=".activity.ContactsActivity">
             <meta-data
@@ -90,7 +90,7 @@
 
         <!-- Preference activity -->
         <activity
-                android:name=".activity.PreferenceActivity"
+                android:name="com.hoccer.talk.android.activity.PreferenceActivity"
                 android:label="@string/app_name">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
@@ -99,7 +99,7 @@
 
         <!-- About activity -->
         <activity
-                android:name=".activity.AboutActivity"
+                android:name="com.hoccer.talk.android.activity.AboutActivity"
                 android:label="@string/app_name">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
@@ -108,7 +108,7 @@
 
         <!-- Licenses activity -->
         <activity
-                android:name=".activity.LicensesActivity"
+                android:name="com.hoccer.talk.android.activity.LicensesActivity"
                 android:label="@string/app_name">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
@@ -116,14 +116,14 @@
         </activity>
 
         <!-- Connection and delivery service -->
-        <service android:name=".service.TalkClientService"/>
+        <service android:name="com.hoccer.talk.android.service.TalkClientService"/>
 
         <!-- GCM push service -->
-        <service android:name=".push.TalkPushService"/>
+        <service android:name="com.hoccer.talk.android.push.TalkPushService"/>
 
         <!-- GCM broadcast receiver -->
         <receiver
-            android:name=".push.TalkPushReceiver"
+            android:name="com.hoccer.talk.android.push.TalkPushReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <!-- Receives the actual messages. -->

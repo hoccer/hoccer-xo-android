@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import com.hoccer.xo.R;
 import com.hoccer.talk.client.HttpClientWithKeystore;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;

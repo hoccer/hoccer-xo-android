@@ -5,7 +5,7 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ImageView;
-import com.hoccer.talk.android.R;
+import com.hoccer.xo.R;
 import org.apache.log4j.Logger;
 
 /**

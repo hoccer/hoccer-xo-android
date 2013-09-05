@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.hoccer.talk.android.R;
+import com.hoccer.xo.R;
 import com.hoccer.talk.android.TalkFragment;
 import com.hoccer.talk.client.HoccerTalkClient;
 

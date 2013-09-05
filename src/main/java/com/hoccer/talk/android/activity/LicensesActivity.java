@@ -3,7 +3,7 @@ package com.hoccer.talk.android.activity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
-import com.hoccer.talk.android.R;
+import com.hoccer.xo.R;
 import com.hoccer.talk.android.TalkActivity;
 
 import java.io.ByteArrayOutputStream;

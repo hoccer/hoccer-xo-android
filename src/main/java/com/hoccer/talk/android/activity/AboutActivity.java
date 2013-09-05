@@ -1,7 +1,7 @@
 package com.hoccer.talk.android.activity;
 
 import android.os.Bundle;
-import com.hoccer.talk.android.R;
+import com.hoccer.xo.R;
 import com.hoccer.talk.android.TalkActivity;
 
 public class AboutActivity extends TalkActivity {

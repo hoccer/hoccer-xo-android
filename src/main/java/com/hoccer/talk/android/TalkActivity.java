@@ -14,6 +14,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.hoccer.xo.R;
 import com.hoccer.talk.android.activity.AboutActivity;
 import com.hoccer.talk.android.activity.LicensesActivity;
 import com.hoccer.talk.android.activity.MessagingActivity;

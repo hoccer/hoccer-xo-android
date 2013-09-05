@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
-import com.hoccer.talk.android.R;
+import com.hoccer.xo.R;
 import org.apache.log4j.Logger;
 
 public class AspectLinearLayout extends LinearLayout {

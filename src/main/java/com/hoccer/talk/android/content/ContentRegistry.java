@@ -10,7 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
-import com.hoccer.talk.android.R;
+import com.hoccer.xo.R;
 import com.hoccer.talk.android.content.audio.AudioViewer;
 import com.hoccer.talk.android.content.audio.MusicSelector;
 import com.hoccer.talk.android.content.image.GallerySelector;

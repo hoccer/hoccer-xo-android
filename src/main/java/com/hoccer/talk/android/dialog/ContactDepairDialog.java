@@ -6,7 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.RemoteException;
 import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.hoccer.talk.android.R;
+import com.hoccer.xo.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;

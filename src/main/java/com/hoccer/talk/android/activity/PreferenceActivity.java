@@ -3,7 +3,7 @@ package com.hoccer.talk.android.activity;
 import android.os.Bundle;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.hoccer.talk.android.R;
+import com.hoccer.xo.R;
 import org.apache.log4j.Logger;
 
 public class PreferenceActivity extends SherlockPreferenceActivity {
