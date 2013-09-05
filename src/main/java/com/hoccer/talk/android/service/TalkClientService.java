@@ -971,6 +971,7 @@ public class TalkClientService extends Service {
         @Override
         public void performDeliveries() throws RemoteException {
             LOG.info("[" + mId + "] requestDelivery()");
+            mClient.wake();
             mClient.requestDelivery();
         }
 
