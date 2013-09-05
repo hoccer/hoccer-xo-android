@@ -31,10 +31,13 @@ public class TalkApplication extends Application {
 
     private static Logger LOG = null;
 
+    /** root of user-visible storage root */
     private static File EXTERNAL_STORAGE = null;
 
+    /** root of app-private storage root */
     private static File INTERNAL_STORAGE = null;
 
+    /** global executor for client background activity */
     private static ScheduledExecutorService EXECUTOR = null;
 
     private SharedPreferences mPreferences;
@@ -116,7 +119,7 @@ public class TalkApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 
-        // get storage roots
+        // initialize storage roots (do so early for log files)
         EXTERNAL_STORAGE = Environment.getExternalStorageDirectory();
         INTERNAL_STORAGE = this.getFilesDir();
 
@@ -128,9 +131,12 @@ public class TalkApplication extends Application {
 
         // get logger for this class
         LOG = Logger.getLogger(TalkApplication.class);
+
+        // announce sdk version
         LOG.info("running on sdk version " + Build.VERSION.SDK_INT);
 
         // install a default exception handler
+        LOG.info("setting up default exception handler");
         mPreviousHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
@@ -142,8 +148,12 @@ public class TalkApplication extends Application {
             }
         });
 
+        // log storage roots
+        LOG.info("internal storage at " + INTERNAL_STORAGE.toString());
+        LOG.info("external storage at " + EXTERNAL_STORAGE.toString());
+
         // set up SSL keystore
-        LOG.info("initializing SSL keystore");
+        LOG.info("initializing ssl keystore");
         try {
             KeyStore ks = KeyStore.getInstance("BKS");
             InputStream in = this.getResources().openRawResource(R.raw.ssl_bks);
@@ -158,13 +168,13 @@ public class TalkApplication extends Application {
         }
 
         // configure image loader
+        LOG.info("configuring image loader");
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
                 .build();
         ImageLoader.getInstance().init(config);
 
         // set up directories
-        LOG.info("internal storage at " + INTERNAL_STORAGE.toString());
-        LOG.info("external storage at " + EXTERNAL_STORAGE.toString());
+        LOG.info("setting up directory structure");
         ensureDirectory(getAttachmentDirectory());
         ensureDirectory(getAvatarDirectory());
         ensureNomedia(getAvatarDirectory());
