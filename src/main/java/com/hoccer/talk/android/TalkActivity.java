@@ -15,6 +15,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.hoccer.talk.android.activity.AboutActivity;
+import com.hoccer.talk.android.activity.LicensesActivity;
 import com.hoccer.talk.android.activity.MessagingActivity;
 import com.hoccer.talk.android.activity.PairingActivity;
 import com.hoccer.talk.android.activity.PreferenceActivity;
@@ -245,6 +246,9 @@ public abstract class TalkActivity extends SherlockFragmentActivity
                 break;
             case R.id.menu_about:
                 showAbout();
+                break;
+            case R.id.menu_licenses:
+                showLicenses();
                 break;
             case R.id.menu_reconnect:
                 try {
@@ -629,6 +633,11 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     public void showAbout() {
         LOG.debug("showAbout()");
         startActivity(new Intent(this, AboutActivity.class));
+    }
+
+    public void showLicenses() {
+        LOG.debug("showLicenses()");
+        startActivity(new Intent(this, LicensesActivity.class));
     }
 
     @Override

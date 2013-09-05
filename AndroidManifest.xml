@@ -106,6 +106,15 @@
                     android:value=".activity.ContactsActivity"/>
         </activity>
 
+        <!-- Licenses activity -->
+        <activity
+                android:name=".activity.LicensesActivity"
+                android:label="@string/app_name">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".activity.ContactsActivity"/>
+        </activity>
+
         <!-- Connection and delivery service -->
         <service android:name=".service.TalkClientService"/>
 
