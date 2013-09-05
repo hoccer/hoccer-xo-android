@@ -47,29 +47,34 @@ public abstract class ContactsAdapter extends TalkAdapter {
 
     @Override
     public void reload() {
-        try {
-            mClientContacts = mDatabase.findAllClientContacts();
-            mGroupContacts = mDatabase.findAllGroupContacts();
+        synchronized (this) {
+            try {
+                List<TalkClientContact> newClients = mDatabase.findAllClientContacts();
+                List<TalkClientContact> newGroups = mDatabase.findAllGroupContacts();
 
-            if(mFilter != null) {
-                mClientContacts = filter(mClientContacts, mFilter);
-                mGroupContacts = filter(mGroupContacts, mFilter);
-            }
+                if(mFilter != null) {
+                    newClients = filter(newClients, mFilter);
+                    newGroups = filter(newGroups, mFilter);
+                }
 
-            for(TalkClientContact contact: mClientContacts) {
-                TalkClientDownload avatarDownload = contact.getAvatarDownload();
-                if(avatarDownload != null) {
-                    mDatabase.refreshClientDownload(avatarDownload);
+                for(TalkClientContact contact: newClients) {
+                    TalkClientDownload avatarDownload = contact.getAvatarDownload();
+                    if(avatarDownload != null) {
+                        mDatabase.refreshClientDownload(avatarDownload);
+                    }
                 }
-            }
-            for(TalkClientContact contact: mGroupContacts) {
-                TalkClientDownload avatarDownload = contact.getAvatarDownload();
-                if(avatarDownload != null) {
-                    mDatabase.refreshClientDownload(avatarDownload);
+                for(TalkClientContact contact: newGroups) {
+                    TalkClientDownload avatarDownload = contact.getAvatarDownload();
+                    if(avatarDownload != null) {
+                        mDatabase.refreshClientDownload(avatarDownload);
+                    }
                 }
+
+                mClientContacts = newClients;
+                mGroupContacts = newGroups;
+            } catch (SQLException e) {
+                LOG.error("sql error", e);
             }
-        } catch (SQLException e) {
-            LOG.error("sql error", e);
         }
         runOnUiThread(new Runnable() {
             @Override

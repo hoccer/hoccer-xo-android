@@ -127,30 +127,32 @@ public class ConversationAdapter extends TalkAdapter {
     private void performReload() {
 
         if(mContact != null) {
-            try {
-                mDatabase.refreshClientContact(mContact);
-                final Map<Integer, TalkClientContact> newContacts = new HashMap<Integer, TalkClientContact>();
-                final Map<Integer, TalkClientDownload> newDownloads = new HashMap<Integer, TalkClientDownload>();
-                final List<TalkClientMessage> newMessages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
-                for(TalkClientMessage message: newMessages) {
-                    reloadRelated(message, newContacts, newDownloads);
-                }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mContacts = newContacts;
-                        mDownloads = newDownloads;
-                        mMessages = newMessages;
-                        notifyDataSetChanged();
+            synchronized (this) {
+                try {
+                    mDatabase.refreshClientContact(mContact);
+                    final Map<Integer, TalkClientContact> newContacts = new HashMap<Integer, TalkClientContact>();
+                    final Map<Integer, TalkClientDownload> newDownloads = new HashMap<Integer, TalkClientDownload>();
+                    final List<TalkClientMessage> newMessages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
+                    for(TalkClientMessage message: newMessages) {
+                        reloadRelated(message, newContacts, newDownloads);
                     }
-                });
-
-            } catch (SQLException e) {
-                LOG.error("sql error", e);
-            } catch (Throwable e) {
-                LOG.error("error reloading", e);
+                    mContacts = newContacts;
+                    mDownloads = newDownloads;
+                    mMessages = newMessages;
+                } catch (SQLException e) {
+                    LOG.error("sql error", e);
+                } catch (Throwable e) {
+                    LOG.error("error reloading", e);
+                }
             }
         }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     private void reloadRelated(TalkClientMessage message, Map<Integer, TalkClientContact> newContacts, Map<Integer, TalkClientDownload> newDownloads) throws SQLException {
