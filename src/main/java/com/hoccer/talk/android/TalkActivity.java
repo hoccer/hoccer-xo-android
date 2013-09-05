@@ -595,6 +595,16 @@ public abstract class TalkActivity extends SherlockFragmentActivity
         return adapter;
     }
 
+    public void wakeClient() {
+        if(mService != null) {
+            try {
+                mService.wake();
+            } catch (RemoteException e) {
+                LOG.error("remote error", e);
+            }
+        }
+    }
+
     @Override
     public void showContactProfile(TalkClientContact contact) {
         LOG.debug("showContactProfile(" + contact.getClientContactId() + ")");
@@ -641,6 +651,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
 
     public void scanBarcode() {
         LOG.debug("scanBarcode()");
+        wakeClient();
         mBarcodeService.initiateScan(IntentIntegrator.QR_CODE_TYPES);
     }
 
