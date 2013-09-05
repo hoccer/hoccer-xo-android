@@ -27,7 +27,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public class TalkApplication extends Application {
 
-    private final static String TAG = "HoccerTalk";
+    private final static String TAG = "HoccerXO";
 
     private static Logger LOG = null;
 
