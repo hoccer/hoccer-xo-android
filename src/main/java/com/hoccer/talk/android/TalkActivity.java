@@ -583,7 +583,6 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     public ConversationAdapter makeConversationAdapter() {
         ConversationAdapter adapter = new ConversationAdapter(this);
         adapter.register();
-        adapter.reload();
         return adapter;
     }
 
@@ -591,7 +590,6 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     public ContactsAdapter makeContactListAdapter() {
         ContactsAdapter adapter = new RichContactsAdapter(this);
         adapter.register();
-        adapter.reload();
         return adapter;
     }
 
