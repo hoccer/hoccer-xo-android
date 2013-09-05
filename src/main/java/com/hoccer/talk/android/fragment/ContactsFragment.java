@@ -24,6 +24,8 @@ public class ContactsFragment extends TalkListFragment implements View.OnClickLi
 
 	private static final Logger LOG = Logger.getLogger(ContactsFragment.class);
 
+    ContactsAdapter mAdapter;
+
     Button mAddUserButton;
 
 	ListView mContactList;
@@ -50,22 +52,27 @@ public class ContactsFragment extends TalkListFragment implements View.OnClickLi
         LOG.debug("onResume()");
         super.onResume();
 
-        // create list adapter
-        ContactsAdapter adapter = getTalkActivity().makeContactListAdapter();
+        if(mAdapter == null) {
+            // create list adapter
+            mAdapter = getTalkActivity().makeContactListAdapter();
 
-        // filter out never-related contacts (which we know only via groups)
-//        adapter.setFilter(new ContactsAdapter.Filter() {
-//            @Override
-//            public boolean shouldShow(TalkClientContact contact) {
-//                LOG.info("contact " + contact.getName() + " related " + contact.isEverRelated());
-//                return (contact.isGroup() && contact.isGroupInvolved())
-//                        || (contact.isClient() && contact.isClientRelated())
-//                        || contact.isEverRelated();
-//            }
-//        });
+            // filter out never-related contacts (which we know only via groups)
+            mAdapter.setFilter(new ContactsAdapter.Filter() {
+                @Override
+                public boolean shouldShow(TalkClientContact contact) {
+                    LOG.trace("contact " + contact.getName() + " related " + contact.isEverRelated());
+                    return (contact.isGroup() && contact.isGroupInvolved())
+                            || (contact.isClient() && contact.isClientRelated())
+                            || contact.isEverRelated();
+                }
+            });
+        }
+
+        // reload the adapter
+        mAdapter.reload();
 
         // do this late so activity has database initialized
-        mContactList.setAdapter(adapter);
+        mContactList.setAdapter(mAdapter);
     }
 
     @Override

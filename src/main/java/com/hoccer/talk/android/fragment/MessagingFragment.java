@@ -46,10 +46,17 @@ public class MessagingFragment extends TalkListFragment
         // do this late so activity has database initialized
         if(mAdapter == null) {
             mAdapter = getTalkActivity().makeConversationAdapter();
-            if(mContact != null) {
-                mAdapter.converseWithContact(mContact);
-            }
         }
+
+        // update adapter conversation
+        if(mContact != null) {
+            mAdapter.converseWithContact(mContact);
+        }
+
+        // reload the adapter
+        mAdapter.reload();
+
+        // pass the adapter to the list
         mMessageList.setAdapter(mAdapter);
     }
 
