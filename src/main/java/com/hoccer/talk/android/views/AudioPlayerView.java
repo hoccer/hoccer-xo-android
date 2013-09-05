@@ -52,7 +52,7 @@ public class AudioPlayerView
     @Override
     public void onClick(View v) {
         if(v == mPlayPause) {
-            LOG.info("onClick(PlayPause)");
+            LOG.debug("onClick(PlayPause)");
             if(mPlayer.isPlaying()) {
                 mPlayPause.setImageResource(R.drawable.ic_light_av_play);
                 mPlayer.pause();
@@ -64,7 +64,7 @@ public class AudioPlayerView
     }
 
     public void setFile(String path) {
-        LOG.info("setFile(" + path + ")");
+        LOG.debug("setFile(" + path + ")");
         mPlayPause.setEnabled(false);
         mPlayPause.setImageResource(R.drawable.ic_light_av_play);
         if(mPlayer.isPlaying()) {
@@ -80,7 +80,7 @@ public class AudioPlayerView
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        LOG.info("onError(" + what + "," + extra + ")");
+        LOG.debug("onError(" + what + "," + extra + ")");
         mPlayPause.setEnabled(false);
         mPlayPause.setImageResource(R.drawable.ic_light_av_play);
         return false;
@@ -88,14 +88,14 @@ public class AudioPlayerView
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        LOG.info("onPrepared()");
+        LOG.debug("onPrepared()");
         mPlayPause.setEnabled(true);
         mPlayPause.setImageResource(R.drawable.ic_light_av_play);
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        LOG.info("onCompletion()");
+        LOG.debug("onCompletion()");
         mPlayPause.setImageResource(R.drawable.ic_light_av_play);
     }
 

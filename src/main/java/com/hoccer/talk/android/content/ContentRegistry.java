@@ -63,7 +63,7 @@ public class ContentRegistry {
     private void initializeSelector(IContentSelector selector) {
         Intent intent = selector.createSelectionIntent(mContext);
         if(IntentHelper.isIntentResolvable(intent, mContext)) {
-            LOG.info("content selector "  + selector.getName() + " / "+ selector.getClass().getSimpleName() + " activated");
+            LOG.debug("content selector "  + selector.getName() + " / "+ selector.getClass().getSimpleName() + " activated");
             mAttachmentSelectors.add(selector);
         } else {
             LOG.warn("content selector "  + selector.getName() + " / "+ selector.getClass().getSimpleName() + " not supported");

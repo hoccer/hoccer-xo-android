@@ -136,7 +136,7 @@ public class ContentObject {
     }
 
     public static ContentObject forUpload(TalkClientUpload upload) {
-        LOG.info("content object for upload " + upload.getClientUploadId());
+        LOG.debug("content object for upload " + upload.getClientUploadId());
 
         ContentObject co = new ContentObject();
         TalkClientUpload.State state = upload.getState();
@@ -147,19 +147,19 @@ public class ContentObject {
             case AVATAR:
                 File avatarLocation = TalkApplication.getAvatarLocation(upload);
                 if(avatarLocation != null) {
-                    LOG.info("co from avatar " + avatarLocation.toString());
+                    LOG.debug("co from avatar " + avatarLocation.toString());
                     co.setContentUrl(avatarLocation.toString());
                 }
                 break;
             case ATTACHMENT:
                 File attachmentLocation = TalkApplication.getAttachmentLocation(upload);
                 if(attachmentLocation != null) {
-                    LOG.info("co from attachment " + attachmentLocation.toString());
+                    LOG.debug("co from attachment " + attachmentLocation.toString());
                     co.setContentUrl(attachmentLocation.toString());
                 }
                 break;
         }
-        LOG.info("content " + co.getContentUrl() + " in state " + state);
+        LOG.debug("content " + co.getContentUrl() + " in state " + state);
         co.setAvailable(true);
         switch (state) {
             case NEW:
@@ -197,19 +197,19 @@ public class ContentObject {
             case AVATAR:
                 File avatarLocation = TalkApplication.getAvatarLocation(download);
                 if(avatarLocation != null) {
-                    LOG.info("co from avatar " + avatarLocation.toString());
+                    LOG.debug("co from avatar " + avatarLocation.toString());
                     co.setContentUrl(avatarLocation.toString());
                 }
                 break;
             case ATTACHMENT:
                 File attachmentLocation = TalkApplication.getAttachmentLocation(download);
                 if(attachmentLocation != null) {
-                    LOG.info("co from avatar " + attachmentLocation.toString());
+                    LOG.debug("co from avatar " + attachmentLocation.toString());
                     co.setContentUrl(attachmentLocation.toString());
                 }
                 break;
         }
-        LOG.info("content " + co.getContentUrl() + " in state " + state);
+        LOG.debug("content " + co.getContentUrl() + " in state " + state);
         switch (state) {
             case NEW:
                 co.setState(State.DOWNLOAD_NEW);

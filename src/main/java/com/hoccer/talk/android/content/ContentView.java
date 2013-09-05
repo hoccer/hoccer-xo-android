@@ -66,7 +66,7 @@ public class ContentView extends LinearLayout {
 
     public void displayContent(Activity activity, ContentObject object) {
         if(object.getContentUrl() != null) {
-            LOG.info("displayContent(" + object.getContentUrl() + ")");
+            LOG.debug("displayContent(" + object.getContentUrl() + ")");
         }
 
         boolean changed = true;
@@ -88,7 +88,7 @@ public class ContentView extends LinearLayout {
 
         ContentObject.State state = object.getState();
 
-        LOG.info("CO state " + state);
+        LOG.debug("CO state " + state);
 
         if(state.equals(ContentObject.State.DOWNLOAD_NEW)) {
             mContentDownload.setVisibility(VISIBLE);

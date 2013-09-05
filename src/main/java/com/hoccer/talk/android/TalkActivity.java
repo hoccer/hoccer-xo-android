@@ -314,13 +314,13 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     }
 
     protected void enableUpNavigation() {
-        LOG.info("enableUpNavigation()");
+        LOG.debug("enableUpNavigation()");
         mUpEnabled = true;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void navigateUp() {
-        LOG.info("navigateUp()");
+        LOG.debug("navigateUp()");
         if(mUpEnabled) {
             Intent upIntent = NavUtils.getParentActivityIntent(this);
             if (NavUtils.shouldUpRecreateTask(this, upIntent)) {

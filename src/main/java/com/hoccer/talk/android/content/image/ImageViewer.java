@@ -31,7 +31,7 @@ public class ImageViewer implements IContentViewer {
         if(!canViewObject(object)) {
             return null;
         }
-        LOG.info("constructing image view");
+        LOG.debug("constructing image view");
         AspectImageView view = new AspectImageView(context);
 
         int maxContentHeight = contentView.getMaxContentHeight();

@@ -63,7 +63,7 @@ public class ContactView extends RelativeLayout {
     }
 
     public void showContent(final String contentUri) {
-        LOG.info("show vcard " + contentUri);
+        LOG.debug("show vcard " + contentUri);
         if(mLoadFuture != null) {
             mLoadFuture.cancel(true);
             mLoadFuture = null;
@@ -73,7 +73,7 @@ public class ContactView extends RelativeLayout {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                LOG.info("refreshing vcard " + contentUri);
+                LOG.debug("refreshing vcard " + contentUri);
 
                 InputStream is = null;
 
@@ -124,7 +124,7 @@ public class ContactView extends RelativeLayout {
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        LOG.info("setting up gui");
+                        LOG.debug("setting up gui");
                         mNameText.setText(name);
                         if(photoFinal != null) {
                             byte[] photoData = photoFinal.getData();

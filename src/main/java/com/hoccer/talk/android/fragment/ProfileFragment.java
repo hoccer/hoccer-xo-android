@@ -196,7 +196,7 @@ public class ProfileFragment extends TalkFragment
             TalkApplication.getExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
-                    LOG.info("creating avatar upload");
+                    LOG.debug("creating avatar upload");
                     TalkClientUpload upload = ContentObject.createAvatarUpload(newAvatar);
                     try {
                         getTalkDatabase().saveClientUpload(upload);

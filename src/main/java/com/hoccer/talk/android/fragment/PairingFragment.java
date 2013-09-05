@@ -81,7 +81,7 @@ public class PairingFragment extends TalkFragment implements View.OnClickListene
         TalkApplication.getExecutor().schedule(new Runnable() {
             @Override
             public void run() {
-                LOG.info("requesting new pairing token");
+                LOG.debug("requesting new pairing token");
                 try {
                     final String token = getTalkActivity().getService().generatePairingToken();
                     getActivity().runOnUiThread(new Runnable() {
@@ -180,8 +180,7 @@ public class PairingFragment extends TalkFragment implements View.OnClickListene
         try {
             getTalkService().pairUsingToken(token);
         } catch (RemoteException e) {
-            LOG.info("pairing failed");
-            e.printStackTrace();
+            LOG.error("pairing failed", e);
         }
     }
 
