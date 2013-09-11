@@ -8,10 +8,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
-import com.hoccer.xo.R;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkFragment;
+import com.hoccer.talk.android.adapter.ContactsAdapter;
+import com.hoccer.talk.android.adapter.SimpleContactsAdapter;
 import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
@@ -19,6 +21,7 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.model.TalkGroup;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkRelationship;
+import com.hoccer.xo.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
 
@@ -52,6 +55,9 @@ public class ProfileFragment extends TalkFragment
     Button mGroupLeaveButton;
     Button mGroupKickButton;
     Button mGroupDeleteButton;
+
+    TextView mGroupMembersTitle;
+    ListView mGroupMembersList;
 
     TalkClientContact mContact;
 
@@ -101,6 +107,8 @@ public class ProfileFragment extends TalkFragment
         mGroupKickButton.setOnClickListener(this);
         mGroupDeleteButton = (Button)v.findViewById(R.id.profile_group_delete_button);
         mGroupDeleteButton.setOnClickListener(this);
+        mGroupMembersTitle = (TextView)v.findViewById(R.id.profile_group_members_title);
+        mGroupMembersList = (ListView)v.findViewById(R.id.profile_group_members_list);
 
         return v;
     }
@@ -270,6 +278,8 @@ public class ProfileFragment extends TalkFragment
         mGroupLeaveButton.setVisibility(groupMemberVisibility);
         mGroupKickButton.setVisibility(groupAdminVisibility);
         mGroupDeleteButton.setVisibility(contact.isGroup() ? View.VISIBLE : View.GONE);
+        mGroupMembersTitle.setVisibility(contact.isGroup() ? View.VISIBLE : View.GONE);
+        mGroupMembersList.setVisibility(contact.isGroup() ? View.VISIBLE : View.GONE);
 
         // apply data from the contact that needs to recurse
         if(contact.isClient() || contact.isSelf()) {
@@ -294,6 +304,15 @@ public class ProfileFragment extends TalkFragment
             if(groupPresence != null) {
                 mNameText.setText(groupPresence.getGroupName());
             }
+            final ContactsAdapter adapter = new SimpleContactsAdapter(getTalkActivity());
+            adapter.setFilter(new ContactsAdapter.Filter() {
+                @Override
+                public boolean shouldShow(TalkClientContact contact) {
+                    return contact.isClientGroupJoined(mContact);
+                }
+            });
+            adapter.reload();
+            mGroupMembersList.setAdapter(adapter);
         }
 
         if(contact.isSelf() || contact.isGroupAdmin()) {

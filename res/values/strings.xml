@@ -113,6 +113,7 @@
     <string name="common_group">Group</string>
     <string name="common_friend">Friend</string>
     <string name="menu_licenses">Licenses</string>
+    <string name="profile_group_members_title">Members in this group:</string>
 
     <string-array name="preference_log_level_names">
       <item>Info</item>
