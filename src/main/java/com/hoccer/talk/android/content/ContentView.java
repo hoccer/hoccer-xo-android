@@ -41,7 +41,9 @@ public class ContentView extends LinearLayout {
 
     public ContentView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mRegistry = ContentRegistry.get(context.getApplicationContext());
+        if(!this.isInEditMode()) {
+            mRegistry = ContentRegistry.get(context.getApplicationContext());
+        }
         initView(context);
     }
 
@@ -96,17 +98,21 @@ public class ContentView extends LinearLayout {
             mContentDownload.setVisibility(GONE);
         }
 
-        if(object.isAvailable()) {
-            mContentWrapper.setVisibility(VISIBLE);
-            if(changed || mContentWrapper.getChildCount() == 0) {
-                View view = mRegistry.createViewForContent(activity, object, this);
-                if(view != null) {
-                    view.setVisibility(VISIBLE);
-                    mContentWrapper.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                }
-            }
-        } else {
+        if(this.isInEditMode()) {
             mContentWrapper.setVisibility(GONE);
+        } else if(mRegistry != null) {
+            if(object.isAvailable()) {
+                mContentWrapper.setVisibility(VISIBLE);
+                if(changed || mContentWrapper.getChildCount() == 0) {
+                    View view = mRegistry.createViewForContent(activity, object, this);
+                    if(view != null) {
+                        view.setVisibility(VISIBLE);
+                        mContentWrapper.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    }
+                }
+            } else {
+                mContentWrapper.setVisibility(GONE);
+            }
         }
 
         if(state.equals(ContentObject.State.DOWNLOAD_STARTED)
