@@ -38,6 +38,7 @@
         android:id="@+id/contact_last_message"
         android:text="Lorem ipsum dolor..."
         android:textColor="@android:color/secondary_text_dark"
+        android:lines="1"
         android:layout_margin="2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
