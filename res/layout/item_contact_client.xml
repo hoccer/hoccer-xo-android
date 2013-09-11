@@ -52,9 +52,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/contact_icon"
+        android:layout_toLeftOf="@+id/contact_type"
         android:layout_below="@id/contact_name"/>
 
     <TextView
+        android:id="@id/contact_type"
         android:text="@string/common_friend"
         android:textColor="@android:color/secondary_text_dark"
         android:layout_alignParentRight="true"
