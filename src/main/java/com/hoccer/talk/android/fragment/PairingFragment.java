@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class PairingFragment extends TalkFragment implements View.OnClickListener {
 
+    TextView mTokenMessage;
     TextView mTokenText;
 
     EditText mTokenEdit;
@@ -56,7 +57,9 @@ public class PairingFragment extends TalkFragment implements View.OnClickListene
 
         View view = inflater.inflate(R.layout.fragment_pairing, container, false);
 
+        mTokenMessage = (TextView)view.findViewById(R.id.pairing_token_message);
         mTokenText = (TextView)view.findViewById(R.id.pairing_token_text);
+        mTokenText.setVisibility(View.GONE);
 
         mTokenEdit = (EditText)view.findViewById(R.id.pairing_token_edit);
         mTokenEdit.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -82,12 +85,16 @@ public class PairingFragment extends TalkFragment implements View.OnClickListene
             @Override
             public void run() {
                 LOG.debug("requesting new pairing token");
+                mTokenText.setVisibility(View.GONE);
+                mTokenMessage.setVisibility(View.VISIBLE);
                 try {
                     final String token = getTalkActivity().getService().generatePairingToken();
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             mTokenText.setText(token);
+                            mTokenText.setVisibility(View.VISIBLE);
+                            mTokenMessage.setVisibility(View.GONE);
                         }
                     });
                 } catch (RemoteException e) {
