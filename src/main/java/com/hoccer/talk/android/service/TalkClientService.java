@@ -21,6 +21,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import com.google.android.gcm.GCMRegistrar;
+import com.hoccer.talk.android.sms.SmsReceiver;
 import com.hoccer.xo.R;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkConfiguration;
@@ -169,6 +170,9 @@ public class TalkClientService extends Service {
             if(intent.hasExtra(TalkPushService.EXTRA_GCM_UNREGISTERED)) {
                 doUpdateGcm(true);
             }
+            if(intent.hasExtra(SmsReceiver.EXTRA_SMS_URL_RECEIVED)) {
+                doHandleSmsUrl(intent.getStringExtra(SmsReceiver.EXTRA_SMS_URL_RECEIVED));
+            }
         }
         return START_STICKY;
     }
@@ -279,6 +283,14 @@ public class TalkClientService extends Service {
                 mClient.unregisterGcm();
                 GCMRegistrar.setRegisteredOnServer(this, false);
             }
+        }
+    }
+
+    private void doHandleSmsUrl(String urlString) {
+        LOG.info("doHandleSmsUrl(" + urlString + ")");
+        if(urlString.startsWith("hxo://")) {
+            String token = urlString.substring(6);
+            LOG.warn("received token " + token);
         }
     }
 

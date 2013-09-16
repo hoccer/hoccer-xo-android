@@ -31,6 +31,8 @@
     <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
     <!-- Our own GCM permission -->
     <uses-permission android:name="com.hoccer.xo.permission.C2D_MESSAGE"/>
+    <!-- SMS receive for pairing tokens -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
 
     <!-- Declare permission for controlling our own push package -->
     <permission
@@ -86,6 +88,9 @@
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="com.hoccer.talk.android.activity.ContactsActivity"/>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="hxo"/>
         </activity>
 
         <!-- Preference activity -->
@@ -135,6 +140,16 @@
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
                 <!-- Restrict to our own push package -->
                 <category android:name="com.hoccer.talk.android" />
+            </intent-filter>
+        </receiver>
+
+        <!-- SMS broadcast receiver -->
+        <receiver
+                android:name="com.hoccer.talk.android.sms.SmsReceiver"
+                android:permission="android.permission.BROADCAST_SMS"
+                android:exported="true">
+            <intent-filter android:priority="1000">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"></action>
             </intent-filter>
         </receiver>
 
