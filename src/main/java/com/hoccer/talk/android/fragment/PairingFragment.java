@@ -14,9 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.hoccer.xo.R;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkFragment;
+import com.hoccer.xo.R;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +30,7 @@ public class PairingFragment extends TalkFragment implements View.OnClickListene
 
     TextView mTokenMessage;
     TextView mTokenText;
+    Button mTokenSendSms;
 
     EditText mTokenEdit;
     Button mTokenPairButton;
@@ -60,6 +61,9 @@ public class PairingFragment extends TalkFragment implements View.OnClickListene
         mTokenMessage = (TextView)view.findViewById(R.id.pairing_token_message);
         mTokenText = (TextView)view.findViewById(R.id.pairing_token_text);
         mTokenText.setVisibility(View.GONE);
+        mTokenSendSms = (Button)view.findViewById(R.id.pairing_token_sms);
+        mTokenSendSms.setEnabled(false);
+        mTokenSendSms.setOnClickListener(this);
 
         mTokenEdit = (EditText)view.findViewById(R.id.pairing_token_edit);
         mTokenEdit.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
@@ -80,29 +84,7 @@ public class PairingFragment extends TalkFragment implements View.OnClickListene
         LOG.debug("onResume()");
         super.onResume();
 
-        // request a new token and show it
-        TalkApplication.getExecutor().schedule(new Runnable() {
-            @Override
-            public void run() {
-                LOG.debug("requesting new pairing token");
-                mTokenText.setVisibility(View.GONE);
-                mTokenMessage.setVisibility(View.VISIBLE);
-                try {
-                    final String token = getTalkActivity().getService().generatePairingToken();
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mTokenText.setText(token);
-                            mTokenText.setVisibility(View.VISIBLE);
-                            mTokenMessage.setVisibility(View.GONE);
-                        }
-                    });
-                } catch (RemoteException e) {
-                    LOG.error("token generation failed", e);
-                    e.printStackTrace();
-                }
-            }
-        }, 1, TimeUnit.SECONDS);
+        requestNewToken();
 
         // bind the listener for the button that starts pairing
         mTokenPairButton.setOnClickListener(new View.OnClickListener() {
@@ -172,6 +154,38 @@ public class PairingFragment extends TalkFragment implements View.OnClickListene
             LOG.debug("onClick(qrScan)");
             getTalkActivity().scanBarcode();
         }
+        if(v == mTokenSendSms) {
+            LOG.debug("onClick(smsSend)");
+            getTalkActivity().composeInviteSms(mTokenText.getText().toString());
+        }
+    }
+
+    public void requestNewToken() {
+        LOG.debug("requesting new pairing token");
+        mTokenText.setVisibility(View.GONE);
+        mTokenMessage.setVisibility(View.VISIBLE);
+        mTokenSendSms.setEnabled(false);
+        // request a new token and show it
+        TalkApplication.getExecutor().schedule(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final String token = getTalkActivity().getService().generatePairingToken();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTokenText.setText(token);
+                            mTokenText.setVisibility(View.VISIBLE);
+                            mTokenMessage.setVisibility(View.GONE);
+                            mTokenSendSms.setEnabled(true);
+                        }
+                    });
+                } catch (RemoteException e) {
+                    LOG.error("token generation failed", e);
+                    e.printStackTrace();
+                }
+            }
+        }, 1, TimeUnit.SECONDS);
     }
 
     public void initializeWithReceivedToken(String token) {

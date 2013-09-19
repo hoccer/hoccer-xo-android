@@ -29,10 +29,10 @@
     <!-- We read and write contacts -->
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
     <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
-    <!-- Our own GCM permission -->
-    <uses-permission android:name="com.hoccer.xo.permission.C2D_MESSAGE"/>
     <!-- SMS receive for pairing tokens -->
     <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <!-- Our own GCM permission -->
+    <uses-permission android:name="com.hoccer.xo.permission.C2D_MESSAGE"/>
 
     <!-- Declare permission for controlling our own push package -->
     <permission
@@ -145,10 +145,11 @@
 
         <!-- SMS broadcast receiver -->
         <receiver
-                android:name="com.hoccer.talk.android.sms.SmsReceiver"
+                android:name="com.hoccer.talk.android.sms.TalkSmsReceiver"
                 android:permission="android.permission.BROADCAST_SMS"
                 android:exported="true">
-            <intent-filter android:priority="1000">
+            <!-- Priority 999 is the maximum priority allowed for applications -->
+            <intent-filter android:priority="999">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"></action>
             </intent-filter>
         </receiver>

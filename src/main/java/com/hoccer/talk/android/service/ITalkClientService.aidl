@@ -65,4 +65,7 @@ interface ITalkClientService {
 
     void markAsSeen(int messageId);
 
+    void useSmsToken(int smsTokenId);
+    void rejectSmsToken(int smsTokenId);
+
 }

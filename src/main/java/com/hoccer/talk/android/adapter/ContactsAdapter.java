@@ -8,6 +8,7 @@ import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.TalkAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientSmsToken;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
@@ -21,12 +22,14 @@ public abstract class ContactsAdapter extends TalkAdapter {
     protected final static long ITEM_ID_UNKNOWN = -1000;
     protected final static long ITEM_ID_CLIENT_HEADER = -1;
     protected final static long ITEM_ID_GROUP_HEADER = -2;
+    protected final static long ITEM_ID_TOKENS_BASE = -10000;
 
     protected final static int VIEW_TYPE_SEPARATOR = 0;
     protected final static int VIEW_TYPE_CLIENT    = 1;
     protected final static int VIEW_TYPE_GROUP     = 2;
+    protected final static int VIEW_TYPE_TOKEN     = 3;
 
-    protected final static int VIEW_TYPE_COUNT = 3;
+    protected final static int VIEW_TYPE_COUNT = 4;
 
     public ContactsAdapter(TalkActivity activity) {
         super(activity);
@@ -34,6 +37,9 @@ public abstract class ContactsAdapter extends TalkAdapter {
 
     Filter mFilter = null;
 
+    protected boolean mShowTokens = false;
+
+    List<TalkClientSmsToken> mSmsTokens = new ArrayList<TalkClientSmsToken>();
     List<TalkClientContact> mClientContacts = new ArrayList<TalkClientContact>();
     List<TalkClientContact> mGroupContacts = new ArrayList<TalkClientContact>();
 
@@ -45,10 +51,25 @@ public abstract class ContactsAdapter extends TalkAdapter {
         this.mFilter = filter;
     }
 
+    public boolean isShowTokens() {
+        return mShowTokens;
+    }
+
+    public void setShowTokens(boolean mShowTokens) {
+        this.mShowTokens = mShowTokens;
+    }
+
     @Override
     public void reload() {
         synchronized (this) {
             try {
+                List<TalkClientSmsToken> newTokens = null;
+                if(mShowTokens) {
+                    newTokens = mDatabase.findAllSmsTokens();
+                } else {
+                    newTokens = new ArrayList<TalkClientSmsToken>();
+                }
+
                 List<TalkClientContact> newClients = mDatabase.findAllClientContacts();
                 List<TalkClientContact> newGroups = mDatabase.findAllGroupContacts();
 
@@ -72,6 +93,7 @@ public abstract class ContactsAdapter extends TalkAdapter {
 
                 mClientContacts = newClients;
                 mGroupContacts = newGroups;
+                mSmsTokens = newTokens;
             } catch (SQLException e) {
                 LOG.error("sql error", e);
             }
@@ -152,6 +174,14 @@ public abstract class ContactsAdapter extends TalkAdapter {
     }
 
     @Override
+    public void onSmsTokensChanged() throws RemoteException {
+        LOG.info("onSmsTokensChanged()");
+        if(mShowTokens) {
+            reload();
+        }
+    }
+
+    @Override
     public int getViewTypeCount() {
         return VIEW_TYPE_COUNT;
     }
@@ -165,9 +195,13 @@ public abstract class ContactsAdapter extends TalkAdapter {
     public int getCount() {
         int count = 0;
 
+        count += mSmsTokens.size();
         count += mClientContacts.size();
         count += mGroupContacts.size();
 
+        if(!mSmsTokens.isEmpty()) {
+            //count += 1;
+        }
         if(!mClientContacts.isEmpty()) {
             //count += 1;
         }
@@ -181,6 +215,13 @@ public abstract class ContactsAdapter extends TalkAdapter {
     @Override
     public Object getItem(int position) {
         int offset = 0;
+        if(!mSmsTokens.isEmpty()) {
+            int tokenPos = position - offset;
+            if(tokenPos >= 0 && tokenPos < mSmsTokens.size()) {
+                return mSmsTokens.get(tokenPos);
+            }
+            offset += mSmsTokens.size();
+        }
         if(!mClientContacts.isEmpty()) {
 //            if(position == offset) {
 //                return mResources.getString(R.string.contacts_category_friends);
@@ -209,6 +250,13 @@ public abstract class ContactsAdapter extends TalkAdapter {
     @Override
     public int getItemViewType(int position) {
         int offset = 0;
+        if(!mSmsTokens.isEmpty()) {
+            int tokenPos = position - offset;
+            if(tokenPos >= 0 && tokenPos < mSmsTokens.size()) {
+                return VIEW_TYPE_TOKEN;
+            }
+            offset += mSmsTokens.size();
+        }
         if(!mClientContacts.isEmpty()) {
 //            if(position == offset) {
 //                return VIEW_TYPE_SEPARATOR;
@@ -240,8 +288,14 @@ public abstract class ContactsAdapter extends TalkAdapter {
         if(item instanceof TalkClientContact) {
             return ((TalkClientContact)item).getClientContactId();
         }
+        if(item instanceof TalkClientSmsToken) {
+            return ITEM_ID_TOKENS_BASE + ((TalkClientSmsToken)item).getSmsTokenId();
+        }
 
         int offset = 0;
+        if(!mSmsTokens.isEmpty()) {
+            offset += mSmsTokens.size();
+        }
         if(!mClientContacts.isEmpty()) {
 //            if(position == offset) {
 //                return ITEM_ID_CLIENT_HEADER;
@@ -284,6 +338,12 @@ public abstract class ContactsAdapter extends TalkAdapter {
             }
             updateSeparator(v, position);
             break;
+        case VIEW_TYPE_TOKEN:
+            if(v == null) {
+                v = mInflater.inflate(getTokenLayout(), null);
+            }
+            updateToken(v, (TalkClientSmsToken)getItem(position));
+            break;
         default:
             v = mInflater.inflate(getSeparatorLayout(), null);
             break;
@@ -295,8 +355,11 @@ public abstract class ContactsAdapter extends TalkAdapter {
     protected abstract int getClientLayout();
     protected abstract int getGroupLayout();
     protected abstract int getSeparatorLayout();
+    protected abstract int getTokenLayout();
 
     protected abstract void updateContact(View view, final TalkClientContact contact);
+    protected abstract void updateToken(View view, final TalkClientSmsToken token);
+
 
     protected void updateSeparator(View view, int position) {
         TextView separator = (TextView)view;

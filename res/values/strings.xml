@@ -115,6 +115,7 @@
     <string name="menu_licenses">Licenses</string>
     <string name="profile_group_members_title">Members in this group:</string>
     <string name="pairing_token_generating">Generating...</string>
+    <string name="pairing_token_sendsms">Send via SMS</string>
 
     <string-array name="preference_log_level_names">
       <item>Info</item>

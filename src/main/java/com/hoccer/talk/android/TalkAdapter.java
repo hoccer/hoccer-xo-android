@@ -137,4 +137,8 @@ public abstract class TalkAdapter extends BaseAdapter implements ITalkClientServ
     public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
     }
 
+    @Override
+    public void onSmsTokensChanged() throws RemoteException {
+    }
+
 }

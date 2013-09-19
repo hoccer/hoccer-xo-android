@@ -1,15 +1,20 @@
 package com.hoccer.talk.android.adapter;
 
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.hoccer.xo.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
+import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.talk.model.TalkPresence;
+import com.hoccer.xo.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
 
@@ -22,6 +27,7 @@ public class RichContactsAdapter extends ContactsAdapter {
 
     public RichContactsAdapter(TalkActivity activity) {
         super(activity);
+        setShowTokens(true);
     }
 
     @Override
@@ -37,6 +43,43 @@ public class RichContactsAdapter extends ContactsAdapter {
     @Override
     protected int getSeparatorLayout() {
         return R.layout.item_contact_separator;
+    }
+
+    @Override
+    protected int getTokenLayout() {
+        return R.layout.item_contact_smsinvite;
+    }
+
+    @Override
+    protected void updateToken(View view, TalkClientSmsToken token) {
+        ContentResolver resolver = mActivity.getContentResolver();
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(token.getSender()));
+
+        String name = token.getSender();
+        String photo = "content://" + R.drawable.avatar_default_contact;
+
+        Cursor cursor = resolver.query(uri,
+                new String[] {
+                   ContactsContract.PhoneLookup.DISPLAY_NAME,
+                   ContactsContract.PhoneLookup.PHOTO_URI,
+                },
+                null, null, null);
+
+        if(cursor != null && cursor.getCount() > 0) {
+            int nameIndex = cursor.getColumnIndex(ContactsContract.Data.DISPLAY_NAME);
+            int photoIndex = cursor.getColumnIndex(ContactsContract.Data.PHOTO_URI);
+            cursor.moveToFirst();
+            name = cursor.getString(nameIndex);
+            String contactPhoto = cursor.getString(photoIndex);
+            if(contactPhoto != null) {
+                photo = contactPhoto;
+            }
+        }
+
+        TextView nameText = (TextView)view.findViewById(R.id.smsinvite_name);
+        nameText.setText(name);
+        ImageView photoImage = (ImageView)view.findViewById(R.id.smsinvite_icon);
+        ImageLoader.getInstance().displayImage(photo, photoImage);
     }
 
     protected void updateContact(final View view, final TalkClientContact contact) {

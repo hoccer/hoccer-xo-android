@@ -40,4 +40,6 @@ interface ITalkClientServiceListener {
     void onDownloadProgress(int contactId, int downloadId);
     void onDownloadStateChanged(int contactId, int downloadId, String state);
 
+    void onSmsTokensChanged();
+
 }

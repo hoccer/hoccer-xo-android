@@ -33,6 +33,12 @@
         android:textIsSelectable="true"
         android:typeface="serif"/>
 
+    <Button
+        android:id="@+id/pairing_token_sms"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="@string/pairing_token_sendsms"/>
+
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"

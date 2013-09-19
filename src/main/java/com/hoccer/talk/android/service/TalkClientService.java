@@ -21,7 +21,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import com.google.android.gcm.GCMRegistrar;
-import com.hoccer.talk.android.sms.SmsReceiver;
+import com.hoccer.talk.android.sms.TalkSmsReceiver;
+import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.R;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkConfiguration;
@@ -170,8 +171,10 @@ public class TalkClientService extends Service {
             if(intent.hasExtra(TalkPushService.EXTRA_GCM_UNREGISTERED)) {
                 doUpdateGcm(true);
             }
-            if(intent.hasExtra(SmsReceiver.EXTRA_SMS_URL_RECEIVED)) {
-                doHandleSmsUrl(intent.getStringExtra(SmsReceiver.EXTRA_SMS_URL_RECEIVED));
+            if(intent.hasExtra(TalkSmsReceiver.EXTRA_SMS_URL_RECEIVED)) {
+                String sender = intent.getStringExtra(TalkSmsReceiver.EXTRA_SMS_SENDER);
+                String url = intent.getStringExtra(TalkSmsReceiver.EXTRA_SMS_URL_RECEIVED);
+                doHandleSmsUrl(sender, url);
             }
         }
         return START_STICKY;
@@ -286,11 +289,35 @@ public class TalkClientService extends Service {
         }
     }
 
-    private void doHandleSmsUrl(String urlString) {
-        LOG.info("doHandleSmsUrl(" + urlString + ")");
+    private void doHandleSmsUrl(String sender, String urlString) {
+        LOG.info("doHandleSmsUrl(" + sender + "," + urlString + ")");
+        // check if the url is for a pairing token
         if(urlString.startsWith("hxo://")) {
             String token = urlString.substring(6);
-            LOG.warn("received token " + token);
+            // build new token object
+            TalkClientSmsToken tokenObject = new TalkClientSmsToken();
+            tokenObject.setSender(sender);
+            tokenObject.setToken(token);
+            try {
+                mClient.getDatabase().saveSmsToken(tokenObject);
+            } catch (SQLException e) {
+                LOG.error("sql error", e);
+            }
+            // call listeners
+            notifySmsTokensChanged();
+        }
+    }
+
+    private void notifySmsTokensChanged() {
+        checkBinders();
+        for(Connection connection: mConnections) {
+            if(connection.hasListener()) {
+                try {
+                    connection.getListener().onSmsTokensChanged();
+                } catch (RemoteException e) {
+                    LOG.error("callback error", e);
+                }
+            }
         }
     }
 
@@ -1143,6 +1170,44 @@ public class TalkClientService extends Service {
             LOG.info("[" + mId + "] markAsSeen(" + clientMessageId + ")");
             try {
                 mClient.markAsSeen(mClient.getDatabase().findClientMessageById(clientMessageId));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void useSmsToken(int smsTokenId) throws RemoteException {
+            LOG.info("[" + mId + "] useSmsToken(" + smsTokenId + ")");
+            try {
+                final TalkClientSmsToken token = mClient.getDatabase().findSmsTokenById(smsTokenId);
+                if(token != null) {
+                    mExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                mClient.performTokenPairing(token.getToken());
+                                mClient.getDatabase().deleteSmsToken(token);
+                                notifySmsTokensChanged();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            } catch (SQLException e) {
+                LOG.error("sql error", e);
+            }
+        }
+
+        @Override
+        public void rejectSmsToken(int smsTokenId) throws RemoteException {
+            LOG.info("[" + mId + "] rejectSmsToken(" + smsTokenId + ")");
+            try {
+                TalkClientSmsToken token = mClient.getDatabase().findSmsTokenById(smsTokenId);
+                if(token != null) {
+                    mClient.getDatabase().deleteSmsToken(token);
+                    notifySmsTokensChanged();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }

@@ -3,6 +3,7 @@ package com.hoccer.talk.android;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -14,6 +15,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.hoccer.talk.android.dialog.TokenDialog;
+import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.R;
 import com.hoccer.talk.android.activity.AboutActivity;
 import com.hoccer.talk.android.activity.LicensesActivity;
@@ -65,6 +68,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     public final static int REQUEST_SCAN_BARCODE = IntentIntegrator.REQUEST_CODE; // XXX dirty
 
     public final static String DIALOG_NAME = "NameDialog";
+    public final static String DIALOG_TOKEN = "TokenDialog";
     public final static String DIALOG_CONTACT_DELETE = "ContactDeleteDialog";
     public final static String DIALOG_CONTACT_DEPAIR = "ContactDepairDialog";
     public final static String DIALOG_GROUP_KICK = "GroupKickDialog";
@@ -559,6 +563,12 @@ public abstract class TalkActivity extends SherlockFragmentActivity
                 listener.onDownloadStateChanged(contactId, downloadId, state);
             }
         }
+        @Override
+        public void onSmsTokensChanged() throws RemoteException {
+            for(ITalkClientServiceListener listener: mListeners) {
+                listener.onSmsTokensChanged();
+            }
+        }
     }
 
     @Override
@@ -624,6 +634,12 @@ public abstract class TalkActivity extends SherlockFragmentActivity
         startActivity(intent);
     }
 
+    public void showTokenDialog(TalkClientSmsToken token) {
+        LOG.debug("showTokenDialog(" + token.getSmsTokenId() + ")");
+        new TokenDialog(this, token)
+                .show(getSupportFragmentManager(), DIALOG_TOKEN);
+    }
+
     @Override
     public void showPairing() {
         LOG.debug("showPairing()");
@@ -683,6 +699,19 @@ public abstract class TalkActivity extends SherlockFragmentActivity
                 });
             }
         });
+    }
+
+    public void composeInviteSms(String token) {
+        LOG.debug("composeInviteSms(" + token + ")");
+
+        String message =
+                "Join the hoccing! hxo://" + token;
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("smsto:"));
+        intent.putExtra("sms_body", message);
+
+        startActivity(intent);
     }
 
     public void hackReturnedFromDialog() {
@@ -812,4 +841,9 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     @Override
     public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
     }
+
+    @Override
+    public void onSmsTokensChanged() throws RemoteException {
+    }
+
 }

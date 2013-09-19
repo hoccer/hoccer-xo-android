@@ -179,4 +179,8 @@ public class TalkListFragment extends SherlockListFragment implements ITalkFragm
     public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
     }
 
+    @Override
+    public void onSmsTokensChanged() throws RemoteException {
+    }
+
 }

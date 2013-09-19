@@ -3,6 +3,7 @@ package com.hoccer.talk.android.adapter;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.TalkApplication;
@@ -31,6 +32,15 @@ public class SimpleContactsAdapter extends ContactsAdapter {
     @Override
     protected int getSeparatorLayout() {
         return R.layout.item_contact_separator;
+    }
+
+    @Override
+    protected int getTokenLayout() {
+        return -1;
+    }
+
+    @Override
+    protected void updateToken(View view, TalkClientSmsToken token) {
     }
 
     @Override
