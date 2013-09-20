@@ -704,14 +704,22 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     public void composeInviteSms(String token) {
         LOG.debug("composeInviteSms(" + token + ")");
 
-        String message =
-                "Join the hoccing! hxo://" + token;
+        try {
+            TalkClientContact self = mDatabase.findSelfContact(false);
 
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("smsto:"));
-        intent.putExtra("sms_body", message);
+            String message =
+                    "Hey! I'm now using the free app Hoccer XO for secure chatting. " +
+                    "Download it now: http://hoccer.com/ Then add me as a contact: " +
+                    self.getName() + "\nxo hxo://" + token;
 
-        startActivity(intent);
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("smsto:"));
+            intent.putExtra("sms_body", message);
+
+            startActivity(intent);
+        } catch (SQLException e) {
+            LOG.error("sql error", e);
+        }
     }
 
     public void hackReturnedFromDialog() {
