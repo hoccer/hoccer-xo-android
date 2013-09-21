@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.hoccer.xo.R;
+import com.hoccer.xo.release.R;
 import com.hoccer.talk.android.TalkApplication;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;

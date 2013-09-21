@@ -12,7 +12,7 @@ import android.provider.ContactsContract;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.xo.R;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 public class TokenDialog extends SherlockDialogFragment implements DialogInterface.OnClickListener {

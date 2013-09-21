@@ -17,7 +17,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.hoccer.talk.android.dialog.TokenDialog;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.xo.R;
+import com.hoccer.xo.release.R;
 import com.hoccer.talk.android.activity.AboutActivity;
 import com.hoccer.talk.android.activity.LicensesActivity;
 import com.hoccer.talk.android.activity.MessagingActivity;

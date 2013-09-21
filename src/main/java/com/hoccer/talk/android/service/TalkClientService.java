@@ -23,7 +23,7 @@ import android.support.v4.app.TaskStackBuilder;
 import com.google.android.gcm.GCMRegistrar;
 import com.hoccer.talk.android.sms.TalkSmsReceiver;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.xo.R;
+import com.hoccer.xo.release.R;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkConfiguration;
 import com.hoccer.talk.android.activity.ContactsActivity;

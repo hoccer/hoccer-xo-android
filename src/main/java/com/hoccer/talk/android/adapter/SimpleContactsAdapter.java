@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.xo.R;
+import com.hoccer.xo.release.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.client.model.TalkClientContact;

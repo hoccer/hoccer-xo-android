@@ -12,7 +12,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import com.hoccer.xo.R;
+import com.hoccer.xo.release.R;
 import com.hoccer.talk.android.TalkFragment;
 import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.content.ContentView;

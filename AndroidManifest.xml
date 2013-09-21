@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hoccer.xo"
+    package="com.hoccer.xo.release"
     android:versionCode="11"
     android:versionName="0.9.1" >
 
@@ -32,11 +32,11 @@
     <!-- SMS receive for pairing tokens -->
     <uses-permission android:name="android.permission.RECEIVE_SMS"/>
     <!-- Our own GCM permission -->
-    <uses-permission android:name="com.hoccer.xo.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="com.hoccer.xo.release.permission.C2D_MESSAGE"/>
 
     <!-- Declare permission for controlling our own push package -->
     <permission
-            android:name="com.hoccer.xo.permission.C2D_MESSAGE"
+            android:name="com.hoccer.xo.release.permission.C2D_MESSAGE"
             android:protectionLevel="signature"/>
 
     <!-- Declare our application -->

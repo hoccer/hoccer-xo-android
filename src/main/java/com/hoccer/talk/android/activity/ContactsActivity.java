@@ -1,6 +1,6 @@
 package com.hoccer.talk.android.activity;
 
-import com.hoccer.xo.R;
+import com.hoccer.xo.release.R;
 import com.hoccer.talk.android.TalkActivity;
 
 public class ContactsActivity extends TalkActivity {

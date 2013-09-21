@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkFragment;
-import com.hoccer.xo.R;
+import com.hoccer.xo.release.R;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;

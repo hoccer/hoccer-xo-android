@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentManager;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.hoccer.xo.R;
+import com.hoccer.xo.release.R;
 import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.fragment.CompositionFragment;
 import com.hoccer.talk.android.fragment.MessagingFragment;

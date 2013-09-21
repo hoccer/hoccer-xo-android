@@ -21,7 +21,7 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.model.TalkGroup;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkRelationship;
-import com.hoccer.xo.R;
+import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
 

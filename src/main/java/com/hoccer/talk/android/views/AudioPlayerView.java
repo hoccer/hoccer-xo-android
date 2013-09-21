@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import com.hoccer.xo.R;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
