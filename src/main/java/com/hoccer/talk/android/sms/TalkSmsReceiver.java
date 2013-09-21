@@ -21,7 +21,7 @@ public class TalkSmsReceiver extends BroadcastReceiver {
     public static final String EXTRA_SMS_URL_RECEIVED = "com.hoccer.talk.android.SMS_URL_RECEIVED";
 
     private static final String URL_PATTERN = ".*(hxo://[a-zA-Z0-9]*).*";
-    private static final Pattern URL_PAT = Pattern.compile(URL_PATTERN);
+    private static final Pattern URL_PAT = Pattern.compile(URL_PATTERN, Pattern.DOTALL);
 
     @Override
     public void onReceive(Context context, Intent intent) {
