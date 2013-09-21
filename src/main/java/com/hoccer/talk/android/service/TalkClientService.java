@@ -470,7 +470,11 @@ public class TalkClientService extends Service {
                         .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
         // set fields
-        builder.setContentTitle(numUnconfirmed + " unconfirmed invitations");
+        if(numUnconfirmed > 1) {
+            builder.setContentTitle(numUnconfirmed + " unconfirmed invitations");
+        } else {
+            builder.setContentTitle(numUnconfirmed + " unconfirmed invitation");
+        }
 
         // finish up
         Notification notification = builder.build();
