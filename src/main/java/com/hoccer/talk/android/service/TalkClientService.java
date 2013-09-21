@@ -71,6 +71,7 @@ public class TalkClientService extends Service {
     private static final AtomicInteger ID_COUNTER = new AtomicInteger();
 
     private static final int NOTIFICATION_UNSEEN_MESSAGES = 0;
+    private static final int NOTIFICATION_UNCONFIRMED_INVITATIONS = 1;
 
     /** Executor for ourselves and the client */
     ScheduledExecutorService mExecutor;
@@ -304,12 +305,18 @@ public class TalkClientService extends Service {
                 LOG.error("sql error", e);
             }
             // call listeners
-            notifySmsTokensChanged();
+            notifySmsTokensChanged(true);
         }
     }
 
-    private void notifySmsTokensChanged() {
+    private void notifySmsTokensChanged(boolean notifyUser) {
         checkBinders();
+        try {
+            List<TalkClientSmsToken> tokens = mClient.getDatabase().findAllSmsTokens();
+            updateInvitationNotification(tokens, notifyUser);
+        } catch (SQLException e) {
+            LOG.error("sql error", e);
+        }
         for(Connection connection: mConnections) {
             if(connection.hasListener()) {
                 try {
@@ -421,6 +428,54 @@ public class TalkClientService extends Service {
             LOG.info("onConnectivityChange()");
             handleConnectivityChange(mConnectivityManager.getActiveNetworkInfo());
         }
+    }
+
+    private void updateInvitationNotification(List<TalkClientSmsToken> unconfirmedTokens, boolean notify) {
+        LOG.info("updateInvitationNotification()");
+        TalkClientDatabase db = mClient.getDatabase();
+
+        // cancel present notification if everything has been seen
+        // we back off here to prevent interruption of any in-progress alarms
+        if(unconfirmedTokens == null || unconfirmedTokens.isEmpty()) {
+            LOG.debug("no unconfirmed tokens");
+            mNotificationManager.cancel(NOTIFICATION_UNCONFIRMED_INVITATIONS);
+            return;
+        }
+
+        int numUnconfirmed = unconfirmedTokens.size();
+
+        // log about what we got
+        LOG.debug("notifying " + numUnconfirmed + " invitations ");
+
+        // build the notification
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        // always set the small icon (should be different depending on if we have a large one)
+        builder.setSmallIcon(R.drawable.ic_notification);
+        // large icon XXX
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+        builder.setLargeIcon(largeIcon);
+        // determine if alarms should be sounded
+        if(notify) {
+            builder.setDefaults(Notification.DEFAULT_ALL);
+        }
+        // set total number of messages of more than one
+        if(numUnconfirmed > 1) {
+            builder.setNumber(numUnconfirmed);
+        }
+        // create pending intent
+        Intent contactsIntent = new Intent(this, ContactsActivity.class);
+        PendingIntent pendingIntent =
+                TaskStackBuilder.create(this)
+                        .addNextIntent(contactsIntent)
+                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pendingIntent);
+        // set fields
+        builder.setContentTitle(numUnconfirmed + " unconfirmed invitations");
+
+        // finish up
+        Notification notification = builder.build();
+        LOG.info("notification " + notification.toString());
+        mNotificationManager.notify(NOTIFICATION_UNCONFIRMED_INVITATIONS, notification);
     }
 
     private void updateNotification(List<TalkClientMessage> allUnseenMessages, boolean notify) {
@@ -1187,7 +1242,7 @@ public class TalkClientService extends Service {
                             try {
                                 mClient.performTokenPairing(token.getToken());
                                 mClient.getDatabase().deleteSmsToken(token);
-                                notifySmsTokensChanged();
+                                notifySmsTokensChanged(false);
                             } catch (SQLException e) {
                                 e.printStackTrace();
                             }
@@ -1206,10 +1261,10 @@ public class TalkClientService extends Service {
                 TalkClientSmsToken token = mClient.getDatabase().findSmsTokenById(smsTokenId);
                 if(token != null) {
                     mClient.getDatabase().deleteSmsToken(token);
-                    notifySmsTokensChanged();
+                    notifySmsTokensChanged(false);
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOG.error("sql error", e);
             }
         }
     }
