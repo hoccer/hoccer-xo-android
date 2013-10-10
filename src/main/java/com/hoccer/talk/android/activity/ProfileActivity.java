@@ -17,6 +17,8 @@ import java.sql.SQLException;
  */
 public class ProfileActivity extends TalkActivity {
 
+    public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
+
     ActionBar mActionBar;
 
     ProfileFragment mFragment;
@@ -54,8 +56,8 @@ public class ProfileActivity extends TalkActivity {
         Intent intent = getIntent();
 
         // handle show intent
-        if(intent != null && intent.hasExtra("clientContactId")) {
-            int contactId = intent.getIntExtra("clientContactId", -1);
+        if(intent != null && intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
+            int contactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
             if(contactId == -1) {
                 LOG.error("invalid contact id");
             } else {

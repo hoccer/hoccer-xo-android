@@ -622,7 +622,8 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     public void showContactProfile(TalkClientContact contact) {
         LOG.debug("showContactProfile(" + contact.getClientContactId() + ")");
         Intent intent = new Intent(this, ProfileActivity.class);
-        intent.putExtra("clientContactId", contact.getClientContactId());
+        intent.putExtra(ProfileActivity.EXTRA_CLIENT_CONTACT_ID,
+                        contact.getClientContactId());
         startActivity(intent);
     }
 
@@ -630,7 +631,8 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     public void showContactConversation(TalkClientContact contact) {
         LOG.debug("showContactConversation(" + contact.getClientContactId() + ")");
         Intent intent = new Intent(this, MessagingActivity.class);
-        intent.putExtra("clientContactId", contact.getClientContactId());
+        intent.putExtra(MessagingActivity.EXTRA_CLIENT_CONTACT_ID,
+                        contact.getClientContactId());
         startActivity(intent);
     }
 

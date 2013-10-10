@@ -17,6 +17,8 @@ import java.sql.SQLException;
 
 public class MessagingActivity extends TalkActivity {
 
+    public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
+
     ActionBar mActionBar;
 
     MessagingFragment mMessagingFragment;
@@ -59,8 +61,8 @@ public class MessagingActivity extends TalkActivity {
         Intent intent = getIntent();
 
         // handle converse intent
-        if(intent != null && intent.hasExtra("clientContactId")) {
-            int contactId = intent.getIntExtra("clientContactId", -1);
+        if(intent != null && intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
+            int contactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
             if(contactId == -1) {
                 LOG.error("invalid contact id");
             } else {
