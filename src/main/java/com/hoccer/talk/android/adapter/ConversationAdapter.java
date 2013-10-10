@@ -30,6 +30,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Adapter for messages in a conversation
+ */
 public class ConversationAdapter extends TalkAdapter {
 
     private static final int VIEW_TYPE_INCOMING = 0;

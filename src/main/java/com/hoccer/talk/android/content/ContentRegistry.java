@@ -23,12 +23,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Content registry
+ *
+ * This singleton is responsible for attachment and avatar selection and viewing.
+ *
+ * Essentially, this keeps a registry of selectors and viewers and provides
+ * some frontend methods for using them.
+ *
+ */
 public class ContentRegistry {
 
     private static final Logger LOG = Logger.getLogger(ContentRegistry.class);
 
     private static ContentRegistry INSTANCE = null;
 
+    /**
+     * Get the content registry singleton
+     *
+     * The given context will be used to initialize the registry
+     * if there isn't one already.
+     *
+     * The given context MUST be the application context.
+     *
+     * @param applicationContext to work in
+     * @return the content registry
+     */
     public static synchronized ContentRegistry get(Context applicationContext) {
         if(INSTANCE == null) {
             INSTANCE = new ContentRegistry(applicationContext);
@@ -36,18 +56,28 @@ public class ContentRegistry {
         return INSTANCE;
     }
 
+    /** Context for this registry */
     Context mContext;
 
+    /** The avatar selector (usually a GallerySelector) */
     IContentSelector mAvatarSelector;
 
+    /** Active attachment selectors (only the supported ones)  */
     List<IContentSelector> mAttachmentSelectors = new ArrayList<IContentSelector>();
+
+    /** Active attachment viewers (only the supported ones) */
     List<IContentViewer> mAttachmentViewers = new ArrayList<IContentViewer>();
 
-    public ContentRegistry(Context context) {
+    private ContentRegistry(Context context) {
         mContext = context;
         initialize();
     }
 
+    /**
+     * Initialize the registry
+     *
+     * This methods activates supported content selectors and viewers.
+     */
     private void initialize() {
         mAvatarSelector = new GallerySelector();
 
@@ -60,6 +90,13 @@ public class ContentRegistry {
         //mAttachmentViewers.add(new ContactViewer());
     }
 
+    /**
+     * Check if the given selector is supported on this device
+     *
+     * Adds the selector to the active list when supported.
+     *
+     * @param selector to add if supported
+     */
     private void initializeSelector(IContentSelector selector) {
         Intent intent = selector.createSelectionIntent(mContext);
         if(IntentHelper.isIntentResolvable(intent, mContext)) {
@@ -70,15 +107,16 @@ public class ContentRegistry {
         }
     }
 
-    public IContentViewer selectViewerForContent(ContentObject contentObject) {
-        for(IContentViewer viewer: mAttachmentViewers) {
-            if(viewer.canViewObject(contentObject)) {
-                return viewer;
-            }
-        }
-        return null;
-    }
-
+    /**
+     * Creates a View for displaying the given content
+     *
+     * This should be called by ContentView when the displayed object changes.
+     *
+     * @param activity the view will be used in
+     * @param contentObject to display
+     * @param view that will host the returned view
+     * @return a View set up for the given content
+     */
     public View createViewForContent(Activity activity, ContentObject contentObject, ContentView view) {
         IContentViewer viewer = selectViewerForContent(contentObject);
         if(viewer != null) {
@@ -87,6 +125,32 @@ public class ContentRegistry {
         return null;
     }
 
+    /**
+     * Selects the viewer for a content object
+     *
+     * First viewer that can show the content will be chosen.
+     *
+     * @param contentObject that needs a view constructed
+     * @return a matching content viewer
+     */
+    private IContentViewer selectViewerForContent(ContentObject contentObject) {
+        for(IContentViewer viewer: mAttachmentViewers) {
+            if(viewer.canViewObject(contentObject)) {
+                return viewer;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Starts avatar selection
+     *
+     * This will jump directly to the Android gallery.
+     *
+     * @param activity that is requesting the selection
+     * @param requestCode identifying returned intents
+     * @return a new selection handle object
+     */
     public ContentSelection selectAvatar(Activity activity, int requestCode) {
         ContentSelection cs = new ContentSelection(activity, mAvatarSelector);
         Intent intent = mAvatarSelector.createSelectionIntent(activity);
@@ -94,17 +158,40 @@ public class ContentRegistry {
         return cs;
     }
 
+    /**
+     * Create a content object from an intent returned by content selection
+     *
+     * Activities should call this when they receive results with the request
+     * code they associate with avatar selection (as given to selectAvatar).
+     *
+     * @param selection handle for the in-progress avatar selection
+     * @param intent returned from the selector
+     * @return content object for selected avatar
+     */
     public ContentObject createSelectedAvatar(ContentSelection selection, Intent intent) {
         return selection.getSelector().createObjectFromSelectionResult(selection.getActivity(), intent);
     }
 
+    /* Keys for use with the internal SimpleAdapter in attachment selection */
     private static final String KEY_ICON = "icon";
     private static final String KEY_NAME = "name";
     private static final String KEY_INTENT = "intent";
     private static final String KEY_SELECTOR = "selector";
 
+    /**
+     * Starts content selection
+     *
+     * Will create and show a dialog above the given activity.
+     *
+     * @param activity that is requesting the selection
+     * @param requestCode identifying returned intents
+     * @return a new selection handle object
+     */
     public ContentSelection selectAttachment(final Activity activity, final int requestCode) {
+        // create handle representing this selection attempt
+        final ContentSelection cs = new ContentSelection(activity);
 
+        // collect selection intents and associated information
         final List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
         for(IContentSelector selector: mAttachmentSelectors) {
             Intent selectionIntent = selector.createSelectionIntent(activity);
@@ -118,6 +205,7 @@ public class ContentRegistry {
             }
         }
 
+        // prepare an adapter for the selection options
         SimpleAdapter adapter = new SimpleAdapter(activity, options, R.layout.select_content,
                 new String[]{KEY_ICON, KEY_NAME},
                 new int[]{R.id.select_content_icon, R.id.select_content_text});
@@ -133,8 +221,7 @@ public class ContentRegistry {
             }
         });
 
-        final ContentSelection cs = new ContentSelection(activity);
-
+        // build the selection dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.selectattachment_title);
         builder.setCancelable(true);
@@ -155,12 +242,26 @@ public class ContentRegistry {
             }
         });
 
+        // configure the dialog
         Dialog dialog = builder.create();
+
+        // and show it
         dialog.show();
 
+        // return the selection handle
         return cs;
     }
 
+    /**
+     * Create a content object from an intent returned by content selection
+     *
+     * Activities should call this when they receive results with the request
+     * code they associate with content selection (as given to selectAttachment).
+     *
+     * @param selection handle for the in-progress content selection
+     * @param intent returned from the selector
+     * @return content object for selected content
+     */
     public ContentObject createSelectedAttachment(ContentSelection selection, Intent intent) {
         IContentSelector selector = selection.getSelector();
         if(selector != null) {

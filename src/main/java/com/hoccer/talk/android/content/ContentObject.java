@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import java.io.File;
 
 /**
- * Represents the content behind an attachment
+ * Content objects
  *
  * This is a grabbag object for all the properties
  * of content objects that we need in the UI.

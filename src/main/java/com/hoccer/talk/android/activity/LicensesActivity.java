@@ -10,6 +10,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Activity that displays our (long) license text
+ */
 public class LicensesActivity extends TalkActivity {
 
     TextView mText;
@@ -57,4 +60,5 @@ public class LicensesActivity extends TalkActivity {
 
         return os.toString();
     }
+
 }

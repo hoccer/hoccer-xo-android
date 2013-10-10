@@ -15,6 +15,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Base class for adapters dealing with contacts
+ *
+ * This allows base classes to override the UI for various needs.
+ *
+ * It also has a filter feature that allows restricting the displayed set of contacts.
+ *
+ */
 public abstract class ContactsAdapter extends TalkAdapter {
 
     private static final Logger LOG = Logger.getLogger(ContactsAdapter.class);

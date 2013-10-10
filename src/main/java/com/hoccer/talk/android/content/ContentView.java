@@ -10,6 +10,14 @@ import android.widget.ProgressBar;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
+/**
+ * Content view
+ *
+ * This is a wrapper for the various types of content object views.
+ *
+ * It needs to handle content in all states, displayable or not.
+ *
+ */
 public class ContentView extends LinearLayout {
 
     private static final Logger LOG = Logger.getLogger(ContentView.class);
@@ -32,18 +40,28 @@ public class ContentView extends LinearLayout {
      * Maximum height for content view in DP.
      *
      * This is only used for views that have variable size,
-     * specifically images and videos, where the responsibility
-     * for applying this lies with the content selectors.
+     * specifically images and videos.
      *
-     * Any container may set this ad libertum.
+     * The responsibility for realising this lies with the content viewers,
+     * which should set up the view they return appropriately.
+     *
+     * Any container may and should set this according to its layout requirements
      */
     int mMaxContentHeight = Integer.MAX_VALUE;
 
+    /**
+     * Standard view constructor
+     *
+     * @param context
+     * @param attrs
+     */
     public ContentView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        // only get the registry when on an actual device
         if(!this.isInEditMode()) {
             mRegistry = ContentRegistry.get(context.getApplicationContext());
         }
+        // initialize views
         initView(context);
     }
 

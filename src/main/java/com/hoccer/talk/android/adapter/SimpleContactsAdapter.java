@@ -13,6 +13,14 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
 
+/**
+ * Contacts adapter for simple lists
+ *
+ * This displays just the avatar and the name of a contact.
+ *
+ * It is used mostly for selecting users in a group context.
+ *
+ */
 public class SimpleContactsAdapter extends ContactsAdapter {
 
     public SimpleContactsAdapter(TalkActivity activity) {
