@@ -52,6 +52,7 @@ public class LicensesActivity extends TalkActivity {
             os.close();
         } catch (IOException e) {
             LOG.error("could not read license text", e);
+            return "Could not read license text";
         }
 
         return os.toString();
