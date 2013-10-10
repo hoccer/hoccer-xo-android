@@ -21,6 +21,12 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.sql.SQLException;
 
+/**
+ * Contacts adapter for the main contact list
+ *
+ * This displays detailed contact status with various nooks and crannies.
+ *
+ */
 public class RichContactsAdapter extends ContactsAdapter {
 
     private static final Logger LOG = Logger.getLogger(RichContactsAdapter.class);
