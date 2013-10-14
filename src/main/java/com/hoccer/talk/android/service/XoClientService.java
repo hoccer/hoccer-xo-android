@@ -21,12 +21,12 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import com.google.android.gcm.GCMRegistrar;
-import com.hoccer.talk.android.TalkApplication;
-import com.hoccer.talk.android.TalkConfiguration;
+import com.hoccer.talk.android.XoApplication;
+import com.hoccer.talk.android.XoConfiguration;
 import com.hoccer.talk.android.activity.ContactsActivity;
 import com.hoccer.talk.android.activity.MessagingActivity;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
-import com.hoccer.talk.android.push.TalkPushService;
+import com.hoccer.talk.android.push.GcmService;
 import com.hoccer.talk.android.sms.TalkSmsReceiver;
 import com.hoccer.talk.client.HoccerTalkClient;
 import com.hoccer.talk.client.ITalkClientListener;
@@ -66,9 +66,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  *
  */
-public class TalkClientService extends Service {
+public class XoClientService extends Service {
 
-	private static final Logger LOG = Logger.getLogger(TalkClientService.class);
+	private static final Logger LOG = Logger.getLogger(XoClientService.class);
 
     private static final AtomicInteger ID_COUNTER = new AtomicInteger();
 
@@ -113,15 +113,15 @@ public class TalkClientService extends Service {
         LOG.info("onCreate()");
 		super.onCreate();
 
-        mExecutor = TalkApplication.getExecutor();
+        mExecutor = XoApplication.getExecutor();
 
         mConnections = new ArrayList<Connection>();
 
         WebSocketClientFactory wscFactory = new WebSocketClientFactory();
         SslContextFactory sslcFactory = wscFactory.getSslContextFactory();
         sslcFactory.setTrustAll(false);
-        sslcFactory.setTrustStore(TalkApplication.getSslKeyStore());
-        sslcFactory.setKeyStore(TalkApplication.getSslKeyStore());
+        sslcFactory.setTrustStore(XoApplication.getSslKeyStore());
+        sslcFactory.setKeyStore(XoApplication.getSslKeyStore());
         sslcFactory.setEnableCRLDP(false);
         sslcFactory.setEnableOCSP(false);
         sslcFactory.setSessionCachingEnabled(true);
@@ -135,10 +135,10 @@ public class TalkClientService extends Service {
         }
 
         mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()), wscFactory);
-        mClient.setAvatarDirectory(TalkApplication.getAvatarDirectory().toString());
-        mClient.setAttachmentDirectory(TalkApplication.getAttachmentDirectory().toString());
-        mClient.setEncryptedUploadDirectory(TalkApplication.getEncryptedUploadDirectory().toString());
-        mClient.setEncryptedDownloadDirectory(TalkApplication.getEncryptedDownloadDirectory().toString());
+        mClient.setAvatarDirectory(XoApplication.getAvatarDirectory().toString());
+        mClient.setAttachmentDirectory(XoApplication.getAttachmentDirectory().toString());
+        mClient.setEncryptedUploadDirectory(XoApplication.getEncryptedUploadDirectory().toString());
+        mClient.setEncryptedDownloadDirectory(XoApplication.getEncryptedDownloadDirectory().toString());
 
         ClientListener clientListener = new ClientListener();
         mClient.registerListener(clientListener);
@@ -181,13 +181,13 @@ public class TalkClientService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         LOG.info("onStartCommand(" + ((intent == null) ? "null" : intent.toString()) + ")");
         if(intent != null) {
-            if(intent.hasExtra(TalkPushService.EXTRA_WAKE_CLIENT)) {
+            if(intent.hasExtra(GcmService.EXTRA_WAKE_CLIENT)) {
                 wakeClient();
             }
-            if(intent.hasExtra(TalkPushService.EXTRA_GCM_REGISTERED)) {
+            if(intent.hasExtra(GcmService.EXTRA_GCM_REGISTERED)) {
                 doUpdateGcm(true);
             }
-            if(intent.hasExtra(TalkPushService.EXTRA_GCM_UNREGISTERED)) {
+            if(intent.hasExtra(GcmService.EXTRA_GCM_UNREGISTERED)) {
                 doUpdateGcm(true);
             }
             if(intent.hasExtra(TalkSmsReceiver.EXTRA_SMS_URL_RECEIVED)) {
@@ -276,7 +276,7 @@ public class TalkClientService extends Service {
         if(mGcmSupported) {
             if (forced || !GCMRegistrar.isRegistered(this)) {
                 LOG.info("requesting GCM registration");
-                GCMRegistrar.register(this, TalkConfiguration.GCM_SENDER_ID);
+                GCMRegistrar.register(this, XoConfiguration.GCM_SENDER_ID);
             }
         }
     }
@@ -293,7 +293,7 @@ public class TalkClientService extends Service {
                 mClient.registerGcm(this.getPackageName(), GCMRegistrar.getRegistrationId(this));
                 // set the registration timeout (XXX move elsewhere)
                 GCMRegistrar.setRegisterOnServerLifespan(
-                        this, TalkConfiguration.GCM_REGISTRATION_EXPIRATION * 1000);
+                        this, XoConfiguration.GCM_REGISTRATION_EXPIRATION * 1000);
                 // tell the registrar that we did this successfully
                 GCMRegistrar.setRegisteredOnServer(this, true);
             } else {
@@ -366,7 +366,7 @@ public class TalkClientService extends Service {
                         doShutdown();
                     }
                 },
-                TalkConfiguration.SERVICE_KEEPALIVE_TIMEOUT, TimeUnit.SECONDS
+                XoConfiguration.SERVICE_KEEPALIVE_TIMEOUT, TimeUnit.SECONDS
         );
     }
 
@@ -423,7 +423,7 @@ public class TalkClientService extends Service {
             boolean netState = activeNetwork.isConnected();
             int netType = activeNetwork.getType();
 
-            if(TalkConfiguration.CONNECTIVITY_RECONNECT_ON_CHANGE) {
+            if(XoConfiguration.CONNECTIVITY_RECONNECT_ON_CHANGE) {
                 if(netState && !mClient.isIdle()) {
                     if(!mPreviousConnectionState
                             || mPreviousConnectionType == -1
@@ -521,7 +521,7 @@ public class TalkClientService extends Service {
         }
 
         // do not sound alarms overly often (sound, vibrate)
-        if(passed < TalkConfiguration.NOTIFICATION_ALARM_BACKOFF) {
+        if(passed < XoConfiguration.NOTIFICATION_ALARM_BACKOFF) {
             notify = false;
         }
 
@@ -632,7 +632,7 @@ public class TalkClientService extends Service {
 
     private void cancelNotification() {
         long now = System.currentTimeMillis();
-        long cancelTime = mNotificationTimestamp + TalkConfiguration.NOTIFICATION_CANCEL_BACKOFF;
+        long cancelTime = mNotificationTimestamp + XoConfiguration.NOTIFICATION_CANCEL_BACKOFF;
         long delay = Math.max(0, cancelTime - now);
         mExecutor.schedule(new Runnable() {
             @Override
@@ -662,8 +662,8 @@ public class TalkClientService extends Service {
                 mExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        doRegisterGcm(TalkConfiguration.GCM_ALWAYS_REGISTER);
-                        doUpdateGcm(TalkConfiguration.GCM_ALWAYS_UPDATE);
+                        doRegisterGcm(XoConfiguration.GCM_ALWAYS_REGISTER);
+                        doUpdateGcm(XoConfiguration.GCM_ALWAYS_UPDATE);
                     }
                 });
             }
@@ -885,10 +885,10 @@ public class TalkClientService extends Service {
                 }
             }
             if(download.getType().equals(TalkTransfer.Type.ATTACHMENT)) {
-                String path = TalkApplication.getAttachmentLocation(download).toString();
+                String path = XoApplication.getAttachmentLocation(download).toString();
                 String type = download.getContentType();
                 LOG.info("triggering media scan of " + path);
-                MediaScannerConnection.scanFile(TalkClientService.this, new String[]{path}, new String[]{type},
+                MediaScannerConnection.scanFile(XoClientService.this, new String[]{path}, new String[]{type},
                         new MediaScannerConnection.OnScanCompletedListener() {
                             @Override
                             public void onScanCompleted(String path, Uri uri) {
@@ -989,13 +989,13 @@ public class TalkClientService extends Service {
         }
     }
 
-    public class Connection extends ITalkClientService.Stub {
+    public class Connection extends IXoClientService.Stub {
 
         int mId;
 
         Intent mBindIntent;
 
-        ITalkClientServiceListener mListener;
+        IXoClientServiceListener mListener;
 
         Connection(Intent bindIntent) {
             mId = ID_COUNTER.incrementAndGet();
@@ -1008,7 +1008,7 @@ public class TalkClientService extends Service {
             return mListener != null;
         }
 
-        public ITalkClientServiceListener getListener() {
+        public IXoClientServiceListener getListener() {
             return mListener;
         }
 
@@ -1079,7 +1079,7 @@ public class TalkClientService extends Service {
         }
 
         @Override
-        public void setListener(ITalkClientServiceListener listener) throws RemoteException {
+        public void setListener(IXoClientServiceListener listener) throws RemoteException {
             LOG.info("[" + mId + "] setListener()");
             mListener = listener;
         }

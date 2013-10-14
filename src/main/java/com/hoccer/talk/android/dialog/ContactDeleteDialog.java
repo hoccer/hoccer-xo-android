@@ -6,8 +6,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.RemoteException;
 import com.actionbarsherlock.app.SherlockDialogFragment;
+import com.hoccer.talk.android.XoActivity;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
 
@@ -15,11 +15,11 @@ public class ContactDeleteDialog extends SherlockDialogFragment {
 
     private static final Logger LOG = Logger.getLogger(ContactDeleteDialog.class);
 
-    TalkActivity mActivity;
+    XoActivity mActivity;
 
     TalkClientContact mContact;
 
-    public ContactDeleteDialog(TalkActivity activity, TalkClientContact contact) {
+    public ContactDeleteDialog(XoActivity activity, TalkClientContact contact) {
         super();
         mActivity = activity;
         mContact = contact;
@@ -37,7 +37,7 @@ public class ContactDeleteDialog extends SherlockDialogFragment {
             public void onClick(DialogInterface dialog, int which) {
                 if(mContact != null) {
                     try {
-                        mActivity.getTalkClientService().deleteContact(mContact.getClientContactId());
+                        mActivity.getXoService().deleteContact(mContact.getClientContactId());
                     } catch (RemoteException e) {
                         LOG.error("remote error", e);
                     }

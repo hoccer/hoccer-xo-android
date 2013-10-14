@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
-import com.hoccer.talk.android.service.TalkClientService;
+import com.hoccer.talk.android.service.XoClientService;
 import org.apache.log4j.Logger;
 
 import java.util.regex.Matcher;
@@ -59,7 +59,7 @@ public class TalkSmsReceiver extends BroadcastReceiver {
     }
 
     private void sendServiceIntent(Context context, String sender, String url) {
-        Intent serviceIntent = new Intent(context, TalkClientService.class);
+        Intent serviceIntent = new Intent(context, XoClientService.class);
         serviceIntent.putExtra(EXTRA_SMS_SENDER, sender);
         serviceIntent.putExtra(EXTRA_SMS_URL_RECEIVED, url);
         context.startService(serviceIntent);

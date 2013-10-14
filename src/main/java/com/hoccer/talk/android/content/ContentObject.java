@@ -1,6 +1,6 @@
 package com.hoccer.talk.android.content;
 
-import com.hoccer.talk.android.TalkApplication;
+import com.hoccer.talk.android.XoApplication;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import org.apache.log4j.Logger;
@@ -145,14 +145,14 @@ public class ContentObject {
         co.setMediaType(upload.getMediaType());
         switch (type) {
             case AVATAR:
-                File avatarLocation = TalkApplication.getAvatarLocation(upload);
+                File avatarLocation = XoApplication.getAvatarLocation(upload);
                 if(avatarLocation != null) {
                     LOG.debug("co from avatar " + avatarLocation.toString());
                     co.setContentUrl(avatarLocation.toString());
                 }
                 break;
             case ATTACHMENT:
-                File attachmentLocation = TalkApplication.getAttachmentLocation(upload);
+                File attachmentLocation = XoApplication.getAttachmentLocation(upload);
                 if(attachmentLocation != null) {
                     LOG.debug("co from attachment " + attachmentLocation.toString());
                     co.setContentUrl(attachmentLocation.toString());
@@ -195,14 +195,14 @@ public class ContentObject {
         co.setMediaType(download.getMediaType());
         switch (type) {
             case AVATAR:
-                File avatarLocation = TalkApplication.getAvatarLocation(download);
+                File avatarLocation = XoApplication.getAvatarLocation(download);
                 if(avatarLocation != null) {
                     LOG.debug("co from avatar " + avatarLocation.toString());
                     co.setContentUrl(avatarLocation.toString());
                 }
                 break;
             case ATTACHMENT:
-                File attachmentLocation = TalkApplication.getAttachmentLocation(download);
+                File attachmentLocation = XoApplication.getAttachmentLocation(download);
                 if(attachmentLocation != null) {
                     LOG.debug("co from avatar " + attachmentLocation.toString());
                     co.setContentUrl(attachmentLocation.toString());

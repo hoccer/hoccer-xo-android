@@ -7,14 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.hoccer.talk.android.XoFragment;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkFragment;
 import com.hoccer.talk.client.HoccerTalkClient;
 
 /**
  * Mix-in fragment for showing client status
  */
-public class StatusFragment extends TalkFragment {
+public class StatusFragment extends XoFragment {
 
     TextView mStatusText;
 
@@ -36,7 +36,7 @@ public class StatusFragment extends TalkFragment {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                int state = getTalkActivity().getClientState();
+                int state = getXoActivity().getClientState();
                 applyClientState(state);
             }
         });

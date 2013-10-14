@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.hoccer.talk.android.TalkApplication;
-import com.hoccer.talk.android.TalkFragment;
+import com.hoccer.talk.android.XoApplication;
+import com.hoccer.talk.android.XoFragment;
 import com.hoccer.talk.android.adapter.ContactsAdapter;
 import com.hoccer.talk.android.adapter.SimpleContactsAdapter;
 import com.hoccer.talk.android.content.ContentObject;
@@ -33,7 +33,7 @@ import java.sql.SQLException;
  *
  * TODO relax defensive programming
  */
-public class ProfileFragment extends TalkFragment
+public class ProfileFragment extends XoFragment
         implements View.OnClickListener {
 
     private static final Logger LOG = Logger.getLogger(ProfileFragment.class);
@@ -118,13 +118,13 @@ public class ProfileFragment extends TalkFragment
         if(v == mAvatarImage) {
             LOG.debug("onClick(avatarSetButton)");
             if(mContact != null && (mContact.isSelf() || mContact.isGroupAdmin())) {
-                getTalkActivity().selectAvatar();
+                getXoActivity().selectAvatar();
             }
         }
         if(v == mNameOverlay || v == mNameText || v == mNameEditButton) {
             LOG.debug("onClick(nameOverlay|nameText|nameEditButton)");
             if(mContact != null && (mContact.isSelf() || mContact.isGroupAdmin())) {
-                getTalkActivity().changeName(mContact);
+                getXoActivity().changeName(mContact);
             }
         }
         if(v == mUserBlockButton) {
@@ -144,7 +144,7 @@ public class ProfileFragment extends TalkFragment
             LOG.debug("onClick(groupJoinButton)");
             if(mContact != null && mContact.isGroup()) {
                 try {
-                    getTalkService().joinGroup(mContact.getClientContactId());
+                    getXoService().joinGroup(mContact.getClientContactId());
                 } catch (RemoteException e) {
                     LOG.error("remote error", e);
                 }
@@ -153,37 +153,37 @@ public class ProfileFragment extends TalkFragment
         if(v == mGroupLeaveButton) {
             LOG.debug("onClick(groupLeaveButton)");
             if(mContact != null && mContact.isGroupJoined() && !mContact.isGroupAdmin()) {
-                getTalkActivity().confirmGroupLeave(mContact);
+                getXoActivity().confirmGroupLeave(mContact);
             }
         }
         if(v == mGroupDeleteButton) {
             LOG.debug("onClick(groupDeleteButton)");
             if(mContact != null) {
-                getTalkActivity().confirmDeleteContact(mContact);
+                getXoActivity().confirmDeleteContact(mContact);
             }
         }
         if(v == mGroupInviteButton) {
             LOG.debug("onClick(groupInviteButton)");
             if(mContact != null && mContact.isGroup()) {
-                getTalkActivity().selectGroupInvite(mContact);
+                getXoActivity().selectGroupInvite(mContact);
             }
         }
         if(v == mGroupKickButton) {
             LOG.debug("onClick(groupKickButton)");
             if(mContact != null && mContact.isGroup()) {
-                getTalkActivity().selectGroupKick(mContact);
+                getXoActivity().selectGroupKick(mContact);
             }
         }
         if(v == mUserDepairButton) {
             LOG.debug("onClick(userDepairButton)");
             if(mContact != null) {
-                getTalkActivity().confirmDepairContact(mContact);
+                getXoActivity().confirmDepairContact(mContact);
             }
         }
         if(v == mUserDeleteButton) {
             LOG.debug("onClick(contactDeleteButton)");
             if(mContact != null) {
-                getTalkActivity().confirmDeleteContact(mContact);
+                getXoActivity().confirmDeleteContact(mContact);
             }
         }
     }
@@ -201,18 +201,18 @@ public class ProfileFragment extends TalkFragment
         final ContentObject newAvatar = mAvatarToSet;
         mAvatarToSet = null;
         if(newAvatar != null) {
-            TalkApplication.getExecutor().execute(new Runnable() {
+            XoApplication.getExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
                     LOG.debug("creating avatar upload");
                     TalkClientUpload upload = ContentObject.createAvatarUpload(newAvatar);
                     try {
-                        getTalkDatabase().saveClientUpload(upload);
+                        getXoDatabase().saveClientUpload(upload);
                         if(mContact.isSelf()) {
-                            getTalkService().setClientAvatar(upload.getClientUploadId());
+                            getXoService().setClientAvatar(upload.getClientUploadId());
                         }
                         if(mContact.isGroup()) {
-                            getTalkService().setGroupAvatar(mContact.getClientContactId(), upload.getClientUploadId());
+                            getXoService().setGroupAvatar(mContact.getClientContactId(), upload.getClientUploadId());
                         }
                     } catch (SQLException e) {
                         LOG.error("sql error", e);
@@ -245,7 +245,7 @@ public class ProfileFragment extends TalkFragment
             TalkClientDownload avatarDownload = contact.getAvatarDownload();
             if(avatarDownload != null) {
                 if(avatarDownload.getState() == TalkClientDownload.State.COMPLETE) {
-                    File avatarFile = TalkApplication.getAvatarLocation(avatarDownload);
+                    File avatarFile = XoApplication.getAvatarLocation(avatarDownload);
                     avatarUrl = "file://" + avatarFile.toString();
                 }
             }
@@ -254,7 +254,7 @@ public class ProfileFragment extends TalkFragment
             TalkClientUpload avatarUpload = contact.getAvatarUpload();
             if(avatarUpload != null) {
                 if(avatarUpload.getState() == TalkClientUpload.State.COMPLETE) {
-                    File avatarFile = TalkApplication.getAvatarLocation(avatarUpload);
+                    File avatarFile = XoApplication.getAvatarLocation(avatarUpload);
                     avatarUrl = "file://" + avatarFile.toString();
                 }
             }
@@ -304,7 +304,7 @@ public class ProfileFragment extends TalkFragment
             if(groupPresence != null) {
                 mNameText.setText(groupPresence.getGroupName());
             }
-            final ContactsAdapter adapter = new SimpleContactsAdapter(getTalkActivity());
+            final ContactsAdapter adapter = new SimpleContactsAdapter(getXoActivity());
             adapter.setFilter(new ContactsAdapter.Filter() {
                 @Override
                 public boolean shouldShow(TalkClientContact contact) {
@@ -326,7 +326,7 @@ public class ProfileFragment extends TalkFragment
         LOG.debug("blockContact()");
         if(mContact != null) {
             try {
-                getTalkService().blockContact(mContact.getClientContactId());
+                getXoService().blockContact(mContact.getClientContactId());
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -337,7 +337,7 @@ public class ProfileFragment extends TalkFragment
         LOG.debug("unblockContact()");
         if(mContact != null) {
             try {
-                getTalkService().unblockContact(mContact.getClientContactId());
+                getXoService().unblockContact(mContact.getClientContactId());
             } catch (RemoteException e) {
                 LOG.error("sql error", e);
             }
@@ -349,17 +349,17 @@ public class ProfileFragment extends TalkFragment
         if(mContact != null) {
             LOG.debug("updating from db");
             try {
-                mContact = getTalkDatabase().findClientContactById(mContact.getClientContactId());
+                mContact = getXoDatabase().findClientContactById(mContact.getClientContactId());
                 if(mContact.isClient() || mContact.isGroup()) {
                     TalkClientDownload avatarDownload = mContact.getAvatarDownload();
                     if(avatarDownload != null) {
-                        getTalkDatabase().refreshClientDownload(avatarDownload);
+                        getXoDatabase().refreshClientDownload(avatarDownload);
                     }
                 }
                 if(mContact.isSelf()) {
                     TalkClientUpload avatarUpload = mContact.getAvatarUpload();
                     if(avatarUpload != null) {
-                        getTalkDatabase().refreshClientUpload(avatarUpload);
+                        getXoDatabase().refreshClientUpload(avatarUpload);
                     }
                 }
             } catch (SQLException e) {

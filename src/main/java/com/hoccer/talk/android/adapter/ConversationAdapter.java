@@ -6,10 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.hoccer.talk.android.XoActivity;
+import com.hoccer.talk.android.XoAdapter;
+import com.hoccer.talk.android.XoApplication;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkActivity;
-import com.hoccer.talk.android.TalkAdapter;
-import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.content.ContentView;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Adapter for messages in a conversation
  */
-public class ConversationAdapter extends TalkAdapter {
+public class ConversationAdapter extends XoAdapter {
 
     private static final int VIEW_TYPE_INCOMING = 0;
     private static final int VIEW_TYPE_OUTGOING = 1;
@@ -52,7 +52,7 @@ public class ConversationAdapter extends TalkAdapter {
     long mLastReload = 0;
     ScheduledFuture<?> mReloadFuture;
 
-    public ConversationAdapter(TalkActivity activity) {
+    public ConversationAdapter(XoActivity activity) {
         super(activity);
     }
 
@@ -98,7 +98,7 @@ public class ConversationAdapter extends TalkAdapter {
 
     @Override
     public void reload() {
-        ScheduledExecutorService executor = TalkApplication.getExecutor();
+        ScheduledExecutorService executor = XoApplication.getExecutor();
         long now = System.currentTimeMillis();
         long since = now - mLastReload;
         if(since < 200) {
@@ -316,7 +316,7 @@ public class ConversationAdapter extends TalkAdapter {
                 TalkClientDownload avatarDownload = sendingContact.getAvatarDownload();
                 if(avatarDownload != null) {
                     if(avatarDownload.getState().equals(TalkClientDownload.State.COMPLETE)) {
-                        File avatarFile = TalkApplication.getAvatarLocation(avatarDownload);
+                        File avatarFile = XoApplication.getAvatarLocation(avatarDownload);
                         if(avatarFile != null) {
                             avatarUrl = "file://" + avatarFile.toString();
                         }
@@ -327,7 +327,7 @@ public class ConversationAdapter extends TalkAdapter {
                 TalkClientUpload avatarUpload = sendingContact.getAvatarUpload();
                 if(avatarUpload != null) {
                     if(avatarUpload.getState().equals(TalkClientUpload.State.COMPLETE)) {
-                        File avatarFile = TalkApplication.getAvatarLocation(avatarUpload);
+                        File avatarFile = XoApplication.getAvatarLocation(avatarUpload);
                         if(avatarFile != null) {
                             avatarUrl = "file://" + avatarFile.toString();
                         }

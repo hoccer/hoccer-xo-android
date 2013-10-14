@@ -3,24 +3,21 @@ package com.hoccer.talk.android;
 import android.app.Activity;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.view.View;
-import android.widget.ListView;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.hoccer.talk.android.content.ContentObject;
-import com.hoccer.talk.android.service.ITalkClientService;
-import com.hoccer.talk.android.service.ITalkClientServiceListener;
+import com.hoccer.talk.android.service.IXoClientService;
 import com.hoccer.talk.client.TalkClientDatabase;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 
-public class TalkListFragment extends SherlockListFragment implements ITalkFragment {
+public class XoListFragment extends SherlockListFragment implements IXoFragment {
 
     protected Logger LOG = null;
 
-    private TalkActivity mActivity;
+    private XoActivity mActivity;
 
-    public TalkListFragment() {
+    public XoListFragment() {
         LOG = Logger.getLogger(getClass());
     }
 
@@ -34,16 +31,16 @@ public class TalkListFragment extends SherlockListFragment implements ITalkFragm
         return new File(mActivity.getFilesDir(), "avatars");
     }
 
-    public TalkActivity getTalkActivity() {
+    public XoActivity getXoActivity() {
         return mActivity;
     }
 
-    public TalkClientDatabase getTalkDatabase() {
-        return mActivity.getTalkClientDatabase();
+    public TalkClientDatabase getXoDatabase() {
+        return mActivity.getXoDatabase();
     }
 
-    public ITalkClientService getTalkService() {
-        return mActivity.getTalkClientService();
+    public IXoClientService getXoService() {
+        return mActivity.getXoService();
     }
 
     public void runOnUiThread(Runnable runnable) {
@@ -55,8 +52,8 @@ public class TalkListFragment extends SherlockListFragment implements ITalkFragm
         LOG.debug("onAttach()");
         super.onAttach(activity);
 
-        if(activity instanceof TalkActivity) {
-            mActivity = (TalkActivity)activity;
+        if(activity instanceof XoActivity) {
+            mActivity = (XoActivity)activity;
         } else {
             throw new RuntimeException("talk fragments need to be in a talk activity");
         }

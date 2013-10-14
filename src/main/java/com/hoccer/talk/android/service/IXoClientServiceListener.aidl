@@ -7,7 +7,7 @@ package com.hoccer.talk.android.service;
  * using the ITalkClientService.setListener() method.
  *
  */
-interface ITalkClientServiceListener {
+interface IXoClientServiceListener {
 
     void onClientStateChanged(int state);
 

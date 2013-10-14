@@ -5,8 +5,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.hoccer.talk.android.content.ContentObject;
-import com.hoccer.talk.android.service.ITalkClientService;
-import com.hoccer.talk.android.service.ITalkClientServiceListener;
+import com.hoccer.talk.android.service.IXoClientService;
 import com.hoccer.talk.client.TalkClientDatabase;
 import org.apache.log4j.Logger;
 
@@ -18,13 +17,13 @@ import java.io.File;
  * This encapsulated commonalities:
  *  - access to activity for db and services
  */
-public class TalkFragment extends SherlockFragment implements ITalkFragment {
+public class XoFragment extends SherlockFragment implements IXoFragment {
 
     protected Logger LOG = null;
 
-    private TalkActivity mActivity;
+    private XoActivity mActivity;
 
-    public TalkFragment() {
+    public XoFragment() {
         LOG = Logger.getLogger(getClass());
     }
 
@@ -38,16 +37,16 @@ public class TalkFragment extends SherlockFragment implements ITalkFragment {
         return new File(mActivity.getFilesDir(), "avatars");
     }
 
-    public TalkActivity getTalkActivity() {
+    public XoActivity getXoActivity() {
         return mActivity;
     }
 
-    public TalkClientDatabase getTalkDatabase() {
-        return mActivity.getTalkClientDatabase();
+    public TalkClientDatabase getXoDatabase() {
+        return mActivity.getXoDatabase();
     }
 
-    public ITalkClientService getTalkService() {
-        return mActivity.getTalkClientService();
+    public IXoClientService getXoService() {
+        return mActivity.getXoService();
     }
 
     public void runOnUiThread(Runnable runnable) {
@@ -59,8 +58,8 @@ public class TalkFragment extends SherlockFragment implements ITalkFragment {
         LOG.debug("onAttach()");
         super.onAttach(activity);
 
-        if(activity instanceof TalkActivity) {
-            mActivity = (TalkActivity)activity;
+        if(activity instanceof XoActivity) {
+            mActivity = (XoActivity)activity;
         } else {
             throw new RuntimeException("talk fragments need to be in a talk activity");
         }

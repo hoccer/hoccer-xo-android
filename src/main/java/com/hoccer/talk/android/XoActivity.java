@@ -15,9 +15,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.hoccer.talk.android.dialog.TokenDialog;
-import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.xo.release.R;
 import com.hoccer.talk.android.activity.AboutActivity;
 import com.hoccer.talk.android.activity.LicensesActivity;
 import com.hoccer.talk.android.activity.MessagingActivity;
@@ -37,12 +34,15 @@ import com.hoccer.talk.android.dialog.GroupInviteDialog;
 import com.hoccer.talk.android.dialog.GroupKickDialog;
 import com.hoccer.talk.android.dialog.GroupLeaveDialog;
 import com.hoccer.talk.android.dialog.NameDialog;
-import com.hoccer.talk.android.service.ITalkClientService;
-import com.hoccer.talk.android.service.ITalkClientServiceListener;
-import com.hoccer.talk.android.service.TalkClientService;
+import com.hoccer.talk.android.dialog.TokenDialog;
+import com.hoccer.talk.android.service.IXoClientService;
+import com.hoccer.talk.android.service.IXoClientServiceListener;
+import com.hoccer.talk.android.service.XoClientService;
 import com.hoccer.talk.client.HoccerTalkClient;
 import com.hoccer.talk.client.TalkClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
@@ -60,8 +60,8 @@ import java.util.concurrent.TimeUnit;
  *  - Methods for moving between activities
  *  - Methods for constructing view adapters
  */
-public abstract class TalkActivity extends SherlockFragmentActivity
-        implements ITalkActivity, ITalkClientServiceListener {
+public abstract class XoActivity extends SherlockFragmentActivity
+        implements IXoActivity, IXoClientServiceListener {
 
     public final static int REQUEST_SELECT_AVATAR = 23;
     public final static int REQUEST_SELECT_ATTACHMENT = 42;
@@ -82,7 +82,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     ScheduledExecutorService mBackgroundExecutor;
 
     /** RPC interface to service (null when not connected) */
-    ITalkClientService mService;
+    IXoClientService mService;
 
     /** Service connection object managing mService */
     ServiceConnection mServiceConnection;
@@ -94,10 +94,10 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     TalkClientDatabase mDatabase;
 
     /** List of all talk fragments */
-    ArrayList<ITalkFragment> mTalkFragments = new ArrayList<ITalkFragment>();
+    ArrayList<IXoFragment> mTalkFragments = new ArrayList<IXoFragment>();
 
     /** Client listeners */
-    ArrayList<ITalkClientServiceListener> mListeners = new ArrayList<ITalkClientServiceListener>();
+    ArrayList<IXoClientServiceListener> mListeners = new ArrayList<IXoClientServiceListener>();
 
     /** Ongoing avatar selection */
     ContentSelection mAvatarSelection = null;
@@ -110,7 +110,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
 
     boolean mUpEnabled = false;
 
-    public TalkActivity() {
+    public XoActivity() {
         LOG = Logger.getLogger(getClass());
         mListeners.add(this);
     }
@@ -122,25 +122,25 @@ public abstract class TalkActivity extends SherlockFragmentActivity
         return mBackgroundExecutor;
     }
 
-    public ITalkClientService getService() {
+    public IXoClientService getService() {
         return mService;
     }
 
-    public void registerTalkFragment(ITalkFragment fragment) {
+    public void registerTalkFragment(IXoFragment fragment) {
         mTalkFragments.add(fragment);
         mListeners.add(fragment);
     }
 
-    public void unregisterTalkFragment(ITalkFragment fragment) {
+    public void unregisterTalkFragment(IXoFragment fragment) {
         mTalkFragments.remove(fragment);
         mListeners.remove(fragment);
     }
 
-    public void registerListener(ITalkClientServiceListener listener) {
+    public void registerListener(IXoClientServiceListener listener) {
         mListeners.add(listener);
     }
 
-    public void unregisterListener(ITalkClientServiceListener listener) {
+    public void unregisterListener(IXoClientServiceListener listener) {
         mListeners.remove(listener);
     }
 
@@ -174,10 +174,10 @@ public abstract class TalkActivity extends SherlockFragmentActivity
         super.onResume();
 
         // launch a new background executor
-        mBackgroundExecutor = TalkApplication.getExecutor();
+        mBackgroundExecutor = XoApplication.getExecutor();
 
         // start the backend service and bind to it
-        Intent serviceIntent = new Intent(getApplicationContext(), TalkClientService.class);
+        Intent serviceIntent = new Intent(getApplicationContext(), XoClientService.class);
         startService(serviceIntent);
         mServiceConnection = new MainServiceConnection();
         bindService(serviceIntent, mServiceConnection, BIND_IMPORTANT);
@@ -235,7 +235,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
                 break;
             case R.id.menu_new_group:
                 try {
-                    getTalkClientService().createGroup();
+                    getXoService().createGroup();
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -284,7 +284,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
                 ContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection, data);
                 if(co != null) {
                     LOG.debug("selected avatar " + co.getContentUrl());
-                    for(ITalkFragment fragment: mTalkFragments) {
+                    for(IXoFragment fragment: mTalkFragments) {
                         fragment.onAvatarSelected(co);
                     }
                 }
@@ -296,7 +296,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
             ContentObject co = ContentRegistry.get(this).createSelectedAttachment(mAttachmentSelection, data);
             if(co != null) {
                 LOG.debug("selected attachment " + co.getContentUrl());
-                for(ITalkFragment fragment: mTalkFragments) {
+                for(IXoFragment fragment: mTalkFragments) {
                     fragment.onAttachmentSelected(co);
                 }
             }
@@ -358,8 +358,8 @@ public abstract class TalkActivity extends SherlockFragmentActivity
                 }
             }
         },
-                TalkConfiguration.SERVICE_KEEPALIVE_PING_DELAY,
-                TalkConfiguration.SERVICE_KEEPALIVE_PING_INTERVAL,
+                XoConfiguration.SERVICE_KEEPALIVE_PING_DELAY,
+                XoConfiguration.SERVICE_KEEPALIVE_PING_INTERVAL,
                 TimeUnit.SECONDS);
     }
 
@@ -393,7 +393,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             LOG.debug("onServiceConnected()");
-            mService = (ITalkClientService)service;
+            mService = (IXoClientService)service;
             scheduleKeepAlive();
             attachServiceListener();
             try {
@@ -401,7 +401,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
             } catch (RemoteException e) {
                 LOG.error("remote error", e);
             }
-            for(ITalkFragment fragment: mTalkFragments) {
+            for(IXoFragment fragment: mTalkFragments) {
                 fragment.onServiceConnected();
             }
             if(mBarcodeToken != null) {
@@ -418,7 +418,7 @@ public abstract class TalkActivity extends SherlockFragmentActivity
             LOG.debug("onServiceDisconnected()");
             shutdownKeepAlive();
             mService = null;
-            for(ITalkFragment fragment: mTalkFragments) {
+            for(IXoFragment fragment: mTalkFragments) {
                 fragment.onServiceDisconnected();
             }
         }
@@ -430,142 +430,142 @@ public abstract class TalkActivity extends SherlockFragmentActivity
      * This gets called when the network side of the client has changed
      * the database. Views should be updated according to what has changed.
      */
-    public class MainServiceListener extends ITalkClientServiceListener.Stub implements ITalkClientServiceListener {
+    public class MainServiceListener extends IXoClientServiceListener.Stub implements IXoClientServiceListener {
         @Override
         public void onClientStateChanged(int state) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onClientStateChanged(state);
             }
         }
         @Override
         public void onTokenPairingFailed(String token) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onTokenPairingFailed(token);
             }
         }
         @Override
         public void onTokenPairingSucceeded(String token) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onTokenPairingSucceeded(token);
             }
         }
         @Override
         public void onContactAdded(int contactId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onContactAdded(contactId);
             }
         }
         @Override
         public void onContactRemoved(int contactId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onContactRemoved(contactId);
             }
         }
         @Override
         public void onClientPresenceChanged(int contactId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onClientPresenceChanged(contactId);
             }
         }
         @Override
         public void onClientRelationshipChanged(int contactId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onClientRelationshipChanged(contactId);
             }
         }
         @Override
         public void onGroupCreationSucceeded(int contactId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onGroupCreationSucceeded(contactId);
             }
         }
         @Override
         public void onGroupCreationFailed() throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onGroupCreationFailed();
             }
         }
         @Override
         public void onGroupPresenceChanged(int contactId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onGroupPresenceChanged(contactId);
             }
         }
         @Override
         public void onGroupMembershipChanged(int contactId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onGroupMembershipChanged(contactId);
             }
         }
         @Override
         public void onMessageAdded(int contactId, int messageId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onMessageAdded(contactId, messageId);
             }
         }
         @Override
         public void onMessageRemoved(int contactId, int messageId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onMessageRemoved(contactId, messageId);
             }
         }
         @Override
         public void onMessageStateChanged(int contactId, int messageId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onMessageStateChanged(contactId, messageId);
             }
         }
         @Override
         public void onUploadAdded(int contactId, int downloadId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onUploadAdded(contactId, downloadId);
             }
         }
         @Override
         public void onUploadRemoved(int contactId, int downloadId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onUploadRemoved(contactId, downloadId);
             }
         }
         @Override
         public void onUploadProgress(int contactId, int downloadId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onUploadProgress(contactId, downloadId);
             }
         }
         @Override
         public void onUploadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onUploadStateChanged(contactId, downloadId, state);
             }
         }
         @Override
         public void onDownloadAdded(int contactId, int downloadId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onDownloadAdded(contactId, downloadId);
             }
         }
         @Override
         public void onDownloadRemoved(int contactId, int downloadId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onDownloadRemoved(contactId, downloadId);
             }
         }
         @Override
         public void onDownloadProgress(int contactId, int downloadId) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onDownloadProgress(contactId, downloadId);
             }
         }
         @Override
         public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onDownloadStateChanged(contactId, downloadId, state);
             }
         }
         @Override
         public void onSmsTokensChanged() throws RemoteException {
-            for(ITalkClientServiceListener listener: mListeners) {
+            for(IXoClientServiceListener listener: mListeners) {
                 listener.onSmsTokensChanged();
             }
         }
@@ -585,12 +585,12 @@ public abstract class TalkActivity extends SherlockFragmentActivity
     }
 
     @Override
-    public ITalkClientService getTalkClientService() {
+    public IXoClientService getXoService() {
         return mService;
     }
 
     @Override
-    public TalkClientDatabase getTalkClientDatabase() {
+    public TalkClientDatabase getXoDatabase() {
         return mDatabase;
     }
 
@@ -683,12 +683,12 @@ public abstract class TalkActivity extends SherlockFragmentActivity
 
     public void showBarcode() {
         LOG.debug("showBarcode()");
-        TalkApplication.getExecutor().execute(new Runnable() {
+        XoApplication.getExecutor().execute(new Runnable() {
             @Override
             public void run() {
                 final String token;
                 try {
-                    token = getTalkClientService().generatePairingToken();
+                    token = getXoService().generatePairingToken();
                 } catch (RemoteException e) {
                     LOG.error("could not generate token", e);
                     return;

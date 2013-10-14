@@ -3,8 +3,8 @@ package com.hoccer.talk.android.activity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
+import com.hoccer.talk.android.XoActivity;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.io.InputStream;
 /**
  * Activity that displays our (long) license text
  */
-public class LicensesActivity extends TalkActivity {
+public class LicensesActivity extends XoActivity {
 
     TextView mText;
 

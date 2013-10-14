@@ -16,8 +16,8 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import com.hoccer.talk.android.XoFragment;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkFragment;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -27,7 +27,7 @@ import java.io.File;
  *
  * This uses webapp caching to cache the page.
  */
-public class AboutFragment extends TalkFragment {
+public class AboutFragment extends XoFragment {
 
     private static final String ABOUT_URL = "http://www.hoccer.com/xo-about-view";
 

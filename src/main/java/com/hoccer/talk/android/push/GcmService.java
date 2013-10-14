@@ -3,8 +3,8 @@ package com.hoccer.talk.android.push;
 import android.content.Context;
 import android.content.Intent;
 import com.google.android.gcm.GCMBaseIntentService;
-import com.hoccer.talk.android.TalkConfiguration;
-import com.hoccer.talk.android.service.TalkClientService;
+import com.hoccer.talk.android.XoConfiguration;
+import com.hoccer.talk.android.service.XoClientService;
 import org.apache.log4j.Logger;
 
 /**
@@ -17,20 +17,20 @@ import org.apache.log4j.Logger;
  * to call the client service to perform appropriate actions.
  *
  */
-public class TalkPushService extends GCMBaseIntentService {
+public class GcmService extends GCMBaseIntentService {
 
     public static final String EXTRA_GCM_REGISTERED = "com.hoccer.xo.GCM_REGISTERED";
     public static final String EXTRA_GCM_UNREGISTERED = "com.hoccer.xo.GCM_UNREGISTERED";
     public static final String EXTRA_WAKE_CLIENT = "com.hoccer.xo.WAKE_CLIENT";
 
-    private static final Logger LOG = Logger.getLogger(TalkPushService.class);
+    private static final Logger LOG = Logger.getLogger(GcmService.class);
 
-    public TalkPushService() {
-        super(TalkConfiguration.GCM_SENDER_ID);
+    public GcmService() {
+        super(XoConfiguration.GCM_SENDER_ID);
     }
 
     private void sendServiceIntent(String extra, String extraValue) {
-        Intent serviceIntent = new Intent(getApplicationContext(), TalkClientService.class);
+        Intent serviceIntent = new Intent(getApplicationContext(), XoClientService.class);
         serviceIntent.putExtra(extra, extraValue);
         startService(serviceIntent);
     }

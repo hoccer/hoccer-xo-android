@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
 import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.hoccer.talk.android.TalkActivity;
+import com.hoccer.talk.android.XoActivity;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -19,11 +19,11 @@ public class TokenDialog extends SherlockDialogFragment implements DialogInterfa
 
     private static final Logger LOG = Logger.getLogger(TokenDialog.class);
 
-    TalkActivity mActivity;
+    XoActivity mActivity;
 
     TalkClientSmsToken mToken;
 
-    public TokenDialog (TalkActivity activity, TalkClientSmsToken token) {
+    public TokenDialog (XoActivity activity, TalkClientSmsToken token) {
         super();
         mActivity = activity;
         mToken = token;

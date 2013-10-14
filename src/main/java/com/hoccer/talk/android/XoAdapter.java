@@ -5,23 +5,23 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
-import com.hoccer.talk.android.service.ITalkClientServiceListener;
+import com.hoccer.talk.android.service.IXoClientServiceListener;
 import com.hoccer.talk.client.TalkClientDatabase;
 
 import java.io.File;
 
-public abstract class TalkAdapter extends BaseAdapter implements ITalkClientServiceListener {
+public abstract class XoAdapter extends BaseAdapter implements IXoClientServiceListener {
 
-    protected TalkActivity mActivity;
+    protected XoActivity mActivity;
     protected TalkClientDatabase mDatabase;
 
     protected Resources mResources;
     protected LayoutInflater mInflater;
 
 
-    public TalkAdapter(TalkActivity activity) {
+    public XoAdapter(XoActivity activity) {
         mActivity = activity;
-        mDatabase = mActivity.getTalkClientDatabase();
+        mDatabase = mActivity.getXoDatabase();
         mInflater = mActivity.getLayoutInflater();
         mResources = mActivity.getResources();
     }

@@ -4,8 +4,8 @@ import android.os.RemoteException;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.hoccer.talk.android.TalkActivity;
-import com.hoccer.talk.android.TalkAdapter;
+import com.hoccer.talk.android.XoActivity;
+import com.hoccer.talk.android.XoAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
@@ -23,7 +23,7 @@ import java.util.List;
  * It also has a filter feature that allows restricting the displayed set of contacts.
  *
  */
-public abstract class ContactsAdapter extends TalkAdapter {
+public abstract class ContactsAdapter extends XoAdapter {
 
     private static final Logger LOG = Logger.getLogger(ContactsAdapter.class);
 
@@ -39,7 +39,7 @@ public abstract class ContactsAdapter extends TalkAdapter {
 
     protected final static int VIEW_TYPE_COUNT = 4;
 
-    public ContactsAdapter(TalkActivity activity) {
+    public ContactsAdapter(XoActivity activity) {
         super(activity);
     }
 

@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import com.actionbarsherlock.widget.SearchView;
+import com.hoccer.talk.android.XoListFragment;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkListFragment;
 import com.hoccer.talk.android.adapter.ConversationAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 /**
  * Fragment for conversations
  */
-public class MessagingFragment extends TalkListFragment
+public class MessagingFragment extends XoListFragment
         implements SearchView.OnQueryTextListener {
 
 	private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
@@ -45,7 +45,7 @@ public class MessagingFragment extends TalkListFragment
 
         // do this late so activity has database initialized
         if(mAdapter == null) {
-            mAdapter = getTalkActivity().makeConversationAdapter();
+            mAdapter = getXoActivity().makeConversationAdapter();
         }
 
         // update adapter conversation

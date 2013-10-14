@@ -10,11 +10,11 @@ import com.google.android.gcm.GCMBroadcastReceiver;
  * intent service to the GCM client implementation.
  *
  */
-public class TalkPushReceiver extends GCMBroadcastReceiver {
+public class GcmReceiver extends GCMBroadcastReceiver {
 
     @Override
     protected String getGCMIntentServiceClassName(Context context) {
-        return TalkPushService.class.getCanonicalName();
+        return GcmService.class.getCanonicalName();
     }
 
 }

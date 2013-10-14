@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.hoccer.talk.android.TalkApplication;
+import com.hoccer.talk.android.XoApplication;
 import com.hoccer.xo.release.R;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
@@ -73,7 +73,7 @@ public class ContactView extends RelativeLayout {
         }
 
         // schedule a new refresh
-        ScheduledExecutorService executor = TalkApplication.getExecutor();
+        ScheduledExecutorService executor = XoApplication.getExecutor();
         mRefreshFuture = executor.schedule(new Runnable() {
             @Override
             public void run() {

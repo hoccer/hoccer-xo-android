@@ -1,11 +1,11 @@
 package com.hoccer.talk.android.service;
 
-import com.hoccer.talk.android.service.ITalkClientServiceListener;
+import com.hoccer.talk.android.service.IXoClientServiceListener;
 
 /**
  * This is the main interface of the Hoccer Talk backend service.
  */
-interface ITalkClientService {
+interface IXoClientService {
 
     /** Tell the service that it is still needed */
     void keepAlive();
@@ -16,7 +16,7 @@ interface ITalkClientService {
     void reconnect();
 
     /** Provide a callback listener to the service for notifications */
-    void setListener(ITalkClientServiceListener listener);
+    void setListener(IXoClientServiceListener listener);
 
     /** Get the current state of the client */
     int getClientState();

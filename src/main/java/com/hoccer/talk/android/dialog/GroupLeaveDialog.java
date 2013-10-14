@@ -6,8 +6,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.RemoteException;
 import com.actionbarsherlock.app.SherlockDialogFragment;
+import com.hoccer.talk.android.XoActivity;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.adapter.ContactsAdapter;
 import com.hoccer.talk.android.adapter.SimpleContactsAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -17,11 +17,11 @@ public class GroupLeaveDialog extends SherlockDialogFragment {
 
     private static final Logger LOG = Logger.getLogger(GroupLeaveDialog.class);
 
-    TalkActivity mActivity;
+    XoActivity mActivity;
 
     TalkClientContact mGroup;
 
-    public GroupLeaveDialog(TalkActivity activity, TalkClientContact group) {
+    public GroupLeaveDialog(XoActivity activity, TalkClientContact group) {
         super();
         mActivity = activity;
         mGroup = group;
@@ -52,7 +52,7 @@ public class GroupLeaveDialog extends SherlockDialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    mActivity.getTalkClientService()
+                    mActivity.getXoService()
                             .leaveGroup(mGroup.getClientContactId());
                 } catch (RemoteException e) {
                     LOG.error("remote error", e);

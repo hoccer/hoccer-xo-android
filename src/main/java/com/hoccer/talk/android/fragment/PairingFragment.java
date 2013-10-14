@@ -14,8 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.hoccer.talk.android.TalkApplication;
-import com.hoccer.talk.android.TalkFragment;
+import com.hoccer.talk.android.XoApplication;
+import com.hoccer.talk.android.XoFragment;
 import com.hoccer.xo.release.R;
 
 import java.util.concurrent.ScheduledFuture;
@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  *
  * This offers various ways of finding new friends.
  */
-public class PairingFragment extends TalkFragment implements View.OnClickListener {
+public class PairingFragment extends XoFragment implements View.OnClickListener {
 
     TextView mTokenMessage;
     TextView mTokenText;
@@ -148,15 +148,15 @@ public class PairingFragment extends TalkFragment implements View.OnClickListene
     public void onClick(View v) {
         if(v == mQrShowButton) {
             LOG.debug("onClick(qrShow)");
-            getTalkActivity().showBarcode();
+            getXoActivity().showBarcode();
         }
         if(v == mQrScanButton) {
             LOG.debug("onClick(qrScan)");
-            getTalkActivity().scanBarcode();
+            getXoActivity().scanBarcode();
         }
         if(v == mTokenSendSms) {
             LOG.debug("onClick(smsSend)");
-            getTalkActivity().composeInviteSms(mTokenText.getText().toString());
+            getXoActivity().composeInviteSms(mTokenText.getText().toString());
         }
     }
 
@@ -166,11 +166,11 @@ public class PairingFragment extends TalkFragment implements View.OnClickListene
         mTokenMessage.setVisibility(View.VISIBLE);
         mTokenSendSms.setEnabled(false);
         // request a new token and show it
-        TalkApplication.getExecutor().schedule(new Runnable() {
+        XoApplication.getExecutor().schedule(new Runnable() {
             @Override
             public void run() {
                 try {
-                    final String token = getTalkActivity().getService().generatePairingToken();
+                    final String token = getXoActivity().getService().generatePairingToken();
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -199,7 +199,7 @@ public class PairingFragment extends TalkFragment implements View.OnClickListene
         mTokenEdit.setEnabled(false);
         mTokenPairButton.setEnabled(false);
         try {
-            getTalkService().pairUsingToken(token);
+            getXoService().pairUsingToken(token);
         } catch (RemoteException e) {
             LOG.error("pairing failed", e);
         }
@@ -216,7 +216,7 @@ public class PairingFragment extends TalkFragment implements View.OnClickListene
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getTalkActivity(), "Pairing failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getXoActivity(), "Pairing failed", Toast.LENGTH_SHORT).show();
                     mTokenEdit.setEnabled(true);
                     mTokenEdit.setText("");
                     mTokenPairButton.setEnabled(false);
@@ -232,7 +232,7 @@ public class PairingFragment extends TalkFragment implements View.OnClickListene
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getTalkActivity(), "Pairing succeeded", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getXoActivity(), "Pairing succeeded", Toast.LENGTH_SHORT).show();
                     mTokenEdit.setEnabled(true);
                     mTokenEdit.setText("");
                     mTokenPairButton.setEnabled(false);

@@ -1,11 +1,11 @@
 package com.hoccer.talk.android.activity;
 
 import android.os.Bundle;
+import com.hoccer.talk.android.XoActivity;
 import com.hoccer.talk.android.fragment.PairingFragment;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkActivity;
 
-public class PairingActivity extends TalkActivity {
+public class PairingActivity extends XoActivity {
 
     @Override
     protected int getLayoutResource() {

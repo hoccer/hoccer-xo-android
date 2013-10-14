@@ -31,7 +31,7 @@ import java.util.concurrent.ScheduledExecutorService;
  *
  * This class handles the various context initialization that we need.
  */
-public class TalkApplication extends Application {
+public class XoApplication extends Application {
 
     private final static String TAG = "HoccerXO";
 
@@ -74,19 +74,19 @@ public class TalkApplication extends Application {
     }
 
     public static File getAttachmentDirectory() {
-        return new File(EXTERNAL_STORAGE, TalkConfiguration.EXTERNAL_ATTACHMENTS);
+        return new File(EXTERNAL_STORAGE, XoConfiguration.EXTERNAL_ATTACHMENTS);
     }
 
     public static File getEncryptedUploadDirectory() {
-        return new File(INTERNAL_STORAGE, TalkConfiguration.INTERNAL_UPLOADS);
+        return new File(INTERNAL_STORAGE, XoConfiguration.INTERNAL_UPLOADS);
     }
 
     public static File getEncryptedDownloadDirectory() {
-        return new File(INTERNAL_STORAGE, TalkConfiguration.INTERNAL_DOWNLOADS);
+        return new File(INTERNAL_STORAGE, XoConfiguration.INTERNAL_DOWNLOADS);
     }
 
     public static File getAvatarDirectory() {
-        return new File(INTERNAL_STORAGE, TalkConfiguration.INTERNAL_AVATARS);
+        return new File(INTERNAL_STORAGE, XoConfiguration.INTERNAL_AVATARS);
     }
 
     public static File getAvatarLocation(TalkClientDownload download) {
@@ -143,7 +143,7 @@ public class TalkApplication extends Application {
         System.setProperty("com.j256.ormlite.logger.type", "LOG4J");
 
         // get logger for this class
-        LOG = Logger.getLogger(TalkApplication.class);
+        LOG = Logger.getLogger(XoApplication.class);
 
         // announce sdk version
         LOG.info("running on sdk version " + Build.VERSION.SDK_INT);
@@ -225,14 +225,14 @@ public class TalkApplication extends Application {
         mRootLogger = Logger.getRootLogger();
 
         // create logcat appender
-        mLogcatAppender = new LogcatAppender(TalkConfiguration.LOG_LOGCAT_LAYOUT);
+        mLogcatAppender = new LogcatAppender(XoConfiguration.LOG_LOGCAT_LAYOUT);
 
         // create file appender
         try {
-            File file = new File(getLogDirectory(), TalkConfiguration.LOG_FILE_NAME);
-            mFileAppender = new RollingFileAppender(TalkConfiguration.LOG_FILE_LAYOUT, file.toString());
-            mFileAppender.setMaximumFileSize(TalkConfiguration.LOG_FILE_SIZE);
-            mFileAppender.setMaxBackupIndex(TalkConfiguration.LOG_FILE_COUNT);
+            File file = new File(getLogDirectory(), XoConfiguration.LOG_FILE_NAME);
+            mFileAppender = new RollingFileAppender(XoConfiguration.LOG_FILE_LAYOUT, file.toString());
+            mFileAppender.setMaximumFileSize(XoConfiguration.LOG_FILE_SIZE);
+            mFileAppender.setMaxBackupIndex(XoConfiguration.LOG_FILE_COUNT);
         } catch (IOException e) {
             e.printStackTrace();
         }

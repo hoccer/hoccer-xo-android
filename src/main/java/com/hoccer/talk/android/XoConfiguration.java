@@ -8,7 +8,7 @@ import org.apache.log4j.PatternLayout;
  *
  * This class collects various android-specific settings for the XO client.
  */
-public class TalkConfiguration {
+public class XoConfiguration {
 
     /* Directories in external storage */
     public static final String EXTERNAL_ATTACHMENTS = "Hoccer XO";

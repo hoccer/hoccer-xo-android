@@ -1,17 +1,17 @@
 package com.hoccer.talk.android;
 
 import com.hoccer.talk.android.content.ContentObject;
-import com.hoccer.talk.android.service.ITalkClientService;
-import com.hoccer.talk.android.service.ITalkClientServiceListener;
+import com.hoccer.talk.android.service.IXoClientService;
+import com.hoccer.talk.android.service.IXoClientServiceListener;
 import com.hoccer.talk.client.TalkClientDatabase;
 
-public interface ITalkFragment extends ITalkClientServiceListener {
+public interface IXoFragment extends IXoClientServiceListener {
 
-    public TalkActivity getTalkActivity();
+    public XoActivity getXoActivity();
 
-    public TalkClientDatabase getTalkDatabase();
+    public TalkClientDatabase getXoDatabase();
 
-    public ITalkClientService getTalkService();
+    public IXoClientService getXoService();
 
     public void onServiceConnected();
     public void onServiceDisconnected();

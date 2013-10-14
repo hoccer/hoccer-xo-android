@@ -1,16 +1,16 @@
 package com.hoccer.talk.android;
 
 import android.widget.BaseAdapter;
-import com.hoccer.talk.android.service.ITalkClientService;
+import com.hoccer.talk.android.service.IXoClientService;
 import com.hoccer.talk.client.TalkClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 
-public interface ITalkActivity {
+public interface IXoActivity {
 
     public int getClientState();
 
-    public ITalkClientService getTalkClientService();
-    public TalkClientDatabase getTalkClientDatabase();
+    public IXoClientService getXoService();
+    public TalkClientDatabase getXoDatabase();
 
 	public BaseAdapter makeConversationAdapter();
 	public BaseAdapter makeContactListAdapter();

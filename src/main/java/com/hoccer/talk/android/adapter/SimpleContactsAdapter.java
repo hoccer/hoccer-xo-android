@@ -3,10 +3,10 @@ package com.hoccer.talk.android.adapter;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.hoccer.talk.android.XoActivity;
+import com.hoccer.talk.android.XoApplication;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkActivity;
-import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -23,7 +23,7 @@ import java.io.File;
  */
 public class SimpleContactsAdapter extends ContactsAdapter {
 
-    public SimpleContactsAdapter(TalkActivity activity) {
+    public SimpleContactsAdapter(XoActivity activity) {
         super(activity);
     }
 
@@ -72,7 +72,7 @@ public class SimpleContactsAdapter extends ContactsAdapter {
                 avatarUri = "content://" + R.drawable.avatar_default_contact;
             }
         } else {
-            File avatarFile = TalkApplication.getAvatarLocation(avatarDownload);
+            File avatarFile = XoApplication.getAvatarLocation(avatarDownload);
             if(avatarFile != null) {
                 avatarUri = "file://" + avatarFile.toString();
             } else {

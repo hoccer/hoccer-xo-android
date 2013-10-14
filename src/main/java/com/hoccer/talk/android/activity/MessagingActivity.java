@@ -7,15 +7,15 @@ import android.support.v4.app.FragmentManager;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.hoccer.talk.android.XoActivity;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.fragment.CompositionFragment;
 import com.hoccer.talk.android.fragment.MessagingFragment;
 import com.hoccer.talk.client.model.TalkClientContact;
 
 import java.sql.SQLException;
 
-public class MessagingActivity extends TalkActivity {
+public class MessagingActivity extends XoActivity {
 
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 
@@ -67,7 +67,7 @@ public class MessagingActivity extends TalkActivity {
                 LOG.error("invalid contact id");
             } else {
                 try {
-                    TalkClientContact contact = getTalkClientDatabase().findClientContactById(contactId);
+                    TalkClientContact contact = getXoDatabase().findClientContactById(contactId);
                     if(contact != null) {
                         converseWithContact(contact);
                     }

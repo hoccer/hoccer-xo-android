@@ -6,8 +6,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.RemoteException;
 import com.actionbarsherlock.app.SherlockDialogFragment;
+import com.hoccer.talk.android.XoActivity;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.adapter.ContactsAdapter;
 import com.hoccer.talk.android.adapter.SimpleContactsAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -17,11 +17,11 @@ public class GroupKickDialog extends SherlockDialogFragment {
 
     private static final Logger LOG = Logger.getLogger(GroupInviteDialog.class);
 
-    TalkActivity mActivity;
+    XoActivity mActivity;
 
     TalkClientContact mGroup;
 
-    public GroupKickDialog(TalkActivity activity, TalkClientContact group) {
+    public GroupKickDialog(XoActivity activity, TalkClientContact group) {
         super();
         mActivity = activity;
         mGroup = group;
@@ -54,7 +54,7 @@ public class GroupKickDialog extends SherlockDialogFragment {
                 if(object != null && object instanceof TalkClientContact) {
                     TalkClientContact contact = (TalkClientContact)object;
                     try {
-                        mActivity.getTalkClientService()
+                        mActivity.getXoService()
                                 .kickFromGroup(mGroup.getClientContactId(),
                                         contact.getClientContactId());
                     } catch (RemoteException e) {

@@ -1,9 +1,9 @@
 package com.hoccer.talk.android.activity;
 
+import com.hoccer.talk.android.XoActivity;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkActivity;
 
-public class ContactsActivity extends TalkActivity {
+public class ContactsActivity extends XoActivity {
 
     @Override
     protected int getLayoutResource() {

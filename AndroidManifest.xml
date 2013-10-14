@@ -41,7 +41,7 @@
 
     <!-- Declare our application -->
     <application
-        android:name="com.hoccer.talk.android.TalkApplication"
+        android:name="com.hoccer.talk.android.XoApplication"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -124,14 +124,14 @@
         </activity>
 
         <!-- Connection and delivery service -->
-        <service android:name="com.hoccer.talk.android.service.TalkClientService"/>
+        <service android:name="com.hoccer.talk.android.service.XoClientService"/>
 
         <!-- GCM push service -->
-        <service android:name="com.hoccer.talk.android.push.TalkPushService"/>
+        <service android:name="com.hoccer.talk.android.push.GcmService"/>
 
         <!-- GCM broadcast receiver -->
         <receiver
-            android:name="com.hoccer.talk.android.push.TalkPushReceiver"
+            android:name="com.hoccer.talk.android.push.GcmReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <!-- Receives the actual messages. -->

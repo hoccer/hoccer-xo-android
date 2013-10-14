@@ -8,8 +8,8 @@ import android.os.RemoteException;
 import android.text.InputType;
 import android.widget.EditText;
 import com.actionbarsherlock.app.SherlockDialogFragment;
+import com.hoccer.talk.android.XoActivity;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
 
@@ -17,7 +17,7 @@ public class NameDialog extends SherlockDialogFragment {
 
     private static final Logger LOG = Logger.getLogger(NameDialog.class);
 
-    TalkActivity mActivity;
+    XoActivity mActivity;
 
     TalkClientContact mContact;
 
@@ -25,7 +25,7 @@ public class NameDialog extends SherlockDialogFragment {
 
     EditText mEdit;
 
-    public NameDialog(TalkActivity activity, TalkClientContact contact) {
+    public NameDialog(XoActivity activity, TalkClientContact contact) {
         super();
         mActivity = activity;
         mContact = contact;

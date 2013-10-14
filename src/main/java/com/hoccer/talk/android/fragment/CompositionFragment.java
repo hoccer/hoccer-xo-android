@@ -12,8 +12,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import com.hoccer.talk.android.XoFragment;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkFragment;
 import com.hoccer.talk.android.content.ContentObject;
 import com.hoccer.talk.android.content.ContentView;
 import com.hoccer.talk.client.TalkClientDatabase;
@@ -26,7 +26,7 @@ import com.hoccer.talk.model.TalkMessage;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class CompositionFragment extends TalkFragment implements View.OnClickListener {
+public class CompositionFragment extends XoFragment implements View.OnClickListener {
 
     EditText mTextEdit;
     TextWatcher mTextWatcher;
@@ -123,7 +123,7 @@ public class CompositionFragment extends TalkFragment implements View.OnClickLis
         }
         if(v == mAttachmentSelectButton) {
             LOG.debug("onClick(attachmentSelectButton)");
-            getTalkActivity().selectAttachment();
+            getXoActivity().selectAttachment();
         }
         if(v == mClearButton) {
             LOG.debug("onClick(attachmentClearButton)");
@@ -157,7 +157,7 @@ public class CompositionFragment extends TalkFragment implements View.OnClickLis
     private void showAttachment(ContentObject contentObject) {
         LOG.debug("showAttachment(" + contentObject.getContentUrl() + ")");
         mAttachment = contentObject;
-        mAttachmentView.displayContent(getTalkActivity(), contentObject);
+        mAttachmentView.displayContent(getXoActivity(), contentObject);
         mAttachmentView.setVisibility(View.VISIBLE);
         mAttachmentSelectButton.setVisibility(View.GONE);
         mSendButton.setEnabled(isComposed());
@@ -173,7 +173,7 @@ public class CompositionFragment extends TalkFragment implements View.OnClickLis
     }
 
     private void sendComposedMessage() {
-        TalkClientDatabase db = getTalkDatabase();
+        TalkClientDatabase db = getXoDatabase();
 
         if(mContact == null) {
             return;
@@ -228,7 +228,7 @@ public class CompositionFragment extends TalkFragment implements View.OnClickLis
         LOG.info("created message with id " + clientMessage.getClientMessageId() + " and tag " + message.getMessageTag());
 
         try {
-            getTalkService().performDeliveries();
+            getXoService().performDeliveries();
         } catch (RemoteException e) {
             LOG.error("remote error", e);
         }

@@ -1,10 +1,10 @@
 package com.hoccer.talk.android.activity;
 
 import android.os.Bundle;
+import com.hoccer.talk.android.XoActivity;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkActivity;
 
-public class AboutActivity extends TalkActivity {
+public class AboutActivity extends XoActivity {
 
     @Override
     protected int getLayoutResource() {

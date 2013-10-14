@@ -6,9 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import com.hoccer.talk.android.XoListFragment;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkListFragment;
 import com.hoccer.talk.android.adapter.ContactsAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
@@ -21,7 +21,7 @@ import java.sql.SQLException;
  * This currently shows only contact data but should also be able to show
  * recent conversations for use as a "conversations" view.
  */
-public class ContactsFragment extends TalkListFragment implements View.OnClickListener {
+public class ContactsFragment extends XoListFragment implements View.OnClickListener {
 
 	private static final Logger LOG = Logger.getLogger(ContactsFragment.class);
 
@@ -55,7 +55,7 @@ public class ContactsFragment extends TalkListFragment implements View.OnClickLi
 
         if(mAdapter == null) {
             // create list adapter
-            mAdapter = getTalkActivity().makeContactListAdapter();
+            mAdapter = getXoActivity().makeContactListAdapter();
 
             // filter out never-related contacts (which we know only via groups)
             mAdapter.setFilter(new ContactsAdapter.Filter() {
@@ -80,9 +80,9 @@ public class ContactsFragment extends TalkListFragment implements View.OnClickLi
     public void onGroupCreationSucceeded(int contactId) {
         LOG.debug("onGroupCreationSucceeded(" + contactId + ")");
         try {
-            TalkClientContact contact = getTalkDatabase().findClientContactById(contactId);
+            TalkClientContact contact = getXoDatabase().findClientContactById(contactId);
             if(contact != null) {
-                getTalkActivity().showContactProfile(contact);
+                getXoActivity().showContactProfile(contact);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -96,7 +96,7 @@ public class ContactsFragment extends TalkListFragment implements View.OnClickLi
     @Override
     public void onClick(View v) {
         if(v == mAddUserButton) {
-            getTalkActivity().showPairing();
+            getXoActivity().showPairing();
         }
     }
 
@@ -107,11 +107,11 @@ public class ContactsFragment extends TalkListFragment implements View.OnClickLi
             Object item = mContactList.getItemAtPosition(position);
             if(item instanceof TalkClientContact) {
                 TalkClientContact contact = (TalkClientContact)item;
-                getTalkActivity().showContactConversation(contact);
+                getXoActivity().showContactConversation(contact);
             }
             if(item instanceof TalkClientSmsToken) {
                 TalkClientSmsToken token = (TalkClientSmsToken)item;
-                getTalkActivity().showTokenDialog(token);
+                getXoActivity().showTokenDialog(token);
             }
         }
     }

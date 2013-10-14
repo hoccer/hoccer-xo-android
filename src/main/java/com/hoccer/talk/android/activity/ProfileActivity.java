@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v4.app.FragmentManager;
 import com.actionbarsherlock.app.ActionBar;
+import com.hoccer.talk.android.XoActivity;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.android.TalkActivity;
 import com.hoccer.talk.android.fragment.ProfileFragment;
 import com.hoccer.talk.client.model.TalkClientContact;
 
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 /**
  * Activity wrapping a profile fragment
  */
-public class ProfileActivity extends TalkActivity {
+public class ProfileActivity extends XoActivity {
 
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 
@@ -72,7 +72,7 @@ public class ProfileActivity extends TalkActivity {
 
     private TalkClientContact refreshContact(int contactId) {
         try {
-            return getTalkClientDatabase().findClientContactById(contactId);
+            return getXoDatabase().findClientContactById(contactId);
         } catch (SQLException e) {
             LOG.error("sql error", e);
         }
