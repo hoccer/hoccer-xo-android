@@ -60,8 +60,7 @@ import java.util.concurrent.TimeUnit;
  *  - Methods for moving between activities
  *  - Methods for constructing view adapters
  */
-public abstract class XoActivity extends SherlockFragmentActivity
-        implements IXoClientServiceListener {
+public abstract class XoActivity extends SherlockFragmentActivity {
 
     public final static int REQUEST_SELECT_AVATAR = 23;
     public final static int REQUEST_SELECT_ATTACHMENT = 42;
@@ -112,7 +111,6 @@ public abstract class XoActivity extends SherlockFragmentActivity
 
     public XoActivity() {
         LOG = Logger.getLogger(getClass());
-        mListeners.add(this);
     }
 
     protected abstract int getLayoutResource();
@@ -746,104 +744,6 @@ public abstract class XoActivity extends SherlockFragmentActivity
     public void selectGroupKick(TalkClientContact group) {
         new GroupKickDialog(this, group)
                 .show(getSupportFragmentManager(), DIALOG_GROUP_KICK);
-    }
-
-    /** Just a dummy so we can implement the listener interface */
-    @Override
-    public IBinder asBinder() {
-        return null;
-    }
-
-    @Override
-    public void onClientStateChanged(int state) throws RemoteException {
-    }
-
-    @Override
-    public void onTokenPairingFailed(String token) throws RemoteException {
-    }
-
-    @Override
-    public void onTokenPairingSucceeded(String token) throws RemoteException {
-    }
-
-    @Override
-    public void onContactAdded(int contactId) throws RemoteException {
-    }
-
-    @Override
-    public void onContactRemoved(int contactId) throws RemoteException {
-    }
-
-    @Override
-    public void onClientPresenceChanged(int contactId) throws RemoteException {
-    }
-
-    @Override
-    public void onClientRelationshipChanged(int contactId) throws RemoteException {
-    }
-
-    @Override
-    public void onGroupCreationSucceeded(int contactId) throws RemoteException {
-    }
-
-    @Override
-    public void onGroupCreationFailed() throws RemoteException {
-    }
-
-    @Override
-    public void onGroupPresenceChanged(int contactId) throws RemoteException {
-    }
-
-    @Override
-    public void onGroupMembershipChanged(int contactId) throws RemoteException {
-    }
-
-    @Override
-    public void onMessageAdded(int contactId, int messageId) throws RemoteException {
-    }
-
-    @Override
-    public void onMessageRemoved(int contactId, int messageId) throws RemoteException {
-    }
-
-    @Override
-    public void onMessageStateChanged(int contactId, int messageId) throws RemoteException {
-    }
-
-    @Override
-    public void onUploadAdded(int contactId, int downloadId) throws RemoteException {
-    }
-
-    @Override
-    public void onUploadRemoved(int contactId, int downloadId) throws RemoteException {
-    }
-
-    @Override
-    public void onUploadProgress(int contactId, int downloadId) throws RemoteException {
-    }
-
-    @Override
-    public void onUploadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
-    }
-
-    @Override
-    public void onDownloadAdded(int contactId, int downloadId) throws RemoteException {
-    }
-
-    @Override
-    public void onDownloadRemoved(int contactId, int downloadId) throws RemoteException {
-    }
-
-    @Override
-    public void onDownloadProgress(int contactId, int downloadId) throws RemoteException {
-    }
-
-    @Override
-    public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
-    }
-
-    @Override
-    public void onSmsTokensChanged() throws RemoteException {
     }
 
 }

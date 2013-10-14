@@ -99,7 +99,7 @@ public class ProfileActivity extends XoActivity {
         }
     }
 
-    @Override
+    // XXX @Override
     public void onContactRemoved(int contactId) throws RemoteException {
         if(mContact != null && mContact.getClientContactId() == contactId) {
             finish();
