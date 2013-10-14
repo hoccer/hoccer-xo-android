@@ -3,10 +3,17 @@ package com.hoccer.talk.android;
 import org.apache.log4j.Layout;
 import org.apache.log4j.PatternLayout;
 
+/**
+ * Android client configuration
+ *
+ * This class collects various android-specific settings for the XO client.
+ */
 public class TalkConfiguration {
 
+    /* Directories in external storage */
     public static final String EXTERNAL_ATTACHMENTS = "Hoccer XO";
 
+    /* Directories in internal storage */
     public static final String INTERNAL_AVATARS = "avatars";
     public static final String INTERNAL_DOWNLOADS = "downloads";
     public static final String INTERNAL_UPLOADS = "uploads";
