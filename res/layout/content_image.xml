@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
 
-    <com.hoccer.talk.android.views.AspectImageView
+    <com.hoccer.xo.android.view.AspectImageView
         android:id="@+id/image_image"
         android:src="@drawable/ic_launcher"
         android:scaleType="centerInside"

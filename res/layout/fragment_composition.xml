@@ -53,7 +53,7 @@
 
     </LinearLayout>
 
-    <com.hoccer.talk.android.content.ContentView
+    <com.hoccer.xo.android.content.ContentView
             android:id="@+id/messaging_composer_attachment"
             custom:maxHeight="150dp"
             android:gravity="center"

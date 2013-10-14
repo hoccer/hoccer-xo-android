@@ -6,13 +6,13 @@
         android:orientation="vertical">
 
   <fragment
-            class="com.hoccer.talk.android.fragment.StatusFragment"
+            class="com.hoccer.xo.android.fragment.StatusFragment"
             android:id="@+id/activity_contacts_status_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
   <fragment
-            class="com.hoccer.talk.android.fragment.ContactsFragment"
+            class="com.hoccer.xo.android.fragment.ContactsFragment"
             android:id="@+id/activity_contacts_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>

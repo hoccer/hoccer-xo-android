@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
-    <com.hoccer.talk.android.views.AspectImageView
+    <com.hoccer.xo.android.view.AspectImageView
         android:id="@+id/contact_icon"
         android:src="@drawable/avatar_default_contact"
         android:clickable="true"

@@ -41,7 +41,7 @@
 
     <!-- Declare our application -->
     <application
-        android:name="com.hoccer.talk.android.XoApplication"
+        android:name="com.hoccer.xo.android.XoApplication"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -49,7 +49,7 @@
 
         <!-- Contact list - our main activity -->
         <activity
-                android:name="com.hoccer.talk.android.activity.ContactsActivity"
+                android:name="com.hoccer.xo.android.activity.ContactsActivity"
                 android:label="@string/app_name">
             <!-- Show in launcher -->
             <intent-filter>
@@ -60,34 +60,34 @@
 
         <!-- Messaging activity -->
         <activity
-                android:name="com.hoccer.talk.android.activity.MessagingActivity"
+                android:name="com.hoccer.xo.android.activity.MessagingActivity"
                 android:label="@string/app_name"
-                android:parentActivityName="com.hoccer.talk.android.activity.ContactsActivity"
+                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:windowSoftInputMode="stateHidden">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.hoccer.talk.android.activity.ContactsActivity"/>
+                    android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
         </activity>
 
         <!-- Profile activity -->
         <activity
-                android:name="com.hoccer.talk.android.activity.ProfileActivity"
+                android:name="com.hoccer.xo.android.activity.ProfileActivity"
                 android:label="@string/app_name"
-                android:parentActivityName="com.hoccer.talk.android.activity.ContactsActivity"
+                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:windowSoftInputMode="stateHidden">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.hoccer.talk.android.activity.ContactsActivity"/>
+                    android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
         </activity>
 
         <!-- Pairing activity -->
         <activity
-                android:name="com.hoccer.talk.android.activity.PairingActivity"
+                android:name="com.hoccer.xo.android.activity.PairingActivity"
                 android:label="@string/app_name"
-                android:parentActivityName="com.hoccer.talk.android.activity.ContactsActivity">
+                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.hoccer.talk.android.activity.ContactsActivity"/>
+                    android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="hxo"/>
@@ -95,43 +95,43 @@
 
         <!-- Preference activity -->
         <activity
-                android:name="com.hoccer.talk.android.activity.PreferenceActivity"
+                android:name="com.hoccer.xo.android.activity.PreferenceActivity"
                 android:label="@string/app_name"
-                android:parentActivityName="com.hoccer.talk.android.activity.ContactsActivity">
+                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.hoccer.talk.android.activity.ContactsActivity"/>
+                    android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
         </activity>
 
         <!-- About activity -->
         <activity
-                android:name="com.hoccer.talk.android.activity.AboutActivity"
+                android:name="com.hoccer.xo.android.activity.AboutActivity"
                 android:label="@string/app_name"
-                android:parentActivityName="com.hoccer.talk.android.activity.ContactsActivity">
+                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".activity.ContactsActivity"/>
+                    android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
         </activity>
 
         <!-- Licenses activity -->
         <activity
-                android:name="com.hoccer.talk.android.activity.LicensesActivity"
+                android:name="com.hoccer.xo.android.activity.LicensesActivity"
                 android:label="@string/app_name"
-                android:parentActivityName="com.hoccer.talk.android.activity.ContactsActivity">
+                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.hoccer.talk.android.activity.ContactsActivity"/>
+                    android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
         </activity>
 
         <!-- Connection and delivery service -->
-        <service android:name="com.hoccer.talk.android.service.XoClientService"/>
+        <service android:name="com.hoccer.xo.android.service.XoClientService"/>
 
         <!-- GCM push service -->
-        <service android:name="com.hoccer.talk.android.push.GcmService"/>
+        <service android:name="com.hoccer.xo.android.push.GcmService"/>
 
         <!-- GCM broadcast receiver -->
         <receiver
-            android:name="com.hoccer.talk.android.push.GcmReceiver"
+            android:name="com.hoccer.xo.android.push.GcmReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <!-- Receives the actual messages. -->
@@ -145,7 +145,7 @@
 
         <!-- SMS broadcast receiver -->
         <receiver
-                android:name="com.hoccer.talk.android.sms.TalkSmsReceiver"
+                android:name="com.hoccer.xo.android.sms.SmsReceiver"
                 android:permission="android.permission.BROADCAST_SMS"
                 android:exported="true">
             <!-- Priority 999 is the maximum priority allowed for applications -->
