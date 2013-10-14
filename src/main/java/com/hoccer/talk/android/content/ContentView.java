@@ -171,6 +171,7 @@ public class ContentView extends LinearLayout {
 
     public void clear() {
         mContentWrapper.removeAllViews();
+        mObject = null;
     }
 
 }
