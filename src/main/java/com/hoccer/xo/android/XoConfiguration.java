@@ -32,6 +32,8 @@ public class XoConfiguration {
     /** GCM server registration expiration (seconds) */
     public static final long GCM_REGISTRATION_EXPIRATION = 24 * 3600;
 
+    /** Log tag to use in logcat */
+    public static final String LOG_LOGCAT_TAG = "HoccerXO";
     /** The layout for android logcat */
     public static final Layout LOG_LOGCAT_LAYOUT = new PatternLayout("[%t] %-5p %c - %m%n");
     /** Base name of log files */

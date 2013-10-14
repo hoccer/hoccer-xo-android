@@ -1,23 +1,15 @@
 package com.hoccer.xo.android;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import com.hoccer.xo.release.R;
 import com.hoccer.talk.client.HttpClientWithKeystore;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Layout;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.RollingFileAppender;
-import org.apache.log4j.spi.LoggingEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,11 +21,10 @@ import java.util.concurrent.ScheduledExecutorService;
 /**
  * Application class
  *
- * This class handles the various context initialization that we need.
+ * This class handles the application lifecycle,
+ * setting up various things as it does so.
  */
 public class XoApplication extends Application {
-
-    private final static String TAG = "HoccerXO";
 
     private static Logger LOG = null;
 
@@ -49,13 +40,6 @@ public class XoApplication extends Application {
     /** SSL key store */
     private static KeyStore KEYSTORE = null;
 
-    private SharedPreferences mPreferences;
-    private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesChangedListener;
-
-    private Logger              mRootLogger;
-    private RollingFileAppender mFileAppender;
-    private LogcatAppender      mLogcatAppender;
-
     private Thread.UncaughtExceptionHandler mPreviousHandler;
 
     public static ScheduledExecutorService getExecutor() {
@@ -69,7 +53,7 @@ public class XoApplication extends Application {
         return KEYSTORE;
     }
 
-    private static File getLogDirectory() {
+    public static File getLogDirectory() {
         return EXTERNAL_STORAGE;
     }
 
@@ -137,7 +121,7 @@ public class XoApplication extends Application {
         INTERNAL_STORAGE = this.getFilesDir();
 
         // initialize logging system
-        initLogging();
+        XoLogging.initialize(this);
 
         // configure ormlite to use log4j
         System.setProperty("com.j256.ormlite.logger.type", "LOG4J");
@@ -207,10 +191,7 @@ public class XoApplication extends Application {
             mPreviousHandler = null;
         }
 
-        if(mPreferencesChangedListener != null) {
-            mPreferences.unregisterOnSharedPreferenceChangeListener(mPreferencesChangedListener);
-            mPreferencesChangedListener = null;
-        }
+        XoLogging.shutdown();
 
         if(EXECUTOR != null) {
             EXECUTOR.shutdownNow();
@@ -218,57 +199,14 @@ public class XoApplication extends Application {
         }
     }
 
-    private void initLogging() {
-        Log.i(TAG, "[logging] initializing logging");
-
-        // get the root logger for configuration
-        mRootLogger = Logger.getRootLogger();
-
-        // create logcat appender
-        mLogcatAppender = new LogcatAppender(XoConfiguration.LOG_LOGCAT_LAYOUT);
-
-        // create file appender
-        try {
-            File file = new File(getLogDirectory(), XoConfiguration.LOG_FILE_NAME);
-            mFileAppender = new RollingFileAppender(XoConfiguration.LOG_FILE_LAYOUT, file.toString());
-            mFileAppender.setMaximumFileSize(XoConfiguration.LOG_FILE_SIZE);
-            mFileAppender.setMaxBackupIndex(XoConfiguration.LOG_FILE_COUNT);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // attach preference listener
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mPreferencesChangedListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if(key.equals("preference_log_logcat")) {
-                    configureLogLogcat();
-                }
-                if(key.equals("preference_log_sd")) {
-                    configureLogSd();
-                }
-                if(key.equals("preference_log_level")) {
-                    configureLogLevel();
-                }
-            }
-        };
-        mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesChangedListener);
-
-        // apply initial configuration
-        configureLogLevel();
-        configureLogLogcat();
-        configureLogSd();
-    }
-
-    private static void ensureDirectory(File directory) {
+    public static void ensureDirectory(File directory) {
         if(!directory.exists()) {
             LOG.info("creating directory " + directory.toString());
             directory.mkdirs();
         }
     }
 
-    private static void ensureNomedia(File directory) {
+    public static void ensureNomedia(File directory) {
         if(directory.exists()) {
             File nomedia = new File(directory, ".nomedia");
             if(!nomedia.exists()) {
@@ -279,83 +217,6 @@ public class XoApplication extends Application {
                     LOG.error("error creating " + nomedia.toString(), e);
                 }
             }
-        }
-    }
-
-    private void configureLogLevel() {
-        String levelString = mPreferences.getString("preference_log_level", "INFO");
-        Log.i(TAG, "[logging] setting log level to " + levelString);
-        Level level = Level.toLevel(levelString);
-        mRootLogger.setLevel(level);
-    }
-
-    private void configureLogSd() {
-        boolean enabled = mPreferences.getBoolean("preference_log_sd", false);
-        Log.i(TAG, "[logging] " + (enabled ? "enabling" : "disabling") + " logging to SD card");
-        if(enabled) {
-            ensureDirectory(getLogDirectory());
-            mRootLogger.addAppender(mFileAppender);
-        } else {
-            mRootLogger.removeAppender(mFileAppender);
-        }
-    }
-
-    private void configureLogLogcat() {
-        boolean enabled = mPreferences.getBoolean("preference_log_logcat", true);
-        Log.i(TAG, "[logging] " + (enabled ? "enabling" : "disabling") + " logging to logcat");
-        if(enabled) {
-            mRootLogger.addAppender(mLogcatAppender);
-        } else {
-            mRootLogger.removeAppender(mLogcatAppender);
-        }
-    }
-
-    private class LogcatAppender extends AppenderSkeleton {
-
-        public LogcatAppender(Layout layout) {
-            super();
-            setLayout(layout);
-        }
-
-        @Override
-        protected void append(LoggingEvent event) {
-            String message = getLayout().format(event);
-            int level = event.getLevel().toInt();
-            if(level == Level.WARN_INT) {
-                if(event.getThrowableInformation() != null) {
-                    Log.w(TAG, message, event.getThrowableInformation().getThrowable());
-                } else {
-                    Log.w(TAG, message);
-                }
-            } else if(level == Level.ERROR_INT) {
-                if(event.getThrowableInformation() != null) {
-                    Log.e(TAG, message, event.getThrowableInformation().getThrowable());
-                } else {
-                    Log.e(TAG, message);
-                }
-            } else if(level == Level.FATAL_INT) {
-                if(event.getThrowableInformation() != null) {
-                    Log.wtf(TAG, message, event.getThrowableInformation().getThrowable());
-                } else {
-                    Log.wtf(TAG, message);
-                }
-            } else {
-                if(event.getThrowableInformation() != null) {
-                    Log.i(TAG, message, event.getThrowableInformation().getThrowable());
-                } else {
-                    Log.i(TAG, message);
-                }
-            }
-        }
-
-        @Override
-        public void close() {
-            Log.v(TAG, "[logging] logcat appender closed");
-        }
-
-        @Override
-        public boolean requiresLayout() {
-            return true;
         }
     }
 
