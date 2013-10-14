@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 
-public class XoListFragment extends SherlockListFragment implements IXoFragment {
+public abstract class XoListFragment extends SherlockListFragment implements IXoFragment {
 
     protected Logger LOG = null;
 

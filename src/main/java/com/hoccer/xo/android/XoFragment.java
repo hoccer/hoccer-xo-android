@@ -17,7 +17,7 @@ import java.io.File;
  * This encapsulated commonalities:
  *  - access to activity for db and services
  */
-public class XoFragment extends SherlockFragment implements IXoFragment {
+public abstract class XoFragment extends SherlockFragment implements IXoFragment {
 
     protected Logger LOG = null;
 
