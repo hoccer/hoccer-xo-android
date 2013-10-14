@@ -11,8 +11,7 @@ import org.apache.log4j.Logger;
  * GCM push notification service
  *
  * This service processes all our GCM events.
- *
- * Its lifecycle is automatically controlled by the GCM client implementation.
+ * Its lifecycle is intent-driven.
  *
  * For most events this service receives it will generate an Intent
  * to call the client service to perform appropriate actions.
@@ -20,9 +19,9 @@ import org.apache.log4j.Logger;
  */
 public class TalkPushService extends GCMBaseIntentService {
 
-    public static final String EXTRA_GCM_REGISTERED = "com.hoccer.talk.android.GCM_REGISTERED";
-    public static final String EXTRA_GCM_UNREGISTERED = "com.hoccer.talk.android.GCM_UNREGISTERED";
-    public static final String EXTRA_WAKE_CLIENT = "com.hoccer.talk.android.WAKE_CLIENT";
+    public static final String EXTRA_GCM_REGISTERED = "com.hoccer.xo.GCM_REGISTERED";
+    public static final String EXTRA_GCM_UNREGISTERED = "com.hoccer.xo.GCM_UNREGISTERED";
+    public static final String EXTRA_WAKE_CLIENT = "com.hoccer.xo.WAKE_CLIENT";
 
     private static final Logger LOG = Logger.getLogger(TalkPushService.class);
 
