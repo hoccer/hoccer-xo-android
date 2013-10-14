@@ -24,6 +24,7 @@ public class XoSsl {
 
     public static WebSocketClientFactory getWebSocketClientFactory() {
         if(WS_CLIENT_FACTORY == null) {
+            LOG.info("creating ws client factory");
             WebSocketClientFactory wscFactory = new WebSocketClientFactory();
             SslContextFactory sslcFactory = wscFactory.getSslContextFactory();
             sslcFactory.setTrustAll(false);
@@ -38,7 +39,7 @@ public class XoSsl {
             try {
                 wscFactory.start();
             } catch (Exception e) {
-                LOG.error("could not initialize websocket client factory", e);
+                LOG.error("could not initialize ws client factory", e);
             }
             WS_CLIENT_FACTORY = wscFactory;
         }
