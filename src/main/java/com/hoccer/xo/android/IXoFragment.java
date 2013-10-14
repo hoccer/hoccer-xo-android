@@ -3,9 +3,8 @@ package com.hoccer.xo.android;
 import com.hoccer.talk.client.TalkClientDatabase;
 import com.hoccer.xo.android.content.ContentObject;
 import com.hoccer.xo.android.service.IXoClientService;
-import com.hoccer.xo.android.service.IXoClientServiceListener;
 
-public interface IXoFragment extends IXoClientServiceListener {
+public interface IXoFragment {
 
     public XoActivity getXoActivity();
 

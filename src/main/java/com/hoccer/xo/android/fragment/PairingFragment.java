@@ -205,11 +205,7 @@ public class PairingFragment extends XoFragment implements View.OnClickListener 
         }
     }
 
-    @Override
-    public void onContactAdded(int contactId) {
-    }
-
-    @Override
+    // XXX @Override
     public void onTokenPairingFailed(String token) {
         LOG.debug("onTokenPairingFailed()");
         if(token.equals(mActiveToken)) {
@@ -225,7 +221,7 @@ public class PairingFragment extends XoFragment implements View.OnClickListener 
         }
     }
 
-    @Override
+    // XXX @Override
     public void onTokenPairingSucceeded(String token) {
         LOG.debug("onTokenPairingSucceeded()");
         if(token.equals(mActiveToken)) {

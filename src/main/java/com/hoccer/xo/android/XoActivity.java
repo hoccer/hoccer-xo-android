@@ -126,12 +126,10 @@ public abstract class XoActivity extends SherlockFragmentActivity {
 
     public void registerTalkFragment(IXoFragment fragment) {
         mTalkFragments.add(fragment);
-        mListeners.add(fragment);
     }
 
     public void unregisterTalkFragment(IXoFragment fragment) {
         mTalkFragments.remove(fragment);
-        mListeners.remove(fragment);
     }
 
     public void registerListener(IXoClientServiceListener listener) {

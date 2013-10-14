@@ -76,7 +76,7 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
         mContactList.setAdapter(mAdapter);
     }
 
-    @Override
+    // XXX @Override
     public void onGroupCreationSucceeded(int contactId) {
         LOG.debug("onGroupCreationSucceeded(" + contactId + ")");
         try {
@@ -89,7 +89,7 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
         }
     }
 
-    @Override
+    // XXX @Override
     public void onGroupCreationFailed() {
     }
 

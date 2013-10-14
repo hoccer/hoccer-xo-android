@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.hoccer.talk.client.ITalkContactsListener;
+import com.hoccer.talk.client.ITalkTransferListener;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoFragment;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
@@ -31,10 +33,9 @@ import java.sql.SQLException;
 /**
  * Fragment for display and editing of profiles
  *
- * TODO relax defensive programming
  */
 public class ProfileFragment extends XoFragment
-        implements View.OnClickListener {
+        implements View.OnClickListener, ITalkContactsListener, ITalkTransferListener {
 
     private static final Logger LOG = Logger.getLogger(ProfileFragment.class);
 
@@ -375,52 +376,82 @@ public class ProfileFragment extends XoFragment
         }
     }
 
+
     @Override
-    public void onClientPresenceChanged(int contactId) {
-        LOG.debug("onClientPresenceChanged(" + contactId + ")");
-        if(mContact != null && mContact.getClientContactId() == contactId) {
+    public void onContactAdded(TalkClientContact contact) {
+    }
+
+    @Override
+    public void onContactRemoved(TalkClientContact contact) {
+        // XXX
+    }
+
+    @Override
+    public void onClientPresenceChanged(TalkClientContact contact) {
+        if(mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
             refreshContact();
         }
     }
 
     @Override
-    public void onClientRelationshipChanged(int contactId) {
-        LOG.debug("onClientRelationshipChanged(" + contactId + ")");
-        if(mContact != null && mContact.getClientContactId() == contactId) {
+    public void onClientRelationshipChanged(TalkClientContact contact) {
+        if(mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
             refreshContact();
         }
     }
 
     @Override
-    public void onGroupPresenceChanged(int contactId) {
-        LOG.debug("onGroupPresenceChanged(" + contactId + ")");
-        if(mContact != null && mContact.getClientContactId() == contactId) {
+    public void onGroupPresenceChanged(TalkClientContact contact) {
+        if(mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
             refreshContact();
         }
     }
 
     @Override
-    public void onGroupMembershipChanged(int contactId) {
-        LOG.debug("onGroupMembershipChanged(" + contactId + ")");
-        if(mContact != null && mContact.getClientContactId() == contactId) {
+    public void onGroupMembershipChanged(TalkClientContact contact) {
+        if(mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
             refreshContact();
         }
     }
 
     @Override
-    public void onUploadStateChanged(int contactId, int uploadId, String state) throws RemoteException {
-        LOG.debug("onUploadStateChanged(" + contactId + "," + uploadId + "," + state + ")");
-        if(state == TalkClientUpload.State.COMPLETE.toString()) {
-            refreshContact();
-        }
+    public void onDownloadStarted(TalkClientDownload download) {
+        // XXX
     }
 
     @Override
-    public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
-        LOG.debug("onDownloadStateChanged(" + contactId + "," + downloadId + "," + state + ")");
-        if(state == TalkClientUpload.State.COMPLETE.toString()) {
-            refreshContact();
-        }
+    public void onDownloadProgress(TalkClientDownload download) {
+        // XXX
+    }
+
+    @Override
+    public void onDownloadFinished(TalkClientDownload download) {
+        // XXX
+    }
+
+    @Override
+    public void onDownloadStateChanged(TalkClientDownload download) {
+        // XXX
+    }
+
+    @Override
+    public void onUploadStarted(TalkClientUpload upload) {
+        // XXX
+    }
+
+    @Override
+    public void onUploadProgress(TalkClientUpload upload) {
+        // XXX
+    }
+
+    @Override
+    public void onUploadFinished(TalkClientUpload upload) {
+        // XXX
+    }
+
+    @Override
+    public void onUploadStateChanged(TalkClientUpload upload) {
+        // XXX
     }
 
 }

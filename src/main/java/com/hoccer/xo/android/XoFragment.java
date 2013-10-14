@@ -1,8 +1,6 @@
 package com.hoccer.xo.android;
 
 import android.app.Activity;
-import android.os.IBinder;
-import android.os.RemoteException;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.hoccer.talk.client.TalkClientDatabase;
 import com.hoccer.xo.android.content.ContentObject;
@@ -25,12 +23,6 @@ public abstract class XoFragment extends SherlockFragment implements IXoFragment
 
     public XoFragment() {
         LOG = Logger.getLogger(getClass());
-    }
-
-    /** Just a dummy so we can implement the listener interface */
-    @Override
-    public IBinder asBinder() {
-        return null;
     }
 
     public File getAvatarDirectory() {
@@ -90,98 +82,6 @@ public abstract class XoFragment extends SherlockFragment implements IXoFragment
     }
 
     public void onAvatarSelected(ContentObject contentObject) {
-    }
-
-    @Override
-    public void onClientStateChanged(int state) {
-    }
-
-    @Override
-    public void onContactAdded(int contactId) {
-    }
-
-    @Override
-    public void onContactRemoved(int contactId) {
-    }
-
-    @Override
-    public void onTokenPairingFailed(String token) {
-    }
-
-    @Override
-    public void onTokenPairingSucceeded(String token) {
-    }
-
-    @Override
-    public void onClientPresenceChanged(int contactId) {
-    }
-
-    @Override
-    public void onClientRelationshipChanged(int contactId) {
-    }
-
-    @Override
-    public void onGroupCreationSucceeded(int contactId) {
-    }
-
-    @Override
-    public void onGroupCreationFailed() {
-    }
-
-    @Override
-    public void onGroupPresenceChanged(int contactId) {
-    }
-
-    @Override
-    public void onGroupMembershipChanged(int contactId) {
-    }
-
-    @Override
-    public void onMessageAdded(int contactId, int messageId) throws RemoteException {
-    }
-
-    @Override
-    public void onMessageRemoved(int contactId, int messageId) throws RemoteException {
-    }
-
-    @Override
-    public void onMessageStateChanged(int contactId, int messageId) throws RemoteException {
-    }
-
-    @Override
-    public void onUploadAdded(int contactId, int downloadId) throws RemoteException {
-    }
-
-    @Override
-    public void onUploadRemoved(int contactId, int downloadId) throws RemoteException {
-    }
-
-    @Override
-    public void onUploadProgress(int contactId, int downloadId) throws RemoteException {
-    }
-
-    @Override
-    public void onUploadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
-    }
-
-    @Override
-    public void onDownloadAdded(int contactId, int downloadId) throws RemoteException {
-    }
-
-    @Override
-    public void onDownloadRemoved(int contactId, int downloadId) throws RemoteException {
-    }
-
-    @Override
-    public void onDownloadProgress(int contactId, int downloadId) throws RemoteException {
-    }
-
-    @Override
-    public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
-    }
-
-    @Override
-    public void onSmsTokensChanged() throws RemoteException {
     }
 
 }
