@@ -61,7 +61,7 @@ import java.util.concurrent.TimeUnit;
  *  - Methods for constructing view adapters
  */
 public abstract class XoActivity extends SherlockFragmentActivity
-        implements IXoActivity, IXoClientServiceListener {
+        implements IXoClientServiceListener {
 
     public final static int REQUEST_SELECT_AVATAR = 23;
     public final static int REQUEST_SELECT_ATTACHMENT = 42;
@@ -571,7 +571,6 @@ public abstract class XoActivity extends SherlockFragmentActivity
         }
     }
 
-    @Override
     public int getClientState() {
         int state = HoccerTalkClient.STATE_INACTIVE;
         if(mService != null) {
@@ -584,24 +583,20 @@ public abstract class XoActivity extends SherlockFragmentActivity
         return state;
     }
 
-    @Override
     public IXoClientService getXoService() {
         return mService;
     }
 
-    @Override
     public TalkClientDatabase getXoDatabase() {
         return mDatabase;
     }
 
-    @Override
     public ConversationAdapter makeConversationAdapter() {
         ConversationAdapter adapter = new ConversationAdapter(this);
         adapter.register();
         return adapter;
     }
 
-    @Override
     public ContactsAdapter makeContactListAdapter() {
         ContactsAdapter adapter = new RichContactsAdapter(this);
         adapter.register();
@@ -618,7 +613,6 @@ public abstract class XoActivity extends SherlockFragmentActivity
         }
     }
 
-    @Override
     public void showContactProfile(TalkClientContact contact) {
         LOG.debug("showContactProfile(" + contact.getClientContactId() + ")");
         Intent intent = new Intent(this, ProfileActivity.class);
@@ -627,7 +621,6 @@ public abstract class XoActivity extends SherlockFragmentActivity
         startActivity(intent);
     }
 
-    @Override
     public void showContactConversation(TalkClientContact contact) {
         LOG.debug("showContactConversation(" + contact.getClientContactId() + ")");
         Intent intent = new Intent(this, MessagingActivity.class);
@@ -642,13 +635,11 @@ public abstract class XoActivity extends SherlockFragmentActivity
                 .show(getSupportFragmentManager(), DIALOG_TOKEN);
     }
 
-    @Override
     public void showPairing() {
         LOG.debug("showPairing()");
         startActivity(new Intent(this, PairingActivity.class));
     }
 
-    @Override
     public void showAbout() {
         LOG.debug("showAbout()");
         startActivity(new Intent(this, AboutActivity.class));
@@ -659,7 +650,6 @@ public abstract class XoActivity extends SherlockFragmentActivity
         startActivity(new Intent(this, LicensesActivity.class));
     }
 
-    @Override
     public void showPreferences() {
         LOG.debug("showPreferences()");
         startActivity(new Intent(this, PreferenceActivity.class));
