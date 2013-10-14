@@ -26,6 +26,11 @@ import java.security.KeyStore;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+/**
+ * Application class
+ *
+ * This class handles the various context initialization that we need.
+ */
 public class TalkApplication extends Application {
 
     private final static String TAG = "HoccerXO";
