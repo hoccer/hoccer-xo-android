@@ -10,12 +10,14 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
-import com.hoccer.xo.release.R;
 import com.hoccer.talk.android.content.audio.AudioViewer;
 import com.hoccer.talk.android.content.audio.MusicSelector;
 import com.hoccer.talk.android.content.image.GallerySelector;
 import com.hoccer.talk.android.content.image.ImageViewer;
+import com.hoccer.talk.android.content.vcard.ContactSelector;
+import com.hoccer.talk.android.content.vcard.ContactViewer;
 import com.hoccer.talk.android.util.IntentHelper;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -83,11 +85,11 @@ public class ContentRegistry {
 
         initializeSelector(new GallerySelector());
         initializeSelector(new MusicSelector());
-        //initializeSelector(new ContactSelector());
+        initializeSelector(new ContactSelector());
 
         mAttachmentViewers.add(new ImageViewer());
         mAttachmentViewers.add(new AudioViewer());
-        //mAttachmentViewers.add(new ContactViewer());
+        mAttachmentViewers.add(new ContactViewer());
     }
 
     /**
