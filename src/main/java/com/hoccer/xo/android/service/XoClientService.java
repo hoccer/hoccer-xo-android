@@ -35,6 +35,7 @@ import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
+import com.hoccer.xo.android.XoSsl;
 import com.hoccer.xo.android.activity.ContactsActivity;
 import com.hoccer.xo.android.activity.MessagingActivity;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
@@ -42,8 +43,6 @@ import com.hoccer.xo.android.push.GcmService;
 import com.hoccer.xo.android.sms.SmsReceiver;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.eclipse.jetty.websocket.WebSocketClientFactory;
 
 import java.net.URI;
 import java.sql.SQLException;
@@ -117,24 +116,7 @@ public class XoClientService extends Service {
 
         mConnections = new ArrayList<Connection>();
 
-        WebSocketClientFactory wscFactory = new WebSocketClientFactory();
-        SslContextFactory sslcFactory = wscFactory.getSslContextFactory();
-        sslcFactory.setTrustAll(false);
-        sslcFactory.setTrustStore(XoApplication.getSslKeyStore());
-        sslcFactory.setKeyStore(XoApplication.getSslKeyStore());
-        sslcFactory.setEnableCRLDP(false);
-        sslcFactory.setEnableOCSP(false);
-        sslcFactory.setSessionCachingEnabled(true);
-        sslcFactory.setSslSessionCacheSize(23);
-        sslcFactory.setIncludeCipherSuites(TalkClientConfiguration.TLS_CIPHERS);
-        sslcFactory.setIncludeProtocols(TalkClientConfiguration.TLS_PROTOCOLS);
-        try {
-            wscFactory.start();
-        } catch (Exception e) {
-            LOG.error("could not initialize websocket factory");
-        }
-
-        mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()), wscFactory);
+        mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()), XoSsl.getWebSocketClientFactory());
         mClient.setAvatarDirectory(XoApplication.getAvatarDirectory().toString());
         mClient.setAttachmentDirectory(XoApplication.getAttachmentDirectory().toString());
         mClient.setEncryptedUploadDirectory(XoApplication.getEncryptedUploadDirectory().toString());

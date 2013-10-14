@@ -3,18 +3,14 @@ package com.hoccer.xo.android;
 import android.app.Application;
 import android.os.Build;
 import android.os.Environment;
-import com.hoccer.talk.client.HttpClientWithKeystore;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
-import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyStore;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -26,22 +22,18 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 public class XoApplication extends Application {
 
+    /** logger for this class (initialized in onCreate) */
     private static Logger LOG = null;
 
-    /** root of user-visible storage root */
-    private static File EXTERNAL_STORAGE = null;
-
-    /** root of app-private storage root */
-    private static File INTERNAL_STORAGE = null;
-
-    /** global executor for client background activity */
+    /** global executor for client background activity (lazy init) */
     private static ScheduledExecutorService EXECUTOR = null;
 
-    /** SSL key store */
-    private static KeyStore KEYSTORE = null;
+    /** root of user-visible storage (initialized in onCreate) */
+    private static File EXTERNAL_STORAGE = null;
+    /** root of app-private storage (initialized in onCreate) */
+    private static File INTERNAL_STORAGE = null;
 
-    private Thread.UncaughtExceptionHandler mPreviousHandler;
-
+    /** @return common executor for background tasks */
     public static ScheduledExecutorService getExecutor() {
         if(EXECUTOR == null) {
             EXECUTOR = Executors.newScheduledThreadPool(2);
@@ -49,9 +41,21 @@ public class XoApplication extends Application {
         return EXECUTOR;
     }
 
-    public static KeyStore getSslKeyStore() {
-        return KEYSTORE;
+    /**
+     * @return user-visible storage directory
+     */
+    public static File getExternalStorage() {
+        return EXTERNAL_STORAGE;
     }
+
+    /**
+     * @return internal storage directory
+     */
+    public static File getInternalStorage() {
+        return INTERNAL_STORAGE;
+    }
+
+    private Thread.UncaughtExceptionHandler mPreviousHandler;
 
     public static File getLogDirectory() {
         return EXTERNAL_STORAGE;
@@ -149,21 +153,8 @@ public class XoApplication extends Application {
         LOG.info("internal storage at " + INTERNAL_STORAGE.toString());
         LOG.info("external storage at " + EXTERNAL_STORAGE.toString());
 
-        // set up SSL
-        LOG.info("initializing ssl keystore");
-        try {
-            KeyStore ks = KeyStore.getInstance("BKS");
-            InputStream in = this.getResources().openRawResource(R.raw.ssl_bks);
-			try {
-				ks.load(in, "password".toCharArray());
-			} finally {
-				in.close();
-			}
-            KEYSTORE = ks;
-            HttpClientWithKeystore.initializeSsl(ks);
-        } catch (Exception e) {
-            LOG.error("error initializing SSL keystore", e);
-        }
+        // configure ssl
+        XoSsl.initialize(this);
 
         // configure image loader
         LOG.info("configuring image loader");
