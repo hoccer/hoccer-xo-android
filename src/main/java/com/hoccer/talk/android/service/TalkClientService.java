@@ -21,15 +21,13 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import com.google.android.gcm.GCMRegistrar;
-import com.hoccer.talk.android.sms.TalkSmsReceiver;
-import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.xo.release.R;
 import com.hoccer.talk.android.TalkApplication;
 import com.hoccer.talk.android.TalkConfiguration;
 import com.hoccer.talk.android.activity.ContactsActivity;
 import com.hoccer.talk.android.activity.MessagingActivity;
 import com.hoccer.talk.android.database.AndroidTalkDatabase;
 import com.hoccer.talk.android.push.TalkPushService;
+import com.hoccer.talk.android.sms.TalkSmsReceiver;
 import com.hoccer.talk.client.HoccerTalkClient;
 import com.hoccer.talk.client.ITalkClientListener;
 import com.hoccer.talk.client.ITalkTransferListener;
@@ -40,8 +38,12 @@ import com.hoccer.talk.client.TalkTransfer;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
+import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.websocket.WebSocketClientFactory;
 
 import java.net.URI;
 import java.sql.SQLException;
@@ -111,13 +113,28 @@ public class TalkClientService extends Service {
         LOG.info("onCreate()");
 		super.onCreate();
 
-        mConnectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-
         mExecutor = TalkApplication.getExecutor();
 
         mConnections = new ArrayList<Connection>();
 
-        mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()));
+        WebSocketClientFactory wscFactory = new WebSocketClientFactory();
+        SslContextFactory sslcFactory = wscFactory.getSslContextFactory();
+        sslcFactory.setTrustAll(false);
+        sslcFactory.setTrustStore(TalkApplication.getSslKeyStore());
+        sslcFactory.setKeyStore(TalkApplication.getSslKeyStore());
+        sslcFactory.setEnableCRLDP(false);
+        sslcFactory.setEnableOCSP(false);
+        sslcFactory.setSessionCachingEnabled(true);
+        sslcFactory.setSslSessionCacheSize(23);
+        sslcFactory.setIncludeCipherSuites(TalkClientConfiguration.TLS_CIPHERS);
+        sslcFactory.setIncludeProtocols(TalkClientConfiguration.TLS_PROTOCOLS);
+        try {
+            wscFactory.start();
+        } catch (Exception e) {
+            LOG.error("could not initialize websocket factory");
+        }
+
+        mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()), wscFactory);
         mClient.setAvatarDirectory(TalkApplication.getAvatarDirectory().toString());
         mClient.setAttachmentDirectory(TalkApplication.getAttachmentDirectory().toString());
         mClient.setEncryptedUploadDirectory(TalkApplication.getEncryptedUploadDirectory().toString());
@@ -141,6 +158,7 @@ public class TalkClientService extends Service {
 
         doVerifyGcm();
 
+        mConnectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
         registerConnectivityReceiver();
         handleConnectivityChange(mConnectivityManager.getActiveNetworkInfo());
 

@@ -41,6 +41,9 @@ public class TalkApplication extends Application {
     /** global executor for client background activity */
     private static ScheduledExecutorService EXECUTOR = null;
 
+    /** SSL key store */
+    private static KeyStore KEYSTORE = null;
+
     private SharedPreferences mPreferences;
     private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesChangedListener;
 
@@ -55,6 +58,10 @@ public class TalkApplication extends Application {
             EXECUTOR = Executors.newScheduledThreadPool(2);
         }
         return EXECUTOR;
+    }
+
+    public static KeyStore getSslKeyStore() {
+        return KEYSTORE;
     }
 
     private static File getLogDirectory() {
@@ -153,7 +160,7 @@ public class TalkApplication extends Application {
         LOG.info("internal storage at " + INTERNAL_STORAGE.toString());
         LOG.info("external storage at " + EXTERNAL_STORAGE.toString());
 
-        // set up SSL keystore
+        // set up SSL
         LOG.info("initializing ssl keystore");
         try {
             KeyStore ks = KeyStore.getInstance("BKS");
@@ -163,6 +170,7 @@ public class TalkApplication extends Application {
 			} finally {
 				in.close();
 			}
+            KEYSTORE = ks;
             HttpClientWithKeystore.initializeSsl(ks);
         } catch (Exception e) {
             LOG.error("error initializing SSL keystore", e);
