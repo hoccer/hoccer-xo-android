@@ -11,8 +11,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import com.hoccer.xo.release.R;
 import com.hoccer.talk.android.TalkApplication;
+import com.hoccer.xo.release.R;
 import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.types.PhotoType;
@@ -26,6 +26,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class ContactView extends RelativeLayout {
 
@@ -37,7 +38,7 @@ public class ContactView extends RelativeLayout {
     TextView mNameText;
     ImageButton mShowButton;
 
-    ScheduledFuture<?> mLoadFuture;
+    ScheduledFuture<?> mRefreshFuture;
 
     public ContactView(Activity activity) {
         super(activity);
@@ -63,81 +64,104 @@ public class ContactView extends RelativeLayout {
     }
 
     public void showContent(final String contentUri) {
-        LOG.debug("show vcard " + contentUri);
-        if(mLoadFuture != null) {
-            mLoadFuture.cancel(true);
-            mLoadFuture = null;
+        LOG.debug("showContent(" + contentUri + ")");
+
+        // cancel running refresh
+        if(mRefreshFuture != null) {
+            mRefreshFuture.cancel(true);
+            mRefreshFuture = null;
         }
 
+        // schedule a new refresh
         ScheduledExecutorService executor = TalkApplication.getExecutor();
-        executor.execute(new Runnable() {
+        mRefreshFuture = executor.schedule(new Runnable() {
             @Override
             public void run() {
-                LOG.debug("refreshing vcard " + contentUri);
+                refresh(contentUri);
+            }
+        }, 0, TimeUnit.MILLISECONDS);
+    }
 
-                InputStream is = null;
+    private void refresh(final String contentUri) {
+        LOG.debug("refresh(" + contentUri + ")");
 
-                if(contentUri.startsWith("content://")) {
-                    ContentResolver resolver = getContext().getContentResolver();
-                    try {
-                        is = resolver.openInputStream(Uri.parse(contentUri));
-                    } catch (FileNotFoundException e) {
-                        LOG.error("could not find vcard", e);
-                        return;
-                    }
-                }
-                if(contentUri.startsWith("file://")) {
-                    try {
-                        URL url = new URL(contentUri);
-                        is = url.openStream();
-                    } catch (MalformedURLException e) {
-                        LOG.error("invalid file uri", e);
-                        return;
-                    } catch (IOException e) {
-                        LOG.error("could not open file", e);
-                        return;
-                    }
-                }
-                if(is == null) {
-                    LOG.error("don't know how to open " + contentUri);
-                    return;
-                }
+        // open input stream for given content
+        InputStream is = openStreamForContent(contentUri);
+        if(is == null) {
+            LOG.error("could not open content");
+            return;
+        }
 
-                VCard card = null;
-                try {
-                    card = Ezvcard.parse(is).first();
-                } catch (IOException e) {
-                    LOG.error("could not read vcard", e);
-                    return;
-                } catch (Throwable t) {
-                    LOG.error("uh!?", t);
-                    return;
-                }
+        // parse the vcard behind the uri
+        VCard card = null;
+        try {
+            card = Ezvcard.parse(is).first();
+        } catch (IOException e) {
+            LOG.error("could not parse vcard", e);
+            return;
+        } catch (Throwable t) {
+            LOG.error("could not parse vcard", t);
+            return;
+        }
 
-                final String name = card.getFormattedName().getValue();
-                final List<PhotoType> photos = card.getPhotos();
-                PhotoType photo = null;
-                if(!photos.isEmpty()) {
-                    photo = photos.get(0);
+        // get the name of the contact
+        final String name = card.getFormattedName().getValue();
+
+        // get and load the first photo of the contact
+        final List<PhotoType> photos = card.getPhotos();
+        PhotoType photo = null;
+        if(!photos.isEmpty()) {
+            photo = photos.get(0);
+        }
+        Bitmap photoBitmap = null;
+        if(photo != null) {
+            byte[] photoData = photo.getData();
+            photoBitmap = BitmapFactory.decodeByteArray(photoData, 0, photoData.length);
+        }
+        final Bitmap finalPhotoBitmap = photoBitmap;
+
+        // refresh the ui
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LOG.debug("refreshing ui");
+                mNameText.setText(name);
+                if(finalPhotoBitmap != null) {
+                    mAvatarImage.setImageDrawable(new BitmapDrawable(finalPhotoBitmap));
+                } else {
+                    mAvatarImage.setImageResource(R.drawable.avatar_default_contact);
                 }
-                final PhotoType photoFinal = photo;
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        LOG.debug("setting up gui");
-                        mNameText.setText(name);
-                        if(photoFinal != null) {
-                            byte[] photoData = photoFinal.getData();
-                            Bitmap photoBitmap = BitmapFactory.decodeByteArray(photoData, 0, photoData.length);
-                            mAvatarImage.setImageDrawable(new BitmapDrawable(photoBitmap));
-                        } else {
-                            mAvatarImage.setImageResource(R.drawable.avatar_default_contact);
-                        }
-                    }
-                });
             }
         });
+    }
 
+    private InputStream openStreamForContent(String contentUri) {
+        LOG.trace("openStreamForContent(" + contentUri + ")");
+        InputStream is = null;
+        // handle content uris
+        if(contentUri.startsWith("content://")) {
+            ContentResolver resolver = getContext().getContentResolver();
+            try {
+                is = resolver.openInputStream(Uri.parse(contentUri));
+            } catch (FileNotFoundException e) {
+                LOG.error("could not find vcard", e);
+            }
+        }
+        // handle file uris
+        if(contentUri.startsWith("file://")) {
+            try {
+                URL url = new URL(contentUri);
+                is = url.openStream();
+            } catch (MalformedURLException e) {
+                LOG.error("invalid file uri", e);
+            } catch (IOException e) {
+                LOG.error("could not open file", e);
+            }
+        }
+        if(is == null) {
+            LOG.error("don't know how to open " + contentUri);
+        }
+        return is;
     }
 
 }
