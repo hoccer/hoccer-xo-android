@@ -395,18 +395,6 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         }
     }
 
-    public int getClientState() {
-        int state = HoccerTalkClient.STATE_INACTIVE;
-        if(mService != null) {
-            try {
-                state = mService.getClientState();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        return state;
-    }
-
     public IXoClientService getXoService() {
         return mService;
     }
