@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.hoccer.talk.client.ITalkContactListener;
+import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.XoActivity;
 import com.hoccer.xo.android.fragment.CompositionFragment;
@@ -15,7 +15,7 @@ import com.hoccer.xo.release.R;
 
 import java.sql.SQLException;
 
-public class MessagingActivity extends XoActivity implements ITalkContactListener {
+public class MessagingActivity extends XoActivity implements IXoContactListener {
 
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 

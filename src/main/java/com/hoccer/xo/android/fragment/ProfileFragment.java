@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.hoccer.talk.client.ITalkContactListener;
+import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
@@ -35,7 +35,7 @@ import java.sql.SQLException;
  *
  */
 public class ProfileFragment extends XoFragment
-        implements View.OnClickListener, ITalkContactListener {
+        implements View.OnClickListener, IXoContactListener {
 
     private static final Logger LOG = Logger.getLogger(ProfileFragment.class);
 

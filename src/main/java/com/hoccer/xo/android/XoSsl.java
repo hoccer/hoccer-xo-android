@@ -1,7 +1,7 @@
 package com.hoccer.xo.android;
 
 import com.hoccer.talk.client.HttpClientWithKeystore;
-import com.hoccer.talk.client.TalkClientConfiguration;
+import com.hoccer.talk.client.XoClientConfiguration;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -34,8 +34,8 @@ public class XoSsl {
             sslcFactory.setEnableOCSP(false);
             sslcFactory.setSessionCachingEnabled(true);
             sslcFactory.setSslSessionCacheSize(23);
-            sslcFactory.setIncludeCipherSuites(TalkClientConfiguration.TLS_CIPHERS);
-            sslcFactory.setIncludeProtocols(TalkClientConfiguration.TLS_PROTOCOLS);
+            sslcFactory.setIncludeCipherSuites(XoClientConfiguration.TLS_CIPHERS);
+            sslcFactory.setIncludeProtocols(XoClientConfiguration.TLS_PROTOCOLS);
             try {
                 wscFactory.start();
             } catch (Exception e) {

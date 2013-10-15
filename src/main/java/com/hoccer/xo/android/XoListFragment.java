@@ -2,7 +2,7 @@ package com.hoccer.xo.android;
 
 import android.app.Activity;
 import com.actionbarsherlock.app.SherlockListFragment;
-import com.hoccer.talk.client.TalkClientDatabase;
+import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.xo.android.content.ContentObject;
 import com.hoccer.xo.android.service.IXoClientService;
 import org.apache.log4j.Logger;
@@ -27,7 +27,7 @@ public abstract class XoListFragment extends SherlockListFragment implements IXo
         return mActivity;
     }
 
-    public TalkClientDatabase getXoDatabase() {
+    public XoClientDatabase getXoDatabase() {
         return mActivity.getXoDatabase();
     }
 

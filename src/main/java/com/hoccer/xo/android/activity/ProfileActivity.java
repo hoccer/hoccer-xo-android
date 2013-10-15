@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import com.actionbarsherlock.app.ActionBar;
-import com.hoccer.talk.client.ITalkContactListener;
+import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.XoActivity;
 import com.hoccer.xo.android.fragment.ProfileFragment;
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 /**
  * Activity wrapping a profile fragment
  */
-public class ProfileActivity extends XoActivity implements ITalkContactListener {
+public class ProfileActivity extends XoActivity implements IXoContactListener {
 
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 

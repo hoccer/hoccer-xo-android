@@ -12,11 +12,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.xo.android.XoFragment;
 import com.hoccer.xo.release.R;
 import com.hoccer.xo.android.content.ContentObject;
 import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.talk.client.TalkClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientUpload;
@@ -173,7 +173,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     private void sendComposedMessage() {
-        TalkClientDatabase db = getXoDatabase();
+        XoClientDatabase db = getXoDatabase();
 
         if(mContact == null) {
             return;

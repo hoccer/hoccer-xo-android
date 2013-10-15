@@ -15,8 +15,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.hoccer.talk.client.HoccerTalkClient;
-import com.hoccer.talk.client.TalkClientDatabase;
+import com.hoccer.talk.client.XoClient;
+import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.activity.AboutActivity;
 import com.hoccer.xo.android.activity.LicensesActivity;
@@ -75,7 +75,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
     ScheduledFuture<?> mKeepAliveTimer;
 
     /** Talk client database */
-    TalkClientDatabase mDatabase;
+    XoClientDatabase mDatabase;
 
     /** List of all talk fragments */
     ArrayList<IXoFragment> mTalkFragments = new ArrayList<IXoFragment>();
@@ -101,7 +101,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
     protected abstract int getLayoutResource();
     protected abstract int getMenuResource();
 
-    public HoccerTalkClient getXoClient() {
+    public XoClient getXoClient() {
         return XoApplication.getXoClient();
     }
 
@@ -135,7 +135,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         super.onCreate(savedInstanceState);
 
         // set up database connection
-        mDatabase = new TalkClientDatabase(AndroidTalkDatabase.getInstance(this.getApplicationContext()));
+        mDatabase = new XoClientDatabase(AndroidTalkDatabase.getInstance(this.getApplicationContext()));
         try {
             mDatabase.initialize();
         } catch (SQLException e) {
@@ -399,7 +399,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         return mService;
     }
 
-    public TalkClientDatabase getXoDatabase() {
+    public XoClientDatabase getXoDatabase() {
         return mDatabase;
     }
 

@@ -7,15 +7,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.hoccer.talk.client.HoccerTalkClient;
-import com.hoccer.talk.client.ITalkStateListener;
+import com.hoccer.talk.client.IXoStateListener;
+import com.hoccer.talk.client.XoClient;
 import com.hoccer.xo.android.XoFragment;
 import com.hoccer.xo.release.R;
 
 /**
  * Mix-in fragment for showing client status
  */
-public class StatusFragment extends XoFragment implements ITalkStateListener {
+public class StatusFragment extends XoFragment implements IXoStateListener {
 
     TextView mStatusText;
 
@@ -70,8 +70,8 @@ public class StatusFragment extends XoFragment implements ITalkStateListener {
     }
 
     @Override
-    public void onClientStateChange(HoccerTalkClient client, final int state) {
-        String stateString = HoccerTalkClient.stateToString(state);
+    public void onClientStateChange(XoClient client, final int state) {
+        String stateString = XoClient.stateToString(state);
         LOG.debug("onClientStateChanged(" + stateString + ")");
 
         runOnUiThread(new Runnable() {
@@ -86,28 +86,28 @@ public class StatusFragment extends XoFragment implements ITalkStateListener {
         String statusText;
         Resources r = getResources();
         switch(state) {
-            case HoccerTalkClient.STATE_IDLE:
+            case XoClient.STATE_IDLE:
                 statusText = r.getString(R.string.client_state_idle);
                 break;
-            case HoccerTalkClient.STATE_INACTIVE:
+            case XoClient.STATE_INACTIVE:
                 statusText = r.getString(R.string.client_state_inactive);
                 break;
-            case HoccerTalkClient.STATE_ACTIVE:
+            case XoClient.STATE_ACTIVE:
                 statusText = r.getString(R.string.client_state_active);
                 break;
-            case HoccerTalkClient.STATE_CONNECTING:
+            case XoClient.STATE_CONNECTING:
                 statusText = r.getString(R.string.client_state_connecting);
                 break;
-            case HoccerTalkClient.STATE_LOGIN:
+            case XoClient.STATE_LOGIN:
                 statusText = r.getString(R.string.client_state_login);
                 break;
-            case HoccerTalkClient.STATE_RECONNECTING:
+            case XoClient.STATE_RECONNECTING:
                 statusText = r.getString(R.string.client_state_reconnecting);
                 break;
-            case HoccerTalkClient.STATE_REGISTERING:
+            case XoClient.STATE_REGISTERING:
                 statusText = r.getString(R.string.client_state_registering);
                 break;
-            case HoccerTalkClient.STATE_SYNCING:
+            case XoClient.STATE_SYNCING:
                 statusText = r.getString(R.string.client_state_syncing);
                 break;
             default:
@@ -120,8 +120,8 @@ public class StatusFragment extends XoFragment implements ITalkStateListener {
                 getActivity()
                         .getSupportFragmentManager()
                         .beginTransaction();
-        if (state == HoccerTalkClient.STATE_ACTIVE
-                || state == HoccerTalkClient.STATE_IDLE) {
+        if (state == XoClient.STATE_ACTIVE
+                || state == XoClient.STATE_IDLE) {
             tr.hide(StatusFragment.this);
         } else {
             tr.show(StatusFragment.this);

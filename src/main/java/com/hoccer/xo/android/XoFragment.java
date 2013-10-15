@@ -2,8 +2,8 @@ package com.hoccer.xo.android;
 
 import android.app.Activity;
 import com.actionbarsherlock.app.SherlockFragment;
-import com.hoccer.talk.client.HoccerTalkClient;
-import com.hoccer.talk.client.TalkClientDatabase;
+import com.hoccer.talk.client.XoClient;
+import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.xo.android.content.ContentObject;
 import com.hoccer.xo.android.service.IXoClientService;
 import org.apache.log4j.Logger;
@@ -26,7 +26,7 @@ public abstract class XoFragment extends SherlockFragment implements IXoFragment
         LOG = Logger.getLogger(getClass());
     }
 
-    public HoccerTalkClient getXoClient() {
+    public XoClient getXoClient() {
         return XoApplication.getXoClient();
     }
 
@@ -38,7 +38,7 @@ public abstract class XoFragment extends SherlockFragment implements IXoFragment
         return mActivity;
     }
 
-    public TalkClientDatabase getXoDatabase() {
+    public XoClientDatabase getXoDatabase() {
         return mActivity.getXoDatabase();
     }
 

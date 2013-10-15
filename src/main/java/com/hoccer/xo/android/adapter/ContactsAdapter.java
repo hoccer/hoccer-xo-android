@@ -4,7 +4,7 @@ import android.os.RemoteException;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.hoccer.talk.client.ITalkContactListener;
+import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.xo.android.XoActivity;
 import com.hoccer.xo.android.XoAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -24,7 +24,7 @@ import java.util.List;
  * It also has a filter feature that allows restricting the displayed set of contacts.
  *
  */
-public abstract class ContactsAdapter extends XoAdapter implements ITalkContactListener {
+public abstract class ContactsAdapter extends XoAdapter implements IXoContactListener {
 
     private static final Logger LOG = Logger.getLogger(ContactsAdapter.class);
 

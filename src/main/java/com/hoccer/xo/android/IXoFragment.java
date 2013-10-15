@@ -1,6 +1,6 @@
 package com.hoccer.xo.android;
 
-import com.hoccer.talk.client.TalkClientDatabase;
+import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.xo.android.content.ContentObject;
 import com.hoccer.xo.android.service.IXoClientService;
 
@@ -8,7 +8,7 @@ public interface IXoFragment {
 
     public XoActivity getXoActivity();
 
-    public TalkClientDatabase getXoDatabase();
+    public XoClientDatabase getXoDatabase();
 
     public IXoClientService getXoService();
 

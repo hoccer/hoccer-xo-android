@@ -2,7 +2,7 @@ package com.hoccer.xo.android.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import com.hoccer.talk.client.ITalkClientDatabaseBackend;
+import com.hoccer.talk.client.IXoClientDatabaseBackend;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMembership;
@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
 
-public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements ITalkClientDatabaseBackend {
+public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoClientDatabaseBackend {
 
     private static final Logger LOG = Logger.getLogger(AndroidTalkDatabase.class);
 

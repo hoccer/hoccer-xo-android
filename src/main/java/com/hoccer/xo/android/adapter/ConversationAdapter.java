@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.hoccer.talk.client.ITalkMessageListener;
+import com.hoccer.talk.client.IXoMessageListener;
 import com.hoccer.xo.android.XoActivity;
 import com.hoccer.xo.android.XoAdapter;
 import com.hoccer.xo.android.XoApplication;
@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Adapter for messages in a conversation
  */
-public class ConversationAdapter extends XoAdapter implements ITalkMessageListener {
+public class ConversationAdapter extends XoAdapter implements IXoMessageListener {
 
     private static final int VIEW_TYPE_INCOMING = 0;
     private static final int VIEW_TYPE_OUTGOING = 1;

@@ -3,15 +3,15 @@ package com.hoccer.xo.android;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
-import com.hoccer.talk.client.HoccerTalkClient;
-import com.hoccer.talk.client.TalkClientDatabase;
+import com.hoccer.talk.client.XoClient;
+import com.hoccer.talk.client.XoClientDatabase;
 
 import java.io.File;
 
 public abstract class XoAdapter extends BaseAdapter {
 
     protected XoActivity mActivity;
-    protected TalkClientDatabase mDatabase;
+    protected XoClientDatabase mDatabase;
 
     protected Resources mResources;
     protected LayoutInflater mInflater;
@@ -28,7 +28,7 @@ public abstract class XoAdapter extends BaseAdapter {
         mActivity.runOnUiThread(runnable);
     }
 
-    public HoccerTalkClient getXoClient() {
+    public XoClient getXoClient() {
         return XoApplication.getXoClient();
     }
 

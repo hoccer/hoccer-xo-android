@@ -3,7 +3,7 @@ package com.hoccer.xo.android;
 import android.app.Application;
 import android.os.Build;
 import android.os.Environment;
-import com.hoccer.talk.client.HoccerTalkClient;
+import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
@@ -31,7 +31,7 @@ public class XoApplication extends Application {
     private static ScheduledExecutorService EXECUTOR = null;
 
     /** global xo client (initialized in onCreate) */
-    private static HoccerTalkClient CLIENT = null;
+    private static XoClient CLIENT = null;
 
     /** root of user-visible storage (initialized in onCreate) */
     private static File EXTERNAL_STORAGE = null;
@@ -44,7 +44,7 @@ public class XoApplication extends Application {
     }
 
     /** @return the xo client */
-    public static HoccerTalkClient getXoClient() {
+    public static XoClient getXoClient() {
         return CLIENT;
     }
 
@@ -181,7 +181,7 @@ public class XoApplication extends Application {
 
         // create client instance
         LOG.info("creating client");
-        HoccerTalkClient client = new HoccerTalkClient(getExecutor(), AndroidTalkDatabase.getInstance(this.getApplicationContext()), XoSsl.getWebSocketClientFactory());
+        XoClient client = new XoClient(getExecutor(), AndroidTalkDatabase.getInstance(this.getApplicationContext()), XoSsl.getWebSocketClientFactory());
         client.setAvatarDirectory(getAvatarDirectory().toString());
         client.setAttachmentDirectory(getAttachmentDirectory().toString());
         client.setEncryptedUploadDirectory(getEncryptedUploadDirectory().toString());

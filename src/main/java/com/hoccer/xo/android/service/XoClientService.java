@@ -19,11 +19,11 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import com.google.android.gcm.GCMRegistrar;
-import com.hoccer.talk.client.HoccerTalkClient;
-import com.hoccer.talk.client.ITalkStateListener;
-import com.hoccer.talk.client.ITalkUnseenListener;
-import com.hoccer.talk.client.TalkClientConfiguration;
-import com.hoccer.talk.client.TalkClientDatabase;
+import com.hoccer.talk.client.IXoStateListener;
+import com.hoccer.talk.client.IXoUnseenListener;
+import com.hoccer.talk.client.XoClient;
+import com.hoccer.talk.client.XoClientConfiguration;
+import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
@@ -70,7 +70,7 @@ public class XoClientService extends Service {
     ScheduledExecutorService mExecutor;
 
     /** Hoccer client that we serve */
-    HoccerTalkClient mClient;
+    XoClient mClient;
 
     /** Reference to latest auto-shutdown future */
     ScheduledFuture<?> mShutdownFuture;
@@ -193,7 +193,7 @@ public class XoClientService extends Service {
     private void configureServiceUri() {
         String uriString = mPreferences.getString("preference_service_uri", "");
         if(uriString.isEmpty()) {
-            uriString = TalkClientConfiguration.SERVER_URI;
+            uriString = XoClientConfiguration.SERVER_URI;
         }
         URI uri = URI.create(uriString);
         mClient.setServiceUri(uri);
@@ -376,15 +376,15 @@ public class XoClientService extends Service {
 
             int previousState = mClient.getState();
             if(activeNetwork.isConnected()) {
-                if(previousState <= HoccerTalkClient.STATE_INACTIVE) {
+                if(previousState <= XoClient.STATE_INACTIVE) {
                     mClient.activate();
                 }
             } else if(activeNetwork.isConnectedOrConnecting()) {
-                if(previousState <= HoccerTalkClient.STATE_INACTIVE) {
+                if(previousState <= XoClient.STATE_INACTIVE) {
                     mClient.activate();
                 }
             } else {
-                if(previousState > HoccerTalkClient.STATE_INACTIVE) {
+                if(previousState > XoClient.STATE_INACTIVE) {
                     mClient.deactivate();
                 }
             }
@@ -397,7 +397,7 @@ public class XoClientService extends Service {
                     if(!mPreviousConnectionState
                             || mPreviousConnectionType == -1
                             || mPreviousConnectionType != netType) {
-                        if(mClient.getState() < HoccerTalkClient.STATE_CONNECTING) {
+                        if(mClient.getState() < XoClient.STATE_CONNECTING) {
                             mClient.reconnect("connection change");
                         }
                     }
@@ -419,7 +419,7 @@ public class XoClientService extends Service {
 
     private void updateInvitationNotification(List<TalkClientSmsToken> unconfirmedTokens, boolean notify) {
         LOG.info("updateInvitationNotification()");
-        TalkClientDatabase db = mClient.getDatabase();
+        XoClientDatabase db = mClient.getDatabase();
 
         // cancel present notification if everything has been seen
         // we back off here to prevent interruption of any in-progress alarms
@@ -471,7 +471,7 @@ public class XoClientService extends Service {
 
     private void updateNotification(List<TalkClientMessage> allUnseenMessages, boolean notify) {
         LOG.info("updateNotification()");
-        TalkClientDatabase db = mClient.getDatabase();
+        XoClientDatabase db = mClient.getDatabase();
 
         // we re-collect messages to this to eliminate
         // messages from deleted contacts that are still in the db (XXX)
@@ -611,11 +611,11 @@ public class XoClientService extends Service {
         }, delay, TimeUnit.MILLISECONDS);
     }
 
-    private class ClientListener implements ITalkStateListener, ITalkUnseenListener {
+    private class ClientListener implements IXoStateListener, IXoUnseenListener {
         @Override
-        public void onClientStateChange(HoccerTalkClient client, int state) {
-            LOG.info("onClientStateChange(" + HoccerTalkClient.stateToString(state) + ")");
-            if(state == HoccerTalkClient.STATE_ACTIVE) {
+        public void onClientStateChange(XoClient client, int state) {
+            LOG.info("onClientStateChange(" + XoClient.stateToString(state) + ")");
+            if(state == XoClient.STATE_ACTIVE) {
                 mExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
