@@ -131,6 +131,10 @@ public class StatusFragment extends XoFragment implements ITalkStateListener {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        /* This is a workaround for an AOSP bug with the given number,
+         * related to saving state for this kind of fragment.
+         * Don't ask me for the details, its magic.
+         */
         outState.putString("WORKAROUND_FOR_BUG_19917_KEY", "WORKAROUND_FOR_BUG_19917_VALUE");
         super.onSaveInstanceState(outState);
     }
