@@ -18,7 +18,6 @@ import com.google.zxing.integration.android.IntentResult;
 import com.hoccer.talk.client.HoccerTalkClient;
 import com.hoccer.talk.client.TalkClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.android.activity.AboutActivity;
 import com.hoccer.xo.android.activity.LicensesActivity;
 import com.hoccer.xo.android.activity.MessagingActivity;
@@ -32,13 +31,6 @@ import com.hoccer.xo.android.content.ContentObject;
 import com.hoccer.xo.android.content.ContentRegistry;
 import com.hoccer.xo.android.content.ContentSelection;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
-import com.hoccer.xo.android.dialog.ContactDeleteDialog;
-import com.hoccer.xo.android.dialog.ContactDepairDialog;
-import com.hoccer.xo.android.dialog.GroupInviteDialog;
-import com.hoccer.xo.android.dialog.GroupKickDialog;
-import com.hoccer.xo.android.dialog.GroupLeaveDialog;
-import com.hoccer.xo.android.dialog.NameDialog;
-import com.hoccer.xo.android.dialog.TokenDialog;
 import com.hoccer.xo.android.service.IXoClientService;
 import com.hoccer.xo.android.service.IXoClientServiceListener;
 import com.hoccer.xo.android.service.XoClientService;
@@ -65,13 +57,6 @@ public abstract class XoActivity extends SherlockFragmentActivity {
     public final static int REQUEST_SELECT_AVATAR = 23;
     public final static int REQUEST_SELECT_ATTACHMENT = 42;
     public final static int REQUEST_SCAN_BARCODE = IntentIntegrator.REQUEST_CODE; // XXX dirty
-
-    public final static String DIALOG_NAME = "NameDialog";
-    public final static String DIALOG_TOKEN = "TokenDialog";
-    public final static String DIALOG_CONTACT_DELETE = "ContactDeleteDialog";
-    public final static String DIALOG_CONTACT_DEPAIR = "ContactDepairDialog";
-    public final static String DIALOG_GROUP_KICK = "GroupKickDialog";
-    public final static String DIALOG_GROUP_INVITE = "GroupInviteDialog";
 
     protected Logger LOG = null;
 
@@ -629,12 +614,6 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         startActivity(intent);
     }
 
-    public void showTokenDialog(TalkClientSmsToken token) {
-        LOG.debug("showTokenDialog(" + token.getSmsTokenId() + ")");
-        new TokenDialog(this, token)
-                .show(getSupportFragmentManager(), DIALOG_TOKEN);
-    }
-
     public void showPairing() {
         LOG.debug("showPairing()");
         startActivity(new Intent(this, PairingActivity.class));
@@ -716,36 +695,6 @@ public abstract class XoActivity extends SherlockFragmentActivity {
 
     public void hackReturnedFromDialog() {
         LOG.debug("hackReturnedFromDialog()");
-    }
-
-    public void changeName(TalkClientContact contact) {
-        new NameDialog(this, contact)
-                .show(getSupportFragmentManager(), DIALOG_NAME);
-    }
-
-    public void confirmDeleteContact(TalkClientContact contact) {
-        new ContactDeleteDialog(this, contact)
-                .show(getSupportFragmentManager(), DIALOG_CONTACT_DELETE);
-    }
-
-    public void confirmDepairContact(TalkClientContact contact) {
-        new ContactDepairDialog(this, contact)
-                .show(getSupportFragmentManager(), DIALOG_CONTACT_DEPAIR);
-    }
-
-    public void confirmGroupLeave(TalkClientContact group) {
-        new GroupLeaveDialog(this, group)
-                .show(getSupportFragmentManager(), DIALOG_GROUP_KICK);
-    }
-
-    public void selectGroupInvite(TalkClientContact group) {
-        new GroupInviteDialog(this, group)
-                .show(getSupportFragmentManager(), DIALOG_GROUP_INVITE);
-    }
-
-    public void selectGroupKick(TalkClientContact group) {
-        new GroupKickDialog(this, group)
-                .show(getSupportFragmentManager(), DIALOG_GROUP_KICK);
     }
 
 }

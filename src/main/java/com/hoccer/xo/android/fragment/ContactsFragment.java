@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.XoListFragment;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.release.R;
@@ -111,7 +112,7 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
             }
             if(item instanceof TalkClientSmsToken) {
                 TalkClientSmsToken token = (TalkClientSmsToken)item;
-                getXoActivity().showTokenDialog(token);
+                XoDialogs.showTokenDialog(getXoActivity(), token);
             }
         }
     }

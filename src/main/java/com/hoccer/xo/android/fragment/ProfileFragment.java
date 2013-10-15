@@ -18,6 +18,7 @@ import com.hoccer.talk.model.TalkGroup;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkRelationship;
 import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.XoFragment;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
@@ -138,7 +139,7 @@ public class ProfileFragment extends XoFragment
         if(v == mNameOverlay || v == mNameText || v == mNameEditButton) {
             LOG.debug("onClick(nameOverlay|nameText|nameEditButton)");
             if(mContact != null && (mContact.isSelf() || mContact.isGroupAdmin())) {
-                getXoActivity().changeName(mContact);
+                XoDialogs.changeName(getXoActivity(), mContact);
             }
         }
         if(v == mUserBlockButton) {
@@ -167,37 +168,37 @@ public class ProfileFragment extends XoFragment
         if(v == mGroupLeaveButton) {
             LOG.debug("onClick(groupLeaveButton)");
             if(mContact != null && mContact.isGroupJoined() && !mContact.isGroupAdmin()) {
-                getXoActivity().confirmGroupLeave(mContact);
+                XoDialogs.confirmGroupLeave(getXoActivity(), mContact);
             }
         }
         if(v == mGroupDeleteButton) {
             LOG.debug("onClick(groupDeleteButton)");
             if(mContact != null) {
-                getXoActivity().confirmDeleteContact(mContact);
+                XoDialogs.confirmDeleteContact(getXoActivity(), mContact);
             }
         }
         if(v == mGroupInviteButton) {
             LOG.debug("onClick(groupInviteButton)");
             if(mContact != null && mContact.isGroup()) {
-                getXoActivity().selectGroupInvite(mContact);
+                XoDialogs.selectGroupInvite(getXoActivity(), mContact);
             }
         }
         if(v == mGroupKickButton) {
             LOG.debug("onClick(groupKickButton)");
             if(mContact != null && mContact.isGroup()) {
-                getXoActivity().selectGroupKick(mContact);
+                XoDialogs.selectGroupKick(getXoActivity(), mContact);
             }
         }
         if(v == mUserDepairButton) {
             LOG.debug("onClick(userDepairButton)");
             if(mContact != null) {
-                getXoActivity().confirmDepairContact(mContact);
+                XoDialogs.confirmDepairContact(getXoActivity(), mContact);
             }
         }
         if(v == mUserDeleteButton) {
             LOG.debug("onClick(contactDeleteButton)");
             if(mContact != null) {
-                getXoActivity().confirmDeleteContact(mContact);
+                XoDialogs.confirmDeleteContact(getXoActivity(), mContact);
             }
         }
     }
