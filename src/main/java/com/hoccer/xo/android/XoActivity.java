@@ -359,19 +359,6 @@ public abstract class XoActivity extends SherlockFragmentActivity {
     }
 
     /**
-     * Attach our listener to the client service
-     */
-    private void attachServiceListener() {
-        if(mService != null) {
-            try {
-                mService.setListener(new MainServiceListener());
-            } catch (RemoteException e) {
-                LOG.error("remote exception", e);
-            }
-        }
-    }
-
-    /**
      * Connection to our backend service
      */
     public class MainServiceConnection implements ServiceConnection {
@@ -380,7 +367,6 @@ public abstract class XoActivity extends SherlockFragmentActivity {
             LOG.debug("onServiceConnected()");
             mService = (IXoClientService)service;
             scheduleKeepAlive();
-            attachServiceListener();
             try {
                 mService.wake();
             } catch (RemoteException e) {
@@ -405,153 +391,6 @@ public abstract class XoActivity extends SherlockFragmentActivity {
             mService = null;
             for(IXoFragment fragment: mTalkFragments) {
                 fragment.onServiceDisconnected();
-            }
-        }
-    }
-
-    /**
-     * Listener for events from service
-     *
-     * This gets called when the network side of the client has changed
-     * the database. Views should be updated according to what has changed.
-     */
-    public class MainServiceListener extends IXoClientServiceListener.Stub implements IXoClientServiceListener {
-        @Override
-        public void onClientStateChanged(int state) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onClientStateChanged(state);
-            }
-        }
-        @Override
-        public void onTokenPairingFailed(String token) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onTokenPairingFailed(token);
-            }
-        }
-        @Override
-        public void onTokenPairingSucceeded(String token) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onTokenPairingSucceeded(token);
-            }
-        }
-        @Override
-        public void onContactAdded(int contactId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onContactAdded(contactId);
-            }
-        }
-        @Override
-        public void onContactRemoved(int contactId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onContactRemoved(contactId);
-            }
-        }
-        @Override
-        public void onClientPresenceChanged(int contactId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onClientPresenceChanged(contactId);
-            }
-        }
-        @Override
-        public void onClientRelationshipChanged(int contactId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onClientRelationshipChanged(contactId);
-            }
-        }
-        @Override
-        public void onGroupCreationSucceeded(int contactId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onGroupCreationSucceeded(contactId);
-            }
-        }
-        @Override
-        public void onGroupCreationFailed() throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onGroupCreationFailed();
-            }
-        }
-        @Override
-        public void onGroupPresenceChanged(int contactId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onGroupPresenceChanged(contactId);
-            }
-        }
-        @Override
-        public void onGroupMembershipChanged(int contactId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onGroupMembershipChanged(contactId);
-            }
-        }
-        @Override
-        public void onMessageAdded(int contactId, int messageId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onMessageAdded(contactId, messageId);
-            }
-        }
-        @Override
-        public void onMessageRemoved(int contactId, int messageId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onMessageRemoved(contactId, messageId);
-            }
-        }
-        @Override
-        public void onMessageStateChanged(int contactId, int messageId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onMessageStateChanged(contactId, messageId);
-            }
-        }
-        @Override
-        public void onUploadAdded(int contactId, int downloadId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onUploadAdded(contactId, downloadId);
-            }
-        }
-        @Override
-        public void onUploadRemoved(int contactId, int downloadId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onUploadRemoved(contactId, downloadId);
-            }
-        }
-        @Override
-        public void onUploadProgress(int contactId, int downloadId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onUploadProgress(contactId, downloadId);
-            }
-        }
-        @Override
-        public void onUploadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onUploadStateChanged(contactId, downloadId, state);
-            }
-        }
-        @Override
-        public void onDownloadAdded(int contactId, int downloadId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onDownloadAdded(contactId, downloadId);
-            }
-        }
-        @Override
-        public void onDownloadRemoved(int contactId, int downloadId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onDownloadRemoved(contactId, downloadId);
-            }
-        }
-        @Override
-        public void onDownloadProgress(int contactId, int downloadId) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onDownloadProgress(contactId, downloadId);
-            }
-        }
-        @Override
-        public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onDownloadStateChanged(contactId, downloadId, state);
-            }
-        }
-        @Override
-        public void onSmsTokensChanged() throws RemoteException {
-            for(IXoClientServiceListener listener: mListeners) {
-                listener.onSmsTokensChanged();
             }
         }
     }
