@@ -7,10 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.hoccer.talk.client.HoccerTalkClient;
 import com.hoccer.talk.client.ITalkStateListener;
 import com.hoccer.xo.android.XoFragment;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.client.HoccerTalkClient;
 
 /**
  * Mix-in fragment for showing client status
@@ -31,13 +31,27 @@ public class StatusFragment extends XoFragment implements ITalkStateListener {
     }
 
     @Override
+    public void onResume() {
+        LOG.debug("onResume()");
+        super.onResume();
+        getXoClient().registerStateListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        LOG.debug("onPause()");
+        super.onPause();
+        getXoClient().unregisterStateListener(this);
+    }
+
+    @Override
     public void onServiceConnected() {
         LOG.debug("onServiceConnected()");
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                int state = getXoActivity().getClientState();
+                int state = getXoClient().getState();
                 applyClientState(state);
             }
         });

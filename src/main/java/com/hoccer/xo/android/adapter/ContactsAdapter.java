@@ -4,6 +4,7 @@ import android.os.RemoteException;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.hoccer.talk.client.ITalkContactListener;
 import com.hoccer.xo.android.XoActivity;
 import com.hoccer.xo.android.XoAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -23,7 +24,7 @@ import java.util.List;
  * It also has a filter feature that allows restricting the displayed set of contacts.
  *
  */
-public abstract class ContactsAdapter extends XoAdapter {
+public abstract class ContactsAdapter extends XoAdapter implements ITalkContactListener {
 
     private static final Logger LOG = Logger.getLogger(ContactsAdapter.class);
 
@@ -65,6 +66,16 @@ public abstract class ContactsAdapter extends XoAdapter {
 
     public void setShowTokens(boolean mShowTokens) {
         this.mShowTokens = mShowTokens;
+    }
+
+    @Override
+    public void register() {
+        getXoClient().registerContactListener(this);
+    }
+
+    @Override
+    public void unregister() {
+        getXoClient().unregisterContactListener(this);
     }
 
     @Override
@@ -125,9 +136,9 @@ public abstract class ContactsAdapter extends XoAdapter {
     }
 
     @Override
-    public void onContactAdded(int contactId) throws RemoteException {
+    public void onContactAdded(TalkClientContact c) {
         try {
-            TalkClientContact contact = mDatabase.findClientContactById(contactId);
+            TalkClientContact contact = mDatabase.findClientContactById(c.getClientContactId());
             if(contact.isClient()) {
                 mClientContacts.add(contact);
             }
@@ -140,48 +151,31 @@ public abstract class ContactsAdapter extends XoAdapter {
     }
 
     @Override
-    public void onContactRemoved(int contactId) throws RemoteException {
-        LOG.info("onContactRemoved(" + contactId + ")");
+    public void onContactRemoved(TalkClientContact contact) {
         reload();
     }
 
     @Override
-    public void onClientPresenceChanged(int contactId) throws RemoteException {
-        LOG.info("onClientPresenceChanged(" + contactId + ")");
+    public void onClientPresenceChanged(TalkClientContact contact) {
         reload();
     }
 
     @Override
-    public void onClientRelationshipChanged(int contactId) throws RemoteException {
-        LOG.info("onClientRelationshipChanged(" + contactId + ")");
+    public void onClientRelationshipChanged(TalkClientContact contact) {
         reload();
     }
 
     @Override
-    public void onGroupPresenceChanged(int contactId) throws RemoteException {
-        LOG.info("onGroupPresenceChanged(" + contactId + ")");
+    public void onGroupPresenceChanged(TalkClientContact contact) {
         reload();
     }
 
     @Override
-    public void onGroupMembershipChanged(int contactId) throws RemoteException {
-        LOG.info("onGroupMembershipChanged(" + contactId + ")");
+    public void onGroupMembershipChanged(TalkClientContact contact) {
         reload();
     }
 
-    @Override
-    public void onDownloadRemoved(int contactId, int downloadId) throws RemoteException {
-        LOG.info("onDownloadRemoved(" + contactId + "," + downloadId + ")");
-        reload();
-    }
-
-    @Override
-    public void onMessageAdded(int contactId, int messageId) throws RemoteException {
-        LOG.info("onMessageAdded(" + contactId + "," + messageId + ")");
-        reload();
-    }
-
-    @Override
+    // XXX @Override
     public void onSmsTokensChanged() throws RemoteException {
         LOG.info("onSmsTokensChanged()");
         if(mShowTokens) {

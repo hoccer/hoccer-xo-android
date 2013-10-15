@@ -2,6 +2,7 @@ package com.hoccer.xo.android;
 
 import android.app.Activity;
 import com.actionbarsherlock.app.SherlockFragment;
+import com.hoccer.talk.client.HoccerTalkClient;
 import com.hoccer.talk.client.TalkClientDatabase;
 import com.hoccer.xo.android.content.ContentObject;
 import com.hoccer.xo.android.service.IXoClientService;
@@ -23,6 +24,10 @@ public abstract class XoFragment extends SherlockFragment implements IXoFragment
 
     public XoFragment() {
         LOG = Logger.getLogger(getClass());
+    }
+
+    public HoccerTalkClient getXoClient() {
+        return XoApplication.getXoClient();
     }
 
     public File getAvatarDirectory() {

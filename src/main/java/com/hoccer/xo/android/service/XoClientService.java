@@ -11,10 +11,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
@@ -22,23 +20,17 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import com.google.android.gcm.GCMRegistrar;
 import com.hoccer.talk.client.HoccerTalkClient;
-import com.hoccer.talk.client.ITalkClientListener;
-import com.hoccer.talk.client.ITalkTransferListener;
+import com.hoccer.talk.client.ITalkStateListener;
 import com.hoccer.talk.client.ITalkUnseenListener;
 import com.hoccer.talk.client.TalkClientConfiguration;
 import com.hoccer.talk.client.TalkClientDatabase;
-import com.hoccer.talk.client.TalkTransfer;
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
-import com.hoccer.xo.android.XoSsl;
 import com.hoccer.xo.android.activity.ContactsActivity;
 import com.hoccer.xo.android.activity.MessagingActivity;
-import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.push.GcmService;
 import com.hoccer.xo.android.sms.SmsReceiver;
 import com.hoccer.xo.release.R;
@@ -116,16 +108,11 @@ public class XoClientService extends Service {
 
         mConnections = new ArrayList<Connection>();
 
-        mClient = new HoccerTalkClient(mExecutor, AndroidTalkDatabase.getInstance(this.getApplicationContext()), XoSsl.getWebSocketClientFactory());
-        mClient.setAvatarDirectory(XoApplication.getAvatarDirectory().toString());
-        mClient.setAttachmentDirectory(XoApplication.getAttachmentDirectory().toString());
-        mClient.setEncryptedUploadDirectory(XoApplication.getEncryptedUploadDirectory().toString());
-        mClient.setEncryptedDownloadDirectory(XoApplication.getEncryptedDownloadDirectory().toString());
+        mClient = XoApplication.getXoClient();
 
         ClientListener clientListener = new ClientListener();
-        mClient.registerListener(clientListener);
+        mClient.registerStateListener(clientListener);
         mClient.registerUnseenListener(clientListener);
-        mClient.getTransferAgent().registerListener(clientListener);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -153,6 +140,7 @@ public class XoClientService extends Service {
         super.onDestroy();
         mExecutor.shutdownNow();
         unregisterConnectivityReceiver();
+        // XXX unregister client listeners
         if(mPreferencesListener != null) {
             mPreferences.unregisterOnSharedPreferenceChangeListener(mPreferencesListener);
             mPreferencesListener = null;
@@ -310,7 +298,6 @@ public class XoClientService extends Service {
     }
 
     private void notifySmsTokensChanged(boolean notifyUser) {
-        checkBinders();
         try {
             List<TalkClientSmsToken> tokens = mClient.getDatabase().findAllSmsTokens();
             updateInvitationNotification(tokens, notifyUser);
@@ -624,19 +611,7 @@ public class XoClientService extends Service {
         }, delay, TimeUnit.MILLISECONDS);
     }
 
-    private void checkBinders() {
-        for(Connection connection: mConnections) {
-            boolean listenerAlive = true;
-            if(connection.hasListener()) {
-                listenerAlive = connection.getListener().asBinder().isBinderAlive();
-            }
-            if(!(connection.asBinder().isBinderAlive() && listenerAlive)) {
-                mConnections.remove(connection);
-            }
-        }
-    }
-
-    private class ClientListener implements ITalkClientListener, ITalkTransferListener, ITalkUnseenListener {
+    private class ClientListener implements ITalkStateListener, ITalkUnseenListener {
         @Override
         public void onClientStateChange(HoccerTalkClient client, int state) {
             LOG.info("onClientStateChange(" + HoccerTalkClient.stateToString(state) + ")");
@@ -649,317 +624,20 @@ public class XoClientService extends Service {
                     }
                 });
             }
-            checkBinders();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onClientStateChanged(mClient.getState());
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
         }
 
-        @Override
-        public void onPushRegistrationRequested() {
-            LOG.info("onPushRegistrationRequested()");
-            mExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    doRegisterGcm(false);
-                    doUpdateGcm(true);
-                }
-            });
-        }
-
-        @Override
-        public void onContactAdded(TalkClientContact contact) {
-            LOG.info("onContactAdded(" + contact.getClientContactId() + ")");
-            checkBinders();
-            int contactId = contact.getClientContactId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onContactAdded(contactId);
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onContactRemoved(TalkClientContact contact) {
-            LOG.info("onContactRemoved(" + contact.getClientContactId() + ")");
-            checkBinders();
-            int contactId = contact.getClientContactId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onContactRemoved(contactId);
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onClientPresenceChanged(TalkClientContact contact) {
-            LOG.info("onClientPresenceChanged(" + contact.getClientContactId() + ")");
-            checkBinders();
-            int contactId = contact.getClientContactId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onClientPresenceChanged(contactId);
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onClientRelationshipChanged(TalkClientContact contact) {
-            LOG.info("onClientRelationshipChanged(" + contact.getClientContactId() + ")");
-            checkBinders();
-            int contactId = contact.getClientContactId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onClientRelationshipChanged(contactId);
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onGroupPresenceChanged(TalkClientContact contact) {
-            LOG.info("onGroupPresenceChanged(" + contact.getClientContactId() + ")");
-            checkBinders();
-            int contactId = contact.getClientContactId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onGroupPresenceChanged(contactId);
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onGroupMembershipChanged(TalkClientContact contact) {
-            LOG.info("onGroupMembership(" + contact.getClientContactId() + ")");
-            checkBinders();
-            int contactId = contact.getClientContactId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onGroupMembershipChanged(contactId);
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onMessageAdded(TalkClientMessage message) {
-            LOG.info("onMessageAdded(" + message.getClientMessageId()  + ")");
-            checkBinders();
-            int messageId = message.getClientMessageId();
-            int contactId = message.getConversationContact().getClientContactId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onMessageAdded(contactId, messageId);
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onMessageRemoved(TalkClientMessage message) {
-            LOG.info("onMessageRemoved(" + message.getClientMessageId()  + ")");
-            checkBinders();
-            int messageId = message.getClientMessageId();
-            int contactId = message.getConversationContact().getClientContactId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onMessageRemoved(contactId, messageId);
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onMessageStateChanged(TalkClientMessage message) {
-            LOG.info("onMessageStateChanged(" + message.getClientMessageId()  + ")");
-            checkBinders();
-            int messageId = message.getClientMessageId();
-            int contactId = message.getConversationContact().getClientContactId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onMessageStateChanged(contactId, messageId);
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onDownloadStarted(TalkClientDownload download) {
-            LOG.info("onDownloadStarted(" + download.getClientDownloadId() + ")");
-            checkBinders();
-            int downloadId = download.getClientDownloadId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onDownloadAdded(0, downloadId); // XXX
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onDownloadProgress(TalkClientDownload download) {
-            LOG.info("onDownloadProgress(" + download.getClientDownloadId() + ")");
-            checkBinders();
-            int downloadId = download.getClientDownloadId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onDownloadProgress(0, downloadId); // XXX
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onDownloadFinished(TalkClientDownload download) {
-            LOG.info("onDownloadFinished(" + download.getClientDownloadId() + ")");
-            checkBinders();
-            int downloadId = download.getClientDownloadId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onDownloadRemoved(0, downloadId); // XXX
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-            if(download.getType().equals(TalkTransfer.Type.ATTACHMENT)) {
-                String path = XoApplication.getAttachmentLocation(download).toString();
-                String type = download.getContentType();
-                LOG.info("triggering media scan of " + path);
-                MediaScannerConnection.scanFile(XoClientService.this, new String[]{path}, new String[]{type},
-                        new MediaScannerConnection.OnScanCompletedListener() {
-                            @Override
-                            public void onScanCompleted(String path, Uri uri) {
-                                LOG.info("completed scan of path " + path);
-                                LOG.info("content uri is " + uri.toString());
-                            }
-                        });
-            }
-        }
-
-        @Override
-        public void onDownloadStateChanged(TalkClientDownload download) {
-            LOG.info("onDownloadStateChanged(" + download.getClientDownloadId() + ")");
-            checkBinders();
-            int downloadId = download.getClientDownloadId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onDownloadStateChanged(0, downloadId, download.getState().toString()); // XXX
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onUploadStarted(TalkClientUpload upload) {
-            LOG.info("onUploadStarted(" + upload.getClientUploadId() + ")");
-            checkBinders();
-            int downloadId = upload.getClientUploadId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onUploadAdded(0, downloadId); // XXX
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onUploadProgress(TalkClientUpload upload) {
-            LOG.info("onUploadProgress(" + upload.getClientUploadId() + ")");
-            checkBinders();
-            int downloadId = upload.getClientUploadId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onUploadProgress(0, downloadId); // XXX
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onUploadFinished(TalkClientUpload upload) {
-            LOG.info("onUploadFinished(" + upload.getClientUploadId() + ")");
-            checkBinders();
-            int downloadId = upload.getClientUploadId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onUploadRemoved(0, downloadId); // XXX
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onUploadStateChanged(TalkClientUpload upload) {
-            LOG.info("onUploadStateChanged(" + upload.getClientUploadId() + ")");
-            checkBinders();
-            int downloadId = upload.getClientUploadId();
-            for(Connection connection: mConnections) {
-                if(connection.hasListener()) {
-                    try {
-                        connection.getListener().onUploadStateChanged(0, downloadId, upload.getState().toString()); // XXX
-                    } catch (RemoteException e) {
-                        LOG.error("callback error", e);
-                    }
-                }
-            }
-        }
+        // XXX
+        //@Override
+        //public void onPushRegistrationRequested() {
+        //    LOG.info("onPushRegistrationRequested()");
+        //    mExecutor.execute(new Runnable() {
+        //        @Override
+        //        public void run() {
+        //            doRegisterGcm(false);
+        //            doUpdateGcm(true);
+        //        }
+        //    });
+        //}
 
         @Override
         public void onUnseenMessages(List<TalkClientMessage> unseenMessages, boolean notify) {

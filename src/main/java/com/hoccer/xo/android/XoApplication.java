@@ -3,8 +3,10 @@ package com.hoccer.xo.android;
 import android.app.Application;
 import android.os.Build;
 import android.os.Environment;
+import com.hoccer.talk.client.HoccerTalkClient;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import org.apache.log4j.Logger;
@@ -25,8 +27,11 @@ public class XoApplication extends Application {
     /** logger for this class (initialized in onCreate) */
     private static Logger LOG = null;
 
-    /** global executor for client background activity (lazy init) */
+    /** global executor for client background activity (initialized in onCreate) */
     private static ScheduledExecutorService EXECUTOR = null;
+
+    /** global xo client (initialized in onCreate) */
+    private static HoccerTalkClient CLIENT = null;
 
     /** root of user-visible storage (initialized in onCreate) */
     private static File EXTERNAL_STORAGE = null;
@@ -35,10 +40,12 @@ public class XoApplication extends Application {
 
     /** @return common executor for background tasks */
     public static ScheduledExecutorService getExecutor() {
-        if(EXECUTOR == null) {
-            EXECUTOR = Executors.newScheduledThreadPool(2);
-        }
         return EXECUTOR;
+    }
+
+    /** @return the xo client */
+    public static HoccerTalkClient getXoClient() {
+        return CLIENT;
     }
 
     /**
@@ -56,10 +63,6 @@ public class XoApplication extends Application {
     }
 
     private Thread.UncaughtExceptionHandler mPreviousHandler;
-
-    public static File getLogDirectory() {
-        return EXTERNAL_STORAGE;
-    }
 
     public static File getAttachmentDirectory() {
         return new File(EXTERNAL_STORAGE, XoConfiguration.EXTERNAL_ATTACHMENTS);
@@ -171,23 +174,45 @@ public class XoApplication extends Application {
         ensureNomedia(getEncryptedUploadDirectory());
         ensureDirectory(getEncryptedDownloadDirectory());
         ensureNomedia(getEncryptedDownloadDirectory());
+
+        // create executor
+        LOG.info("creating background executor");
+        EXECUTOR = Executors.newScheduledThreadPool(2);
+
+        // create client instance
+        LOG.info("creating client");
+        HoccerTalkClient client = new HoccerTalkClient(getExecutor(), AndroidTalkDatabase.getInstance(this.getApplicationContext()), XoSsl.getWebSocketClientFactory());
+        client.setAvatarDirectory(getAvatarDirectory().toString());
+        client.setAttachmentDirectory(getAttachmentDirectory().toString());
+        client.setEncryptedUploadDirectory(getEncryptedUploadDirectory().toString());
+        client.setEncryptedDownloadDirectory(getEncryptedDownloadDirectory().toString());
+        CLIENT = client;
     }
 
     @Override
     public void onTerminate() {
         super.onTerminate();
 
+        LOG.info("deactivating client");
+        if(CLIENT != null) {
+            CLIENT.deactivateNow();
+            CLIENT = null;
+        }
+
+        LOG.info("removing uncaught exception handler");
         if(mPreviousHandler != null) {
             Thread.setDefaultUncaughtExceptionHandler(mPreviousHandler);
             mPreviousHandler = null;
         }
 
-        XoLogging.shutdown();
-
+        LOG.info("shutting down executor");
         if(EXECUTOR != null) {
             EXECUTOR.shutdownNow();
             EXECUTOR = null;
         }
+
+        LOG.info("shutting down logging");
+        XoLogging.shutdown();
     }
 
     public static void ensureDirectory(File directory) {

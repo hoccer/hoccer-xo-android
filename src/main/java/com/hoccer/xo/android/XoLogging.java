@@ -35,6 +35,11 @@ public class XoLogging {
     /** Logcat appender */
     private static LogcatAppender      sLogcatAppender;
 
+    /** @return directory for log files */
+    private static File getLogDirectory() {
+        return XoApplication.getExternalStorage();
+    }
+
     /**
      * Initialize the logging system
      * @param application for context
@@ -50,7 +55,7 @@ public class XoLogging {
 
         // create file appender
         try {
-            File file = new File(XoApplication.getLogDirectory(), XoConfiguration.LOG_FILE_NAME);
+            File file = new File(getLogDirectory(), XoConfiguration.LOG_FILE_NAME);
             sFileAppender = new RollingFileAppender(XoConfiguration.LOG_FILE_LAYOUT, file.toString());
             sFileAppender.setMaximumFileSize(XoConfiguration.LOG_FILE_SIZE);
             sFileAppender.setMaxBackupIndex(XoConfiguration.LOG_FILE_COUNT);
@@ -103,7 +108,7 @@ public class XoLogging {
         boolean enabled = sPreferences.getBoolean("preference_log_sd", false);
         Log.i(TAG, "[logging] " + (enabled ? "enabling" : "disabling") + " logging to SD card");
         if(enabled) {
-            XoApplication.ensureDirectory(XoApplication.getLogDirectory());
+            XoApplication.ensureDirectory(getLogDirectory());
             sRootLogger.addAppender(sFileAppender);
         } else {
             sRootLogger.removeAppender(sFileAppender);

@@ -116,6 +116,10 @@ public abstract class XoActivity extends SherlockFragmentActivity {
     protected abstract int getLayoutResource();
     protected abstract int getMenuResource();
 
+    public HoccerTalkClient getXoClient() {
+        return XoApplication.getXoClient();
+    }
+
     public ScheduledExecutorService getBackgroundExecutor() {
         return mBackgroundExecutor;
     }

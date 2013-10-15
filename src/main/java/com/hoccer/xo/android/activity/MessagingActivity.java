@@ -2,20 +2,20 @@ package com.hoccer.xo.android.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.support.v4.app.FragmentManager;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.hoccer.talk.client.ITalkContactListener;
+import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.XoActivity;
-import com.hoccer.xo.release.R;
 import com.hoccer.xo.android.fragment.CompositionFragment;
 import com.hoccer.xo.android.fragment.MessagingFragment;
-import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.xo.release.R;
 
 import java.sql.SQLException;
 
-public class MessagingActivity extends XoActivity {
+public class MessagingActivity extends XoActivity implements ITalkContactListener {
 
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 
@@ -76,6 +76,16 @@ public class MessagingActivity extends XoActivity {
                 }
             }
         }
+
+        getXoClient().registerContactListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        LOG.debug("onPause()");
+        super.onPause();
+
+        getXoClient().unregisterContactListener(this);
     }
 
     @Override
@@ -123,11 +133,36 @@ public class MessagingActivity extends XoActivity {
         invalidateOptionsMenu();
     }
 
-    // XXX @Override
-    public void onContactRemoved(int contactId) throws RemoteException {
-        if(mContact != null && mContact.getClientContactId() == contactId) {
+    @Override
+    public void onContactAdded(TalkClientContact contact) {
+        // we don't care
+    }
+
+    @Override
+    public void onContactRemoved(TalkClientContact contact) {
+        if(mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
             finish();
         }
+    }
+
+    @Override
+    public void onClientPresenceChanged(TalkClientContact contact) {
+        // we don't care
+    }
+
+    @Override
+    public void onClientRelationshipChanged(TalkClientContact contact) {
+        // we don't care
+    }
+
+    @Override
+    public void onGroupPresenceChanged(TalkClientContact contact) {
+        // we don't care
+    }
+
+    @Override
+    public void onGroupMembershipChanged(TalkClientContact contact) {
+        // we don't care
     }
 
 }

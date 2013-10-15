@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.hoccer.talk.client.ITalkMessageListener;
 import com.hoccer.xo.android.XoActivity;
 import com.hoccer.xo.android.XoAdapter;
 import com.hoccer.xo.android.XoApplication;
@@ -33,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Adapter for messages in a conversation
  */
-public class ConversationAdapter extends XoAdapter {
+public class ConversationAdapter extends XoAdapter implements ITalkMessageListener {
 
     private static final int VIEW_TYPE_INCOMING = 0;
     private static final int VIEW_TYPE_OUTGOING = 1;
@@ -62,37 +63,27 @@ public class ConversationAdapter extends XoAdapter {
     }
 
     @Override
-    public void onMessageAdded(int contactId, int messageId) throws RemoteException {
+    public void register() {
+        getXoClient().registerMessageListener(this);
+    }
+
+    @Override
+    public void unregister() {
+        getXoClient().unregisterMessageListener(this);
+    }
+
+    @Override
+    public void onMessageAdded(TalkClientMessage message) {
         reload();
     }
 
     @Override
-    public void onMessageRemoved(int contactId, int messageId) throws RemoteException {
+    public void onMessageRemoved(TalkClientMessage message) {
         reload();
     }
 
     @Override
-    public void onMessageStateChanged(int contactId, int messageId) throws RemoteException {
-        reload();
-    }
-
-    @Override
-    public void onDownloadProgress(int contactId, int downloadId) throws RemoteException {
-        reload();
-    }
-
-    @Override
-    public void onDownloadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
-        reload();
-    }
-
-    @Override
-    public void onUploadProgress(int contactId, int downloadId) throws RemoteException {
-        reload();
-    }
-
-    @Override
-    public void onUploadStateChanged(int contactId, int downloadId, String state) throws RemoteException {
+    public void onMessageStateChanged(TalkClientMessage message) {
         reload();
     }
 

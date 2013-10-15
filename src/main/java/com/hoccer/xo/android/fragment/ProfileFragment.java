@@ -10,19 +10,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.hoccer.talk.client.ITalkContactsListener;
-import com.hoccer.talk.client.ITalkTransferListener;
-import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.android.XoFragment;
-import com.hoccer.xo.android.adapter.ContactsAdapter;
-import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
-import com.hoccer.xo.android.content.ContentObject;
+import com.hoccer.talk.client.ITalkContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.model.TalkGroup;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkRelationship;
+import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.XoFragment;
+import com.hoccer.xo.android.adapter.ContactsAdapter;
+import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
+import com.hoccer.xo.android.content.ContentObject;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
@@ -35,7 +34,7 @@ import java.sql.SQLException;
  *
  */
 public class ProfileFragment extends XoFragment
-        implements View.OnClickListener, ITalkContactsListener, ITalkTransferListener {
+        implements View.OnClickListener, ITalkContactListener {
 
     private static final Logger LOG = Logger.getLogger(ProfileFragment.class);
 
@@ -112,6 +111,20 @@ public class ProfileFragment extends XoFragment
         mGroupMembersList = (ListView)v.findViewById(R.id.profile_group_members_list);
 
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        LOG.debug("onResume()");
+        super.onResume();
+        getXoClient().registerContactListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        LOG.debug("onPause()");
+        super.onPause();
+        getXoClient().unregisterContactListener(this);
     }
 
     @Override
@@ -379,11 +392,12 @@ public class ProfileFragment extends XoFragment
 
     @Override
     public void onContactAdded(TalkClientContact contact) {
+        // we don't care
     }
 
     @Override
     public void onContactRemoved(TalkClientContact contact) {
-        // XXX
+        // we don't care - if our own contact gets removed the activity will finish itself
     }
 
     @Override
@@ -412,46 +426,6 @@ public class ProfileFragment extends XoFragment
         if(mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
             refreshContact();
         }
-    }
-
-    @Override
-    public void onDownloadStarted(TalkClientDownload download) {
-        // XXX
-    }
-
-    @Override
-    public void onDownloadProgress(TalkClientDownload download) {
-        // XXX
-    }
-
-    @Override
-    public void onDownloadFinished(TalkClientDownload download) {
-        // XXX
-    }
-
-    @Override
-    public void onDownloadStateChanged(TalkClientDownload download) {
-        // XXX
-    }
-
-    @Override
-    public void onUploadStarted(TalkClientUpload upload) {
-        // XXX
-    }
-
-    @Override
-    public void onUploadProgress(TalkClientUpload upload) {
-        // XXX
-    }
-
-    @Override
-    public void onUploadFinished(TalkClientUpload upload) {
-        // XXX
-    }
-
-    @Override
-    public void onUploadStateChanged(TalkClientUpload upload) {
-        // XXX
     }
 
 }
