@@ -19,6 +19,9 @@ public class XoSsl {
     private static WebSocketClientFactory WS_CLIENT_FACTORY = null;
 
     public static KeyStore getKeyStore() {
+        if(KEYSTORE == null) {
+            throw new RuntimeException("SSL security not initialized");
+        }
         return KEYSTORE;
     }
 
@@ -28,12 +31,11 @@ public class XoSsl {
             WebSocketClientFactory wscFactory = new WebSocketClientFactory();
             SslContextFactory sslcFactory = wscFactory.getSslContextFactory();
             sslcFactory.setTrustAll(false);
-            sslcFactory.setTrustStore(getKeyStore());
             sslcFactory.setKeyStore(getKeyStore());
             sslcFactory.setEnableCRLDP(false);
             sslcFactory.setEnableOCSP(false);
-            sslcFactory.setSessionCachingEnabled(true);
-            sslcFactory.setSslSessionCacheSize(23);
+            sslcFactory.setSessionCachingEnabled(XoClientConfiguration.TLS_SESSION_CACHE_ENABLED);
+            sslcFactory.setSslSessionCacheSize(XoClientConfiguration.TLS_SESSION_CACHE_SIZE);
             sslcFactory.setIncludeCipherSuites(XoClientConfiguration.TLS_CIPHERS);
             sslcFactory.setIncludeProtocols(XoClientConfiguration.TLS_PROTOCOLS);
             try {

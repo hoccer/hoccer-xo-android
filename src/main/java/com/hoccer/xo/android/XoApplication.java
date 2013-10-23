@@ -181,7 +181,7 @@ public class XoApplication extends Application {
 
         // create client instance
         LOG.info("creating client");
-        XoClient client = new XoClient(getExecutor(), AndroidTalkDatabase.getInstance(this.getApplicationContext()), XoSsl.getWebSocketClientFactory());
+        XoClient client = new XoClient(getExecutor(), AndroidTalkDatabase.getInstance(this), XoSsl.getWebSocketClientFactory());
         client.setAvatarDirectory(getAvatarDirectory().toString());
         client.setAttachmentDirectory(getAttachmentDirectory().toString());
         client.setEncryptedUploadDirectory(getEncryptedUploadDirectory().toString());
