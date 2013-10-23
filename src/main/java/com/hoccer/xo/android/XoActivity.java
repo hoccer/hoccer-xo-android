@@ -44,13 +44,14 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Base class for activities working with the talk client
+ * Base class for our activities
  *
- * This encapsulated commonalities:
- *  - Database access
- *  - Permanent connection to the client service
- *  - Methods for moving between activities
- *  - Methods for constructing view adapters
+ * All our activities inherit from SherlockFragmentActivity
+ * to maintain a common look and feel in the whole application.
+ *
+ * These activites continually keep the background service which
+ * we use for connection retention alive by calling it via RPC.
+ *
  */
 public abstract class XoActivity extends SherlockFragmentActivity {
 

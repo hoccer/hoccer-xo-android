@@ -19,8 +19,10 @@ import java.util.concurrent.ScheduledExecutorService;
 /**
  * Application class
  *
- * This class handles the application lifecycle,
- * setting up various things as it does so.
+ * This class handles the application lifecycle and is responsible
+ * for such things as initializing the logger and setting up the
+ * XO client itself. All global initialization should go here.
+ *
  */
 public class XoApplication extends Application {
 

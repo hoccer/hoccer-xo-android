@@ -8,6 +8,14 @@ import com.hoccer.talk.client.XoClientDatabase;
 
 import java.io.File;
 
+/**
+ * Base class for list adapters
+ *
+ * This enforces a registration/deregistration lifecycle
+ * for use with client listeners and provides some
+ * convenience methods.
+ *
+ */
 public abstract class XoAdapter extends BaseAdapter {
 
     protected XoActivity mActivity;
