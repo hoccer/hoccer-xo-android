@@ -5,8 +5,11 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import com.hoccer.talk.content.ContentState;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.release.R;
@@ -30,13 +33,17 @@ public class ContentView extends LinearLayout {
 
     LinearLayout mContentWrapper;
 
-    LinearLayout mContentDownloading;
-    LinearLayout mContentUnavailable;
-    LinearLayout mContentDownload;
-    LinearLayout mContentUploading;
+    LinearLayout mContentFooter;
 
-    ProgressBar mDownloadingProgress;
-    ProgressBar mUploadingProgress;
+    ImageView mContentType;
+
+    TextView mContentDescription;
+    TextView mContentStatus;
+
+    Button mDownloadButton;
+    Button mUploadButton;
+
+    ProgressBar mTransferProgress;
 
     /**
      * Maximum height for content view in DP.
@@ -68,14 +75,15 @@ public class ContentView extends LinearLayout {
     }
 
     private void initView(Context context) {
-        addView(inflate(context, R.layout.view_content, null));
-        mContentWrapper = (LinearLayout)findViewById(R.id.content_content);
-        mContentDownloading = (LinearLayout)findViewById(R.id.content_downloading);
-        mContentDownload = (LinearLayout)findViewById(R.id.content_download);
-        mContentUnavailable = (LinearLayout)findViewById(R.id.content_unavailable);
-        mContentUploading = (LinearLayout)findViewById(R.id.content_uploading);
-        mDownloadingProgress = (ProgressBar)findViewById(R.id.content_downloading_progress);
-        mUploadingProgress = (ProgressBar)findViewById(R.id.content_uploading_progress);
+        addView(inflate(context, R.layout.view_content_new, null));
+        mContentWrapper = (LinearLayout)findViewById(R.id.content_wrapper);
+        mContentFooter = (LinearLayout)findViewById(R.id.content_footer);
+        mContentType = (ImageView)findViewById(R.id.content_type_image);
+        mContentDescription = (TextView)findViewById(R.id.content_description_text);
+        mContentStatus = (TextView)findViewById(R.id.content_status_text);
+        mDownloadButton = (Button)findViewById(R.id.content_download_button);
+        mUploadButton = (Button)findViewById(R.id.content_upload_button);
+        mTransferProgress = (ProgressBar)findViewById(R.id.content_transfer_progress);
     }
 
     public int getMaxContentHeight() {
@@ -104,76 +112,86 @@ public class ContentView extends LinearLayout {
             }
         }
 
-        // remove all previous child views
-        if(contentChanged || !object.isContentAvailable()) {
-            mContentWrapper.removeAllViews();
-        }
-
         // remember the new object
         mObject = object;
 
         // we examine the state of the object
+        boolean available = object.isContentAvailable();
         ContentState state = object.getContentState();
 
-        LOG.debug("content " + object.getContentUrl() + " in state " + state);
-
-        if(state.equals(ContentState.DOWNLOAD_NEW)) {
-            mContentDownload.setVisibility(VISIBLE);
+        // footer
+        if(state == ContentState.SELECTED || state == ContentState.UPLOAD_COMPLETE || state == ContentState.DOWNLOAD_COMPLETE) {
+            mContentFooter.setVisibility(GONE);
         } else {
-            mContentDownload.setVisibility(GONE);
+            mContentFooter.setVisibility(VISIBLE);
         }
 
-        if(state.equals(ContentState.DOWNLOAD_IN_PROGRESS)) {
-            mContentDownloading.setVisibility(VISIBLE);
+        // description
+        mContentDescription.setText(object.getContentMediaType());
+
+        // status text
+        if(state == ContentState.SELECTED) {
+            mContentStatus.setVisibility(GONE);
+        } else {
+            mContentStatus.setVisibility(VISIBLE);
+            int stateRes = 0;
+            switch(state) {
+            case DOWNLOAD_NEW:
+            case DOWNLOAD_IN_PROGRESS:
+            case DOWNLOAD_PAUSED:
+            case DOWNLOAD_COMPLETE:
+            case DOWNLOAD_FAILED:
+            case UPLOAD_NEW:
+            case UPLOAD_IN_PROGRESS:
+            case UPLOAD_PAUSED:
+            case UPLOAD_COMPLETE:
+            case UPLOAD_FAILED:
+            }
+        }
+
+        // download/upload actions
+        if(state == ContentState.DOWNLOAD_NEW || state == ContentState.DOWNLOAD_PAUSED) {
+            mDownloadButton.setVisibility(VISIBLE);
+        } else {
+            mDownloadButton.setVisibility(GONE);
+        }
+        if(state == ContentState.UPLOAD_NEW || state == ContentState.UPLOAD_PAUSED) {
+            mUploadButton.setVisibility(VISIBLE);
+        } else {
+            mUploadButton.setVisibility(GONE);
+        }
+
+        // progress bar
+        if(state == ContentState.DOWNLOAD_IN_PROGRESS || state == ContentState.UPLOAD_IN_PROGRESS) {
+            mTransferProgress.setVisibility(VISIBLE);
             int length = object.getTransferLength();
             int progress = object.getTransferProgress();
             if(length > 0 && progress > 0) {
-                mDownloadingProgress.setIndeterminate(false);
-                mDownloadingProgress.setMax(length);
-                mDownloadingProgress.setProgress(progress);
+                mTransferProgress.setIndeterminate(false);
+                mTransferProgress.setMax(length);
+                mTransferProgress.setProgress(progress);
             } else {
-                mDownloadingProgress.setIndeterminate(true);
+                mTransferProgress.setIndeterminate(true);
             }
         } else {
-            mContentDownloading.setVisibility(GONE);
+            mTransferProgress.setVisibility(GONE);
         }
 
-        if(state.equals(ContentState.UPLOAD_IN_PROGRESS)) {
-            mContentUploading.setVisibility(VISIBLE);
-            int length = object.getTransferLength();
-            if(length > 0) {
-                mUploadingProgress.setIndeterminate(false);
-                mUploadingProgress.setMax(length);
-                mUploadingProgress.setProgress(object.getTransferProgress());
-            } else {
-                mUploadingProgress.setIndeterminate(true);
+        // content wrapper
+        if(contentChanged || !object.isContentAvailable()) {
+            mContentWrapper.removeAllViews();
+        }
+        if(available && !isInEditMode()) {
+            mContentWrapper.setVisibility(VISIBLE);
+            if(contentChanged || mContentWrapper.getChildCount() == 0) {
+                View view = mRegistry.createViewForContent(activity, object, this);
+                if(view != null) {
+                    view.setVisibility(VISIBLE);
+                    mContentWrapper.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                }
             }
         } else {
-            mContentUploading.setVisibility(GONE);
-        }
-
-        if(this.isInEditMode()) {
             mContentWrapper.setVisibility(GONE);
-        } else if(mRegistry != null) {
-            if(object.isContentAvailable()) {
-                mContentUnavailable.setVisibility(GONE);
-                mContentWrapper.setVisibility(VISIBLE);
-                if(contentChanged || mContentWrapper.getChildCount() == 0) {
-                    View view = mRegistry.createViewForContent(activity, object, this);
-                    if(view != null) {
-                        view.setVisibility(VISIBLE);
-                        mContentWrapper.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                    }
-                }
-                if(state == ContentState.SELECTED || state == ContentState.DOWNLOAD_COMPLETE || state == ContentState.UPLOAD_COMPLETE) {
-                    mContentWrapper.setEnabled(true);
-                } else {
-                    mContentWrapper.setEnabled(false);
-                }
-            } else {
-                mContentUnavailable.setVisibility(VISIBLE);
-                mContentWrapper.setVisibility(GONE);
-            }
         }
     }
 
