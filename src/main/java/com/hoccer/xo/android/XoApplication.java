@@ -1,8 +1,11 @@
 package com.hoccer.xo.android;
 
 import android.app.Application;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import com.hoccer.talk.client.IXoClientDatabaseBackend;
+import com.hoccer.talk.client.IXoClientHost;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
@@ -10,9 +13,12 @@ import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.websocket.WebSocketClientFactory;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -24,7 +30,7 @@ import java.util.concurrent.ScheduledExecutorService;
  * XO client itself. All global initialization should go here.
  *
  */
-public class XoApplication extends Application {
+public class XoApplication extends Application implements IXoClientHost {
 
     /** logger for this class (initialized in onCreate) */
     private static Logger LOG = null;
@@ -120,8 +126,24 @@ public class XoApplication extends Application {
         return null;
     }
 
+    @Override
+    public ScheduledExecutorService getBackgroundExecutor() {
+        return getExecutor();
+    }
+    @Override
+    public IXoClientDatabaseBackend getDatabaseBackend() {
+        return AndroidTalkDatabase.getInstance(this);
+    }
+    @Override
+    public WebSocketClientFactory getWebSocketFactory() {
+        return XoSsl.getWebSocketClientFactory();
+    }
+    @Override
+    public InputStream openInputStreamForUrl(String url) throws FileNotFoundException {
+        return getContentResolver().openInputStream(Uri.parse(url));
+    }
 
-	@Override
+    @Override
 	public void onCreate() {
 		super.onCreate();
 
@@ -183,7 +205,7 @@ public class XoApplication extends Application {
 
         // create client instance
         LOG.info("creating client");
-        XoClient client = new XoClient(getExecutor(), AndroidTalkDatabase.getInstance(this), XoSsl.getWebSocketClientFactory());
+        XoClient client = new XoClient(this);
         client.setAvatarDirectory(getAvatarDirectory().toString());
         client.setAttachmentDirectory(getAttachmentDirectory().toString());
         client.setEncryptedUploadDirectory(getEncryptedUploadDirectory().toString());
