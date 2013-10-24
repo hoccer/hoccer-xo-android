@@ -10,6 +10,11 @@ import org.eclipse.jetty.websocket.WebSocketClientFactory;
 import java.io.InputStream;
 import java.security.KeyStore;
 
+/**
+ * Static SSL configuration
+ *
+ * This class takes care of our SSL initialization.
+ */
 public class XoSsl {
 
     private static Logger LOG = Logger.getLogger(XoSsl.class);

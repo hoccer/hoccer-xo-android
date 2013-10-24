@@ -11,6 +11,11 @@ import com.hoccer.xo.android.dialog.GroupLeaveDialog;
 import com.hoccer.xo.android.dialog.NameDialog;
 import com.hoccer.xo.android.dialog.TokenDialog;
 
+/**
+ * Static dialog launchers
+ *
+ * This class contains wrappers for launching dialogs.
+ */
 public class XoDialogs {
 
     public final static String DIALOG_NAME = "NameDialog";

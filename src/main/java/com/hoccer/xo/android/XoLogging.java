@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Logging routines
+ * Static logging routines
  *
  * This class initializes and terminates our logging system.
  */

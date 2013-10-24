@@ -4,7 +4,7 @@ import org.apache.log4j.Layout;
 import org.apache.log4j.PatternLayout;
 
 /**
- * Android client configuration
+ * Static client configuration
  *
  * This class collects various android-specific settings for the XO client.
  */
