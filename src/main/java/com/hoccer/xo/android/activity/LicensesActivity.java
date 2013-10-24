@@ -3,7 +3,7 @@ package com.hoccer.xo.android.activity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
-import com.hoccer.xo.android.XoActivity;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
 
 import java.io.ByteArrayOutputStream;

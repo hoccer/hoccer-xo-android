@@ -1,4 +1,4 @@
-package com.hoccer.xo.android;
+package com.hoccer.xo.android.base;
 
 import android.app.Activity;
 import com.actionbarsherlock.app.SherlockListFragment;

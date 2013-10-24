@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import com.actionbarsherlock.widget.SearchView;
-import com.hoccer.xo.android.XoListFragment;
+import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.release.R;
 import com.hoccer.xo.android.adapter.ConversationAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;

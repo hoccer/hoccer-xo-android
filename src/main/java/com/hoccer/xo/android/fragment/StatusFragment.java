@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.hoccer.talk.client.IXoStateListener;
 import com.hoccer.talk.client.XoClient;
-import com.hoccer.xo.android.XoFragment;
+import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.release.R;
 
 /**

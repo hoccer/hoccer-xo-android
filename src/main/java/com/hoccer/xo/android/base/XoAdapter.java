@@ -1,10 +1,11 @@
-package com.hoccer.xo.android;
+package com.hoccer.xo.android.base;
 
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientDatabase;
+import com.hoccer.xo.android.XoApplication;
 
 import java.io.File;
 

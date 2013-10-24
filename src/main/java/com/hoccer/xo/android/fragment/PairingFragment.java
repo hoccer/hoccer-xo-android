@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.android.XoFragment;
+import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.release.R;
 
 import java.util.concurrent.ScheduledFuture;

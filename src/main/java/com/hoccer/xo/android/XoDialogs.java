@@ -2,6 +2,7 @@ package com.hoccer.xo.android;
 
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.dialog.ContactDeleteDialog;
 import com.hoccer.xo.android.dialog.ContactDepairDialog;
 import com.hoccer.xo.android.dialog.GroupInviteDialog;

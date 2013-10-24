@@ -3,7 +3,7 @@ package com.hoccer.xo.android.adapter;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.hoccer.xo.android.XoActivity;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.release.R;

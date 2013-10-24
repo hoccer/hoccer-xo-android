@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import com.actionbarsherlock.app.ActionBar;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.xo.android.XoActivity;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.ProfileFragment;
 import com.hoccer.xo.release.R;
 

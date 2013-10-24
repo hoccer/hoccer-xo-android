@@ -1,10 +1,11 @@
-package com.hoccer.xo.android;
+package com.hoccer.xo.android.base;
 
 import android.app.Activity;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.service.IXoClientService;
 import org.apache.log4j.Logger;
 

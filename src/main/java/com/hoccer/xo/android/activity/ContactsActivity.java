@@ -1,6 +1,6 @@
 package com.hoccer.xo.android.activity;
 
-import com.hoccer.xo.android.XoActivity;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
 
 public class ContactsActivity extends XoActivity {

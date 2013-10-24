@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import com.hoccer.xo.android.XoDialogs;
-import com.hoccer.xo.android.XoListFragment;
+import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.release.R;
 import com.hoccer.xo.android.adapter.ContactsAdapter;

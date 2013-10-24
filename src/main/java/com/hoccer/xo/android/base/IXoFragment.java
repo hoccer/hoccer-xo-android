@@ -1,4 +1,4 @@
-package com.hoccer.xo.android;
+package com.hoccer.xo.android.base;
 
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.content.IContentObject;

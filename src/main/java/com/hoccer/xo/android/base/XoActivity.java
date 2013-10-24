@@ -1,4 +1,4 @@
-package com.hoccer.xo.android;
+package com.hoccer.xo.android.base;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -19,6 +19,8 @@ import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.activity.AboutActivity;
 import com.hoccer.xo.android.activity.LicensesActivity;
 import com.hoccer.xo.android.activity.MessagingActivity;

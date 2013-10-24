@@ -8,7 +8,7 @@ import android.os.RemoteException;
 import android.text.InputType;
 import android.widget.EditText;
 import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.hoccer.xo.android.XoActivity;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
 import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;

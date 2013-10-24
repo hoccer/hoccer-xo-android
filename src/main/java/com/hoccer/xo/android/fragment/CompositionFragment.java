@@ -14,7 +14,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.content.IContentObject;
-import com.hoccer.xo.android.XoFragment;
+import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
 import com.hoccer.xo.android.content.ContentView;
