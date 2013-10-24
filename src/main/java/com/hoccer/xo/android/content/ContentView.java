@@ -105,12 +105,14 @@ public class ContentView extends LinearLayout {
         }
 
         // remove all previous child views
-        if(contentChanged) {
+        if(contentChanged || !object.isContentAvailable()) {
             mContentWrapper.removeAllViews();
         }
 
+        // remember the new object
         mObject = object;
 
+        // we examine the state of the object
         ContentState state = object.getContentState();
 
         LOG.debug("content " + object.getContentUrl() + " in state " + state);
@@ -119,23 +121,6 @@ public class ContentView extends LinearLayout {
             mContentDownload.setVisibility(VISIBLE);
         } else {
             mContentDownload.setVisibility(GONE);
-        }
-
-        if(this.isInEditMode()) {
-            mContentWrapper.setVisibility(GONE);
-        } else if(mRegistry != null) {
-            if(object.isContentAvailable()) {
-                mContentWrapper.setVisibility(VISIBLE);
-                if(contentChanged || mContentWrapper.getChildCount() == 0) {
-                    View view = mRegistry.createViewForContent(activity, object, this);
-                    if(view != null) {
-                        view.setVisibility(VISIBLE);
-                        mContentWrapper.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                    }
-                }
-            } else {
-                mContentWrapper.setVisibility(GONE);
-            }
         }
 
         if(state.equals(ContentState.DOWNLOAD_IN_PROGRESS)) {
@@ -167,10 +152,28 @@ public class ContentView extends LinearLayout {
             mContentUploading.setVisibility(GONE);
         }
 
-        if(!object.isContentAvailable()) {
-            mContentUnavailable.setVisibility(VISIBLE);
-        } else {
-            mContentUnavailable.setVisibility(GONE);
+        if(this.isInEditMode()) {
+            mContentWrapper.setVisibility(GONE);
+        } else if(mRegistry != null) {
+            if(object.isContentAvailable()) {
+                mContentUnavailable.setVisibility(GONE);
+                mContentWrapper.setVisibility(VISIBLE);
+                if(contentChanged || mContentWrapper.getChildCount() == 0) {
+                    View view = mRegistry.createViewForContent(activity, object, this);
+                    if(view != null) {
+                        view.setVisibility(VISIBLE);
+                        mContentWrapper.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    }
+                }
+                if(state == ContentState.SELECTED || state == ContentState.DOWNLOAD_COMPLETE || state == ContentState.UPLOAD_COMPLETE) {
+                    mContentWrapper.setEnabled(true);
+                } else {
+                    mContentWrapper.setEnabled(false);
+                }
+            } else {
+                mContentUnavailable.setVisibility(VISIBLE);
+                mContentWrapper.setVisibility(GONE);
+            }
         }
     }
 
