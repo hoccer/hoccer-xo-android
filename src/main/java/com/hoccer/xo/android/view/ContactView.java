@@ -138,25 +138,11 @@ public class ContactView extends RelativeLayout {
     private InputStream openStreamForContent(String contentUri) {
         LOG.trace("openStreamForContent(" + contentUri + ")");
         InputStream is = null;
-        // handle content uris
-        if(contentUri.startsWith("content://")) {
-            ContentResolver resolver = getContext().getContentResolver();
-            try {
-                is = resolver.openInputStream(Uri.parse(contentUri));
-            } catch (FileNotFoundException e) {
-                LOG.error("could not find vcard", e);
-            }
-        }
-        // handle file uris
-        if(contentUri.startsWith("file://")) {
-            try {
-                URL url = new URL(contentUri);
-                is = url.openStream();
-            } catch (MalformedURLException e) {
-                LOG.error("invalid file uri", e);
-            } catch (IOException e) {
-                LOG.error("could not open file", e);
-            }
+        ContentResolver resolver = getContext().getContentResolver();
+        try {
+            is = resolver.openInputStream(Uri.parse(contentUri));
+        } catch (FileNotFoundException e) {
+            LOG.error("could not find vcard", e);
         }
         if(is == null) {
             LOG.error("don't know how to open " + contentUri);
