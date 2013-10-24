@@ -21,8 +21,6 @@ import org.apache.log4j.Logger;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -113,26 +111,30 @@ public class ContactView extends RelativeLayout {
         if(!photos.isEmpty()) {
             photo = photos.get(0);
         }
-        Bitmap photoBitmap = null;
-        if(photo != null) {
-            byte[] photoData = photo.getData();
-            photoBitmap = BitmapFactory.decodeByteArray(photoData, 0, photoData.length);
-        }
-        final Bitmap finalPhotoBitmap = photoBitmap;
 
-        // refresh the ui
+        // refresh the name text
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                LOG.debug("refreshing ui");
                 mNameText.setText(name);
-                if(finalPhotoBitmap != null) {
-                    mAvatarImage.setImageDrawable(new BitmapDrawable(finalPhotoBitmap));
-                } else {
-                    mAvatarImage.setImageResource(R.drawable.avatar_default_contact);
-                }
             }
         });
+
+        // refresh the photo, if there is one
+        if(photo != null) {
+            final byte[] photoData = photo.getData();
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Bitmap photoBitmap = BitmapFactory.decodeByteArray(photoData, 0, photoData.length);
+                    if(photoBitmap != null) {
+                        mAvatarImage.setImageDrawable(new BitmapDrawable(photoBitmap));
+                    } else {
+                        mAvatarImage.setImageResource(R.drawable.avatar_default_contact);
+                    }
+                }
+            });
+        }
     }
 
     private InputStream openStreamForContent(String contentUri) {
