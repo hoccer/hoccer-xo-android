@@ -28,12 +28,10 @@ import com.hoccer.xo.android.activity.ProfileActivity;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.ConversationAdapter;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
-import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.ContentRegistry;
 import com.hoccer.xo.android.content.ContentSelection;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.IXoClientService;
-import com.hoccer.xo.android.service.IXoClientServiceListener;
 import com.hoccer.xo.android.service.XoClientService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -82,9 +80,6 @@ public abstract class XoActivity extends SherlockFragmentActivity {
     /** List of all talk fragments */
     ArrayList<IXoFragment> mTalkFragments = new ArrayList<IXoFragment>();
 
-    /** Client listeners */
-    ArrayList<IXoClientServiceListener> mListeners = new ArrayList<IXoClientServiceListener>();
-
     /** Ongoing avatar selection */
     ContentSelection mAvatarSelection = null;
 
@@ -115,20 +110,12 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         return mService;
     }
 
-    public void registerTalkFragment(IXoFragment fragment) {
+    public void registerXoFragment(IXoFragment fragment) {
         mTalkFragments.add(fragment);
     }
 
-    public void unregisterTalkFragment(IXoFragment fragment) {
+    public void unregisterXoFragment(IXoFragment fragment) {
         mTalkFragments.remove(fragment);
-    }
-
-    public void registerListener(IXoClientServiceListener listener) {
-        mListeners.add(listener);
-    }
-
-    public void unregisterListener(IXoClientServiceListener listener) {
-        mListeners.remove(listener);
     }
 
     @Override
@@ -160,7 +147,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         LOG.debug("onResume()");
         super.onResume();
 
-        // launch a new background executor
+        // get the background executor
         mBackgroundExecutor = XoApplication.getExecutor();
 
         // start the backend service and bind to it

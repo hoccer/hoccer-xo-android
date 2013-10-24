@@ -50,7 +50,7 @@ public abstract class XoListFragment extends SherlockListFragment implements IXo
             throw new RuntimeException("talk fragments need to be in a talk activity");
         }
 
-        mActivity.registerTalkFragment(this);
+        mActivity.registerXoFragment(this);
     }
 
     @Override
@@ -59,7 +59,7 @@ public abstract class XoListFragment extends SherlockListFragment implements IXo
         super.onDetach();
 
         if(mActivity != null) {
-            mActivity.unregisterTalkFragment(this);
+            mActivity.unregisterXoFragment(this);
             mActivity = null;
         }
     }
