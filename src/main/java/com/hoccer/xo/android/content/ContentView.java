@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import com.hoccer.talk.content.ContentState;
+import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -24,7 +26,7 @@ public class ContentView extends LinearLayout {
 
     ContentRegistry mRegistry;
 
-    ContentObject mObject;
+    IContentObject mObject;
 
     LinearLayout mContentWrapper;
 
@@ -84,33 +86,36 @@ public class ContentView extends LinearLayout {
         this.mMaxContentHeight = maxContentHeight;
     }
 
-    public void displayContent(Activity activity, ContentObject object) {
+    public void displayContent(Activity activity, IContentObject object) {
         if(object.getContentUrl() != null) {
             LOG.debug("displayContent(" + object.getContentUrl() + ")");
         }
 
-        boolean changed = true;
+        // determine if the content url has changed so
+        // we know if we need to re-instantiate child views
+        boolean contentChanged = true;
         if(mObject != null) {
             String oldUrl = mObject.getContentUrl();
             String newUrl = object.getContentUrl();
             if(oldUrl != null && newUrl != null) {
                 if(oldUrl.equals(newUrl)) {
-                    changed = false;
+                    contentChanged = false;
                 }
             }
         }
 
-        if(changed) {
+        // remove all previous child views
+        if(contentChanged) {
             mContentWrapper.removeAllViews();
         }
 
         mObject = object;
 
-        ContentObject.State state = object.getState();
+        ContentState state = object.getContentState();
 
-        LOG.debug("CO state " + state);
+        LOG.debug("content " + object.getContentUrl() + " in state " + state);
 
-        if(state.equals(ContentObject.State.DOWNLOAD_NEW)) {
+        if(state.equals(ContentState.DOWNLOAD_NEW)) {
             mContentDownload.setVisibility(VISIBLE);
         } else {
             mContentDownload.setVisibility(GONE);
@@ -119,9 +124,9 @@ public class ContentView extends LinearLayout {
         if(this.isInEditMode()) {
             mContentWrapper.setVisibility(GONE);
         } else if(mRegistry != null) {
-            if(object.isAvailable()) {
+            if(object.isContentAvailable()) {
                 mContentWrapper.setVisibility(VISIBLE);
-                if(changed || mContentWrapper.getChildCount() == 0) {
+                if(contentChanged || mContentWrapper.getChildCount() == 0) {
                     View view = mRegistry.createViewForContent(activity, object, this);
                     if(view != null) {
                         view.setVisibility(VISIBLE);
@@ -133,14 +138,14 @@ public class ContentView extends LinearLayout {
             }
         }
 
-        if(state.equals(ContentObject.State.DOWNLOAD_STARTED)
-                || state.equals(ContentObject.State.DOWNLOAD_REQUESTED)) {
+        if(state.equals(ContentState.DOWNLOAD_IN_PROGRESS)) {
             mContentDownloading.setVisibility(VISIBLE);
             int length = object.getTransferLength();
-            if(length > 0 && state.equals(ContentObject.State.DOWNLOAD_STARTED)) {
+            int progress = object.getTransferProgress();
+            if(length > 0 && progress > 0) {
                 mDownloadingProgress.setIndeterminate(false);
                 mDownloadingProgress.setMax(length);
-                mDownloadingProgress.setProgress(object.getTransferProgress());
+                mDownloadingProgress.setProgress(progress);
             } else {
                 mDownloadingProgress.setIndeterminate(true);
             }
@@ -148,7 +153,7 @@ public class ContentView extends LinearLayout {
             mContentDownloading.setVisibility(GONE);
         }
 
-        if(state.equals(ContentObject.State.UPLOAD_STARTED)) {
+        if(state.equals(ContentState.UPLOAD_IN_PROGRESS)) {
             mContentUploading.setVisibility(VISIBLE);
             int length = object.getTransferLength();
             if(length > 0) {
@@ -162,7 +167,7 @@ public class ContentView extends LinearLayout {
             mContentUploading.setVisibility(GONE);
         }
 
-        if(state.equals(ContentObject.State.DOWNLOAD_FAILED)) {
+        if(!object.isContentAvailable()) {
             mContentUnavailable.setVisibility(VISIBLE);
         } else {
             mContentUnavailable.setVisibility(GONE);

@@ -7,16 +7,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.hoccer.talk.client.IXoMessageListener;
-import com.hoccer.xo.android.XoActivity;
-import com.hoccer.xo.android.XoAdapter;
-import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.release.R;
-import com.hoccer.xo.android.content.ContentObject;
-import com.hoccer.xo.android.content.ContentView;
+import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.XoActivity;
+import com.hoccer.xo.android.XoAdapter;
+import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.content.ContentView;
+import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
 
@@ -34,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Adapter for messages in a conversation
  */
-public class ConversationAdapter extends XoAdapter implements IXoMessageListener {
+public class ConversationAdapter extends XoAdapter implements IXoMessageListener, IXoTransferListener {
 
     private static final int VIEW_TYPE_INCOMING = 0;
     private static final int VIEW_TYPE_OUTGOING = 1;
@@ -49,6 +50,7 @@ public class ConversationAdapter extends XoAdapter implements IXoMessageListener
 
     Map<Integer, TalkClientContact> mContacts = new HashMap<Integer, TalkClientContact>();
     Map<Integer, TalkClientDownload> mDownloads = new HashMap<Integer, TalkClientDownload>();
+    Map<Integer, TalkClientUpload> mUploads = new HashMap<Integer, TalkClientUpload>();
 
     long mLastReload = 0;
     ScheduledFuture<?> mReloadFuture;
@@ -65,11 +67,13 @@ public class ConversationAdapter extends XoAdapter implements IXoMessageListener
     @Override
     public void register() {
         getXoClient().registerMessageListener(this);
+        getXoClient().registerTransferListener(this);
     }
 
     @Override
     public void unregister() {
         getXoClient().unregisterMessageListener(this);
+        getXoClient().unregisterTransferListener(this);
     }
 
     @Override
@@ -88,12 +92,52 @@ public class ConversationAdapter extends XoAdapter implements IXoMessageListener
     }
 
     @Override
+    public void onDownloadStarted(TalkClientDownload download) {
+        reload();
+    }
+
+    @Override
+    public void onDownloadProgress(TalkClientDownload download) {
+        reload();
+    }
+
+    @Override
+    public void onDownloadFinished(TalkClientDownload download) {
+        reload();
+    }
+
+    @Override
+    public void onDownloadStateChanged(TalkClientDownload download) {
+        reload();
+    }
+
+    @Override
+    public void onUploadStarted(TalkClientUpload upload) {
+        reload();
+    }
+
+    @Override
+    public void onUploadProgress(TalkClientUpload upload) {
+        reload();
+    }
+
+    @Override
+    public void onUploadFinished(TalkClientUpload upload) {
+        reload();
+    }
+
+    @Override
+    public void onUploadStateChanged(TalkClientUpload upload) {
+        reload();
+    }
+
+    @Override
     public void reload() {
         ScheduledExecutorService executor = XoApplication.getExecutor();
         long now = System.currentTimeMillis();
         long since = now - mLastReload;
-        if(since < 200) {
-            long delay = Math.max(0, (mLastReload + 200) - now);
+        if(since < 500) {
+            long delay = Math.max(0, (mLastReload + 500) - now);
             if(mReloadFuture != null) {
                 mReloadFuture.cancel(false);
             }
@@ -126,12 +170,14 @@ public class ConversationAdapter extends XoAdapter implements IXoMessageListener
                     mDatabase.refreshClientContact(mContact);
                     final Map<Integer, TalkClientContact> newContacts = new HashMap<Integer, TalkClientContact>();
                     final Map<Integer, TalkClientDownload> newDownloads = new HashMap<Integer, TalkClientDownload>();
+                    final Map<Integer, TalkClientUpload> newUploads = new HashMap<Integer, TalkClientUpload>();
                     final List<TalkClientMessage> newMessages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
                     for(TalkClientMessage message: newMessages) {
-                        reloadRelated(message, newContacts, newDownloads);
+                        reloadRelated(message, newContacts, newDownloads, newUploads);
                     }
                     mContacts = newContacts;
                     mDownloads = newDownloads;
+                    mUploads = newUploads;
                     mMessages = newMessages;
                 } catch (SQLException e) {
                     LOG.error("sql error", e);
@@ -149,7 +195,16 @@ public class ConversationAdapter extends XoAdapter implements IXoMessageListener
         });
     }
 
-    private void reloadRelated(TalkClientMessage message, Map<Integer, TalkClientContact> newContacts, Map<Integer, TalkClientDownload> newDownloads) throws SQLException {
+    private void reloadRelated(TalkClientMessage message,
+                               Map<Integer, TalkClientContact> newContacts,
+                               Map<Integer, TalkClientDownload> newDownloads,
+                               Map<Integer, TalkClientUpload> newUploads) throws SQLException {
+        if(message.getAttachmentDownload() != null) {
+            mDatabase.refreshClientDownload(message.getAttachmentDownload());
+        }
+        if(message.getAttachmentUpload() != null) {
+            mDatabase.refreshClientUpload(message.getAttachmentUpload());
+        }
         TalkClientContact sender = message.getSenderContact();
         if(sender != null) {
             int contactId = sender.getClientContactId();
@@ -334,14 +389,14 @@ public class ConversationAdapter extends XoAdapter implements IXoMessageListener
         // XXX better place for this? also we might want to use the measured height of our list view
         contentView.setMaxContentHeight(Math.round(displayHeight * 0.8f));
 
-        ContentObject contentObject = null;
+        IContentObject contentObject = null;
         TalkClientUpload attachmentUpload = message.getAttachmentUpload();
         if(attachmentUpload != null) {
-            contentObject = ContentObject.forUpload(attachmentUpload);
+            contentObject = attachmentUpload;
         } else {
             TalkClientDownload attachmentDownload = message.getAttachmentDownload();
             if(attachmentDownload != null) {
-                contentObject = ContentObject.forDownload(attachmentDownload);
+                contentObject = attachmentDownload;
             }
         }
         if(contentObject == null) {

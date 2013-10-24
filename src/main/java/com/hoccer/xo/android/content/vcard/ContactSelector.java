@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import com.hoccer.xo.android.content.ContentObject;
+import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
 import org.apache.log4j.Logger;
 
@@ -24,7 +24,7 @@ public class ContactSelector implements IContentSelector {
     }
 
     @Override
-    public ContentObject createObjectFromSelectionResult(Context context, Intent intent) {
+    public SelectedContent createObjectFromSelectionResult(Context context, Intent intent) {
         Uri selectedContent = intent.getData();
         String[] columns = {
                 ContactsContract.Contacts.LOOKUP_KEY
@@ -45,10 +45,9 @@ public class ContactSelector implements IContentSelector {
             contentUri = contentUri.replace("content:/com.android.contacts", "content://com.android.contacts");
         }
 
-        ContentObject co = new ContentObject();
-        co.setMediaType(ContactsContract.Contacts.CONTENT_VCARD_TYPE);
-        co.setMediaType("contact");
-        co.setContentUrl(contentUri);
+        SelectedContent co = new SelectedContent(contentUri);
+        co.setContentType(ContactsContract.Contacts.CONTENT_VCARD_TYPE);
+        co.setContentMediaType("contact");
 
         return co;
     }

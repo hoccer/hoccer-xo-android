@@ -18,6 +18,7 @@ import com.google.zxing.integration.android.IntentResult;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.activity.AboutActivity;
 import com.hoccer.xo.android.activity.LicensesActivity;
 import com.hoccer.xo.android.activity.MessagingActivity;
@@ -27,7 +28,7 @@ import com.hoccer.xo.android.activity.ProfileActivity;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.ConversationAdapter;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
-import com.hoccer.xo.android.content.ContentObject;
+import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.ContentRegistry;
 import com.hoccer.xo.android.content.ContentSelection;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
@@ -267,7 +268,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
 
         if(requestCode == REQUEST_SELECT_AVATAR) {
             if(mAvatarSelection != null) {
-                ContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection, data);
+                IContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection, data);
                 if(co != null) {
                     LOG.debug("selected avatar " + co.getContentUrl());
                     for(IXoFragment fragment: mTalkFragments) {
@@ -279,7 +280,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         }
 
         if(requestCode == REQUEST_SELECT_ATTACHMENT) {
-            ContentObject co = ContentRegistry.get(this).createSelectedAttachment(mAttachmentSelection, data);
+            IContentObject co = ContentRegistry.get(this).createSelectedAttachment(mAttachmentSelection, data);
             if(co != null) {
                 LOG.debug("selected attachment " + co.getContentUrl());
                 for(IXoFragment fragment: mTalkFragments) {

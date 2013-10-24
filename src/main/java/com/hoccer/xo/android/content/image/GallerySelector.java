@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import com.hoccer.xo.android.content.ContentObject;
+import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
 
 public class GallerySelector implements IContentSelector {
@@ -21,7 +21,7 @@ public class GallerySelector implements IContentSelector {
     }
 
     @Override
-    public ContentObject createObjectFromSelectionResult(Context context, Intent intent) {
+    public SelectedContent createObjectFromSelectionResult(Context context, Intent intent) {
         Uri selectedContent = intent.getData();
         String[] filePathColumn = {MediaStore.Images.Media.MIME_TYPE,
                                    MediaStore.Images.Media.DATA,
@@ -45,12 +45,11 @@ public class GallerySelector implements IContentSelector {
             return null;
         }
 
-        ContentObject contentObject = new ContentObject();
-        contentObject.setMediaType("image");
-        contentObject.setMimeType(fileType);
-        contentObject.setContentUrl(filePath);
+        SelectedContent contentObject = new SelectedContent("file://" + filePath);
+        contentObject.setContentMediaType("image");
+        contentObject.setContentType(fileType);
         if(fileWidth > 0 && fileHeight > 0) {
-            contentObject.setAspectRatio(((float)fileWidth) / ((float)fileHeight));
+            contentObject.setContentAspectRatio(((float)fileWidth) / ((float)fileHeight));
         }
 
         cursor.close();

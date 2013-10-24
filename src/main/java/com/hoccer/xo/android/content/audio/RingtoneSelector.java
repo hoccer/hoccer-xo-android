@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.provider.MediaStore;
-import com.hoccer.xo.android.content.ContentObject;
+import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
 import org.apache.log4j.Logger;
 
@@ -25,7 +25,7 @@ public class RingtoneSelector implements IContentSelector {
     }
 
     @Override
-    public ContentObject createObjectFromSelectionResult(Context context, Intent intent) {
+    public SelectedContent createObjectFromSelectionResult(Context context, Intent intent) {
         Uri selectedContent = intent.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
         String[] filePathColumn = {MediaStore.Audio.Media.MIME_TYPE,
                                    MediaStore.Audio.Media.DATA};
@@ -43,10 +43,9 @@ public class RingtoneSelector implements IContentSelector {
             return null;
         }
 
-        ContentObject contentObject = new ContentObject();
-        contentObject.setMediaType("audio");
-        contentObject.setMimeType(fileType);
-        contentObject.setContentUrl(filePath);
+        SelectedContent contentObject = new SelectedContent(filePath);
+        contentObject.setContentMediaType("audio");
+        contentObject.setContentType(fileType);
 
         return contentObject;
     }

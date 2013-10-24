@@ -14,6 +14,7 @@ import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.talk.content.IContentObject;
 import com.hoccer.talk.model.TalkGroup;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkRelationship;
@@ -22,7 +23,7 @@ import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.XoFragment;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
-import com.hoccer.xo.android.content.ContentObject;
+import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
@@ -44,7 +45,7 @@ public class ProfileFragment extends XoFragment
     ImageView mNameEditButton;
 
     ImageView mAvatarImage;
-    ContentObject mAvatarToSet;
+    IContentObject mAvatarToSet;
 
     TextView mUserBlockStatus;
     Button   mUserBlockButton;
@@ -204,7 +205,7 @@ public class ProfileFragment extends XoFragment
     }
 
     @Override
-    public void onAvatarSelected(ContentObject contentObject) {
+    public void onAvatarSelected(IContentObject contentObject) {
         LOG.debug("onAvatarSelected(" + contentObject.getContentUrl() + ")");
         mAvatarToSet = contentObject;
     }
@@ -213,14 +214,14 @@ public class ProfileFragment extends XoFragment
     public void onServiceConnected() {
         LOG.debug("onServiceConnected()");
 
-        final ContentObject newAvatar = mAvatarToSet;
+        final IContentObject newAvatar = mAvatarToSet;
         mAvatarToSet = null;
         if(newAvatar != null) {
             XoApplication.getExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
                     LOG.debug("creating avatar upload");
-                    TalkClientUpload upload = ContentObject.createAvatarUpload(newAvatar);
+                    TalkClientUpload upload = SelectedContent.createAvatarUpload(newAvatar);
                     try {
                         getXoDatabase().saveClientUpload(upload);
                         if(mContact.isSelf()) {

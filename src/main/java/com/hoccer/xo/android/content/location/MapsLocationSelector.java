@@ -2,7 +2,7 @@ package com.hoccer.xo.android.content.location;
 
 import android.content.Context;
 import android.content.Intent;
-import com.hoccer.xo.android.content.ContentObject;
+import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
 
 public class MapsLocationSelector implements IContentSelector {
@@ -18,7 +18,7 @@ public class MapsLocationSelector implements IContentSelector {
     }
 
     @Override
-    public ContentObject createObjectFromSelectionResult(Context context, Intent intent) {
+    public SelectedContent createObjectFromSelectionResult(Context context, Intent intent) {
         return null;
     }
 

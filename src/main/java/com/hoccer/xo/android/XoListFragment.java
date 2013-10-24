@@ -3,7 +3,7 @@ package com.hoccer.xo.android;
 import android.app.Activity;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.hoccer.talk.client.XoClientDatabase;
-import com.hoccer.xo.android.content.ContentObject;
+import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.service.IXoClientService;
 import org.apache.log4j.Logger;
 
@@ -73,11 +73,11 @@ public abstract class XoListFragment extends SherlockListFragment implements IXo
     }
 
     @Override
-    public void onAvatarSelected(ContentObject co) {
+    public void onAvatarSelected(IContentObject co) {
     }
 
     @Override
-    public void onAttachmentSelected(ContentObject co) {
+    public void onAttachmentSelected(IContentObject co) {
     }
 
 }

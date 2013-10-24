@@ -13,9 +13,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import com.hoccer.talk.client.XoClientDatabase;
+import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoFragment;
+import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
-import com.hoccer.xo.android.content.ContentObject;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientMessage;
@@ -36,8 +37,8 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
     ImageButton mAttachmentSelectButton;
 
+    IContentObject mAttachment;
     ContentView mAttachmentView;
-    ContentObject mAttachment;
 
     TalkClientContact mContact;
 
@@ -132,7 +133,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     @Override
-    public void onAttachmentSelected(ContentObject contentObject) {
+    public void onAttachmentSelected(IContentObject contentObject) {
         LOG.debug("onAttachmentSelected(" + contentObject.getContentUrl() + ")");
         showAttachment(contentObject);
     }
@@ -154,7 +155,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         clearAttachment();
     }
 
-    private void showAttachment(ContentObject contentObject) {
+    private void showAttachment(IContentObject contentObject) {
         LOG.debug("showAttachment(" + contentObject.getContentUrl() + ")");
         mAttachment = contentObject;
         mAttachmentView.displayContent(getXoActivity(), contentObject);
@@ -208,7 +209,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
         TalkClientUpload upload = null;
         if(mAttachment != null) {
-            upload = ContentObject.createAttachmentUpload(mAttachment);
+            upload = SelectedContent.createAttachmentUpload(mAttachment);
             clientMessage.setAttachmentUpload(upload);
         }
 

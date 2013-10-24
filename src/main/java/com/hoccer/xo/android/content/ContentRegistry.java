@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
+import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.audio.AudioViewer;
 import com.hoccer.xo.android.content.audio.MusicSelector;
 import com.hoccer.xo.android.content.image.GallerySelector;
@@ -119,7 +120,7 @@ public class ContentRegistry {
      * @param view that will host the returned view
      * @return a View set up for the given content
      */
-    public View createViewForContent(Activity activity, ContentObject contentObject, ContentView view) {
+    public View createViewForContent(Activity activity, IContentObject contentObject, ContentView view) {
         IContentViewer viewer = selectViewerForContent(contentObject);
         if(viewer != null) {
             return viewer.getViewForObject(activity, contentObject, view);
@@ -135,7 +136,7 @@ public class ContentRegistry {
      * @param contentObject that needs a view constructed
      * @return a matching content viewer
      */
-    private IContentViewer selectViewerForContent(ContentObject contentObject) {
+    private IContentViewer selectViewerForContent(IContentObject contentObject) {
         for(IContentViewer viewer: mAttachmentViewers) {
             if(viewer.canViewObject(contentObject)) {
                 return viewer;
@@ -170,7 +171,7 @@ public class ContentRegistry {
      * @param intent returned from the selector
      * @return content object for selected avatar
      */
-    public ContentObject createSelectedAvatar(ContentSelection selection, Intent intent) {
+    public IContentObject createSelectedAvatar(ContentSelection selection, Intent intent) {
         return selection.getSelector().createObjectFromSelectionResult(selection.getActivity(), intent);
     }
 
@@ -264,14 +265,10 @@ public class ContentRegistry {
      * @param intent returned from the selector
      * @return content object for selected content
      */
-    public ContentObject createSelectedAttachment(ContentSelection selection, Intent intent) {
+    public IContentObject createSelectedAttachment(ContentSelection selection, Intent intent) {
         IContentSelector selector = selection.getSelector();
         if(selector != null) {
-            ContentObject object = selector.createObjectFromSelectionResult(selection.getActivity(), intent);
-            if(object != null) {
-                object.setState(ContentObject.State.SELECTED);
-                object.setAvailable(true);
-            }
+            IContentObject object = selector.createObjectFromSelectionResult(selection.getActivity(), intent);
             return object;
         }
         return null;

@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import com.hoccer.xo.android.content.ContentObject;
+import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
 
 public class MusicSelector implements IContentSelector {
@@ -21,7 +21,7 @@ public class MusicSelector implements IContentSelector {
     }
 
     @Override
-    public ContentObject createObjectFromSelectionResult(Context context, Intent intent) {
+    public SelectedContent createObjectFromSelectionResult(Context context, Intent intent) {
         Uri selectedContent = intent.getData();
         String[] filePathColumn = {MediaStore.Audio.Media.MIME_TYPE,
                                    MediaStore.Audio.Media.DATA};
@@ -39,10 +39,10 @@ public class MusicSelector implements IContentSelector {
             return null;
         }
 
-        ContentObject contentObject = new ContentObject();
-        contentObject.setMediaType("audio");
-        contentObject.setMimeType(fileType);
-        contentObject.setContentUrl(filePath);
+        SelectedContent contentObject = new SelectedContent(filePath);
+        contentObject.setContentMediaType("audio");
+        contentObject.setContentType(fileType);
+
         cursor.close();
 
         return contentObject;

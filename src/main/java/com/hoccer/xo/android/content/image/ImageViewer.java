@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import com.hoccer.xo.android.content.ContentObject;
+import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.IContentViewer;
 import com.hoccer.xo.android.view.AspectImageView;
@@ -19,15 +19,15 @@ public class ImageViewer implements IContentViewer {
     private static final Logger LOG = Logger.getLogger(ImageViewer.class);
 
     @Override
-    public boolean canViewObject(ContentObject object) {
-        if(object.getMediaType().equals("image")) {
+    public boolean canViewObject(IContentObject object) {
+        if(object.getContentMediaType().equals("image")) {
             return true;
         }
         return false;
     }
 
     @Override
-    public View getViewForObject(Activity context, ContentObject object, ContentView contentView) {
+    public View getViewForObject(Activity context, IContentObject object, ContentView contentView) {
         if(!canViewObject(object)) {
             return null;
         }
@@ -39,11 +39,11 @@ public class ImageViewer implements IContentViewer {
             view.setMaxHeight(maxContentHeight);
         }
         view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        view.setAspectRatio(object.getAspectRatio());
+        view.setAspectRatio(object.getContentAspectRatio());
         view.setAdjustViewBounds(true);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        ImageLoader.getInstance().displayImage("file://" + object.getContentUrl(), view, new ImageLoadingListener() {
+        ImageLoader.getInstance().displayImage(object.getContentUrl(), view, new ImageLoadingListener() {
             @Override
             public void onLoadingStarted(String imageUri, View view) {
                 LOG.info("load of " + imageUri + " started");
