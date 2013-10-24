@@ -184,7 +184,8 @@ public class ContentRegistry {
     /**
      * Starts content selection
      *
-     * Will create and show a dialog above the given activity.
+     * Will create and show a dialog above the given activity
+     * that allows the users to select a source for content selection.
      *
      * @param activity that is requesting the selection
      * @param requestCode identifying returned intents
