@@ -39,7 +39,7 @@ public class MusicSelector implements IContentSelector {
             return null;
         }
 
-        SelectedContent contentObject = new SelectedContent(filePath);
+        SelectedContent contentObject = new SelectedContent("file://" + filePath);
         contentObject.setContentMediaType("audio");
         contentObject.setContentType(fileType);
 
