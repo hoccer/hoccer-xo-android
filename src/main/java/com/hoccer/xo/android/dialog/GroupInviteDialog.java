@@ -4,13 +4,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.RemoteException;
 import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.release.R;
+import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
-import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 public class GroupInviteDialog extends SherlockDialogFragment {
@@ -53,13 +52,7 @@ public class GroupInviteDialog extends SherlockDialogFragment {
                 Object object = adapter.getItem(which);
                 if(object != null && object instanceof TalkClientContact) {
                     TalkClientContact contact = (TalkClientContact)object;
-                    try {
-                        mActivity.getXoService()
-                                .inviteToGroup(mGroup.getClientContactId(),
-                                        contact.getClientContactId());
-                    } catch (RemoteException e) {
-                        LOG.error("remote error", e);
-                    }
+                    mActivity.getXoClient().inviteClientToGroup(mGroup.getGroupId(), contact.getClientId());
                 }
             }
         });

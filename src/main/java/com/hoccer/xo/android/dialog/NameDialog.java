@@ -4,13 +4,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.text.InputType;
 import android.widget.EditText;
 import com.actionbarsherlock.app.SherlockDialogFragment;
+import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
 
 public class NameDialog extends SherlockDialogFragment {
@@ -46,16 +45,12 @@ public class NameDialog extends SherlockDialogFragment {
         builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                try {
-                    String newName = mEdit.getText().toString();
-                    if(mContact.isSelf()) {
-                        mActivity.getService().setClientName(newName);
-                    }
-                    if(mContact.isGroup()) {
-                        mActivity.getService().setGroupName(mContact.getClientContactId(), newName);
-                    }
-                } catch (RemoteException e) {
-                    LOG.error("remote error", e);
+                String newName = mEdit.getText().toString();
+                if(mContact.isSelf()) {
+                    mActivity.getXoClient().setClientString(newName, null);
+                }
+                if(mContact.isGroup()) {
+                    mActivity.getXoClient().setGroupName(mContact, newName);
                 }
                 mActivity.hackReturnedFromDialog();
             }

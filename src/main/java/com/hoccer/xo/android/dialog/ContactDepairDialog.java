@@ -4,11 +4,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.RemoteException;
 import com.actionbarsherlock.app.SherlockDialogFragment;
+import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
-import com.hoccer.talk.client.model.TalkClientContact;
 import org.apache.log4j.Logger;
 
 public class ContactDepairDialog extends SherlockDialogFragment {
@@ -36,11 +35,7 @@ public class ContactDepairDialog extends SherlockDialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(mContact != null) {
-                    try {
-                        mActivity.getXoService().depairContact(mContact.getClientContactId());
-                    } catch (RemoteException e) {
-                        LOG.error("remote error", e);
-                    }
+                    mActivity.getXoClient().depairContact(mContact);
                 }
                 mActivity.hackReturnedFromDialog();
             }

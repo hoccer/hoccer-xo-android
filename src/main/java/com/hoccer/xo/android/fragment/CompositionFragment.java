@@ -1,7 +1,6 @@
 package com.hoccer.xo.android.fragment;
 
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -13,16 +12,16 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import com.hoccer.talk.client.XoClientDatabase;
-import com.hoccer.talk.content.IContentObject;
-import com.hoccer.xo.android.base.XoFragment;
-import com.hoccer.xo.android.content.SelectedContent;
-import com.hoccer.xo.release.R;
-import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.talk.content.IContentObject;
 import com.hoccer.talk.model.TalkDelivery;
 import com.hoccer.talk.model.TalkMessage;
+import com.hoccer.xo.android.base.XoFragment;
+import com.hoccer.xo.android.content.ContentView;
+import com.hoccer.xo.android.content.SelectedContent;
+import com.hoccer.xo.release.R;
 
 import java.sql.SQLException;
 import java.util.UUID;
@@ -228,11 +227,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         // log to help debugging
         LOG.info("created message with id " + clientMessage.getClientMessageId() + " and tag " + message.getMessageTag());
 
-        try {
-            getXoService().performDeliveries();
-        } catch (RemoteException e) {
-            LOG.error("remote error", e);
-        }
+        getXoClient().requestDelivery();
 
         // clear the composer UI to prepare it for the next message
         clearComposedMessage();

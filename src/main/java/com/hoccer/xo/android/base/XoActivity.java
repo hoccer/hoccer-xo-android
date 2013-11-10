@@ -210,11 +210,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
                 showPairing();
                 break;
             case R.id.menu_new_group:
-                try {
-                    getXoService().createGroup();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+                // XXX create new group with callback
                 break;
             case R.id.menu_scan_code:
                 scanBarcode();
@@ -367,11 +363,8 @@ public abstract class XoActivity extends SherlockFragmentActivity {
                 fragment.onServiceConnected();
             }
             if(mBarcodeToken != null) {
-                try {
-                    mService.pairUsingToken(mBarcodeToken);
-                } catch (RemoteException e) {
-                    LOG.error("remote error", e);
-                }
+                // XXX perform token pairing with callback
+                getXoClient().performTokenPairing(mBarcodeToken);
                 mBarcodeToken = null;
             }
         }
@@ -473,13 +466,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         XoApplication.getExecutor().execute(new Runnable() {
             @Override
             public void run() {
-                final String token;
-                try {
-                    token = getXoService().generatePairingToken();
-                } catch (RemoteException e) {
-                    LOG.error("could not generate token", e);
-                    return;
-                }
+                final String token = getXoClient().generatePairingToken();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

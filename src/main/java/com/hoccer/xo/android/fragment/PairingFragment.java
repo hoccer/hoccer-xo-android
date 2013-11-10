@@ -1,7 +1,6 @@
 package com.hoccer.xo.android.fragment;
 
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -169,21 +168,16 @@ public class PairingFragment extends XoFragment implements View.OnClickListener 
         XoApplication.getExecutor().schedule(new Runnable() {
             @Override
             public void run() {
-                try {
-                    final String token = getXoActivity().getService().generatePairingToken();
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mTokenText.setText(token);
-                            mTokenText.setVisibility(View.VISIBLE);
-                            mTokenMessage.setVisibility(View.GONE);
-                            mTokenSendSms.setEnabled(true);
-                        }
-                    });
-                } catch (RemoteException e) {
-                    LOG.error("token generation failed", e);
-                    e.printStackTrace();
-                }
+                final String token = getXoClient().generatePairingToken();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mTokenText.setText(token);
+                        mTokenText.setVisibility(View.VISIBLE);
+                        mTokenMessage.setVisibility(View.GONE);
+                        mTokenSendSms.setEnabled(true);
+                    }
+                });
             }
         }, 1, TimeUnit.SECONDS);
     }
@@ -198,11 +192,8 @@ public class PairingFragment extends XoFragment implements View.OnClickListener 
         mActiveToken = token;
         mTokenEdit.setEnabled(false);
         mTokenPairButton.setEnabled(false);
-        try {
-            getXoService().pairUsingToken(token);
-        } catch (RemoteException e) {
-            LOG.error("pairing failed", e);
-        }
+        // XXX callback
+        getXoClient().performTokenPairing(token);
     }
 
     // XXX @Override

@@ -1,7 +1,6 @@
 package com.hoccer.xo.android.fragment;
 
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +19,9 @@ import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkRelationship;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoDialogs;
-import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
+import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -159,11 +158,7 @@ public class ProfileFragment extends XoFragment
         if(v == mGroupJoinButton) {
             LOG.debug("onClick(groupJoinButton)");
             if(mContact != null && mContact.isGroup()) {
-                try {
-                    getXoService().joinGroup(mContact.getClientContactId());
-                } catch (RemoteException e) {
-                    LOG.error("remote error", e);
-                }
+                getXoClient().joinGroup(mContact.getGroupId());
             }
         }
         if(v == mGroupLeaveButton) {
@@ -225,15 +220,13 @@ public class ProfileFragment extends XoFragment
                     try {
                         getXoDatabase().saveClientUpload(upload);
                         if(mContact.isSelf()) {
-                            getXoService().setClientAvatar(upload.getClientUploadId());
+                            getXoClient().setClientAvatar(upload);
                         }
                         if(mContact.isGroup()) {
-                            getXoService().setGroupAvatar(mContact.getClientContactId(), upload.getClientUploadId());
+                            getXoClient().setGroupAvatar(mContact, upload);
                         }
                     } catch (SQLException e) {
                         LOG.error("sql error", e);
-                    } catch (RemoteException e) {
-                        LOG.error("remote error", e);
                     }
                 }
             });
@@ -341,22 +334,14 @@ public class ProfileFragment extends XoFragment
     private void blockContact() {
         LOG.debug("blockContact()");
         if(mContact != null) {
-            try {
-                getXoService().blockContact(mContact.getClientContactId());
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+            getXoClient().blockContact(mContact);
         }
     }
 
     private void unblockContact() {
         LOG.debug("unblockContact()");
         if(mContact != null) {
-            try {
-                getXoService().unblockContact(mContact.getClientContactId());
-            } catch (RemoteException e) {
-                LOG.error("sql error", e);
-            }
+            getXoClient().unblockContact(mContact);
         }
     }
 

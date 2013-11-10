@@ -1,6 +1,5 @@
 package com.hoccer.xo.android.adapter;
 
-import android.os.RemoteException;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +12,9 @@ import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
-import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -416,11 +415,7 @@ public class ConversationAdapter extends XoAdapter implements IXoMessageListener
         mActivity.getBackgroundExecutor().execute(new Runnable() {
             @Override
             public void run() {
-                try {
-                    mActivity.getService().markAsSeen(message.getClientMessageId());
-                } catch (RemoteException e) {
-                    LOG.error("remote error", e);
-                }
+                getXoClient().markAsSeen(message);
             }
         });
     }

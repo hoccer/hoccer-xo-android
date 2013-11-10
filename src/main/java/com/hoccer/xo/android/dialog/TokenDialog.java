@@ -7,11 +7,10 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.provider.ContactsContract;
 import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -70,21 +69,13 @@ public class TokenDialog extends SherlockDialogFragment implements DialogInterfa
     public void onClick(DialogInterface dialog, int which) {
         if(which == DialogInterface.BUTTON_POSITIVE) {
             if(mToken != null) {
-                try {
-                    mActivity.getService().useSmsToken(mToken.getSmsTokenId());
-                } catch (RemoteException e) {
-                    LOG.error("remote error", e);
-                }
+                // XXX use SMS token
                 mActivity.hackReturnedFromDialog();
             }
         }
         if(which == DialogInterface.BUTTON_NEGATIVE) {
             if(mToken != null) {
-                try {
-                    mActivity.getService().rejectSmsToken(mToken.getSmsTokenId());
-                } catch (RemoteException e) {
-                    LOG.error("remote error", e);
-                }
+                // XXX reject SMS token
                 mActivity.hackReturnedFromDialog();
             }
         }

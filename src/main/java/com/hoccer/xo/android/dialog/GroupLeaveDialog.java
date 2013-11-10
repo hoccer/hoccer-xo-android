@@ -4,13 +4,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.RemoteException;
 import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.release.R;
+import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
-import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 public class GroupLeaveDialog extends SherlockDialogFragment {
@@ -51,12 +50,7 @@ public class GroupLeaveDialog extends SherlockDialogFragment {
         builder.setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                try {
-                    mActivity.getXoService()
-                            .leaveGroup(mGroup.getClientContactId());
-                } catch (RemoteException e) {
-                    LOG.error("remote error", e);
-                }
+                mActivity.getXoClient().leaveGroup(mGroup.getGroupId());
             }
         });
 
