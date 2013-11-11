@@ -10,6 +10,7 @@ import com.hoccer.xo.android.service.IXoClientService;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Base class for fragments working with the talk client
@@ -33,6 +34,10 @@ public abstract class XoFragment extends SherlockFragment implements IXoFragment
 
     public File getAvatarDirectory() {
         return new File(mActivity.getFilesDir(), "avatars");
+    }
+
+    public ScheduledExecutorService getBackgroundExecutor() {
+        return mActivity.getBackgroundExecutor();
     }
 
     public XoActivity getXoActivity() {
