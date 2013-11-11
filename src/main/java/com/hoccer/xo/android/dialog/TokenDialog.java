@@ -69,13 +69,13 @@ public class TokenDialog extends SherlockDialogFragment implements DialogInterfa
     public void onClick(DialogInterface dialog, int which) {
         if(which == DialogInterface.BUTTON_POSITIVE) {
             if(mToken != null) {
-                // XXX use SMS token
+                mActivity.getXoClient().useSmsToken(mToken);
                 mActivity.hackReturnedFromDialog();
             }
         }
         if(which == DialogInterface.BUTTON_NEGATIVE) {
             if(mToken != null) {
-                // XXX reject SMS token
+                mActivity.getXoClient().rejectSmsToken(mToken);
                 mActivity.hackReturnedFromDialog();
             }
         }

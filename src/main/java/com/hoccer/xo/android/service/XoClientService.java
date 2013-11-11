@@ -20,6 +20,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import com.google.android.gcm.GCMRegistrar;
 import com.hoccer.talk.client.IXoStateListener;
+import com.hoccer.talk.client.IXoTokenListener;
 import com.hoccer.talk.client.IXoUnseenListener;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientConfiguration;
@@ -574,7 +575,7 @@ public class XoClientService extends Service {
         }, delay, TimeUnit.MILLISECONDS);
     }
 
-    private class ClientListener implements IXoStateListener, IXoUnseenListener {
+    private class ClientListener implements IXoStateListener, IXoUnseenListener, IXoTokenListener {
         @Override
         public void onClientStateChange(XoClient client, int state) {
             LOG.info("onClientStateChange(" + XoClient.stateToString(state) + ")");
@@ -609,6 +610,11 @@ public class XoClientService extends Service {
             } catch (Throwable t) {
                 LOG.error("exception updating notification", t);
             }
+        }
+
+        @Override
+        public void onTokensChanged(List<TalkClientSmsToken> tokens, boolean newTokens) {
+            updateInvitationNotification(tokens, newTokens);
         }
     }
 

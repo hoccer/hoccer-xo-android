@@ -178,7 +178,7 @@ public abstract class ContactsAdapter extends XoAdapter implements IXoContactLis
     }
 
     @Override
-    public void onTokensChanged(List<TalkClientSmsToken> tokens) {
+    public void onTokensChanged(List<TalkClientSmsToken> tokens, boolean newTokens) {
         LOG.info("onTokensChanged()");
         if(mShowTokens) {
             reload();
