@@ -187,16 +187,24 @@ public class PairingFragment extends XoFragment implements View.OnClickListener 
         mTokenEdit.setText(token);
     }
 
-    private void performPairing(String token) {
+    private void performPairing(final String token) {
         LOG.debug("performPairing(" + token + ")");
         mActiveToken = token;
         mTokenEdit.setEnabled(false);
         mTokenPairButton.setEnabled(false);
-        // XXX callback
-        getXoClient().performTokenPairing(token);
+        getBackgroundExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                boolean success = getXoClient().performTokenPairing(token);
+                if(success) {
+                    onTokenPairingSucceeded(token);
+                } else {
+                    onTokenPairingFailed(token);
+                }
+            }
+        });
     }
 
-    // XXX @Override
     public void onTokenPairingFailed(String token) {
         LOG.debug("onTokenPairingFailed()");
         if(token.equals(mActiveToken)) {
