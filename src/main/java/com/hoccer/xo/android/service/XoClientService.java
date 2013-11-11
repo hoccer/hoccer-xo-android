@@ -163,7 +163,7 @@ public class XoClientService extends Service {
             if(intent.hasExtra(SmsReceiver.EXTRA_SMS_URL_RECEIVED)) {
                 String sender = intent.getStringExtra(SmsReceiver.EXTRA_SMS_SENDER);
                 String url = intent.getStringExtra(SmsReceiver.EXTRA_SMS_URL_RECEIVED);
-                doHandleSmsUrl(sender, url);
+                mClient.handleSmsUrl(sender, url);
             }
         }
         return START_STICKY;
@@ -275,34 +275,6 @@ public class XoClientService extends Service {
                 mClient.unregisterGcm();
                 GCMRegistrar.setRegisteredOnServer(this, false);
             }
-        }
-    }
-
-    private void doHandleSmsUrl(String sender, String urlString) {
-        LOG.info("doHandleSmsUrl(" + sender + "," + urlString + ")");
-        // check if the url is for a pairing token
-        if(urlString.startsWith("hxo://")) {
-            String token = urlString.substring(6);
-            // build new token object
-            TalkClientSmsToken tokenObject = new TalkClientSmsToken();
-            tokenObject.setSender(sender);
-            tokenObject.setToken(token);
-            try {
-                mClient.getDatabase().saveSmsToken(tokenObject);
-            } catch (SQLException e) {
-                LOG.error("sql error", e);
-            }
-            // call listeners
-            notifySmsTokensChanged(true);
-        }
-    }
-
-    private void notifySmsTokensChanged(boolean notifyUser) {
-        try {
-            List<TalkClientSmsToken> tokens = mClient.getDatabase().findAllSmsTokens();
-            updateInvitationNotification(tokens, notifyUser);
-        } catch (SQLException e) {
-            LOG.error("sql error", e);
         }
     }
 

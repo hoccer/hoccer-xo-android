@@ -1,15 +1,15 @@
 package com.hoccer.xo.android.adapter;
 
-import android.os.RemoteException;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.hoccer.talk.client.IXoContactListener;
-import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.base.XoAdapter;
+import com.hoccer.talk.client.IXoTokenListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.base.XoAdapter;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
@@ -24,7 +24,7 @@ import java.util.List;
  * It also has a filter feature that allows restricting the displayed set of contacts.
  *
  */
-public abstract class ContactsAdapter extends XoAdapter implements IXoContactListener {
+public abstract class ContactsAdapter extends XoAdapter implements IXoContactListener, IXoTokenListener {
 
     private static final Logger LOG = Logger.getLogger(ContactsAdapter.class);
 
@@ -71,11 +71,13 @@ public abstract class ContactsAdapter extends XoAdapter implements IXoContactLis
     @Override
     public void register() {
         getXoClient().registerContactListener(this);
+        getXoClient().registerTokenListener(this);
     }
 
     @Override
     public void unregister() {
         getXoClient().unregisterContactListener(this);
+        getXoClient().unregisterTokenListener(this);
     }
 
     @Override
@@ -175,9 +177,9 @@ public abstract class ContactsAdapter extends XoAdapter implements IXoContactLis
         reload();
     }
 
-    // XXX @Override
-    public void onSmsTokensChanged() throws RemoteException {
-        LOG.info("onSmsTokensChanged()");
+    @Override
+    public void onTokensChanged(List<TalkClientSmsToken> tokens) {
+        LOG.info("onTokensChanged()");
         if(mShowTokens) {
             reload();
         }
