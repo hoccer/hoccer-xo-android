@@ -85,6 +85,13 @@
             android:layout_height="wrap_content"/>
 
         <Button
+            android:id="@+id/profile_newgroup_create_button"
+            android:text="@string/profile_group_create_button"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
             android:id="@+id/profile_group_join_button"
             android:text="@string/profile_group_join_button"
             android:visibility="gone"

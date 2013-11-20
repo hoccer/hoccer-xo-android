@@ -28,8 +28,6 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
 
     ProfileFragment mFragment;
 
-    TalkClientContact mContact;
-
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_profile;
@@ -63,7 +61,9 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
         // handle show intent
         if(intent != null) {
             if(intent.hasExtra(EXTRA_CLIENT_CREATE_SELF)) {
+                createSelf();
             } else if(intent.hasExtra(EXTRA_CLIENT_CREATE_GROUP)) {
+                createGroup();
             } else if(intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
                 int contactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
                 if(contactId == -1) {
@@ -71,10 +71,6 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
                 } else {
                     showProfile(refreshContact(contactId));
                 }
-            }
-        } else {
-            if(mContact != null) {
-                showProfile(refreshContact(mContact.getClientContactId()));
             }
         }
 
@@ -100,34 +96,39 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
 
     public void showProfile(TalkClientContact contact) {
         LOG.debug("showProfile(" + contact.getClientContactId() + ")");
-        mContact = contact;
-        if(mContact != null) {
-            mActionBar.setTitle(contact.getName());
-            mFragment.showProfile(contact);
-            if(contact.isDeleted()) {
-                finish();
-            }
-        }
+        mFragment.showProfile(contact);
+        update(contact);
+
     }
 
     public void createGroup() {
         LOG.debug("createGroup()");
         mFragment.createGroup();
-        mContact = null;
+        update(mFragment.getContact());
     }
 
     public void createSelf() {
         LOG.debug("createSelf()");
         mFragment.createSelf();
-        mContact = null;
+        update(mFragment.getContact());
     }
 
     @Override
     public void hackReturnedFromDialog() {
         super.hackReturnedFromDialog();
-        if(mContact != null) {
-            showProfile(refreshContact(mContact.getClientContactId()));
-        }
+        mFragment.refreshContact();
+    }
+
+    private void update(final TalkClientContact contact) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mActionBar.setTitle(contact.getName());
+                if(contact.isDeleted()) {
+                    finish();
+                }
+            }
+        });
     }
 
     @Override
@@ -136,25 +137,42 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
 
     @Override
     public void onContactRemoved(TalkClientContact contact) {
-        if(mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
+        TalkClientContact myContact = mFragment.getContact();
+        if(myContact != null && myContact.getClientContactId() == contact.getClientContactId()) {
             finish();
         }
     }
 
     @Override
     public void onClientPresenceChanged(TalkClientContact contact) {
+        TalkClientContact myContact = mFragment.getContact();
+        if(myContact != null && myContact.getClientContactId() == contact.getClientContactId()) {
+            update(contact);
+        }
     }
 
     @Override
     public void onClientRelationshipChanged(TalkClientContact contact) {
+        TalkClientContact myContact = mFragment.getContact();
+        if(myContact != null && myContact.getClientContactId() == contact.getClientContactId()) {
+            update(contact);
+        }
     }
 
     @Override
     public void onGroupPresenceChanged(TalkClientContact contact) {
+        TalkClientContact myContact = mFragment.getContact();
+        if(myContact != null && myContact.getClientContactId() == contact.getClientContactId()) {
+            update(contact);
+        }
     }
 
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
+        TalkClientContact myContact = mFragment.getContact();
+        if(myContact != null && myContact.getClientContactId() == contact.getClientContactId()) {
+            update(contact);
+        }
     }
 
 }
