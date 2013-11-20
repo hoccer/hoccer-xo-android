@@ -23,13 +23,15 @@ import org.apache.log4j.Logger;
  * It needs to handle content in all states, displayable or not.
  *
  */
-public class ContentView extends LinearLayout {
+public class ContentView extends LinearLayout implements View.OnClickListener {
 
     private static final Logger LOG = Logger.getLogger(ContentView.class);
 
     ContentRegistry mRegistry;
 
     IContentObject mObject;
+
+    ContentState mPreviousContentState;
 
     LinearLayout mContentWrapper;
 
@@ -94,6 +96,16 @@ public class ContentView extends LinearLayout {
         this.mMaxContentHeight = maxContentHeight;
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v == mDownloadButton) {
+
+        }
+        if(v == mUploadButton) {
+
+        }
+    }
+
     public void displayContent(Activity activity, IContentObject object) {
         if(object.getContentUrl() != null) {
             LOG.debug("displayContent(" + object.getContentUrl() + ")");
@@ -112,8 +124,18 @@ public class ContentView extends LinearLayout {
             }
         }
 
+        boolean stateChanged = true;
+        if(mObject != null) {
+            if(object.getContentUrl().equals(mObject.getContentUrl())) {
+                if(object.getContentState().equals(mPreviousContentState)) {
+                    stateChanged = false;
+                }
+            }
+        }
+
         // remember the new object
         mObject = object;
+        mPreviousContentState = mObject.getContentState();
 
         // we examine the state of the object
         boolean available = object.isContentAvailable();
@@ -130,33 +152,70 @@ public class ContentView extends LinearLayout {
         mContentDescription.setText(object.getContentMediaType());
 
         // status text
-        if(state == ContentState.SELECTED) {
+        if(available) {
             mContentStatus.setVisibility(GONE);
         } else {
             mContentStatus.setVisibility(VISIBLE);
-            int stateRes = 0;
+            String stateText = "";
             switch(state) {
             case DOWNLOAD_NEW:
+                stateText = "Available for download";
+                break;
             case DOWNLOAD_IN_PROGRESS:
+                stateText = "Downloading...";
+                break;
             case DOWNLOAD_PAUSED:
+                stateText = "Download paused";
+                break;
             case DOWNLOAD_COMPLETE:
+                stateText = "Download complete";
+                break;
             case DOWNLOAD_FAILED:
+                stateText = "Download failed";
+                break;
             case UPLOAD_NEW:
+                stateText = "New upload";
+                break;
             case UPLOAD_IN_PROGRESS:
+                stateText = "Uploading...";
+                break;
             case UPLOAD_PAUSED:
+                stateText = "Upload paused";
+                break;
             case UPLOAD_COMPLETE:
+                stateText = "Upload complete";
+                break;
             case UPLOAD_FAILED:
+                stateText = "Upload failed";
+                break;
             }
+            mContentStatus.setText(stateText);
         }
 
         // download/upload actions
-        if(state == ContentState.DOWNLOAD_NEW || state == ContentState.DOWNLOAD_PAUSED) {
+        if(state == ContentState.DOWNLOAD_NEW
+                || state == ContentState.DOWNLOAD_PAUSED
+                || state == ContentState.DOWNLOAD_FAILED
+                || state == ContentState.DOWNLOAD_IN_PROGRESS) {
             mDownloadButton.setVisibility(VISIBLE);
+            if(state == ContentState.DOWNLOAD_IN_PROGRESS) {
+                mDownloadButton.setText("Cancel");
+            } else {
+                mDownloadButton.setText("Download");
+            }
         } else {
             mDownloadButton.setVisibility(GONE);
         }
-        if(state == ContentState.UPLOAD_NEW || state == ContentState.UPLOAD_PAUSED) {
+        if(state == ContentState.UPLOAD_NEW
+                || state == ContentState.UPLOAD_PAUSED
+                || state == ContentState.UPLOAD_FAILED
+                || state == ContentState.UPLOAD_IN_PROGRESS) {
             mUploadButton.setVisibility(VISIBLE);
+            if(state == ContentState.UPLOAD_IN_PROGRESS) {
+                mUploadButton.setText("Cancel");
+            } else {
+                mUploadButton.setText("Upload");
+            }
         } else {
             mUploadButton.setVisibility(GONE);
         }
@@ -178,20 +237,20 @@ public class ContentView extends LinearLayout {
         }
 
         // content wrapper
-        if(contentChanged || !object.isContentAvailable()) {
+        if(contentChanged || stateChanged) {
             mContentWrapper.removeAllViews();
         }
-        if(available && !isInEditMode()) {
+        if(state == ContentState.DOWNLOAD_NEW || isInEditMode()) {
+            mContentWrapper.setVisibility(GONE);
+        } else {
             mContentWrapper.setVisibility(VISIBLE);
-            if(contentChanged || mContentWrapper.getChildCount() == 0) {
+            if(mContentWrapper.getChildCount() == 0) {
                 View view = mRegistry.createViewForContent(activity, object, this);
                 if(view != null) {
                     view.setVisibility(VISIBLE);
                     mContentWrapper.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 }
             }
-        } else {
-            mContentWrapper.setVisibility(GONE);
         }
     }
 
