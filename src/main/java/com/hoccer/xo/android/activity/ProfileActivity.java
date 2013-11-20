@@ -17,6 +17,11 @@ import java.sql.SQLException;
  */
 public class ProfileActivity extends XoActivity implements IXoContactListener {
 
+    /* use this extra to open in "group creation" mode */
+    public static final String EXTRA_CLIENT_CREATE_GROUP = "clientCreateGroup";
+    /* use this extra to open in "client registration" mode */
+    public static final String EXTRA_CLIENT_CREATE_SELF  = "clientCreateSelf";
+    /* use this extra to show the given contact */
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 
     ActionBar mActionBar;
@@ -56,12 +61,16 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
         Intent intent = getIntent();
 
         // handle show intent
-        if(intent != null && intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
-            int contactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
-            if(contactId == -1) {
-                LOG.error("invalid contact id");
-            } else {
-                showProfile(refreshContact(contactId));
+        if(intent != null) {
+            if(intent.hasExtra(EXTRA_CLIENT_CREATE_SELF)) {
+            } else if(intent.hasExtra(EXTRA_CLIENT_CREATE_GROUP)) {
+            } else if(intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
+                int contactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
+                if(contactId == -1) {
+                    LOG.error("invalid contact id");
+                } else {
+                    showProfile(refreshContact(contactId));
+                }
             }
         } else {
             if(mContact != null) {
@@ -99,6 +108,18 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
                 finish();
             }
         }
+    }
+
+    public void createGroup() {
+        LOG.debug("createGroup()");
+        mFragment.createGroup();
+        mContact = null;
+    }
+
+    public void createSelf() {
+        LOG.debug("createSelf()");
+        mFragment.createSelf();
+        mContact = null;
     }
 
     @Override

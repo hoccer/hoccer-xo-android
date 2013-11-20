@@ -210,7 +210,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
                 showPairing();
                 break;
             case R.id.menu_new_group:
-                // XXX create new group with callback
+                showNewGroup();
                 break;
             case R.id.menu_scan_code:
                 scanBarcode();
@@ -414,6 +414,13 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         Intent intent = new Intent(this, ProfileActivity.class);
         intent.putExtra(ProfileActivity.EXTRA_CLIENT_CONTACT_ID,
                         contact.getClientContactId());
+        startActivity(intent);
+    }
+
+    public void showNewGroup() {
+        LOG.debug("showNewGroup()");
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra(ProfileActivity.EXTRA_CLIENT_CREATE_GROUP, true);
         startActivity(intent);
     }
 

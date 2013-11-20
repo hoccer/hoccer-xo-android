@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.UUID;
 
 /**
  * Fragment for display and editing of profiles
@@ -38,6 +39,14 @@ public class ProfileFragment extends XoFragment
         implements View.OnClickListener, IXoContactListener {
 
     private static final Logger LOG = Logger.getLogger(ProfileFragment.class);
+
+    enum Mode {
+        PROFILE,
+        CREATE_GROUP,
+        CREATE_SELF,
+    }
+
+    Mode mMode;
 
     LinearLayout mNameOverlay;
     TextView  mNameText;
@@ -237,8 +246,27 @@ public class ProfileFragment extends XoFragment
         if(contact != null) {
             LOG.debug("showProfile(" + contact.getClientContactId() + ")");
         }
+        mMode = Mode.PROFILE;
         mContact = contact;
         refreshContact();
+    }
+
+    public void createSelf() {
+        LOG.debug("createSelf()");
+        mMode = Mode.CREATE_SELF;
+        XoApplication.getXoClient();
+    }
+
+    public void createGroup() {
+        LOG.debug("createGroup()");
+        mMode = Mode.CREATE_GROUP;
+        String groupTag = UUID.randomUUID().toString();
+        mContact = new TalkClientContact(TalkClientContact.TYPE_GROUP);
+        mContact.updateGroupTag(groupTag);
+        TalkGroup groupPresence = new TalkGroup();
+        groupPresence.setGroupTag(groupTag);
+        groupPresence.setGroupName("<new group>");
+        mContact.updateGroupPresence(groupPresence);
     }
 
     private void update(TalkClientContact contact) {
