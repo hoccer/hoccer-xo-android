@@ -421,6 +421,9 @@ public class ProfileFragment extends XoFragment
         }
     }
 
+    private boolean isMyContact(TalkClientContact contact) {
+        return mContact != null && mContact.getClientContactId() == contact.getClientContactId();
+    }
 
     @Override
     public void onContactAdded(TalkClientContact contact) {
@@ -434,7 +437,7 @@ public class ProfileFragment extends XoFragment
 
     @Override
     public void onClientPresenceChanged(TalkClientContact contact) {
-        if(mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
+        if(isMyContact(contact)) {
             mContact = contact;
             refreshContact();
         }
@@ -442,7 +445,7 @@ public class ProfileFragment extends XoFragment
 
     @Override
     public void onClientRelationshipChanged(TalkClientContact contact) {
-        if(mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
+        if(isMyContact(contact)) {
             mContact = contact;
             refreshContact();
         }
@@ -450,7 +453,7 @@ public class ProfileFragment extends XoFragment
 
     @Override
     public void onGroupPresenceChanged(TalkClientContact contact) {
-        if(mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
+        if(isMyContact(contact)) {
             mContact = contact;
             refreshContact();
         }
@@ -458,7 +461,7 @@ public class ProfileFragment extends XoFragment
 
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
-        if(mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
+        if(isMyContact(contact)) {
             mContact = contact;
             refreshContact();
         }
