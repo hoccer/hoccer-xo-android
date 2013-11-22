@@ -138,6 +138,7 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
 
     @Override
     public void onContactAdded(TalkClientContact contact) {
+        // we don't care
     }
 
     @Override
