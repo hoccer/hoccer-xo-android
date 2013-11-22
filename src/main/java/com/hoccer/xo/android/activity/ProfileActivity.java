@@ -131,46 +131,46 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
         });
     }
 
+    private boolean isMyContact(TalkClientContact contact) {
+        TalkClientContact myContact = mFragment.getContact();
+        return myContact != null && myContact.getClientContactId() == contact.getClientContactId();
+    }
+
     @Override
     public void onContactAdded(TalkClientContact contact) {
     }
 
     @Override
     public void onContactRemoved(TalkClientContact contact) {
-        TalkClientContact myContact = mFragment.getContact();
-        if(myContact != null && myContact.getClientContactId() == contact.getClientContactId()) {
+        if(isMyContact(contact)) {
             finish();
         }
     }
 
     @Override
     public void onClientPresenceChanged(TalkClientContact contact) {
-        TalkClientContact myContact = mFragment.getContact();
-        if(myContact != null && myContact.getClientContactId() == contact.getClientContactId()) {
+        if(isMyContact(contact)) {
             update(contact);
         }
     }
 
     @Override
     public void onClientRelationshipChanged(TalkClientContact contact) {
-        TalkClientContact myContact = mFragment.getContact();
-        if(myContact != null && myContact.getClientContactId() == contact.getClientContactId()) {
+        if(isMyContact(contact)) {
             update(contact);
         }
     }
 
     @Override
     public void onGroupPresenceChanged(TalkClientContact contact) {
-        TalkClientContact myContact = mFragment.getContact();
-        if(myContact != null && myContact.getClientContactId() == contact.getClientContactId()) {
+        if(isMyContact(contact)) {
             update(contact);
         }
     }
 
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
-        TalkClientContact myContact = mFragment.getContact();
-        if(myContact != null && myContact.getClientContactId() == contact.getClientContactId()) {
+        if(isMyContact(contact)) {
             update(contact);
         }
     }
