@@ -332,7 +332,7 @@ public class ProfileFragment extends XoFragment
         mUserDepairButton.setVisibility(clientRelatedVisibility);
         mUserDeleteButton.setVisibility(clientVisibility);
         // group operations
-        int groupCreateVisibility = contact.isGroupRegistered() ? View.GONE : View.VISIBLE;
+        int groupCreateVisibility = (contact.isGroup() && !contact.isGroupRegistered()) ? View.VISIBLE : View.GONE;
         int groupJoinedVisibility = (contact.isGroupRegistered() && contact.isGroupJoined()) ? View.VISIBLE : View.GONE;
         int groupInvitedVisibility = (contact.isGroupRegistered() && contact.isGroupInvited()) ? View.VISIBLE : View.GONE;
         int groupAdminVisibility = (contact.isGroupRegistered() && contact.isGroupAdmin()) ? View.VISIBLE : View.GONE;
