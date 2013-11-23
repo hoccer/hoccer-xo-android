@@ -7,18 +7,16 @@ import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.XoApplication;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.talk.model.TalkPresence;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.sql.SQLException;
 
 /**
@@ -148,9 +146,9 @@ public class RichContactsAdapter extends ContactsAdapter {
                 avatarUri = "content://" + R.drawable.avatar_default_contact;
             }
         } else {
-            File avatarFile = XoApplication.getAvatarLocation(avatarDownload);
+            String avatarFile = avatarDownload.getDataFile();
             if(avatarFile != null) {
-                avatarUri = "file://" + avatarFile.toString();
+                avatarUri = avatarFile;
             } else {
                 if(contact.isGroup()) {
                     avatarUri = "content://" + R.drawable.avatar_default_group;
