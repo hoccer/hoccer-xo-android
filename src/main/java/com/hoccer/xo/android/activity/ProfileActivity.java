@@ -123,7 +123,11 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mActionBar.setTitle(contact.getName());
+                if(contact.isSelf()) {
+                    mActionBar.setTitle("My profile");
+                } else {
+                    mActionBar.setTitle(contact.getName());
+                }
                 if (contact.isDeleted()) {
                     finish();
                 }
