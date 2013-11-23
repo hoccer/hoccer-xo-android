@@ -195,12 +195,8 @@ public class PairingFragment extends XoFragment implements View.OnClickListener 
         getBackgroundExecutor().execute(new Runnable() {
             @Override
             public void run() {
-                boolean success = getXoClient().performTokenPairing(token);
-                if(success) {
-                    onTokenPairingSucceeded(token);
-                } else {
-                    onTokenPairingFailed(token);
-                }
+                getXoClient().performTokenPairing(token);
+                onTokenPairingSucceeded(token);
             }
         });
     }
