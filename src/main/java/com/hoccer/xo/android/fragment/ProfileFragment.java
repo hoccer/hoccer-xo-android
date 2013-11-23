@@ -27,7 +27,6 @@ import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -40,7 +39,7 @@ public class ProfileFragment extends XoFragment
 
     private static final Logger LOG = Logger.getLogger(ProfileFragment.class);
 
-    enum Mode {
+    public enum Mode {
         PROFILE,
         CREATE_GROUP,
         CREATE_SELF,
@@ -291,24 +290,38 @@ public class ProfileFragment extends XoFragment
         } else {
             avatarUrl = "content://" + R.drawable.avatar_default_contact_large;
         }
-        if(contact.isClient() || contact.isGroup()) {
-            TalkClientDownload avatarDownload = contact.getAvatarDownload();
-            if(avatarDownload != null) {
-                if(avatarDownload.getState() == TalkClientDownload.State.COMPLETE) {
-                    File avatarFile = XoApplication.getAvatarLocation(avatarDownload);
-                    avatarUrl = "file://" + avatarFile.toString();
-                }
-            }
-        }
-        if(contact.isSelf()) {
-            TalkClientUpload avatarUpload = contact.getAvatarUpload();
+        TalkClientUpload avatarUpload = null;
+        TalkClientDownload avatarDownload = null;
+        if(contact.isSelf() || contact.isGroup()) {
+            LOG.info("checking for avatar upload");
+            avatarUpload = contact.getAvatarUpload();
             if(avatarUpload != null) {
-                if(avatarUpload.getState() == TalkClientUpload.State.COMPLETE) {
-                    File avatarFile = XoApplication.getAvatarLocation(avatarUpload);
-                    avatarUrl = "file://" + avatarFile.toString();
+                if (avatarUpload.isContentAvailable()) {
+                    LOG.info("avatar upload");
+                    String file = avatarUpload.getDataFile();
+                    if(file == null) {
+                        LOG.warn("duh!? avatar upload without a file");
+                        avatarUpload = null;
+                    } else {
+                        avatarUrl = file;
+                    }
+                } else {
+                    LOG.warn("duh!? avatar upload not available");
+                    avatarUpload = null;
                 }
             }
         }
+        if(avatarUpload == null && (contact.isClient() || contact.isGroup())) {
+            LOG.info("checking for avatar download");
+            avatarDownload = contact.getAvatarDownload();
+            if(avatarDownload != null) {
+                if(avatarDownload.isContentAvailable()) {
+                    LOG.info("avatar download");
+                    avatarUrl = avatarDownload.getDataFile();
+                }
+            }
+        }
+        LOG.info("avatar is " + avatarUrl);
         ImageLoader.getInstance().displayImage(avatarUrl, mAvatarImage);
 
         // client operations

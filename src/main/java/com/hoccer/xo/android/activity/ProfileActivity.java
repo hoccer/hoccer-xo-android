@@ -49,16 +49,9 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         mFragment = (ProfileFragment)fragmentManager.findFragmentById(R.id.activity_profile_fragment);
-    }
 
-    @Override
-    protected void onResume() {
-        LOG.debug("onResume()");
-        super.onResume();
-
+        // handle intents
         Intent intent = getIntent();
-
-        // handle show intent
         if(intent != null) {
             if(intent.hasExtra(EXTRA_CLIENT_CREATE_SELF)) {
                 createSelf();
@@ -73,6 +66,12 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
                 }
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        LOG.debug("onResume()");
+        super.onResume();
 
         getXoClient().registerContactListener(this);
     }
@@ -120,11 +119,12 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
     }
 
     private void update(final TalkClientContact contact) {
+        LOG.info("update(" + contact.getClientContactId() + ")");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mActionBar.setTitle(contact.getName());
-                if(contact.isDeleted()) {
+                if (contact.isDeleted()) {
                     finish();
                 }
             }
