@@ -126,8 +126,10 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
 
         boolean stateChanged = true;
         if(mObject != null) {
-            if(object.getContentUrl().equals(mObject.getContentUrl())) {
-                if(object.getContentState().equals(mPreviousContentState)) {
+            String oldUrl = mObject.getContentUrl();
+            String newUrl = object.getContentUrl();
+            if(oldUrl != null && newUrl != null) {
+                if(oldUrl.equals(newUrl)) {
                     stateChanged = false;
                 }
             }
