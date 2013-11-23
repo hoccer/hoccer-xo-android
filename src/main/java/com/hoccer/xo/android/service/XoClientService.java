@@ -163,8 +163,9 @@ public class XoClientService extends Service {
             }
             if(intent.hasExtra(SmsReceiver.EXTRA_SMS_URL_RECEIVED)) {
                 String sender = intent.getStringExtra(SmsReceiver.EXTRA_SMS_SENDER);
+                String body = intent.getStringExtra(SmsReceiver.EXTRA_SMS_BODY);
                 String url = intent.getStringExtra(SmsReceiver.EXTRA_SMS_URL_RECEIVED);
-                mClient.handleSmsUrl(sender, url);
+                mClient.handleSmsUrl(sender, body, url);
             }
         }
         return START_STICKY;
