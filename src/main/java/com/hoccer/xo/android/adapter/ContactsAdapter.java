@@ -4,10 +4,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.hoccer.talk.client.IXoContactListener;
+import com.hoccer.talk.client.IXoMessageListener;
 import com.hoccer.talk.client.IXoTokenListener;
+import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import org.apache.log4j.Logger;
@@ -24,7 +28,8 @@ import java.util.List;
  * It also has a filter feature that allows restricting the displayed set of contacts.
  *
  */
-public abstract class ContactsAdapter extends XoAdapter implements IXoContactListener, IXoTokenListener {
+public abstract class ContactsAdapter extends XoAdapter
+        implements IXoContactListener, IXoMessageListener, IXoTokenListener, IXoTransferListener {
 
     private static final Logger LOG = Logger.getLogger(ContactsAdapter.class);
 
@@ -72,12 +77,16 @@ public abstract class ContactsAdapter extends XoAdapter implements IXoContactLis
     public void register() {
         getXoClient().registerContactListener(this);
         getXoClient().registerTokenListener(this);
+        getXoClient().registerTransferListener(this);
+        getXoClient().registerMessageListener(this);
     }
 
     @Override
     public void unregister() {
         getXoClient().unregisterContactListener(this);
         getXoClient().unregisterTokenListener(this);
+        getXoClient().unregisterTransferListener(this);
+        getXoClient().unregisterMessageListener(this);
     }
 
     @Override
@@ -156,25 +165,63 @@ public abstract class ContactsAdapter extends XoAdapter implements IXoContactLis
     public void onContactRemoved(TalkClientContact contact) {
         reload();
     }
-
     @Override
     public void onClientPresenceChanged(TalkClientContact contact) {
         reload();
     }
-
     @Override
     public void onClientRelationshipChanged(TalkClientContact contact) {
         reload();
     }
-
     @Override
     public void onGroupPresenceChanged(TalkClientContact contact) {
         reload();
     }
-
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
         reload();
+    }
+
+    @Override
+    public void onMessageAdded(TalkClientMessage message) {
+        reload();
+    }
+    @Override
+    public void onMessageRemoved(TalkClientMessage message) {
+    }
+    @Override
+    public void onMessageStateChanged(TalkClientMessage message) {
+    }
+
+    @Override
+    public void onDownloadStarted(TalkClientDownload download) {
+    }
+    @Override
+    public void onDownloadProgress(TalkClientDownload download) {
+    }
+    @Override
+    public void onDownloadFinished(TalkClientDownload download) {
+    }
+    @Override
+    public void onDownloadStateChanged(TalkClientDownload download) {
+        if(download.isAvatar() && download.getState() == TalkClientDownload.State.COMPLETE) {
+            reload();
+        }
+    }
+    @Override
+    public void onUploadStarted(TalkClientUpload upload) {
+    }
+    @Override
+    public void onUploadProgress(TalkClientUpload upload) {
+    }
+    @Override
+    public void onUploadFinished(TalkClientUpload upload) {
+    }
+    @Override
+    public void onUploadStateChanged(TalkClientUpload upload) {
+        if(upload.isAvatar()) {
+            reload();
+        }
     }
 
     @Override
