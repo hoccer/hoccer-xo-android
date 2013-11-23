@@ -43,27 +43,29 @@ public class ImageViewer implements IContentViewer {
         view.setAdjustViewBounds(true);
         view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        ImageLoader.getInstance().displayImage(object.getContentUrl(), view, new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String imageUri, View view) {
-                LOG.info("load of " + imageUri + " started");
-            }
+        if(object.getContentUrl() != null) {
+            ImageLoader.getInstance().displayImage(object.getContentUrl(), view, new ImageLoadingListener() {
+                @Override
+                public void onLoadingStarted(String imageUri, View view) {
+                    LOG.info("load of " + imageUri + " started");
+                }
 
-            @Override
-            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-                LOG.error("load of " + imageUri + " failed: " + failReason.getType().toString(), failReason.getCause());
-            }
+                @Override
+                public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                    LOG.error("load of " + imageUri + " failed: " + failReason.getType().toString(), failReason.getCause());
+                }
 
-            @Override
-            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                LOG.info("load of " + imageUri + " complete");
-            }
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    LOG.info("load of " + imageUri + " complete");
+                }
 
-            @Override
-            public void onLoadingCancelled(String imageUri, View view) {
-                LOG.info("load of " + imageUri + " cancelled");
-            }
-        });
+                @Override
+                public void onLoadingCancelled(String imageUri, View view) {
+                    LOG.info("load of " + imageUri + " cancelled");
+                }
+            });
+        }
         return view;
     }
 
