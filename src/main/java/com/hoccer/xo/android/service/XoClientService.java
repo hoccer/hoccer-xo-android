@@ -382,8 +382,8 @@ public class XoClientService extends Service {
         }
     }
 
-    private void updateInvitationNotification(List<TalkClientSmsToken> unconfirmedTokens, boolean notify) {
-        LOG.info("updateInvitationNotification()");
+    private void updateInvitateNotification(List<TalkClientSmsToken> unconfirmedTokens, boolean notify) {
+        LOG.info("updateInvitateNotification()");
         XoClientDatabase db = mClient.getDatabase();
 
         // cancel present notification if everything has been seen
@@ -430,12 +430,14 @@ public class XoClientService extends Service {
 
         // finish up
         Notification notification = builder.build();
-        LOG.info("notification " + notification.toString());
+        // log about it
+        LOG.debug("invite notification " + notification.toString());
+        // update the notification
         mNotificationManager.notify(NOTIFICATION_UNCONFIRMED_INVITATIONS, notification);
     }
 
-    private void updateNotification(List<TalkClientMessage> allUnseenMessages, boolean notify) {
-        LOG.info("updateNotification()");
+    private void updateMessageNotification(List<TalkClientMessage> allUnseenMessages, boolean notify) {
+        LOG.info("updateMessageNotification()");
         XoClientDatabase db = mClient.getDatabase();
 
         // we re-collect messages to this to eliminate
@@ -450,7 +452,7 @@ public class XoClientService extends Service {
         // we back off here to prevent interruption of any in-progress alarms
         if(allUnseenMessages == null || allUnseenMessages.isEmpty()) {
             LOG.debug("no unseen messages");
-            cancelNotification();
+            cancelMessageNotification();
             return;
         }
 
@@ -486,7 +488,7 @@ public class XoClientService extends Service {
         // if we have no messages after culling then cancel notification
         if(unseenMessages.isEmpty()) {
             LOG.debug("no unseen messages");
-            cancelNotification();
+            cancelMessageNotification();
             return;
         }
 
@@ -560,11 +562,13 @@ public class XoClientService extends Service {
 
         // finish up
         Notification notification = builder.build();
-        LOG.info("notification " + notification.toString());
+        // log about it
+        LOG.debug("message notification " + notification.toString());
+        // update the notification
         mNotificationManager.notify(NOTIFICATION_UNSEEN_MESSAGES, notification);
     }
 
-    private void cancelNotification() {
+    private void cancelMessageNotification() {
         long now = System.currentTimeMillis();
         long cancelTime = mNotificationTimestamp + XoConfiguration.NOTIFICATION_CANCEL_BACKOFF;
         long delay = Math.max(0, cancelTime - now);
@@ -607,7 +611,7 @@ public class XoClientService extends Service {
         @Override
         public void onUnseenMessages(List<TalkClientMessage> unseenMessages, boolean notify) {
             try {
-                updateNotification(unseenMessages, notify);
+                updateMessageNotification(unseenMessages, notify);
             } catch (Throwable t) {
                 LOG.error("exception updating notification", t);
             }
@@ -615,7 +619,7 @@ public class XoClientService extends Service {
 
         @Override
         public void onTokensChanged(List<TalkClientSmsToken> tokens, boolean newTokens) {
-            updateInvitationNotification(tokens, newTokens);
+            updateInvitateNotification(tokens, newTokens);
         }
     }
 
