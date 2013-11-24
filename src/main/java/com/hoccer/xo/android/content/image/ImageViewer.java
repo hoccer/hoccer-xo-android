@@ -41,7 +41,9 @@ public class ImageViewer implements IContentViewer {
         view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         view.setAspectRatio(object.getContentAspectRatio());
         view.setAdjustViewBounds(true);
-        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        view.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
 
         if(object.getContentUrl() != null) {
             ImageLoader.getInstance().displayImage(object.getContentUrl(), view, new ImageLoadingListener() {
