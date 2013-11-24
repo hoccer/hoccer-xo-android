@@ -25,6 +25,7 @@ public class CaptureSelector implements IContentSelector {
         Uri selectedContent = intent.getData();
         String[] filePathColumn = {MediaStore.Images.Media.MIME_TYPE,
                                     MediaStore.Images.Media.DATA,
+                                    MediaStore.Images.Media.SIZE,
                                     MediaStore.Images.Media.WIDTH,
                                     MediaStore.Images.Media.HEIGHT};
 
@@ -36,17 +37,24 @@ public class CaptureSelector implements IContentSelector {
         String fileType = cursor.getString(typeIndex);
         int dataIndex = cursor.getColumnIndex(filePathColumn[1]);
         String filePath = cursor.getString(dataIndex);
-        int widthIndex = cursor.getColumnIndex(filePathColumn[2]);
+        int sizeIndex = cursor.getColumnIndex(filePathColumn[2]);
+        int fileSize = cursor.getInt(sizeIndex);
+        int widthIndex = cursor.getColumnIndex(filePathColumn[3]);
         int fileWidth = cursor.getInt(widthIndex);
-        int heightIndex = cursor.getColumnIndex(filePathColumn[3]);
+        int heightIndex = cursor.getColumnIndex(filePathColumn[4]);
         int fileHeight = cursor.getInt(heightIndex);
+
+        cursor.close();
+
+        if(filePath == null) {
+            return null;
+        }
 
         SelectedContent contentObject = new SelectedContent("file://" + filePath);
         contentObject.setContentMediaType("image");
         contentObject.setContentType(fileType);
+        contentObject.setContentLength(fileSize);
         contentObject.setContentAspectRatio(((float)fileWidth) / ((float)fileHeight));
-
-        cursor.close();
 
         return contentObject;
     }

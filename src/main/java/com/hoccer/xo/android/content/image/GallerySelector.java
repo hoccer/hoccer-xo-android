@@ -44,6 +44,8 @@ public class GallerySelector implements IContentSelector {
         int heightIndex = cursor.getColumnIndex(filePathColumn[4]);
         int fileHeight = cursor.getInt(heightIndex);
 
+        cursor.close();
+
         if(filePath == null) {
             return null;
         }
@@ -55,8 +57,6 @@ public class GallerySelector implements IContentSelector {
         if(fileWidth > 0 && fileHeight > 0) {
             contentObject.setContentAspectRatio(((float)fileWidth) / ((float)fileHeight));
         }
-
-        cursor.close();
 
         return contentObject;
     }

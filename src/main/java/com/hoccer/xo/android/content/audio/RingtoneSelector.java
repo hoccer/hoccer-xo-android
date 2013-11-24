@@ -28,7 +28,8 @@ public class RingtoneSelector implements IContentSelector {
     public SelectedContent createObjectFromSelectionResult(Context context, Intent intent) {
         Uri selectedContent = intent.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
         String[] filePathColumn = {MediaStore.Audio.Media.MIME_TYPE,
-                                   MediaStore.Audio.Media.DATA};
+                                   MediaStore.Audio.Media.DATA,
+                                   MediaStore.Audio.Media.SIZE};
 
         Cursor cursor = context.getContentResolver().query(
                 selectedContent, filePathColumn, null, null, null);
@@ -38,6 +39,10 @@ public class RingtoneSelector implements IContentSelector {
         String fileType = cursor.getString(typeIndex);
         int dataIndex = cursor.getColumnIndex(filePathColumn[1]);
         String filePath = cursor.getString(dataIndex);
+        int sizeIndex = cursor.getColumnIndex(filePathColumn[2]);
+        int fileSize = cursor.getInt(sizeIndex);
+
+        cursor.close();
 
         if(filePath == null) {
             return null;
@@ -46,6 +51,7 @@ public class RingtoneSelector implements IContentSelector {
         SelectedContent contentObject = new SelectedContent("file://" + filePath);
         contentObject.setContentMediaType("audio");
         contentObject.setContentType(fileType);
+        contentObject.setContentLength(fileSize);
 
         return contentObject;
     }

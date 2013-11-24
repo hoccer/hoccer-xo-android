@@ -45,6 +45,8 @@ public class ContactSelector implements IContentSelector {
             contentUri = contentUri.replace("content:/com.android.contacts", "content://com.android.contacts");
         }
 
+        cursor.close();
+
         SelectedContent co = new SelectedContent(contentUri);
         co.setContentType(ContactsContract.Contacts.CONTENT_VCARD_TYPE);
         co.setContentMediaType("contact");
