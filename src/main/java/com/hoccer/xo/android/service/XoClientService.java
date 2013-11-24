@@ -610,16 +610,22 @@ public class XoClientService extends Service {
 
         @Override
         public void onUnseenMessages(List<TalkClientMessage> unseenMessages, boolean notify) {
+            LOG.debug("onUnseenMessages(" + unseenMessages.size() + "," + notify + ")");
             try {
                 updateMessageNotification(unseenMessages, notify);
             } catch (Throwable t) {
-                LOG.error("exception updating notification", t);
+                LOG.error("exception updating message notification", t);
             }
         }
 
         @Override
         public void onTokensChanged(List<TalkClientSmsToken> tokens, boolean newTokens) {
-            updateInvitateNotification(tokens, newTokens);
+            LOG.debug("onTokensChanged(" + tokens.size() + "," + newTokens + ")");
+            try {
+                updateInvitateNotification(tokens, newTokens);
+            } catch (Throwable t) {
+                LOG.error("exception updating invite notification", t);
+            }
         }
     }
 
