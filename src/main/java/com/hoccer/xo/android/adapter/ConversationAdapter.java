@@ -20,7 +20,6 @@ import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,7 +33,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Adapter for messages in a conversation
  */
-public class ConversationAdapter extends XoAdapter implements IXoMessageListener, IXoTransferListener {
+public class ConversationAdapter extends XoAdapter
+        implements IXoMessageListener, IXoTransferListener {
 
     private static final int VIEW_TYPE_INCOMING = 0;
     private static final int VIEW_TYPE_OUTGOING = 1;
@@ -79,7 +79,6 @@ public class ConversationAdapter extends XoAdapter implements IXoMessageListener
     public void onMessageAdded(TalkClientMessage message) {
         reload();
     }
-
     @Override
     public void onMessageRemoved(TalkClientMessage message) {
         reload();
@@ -89,22 +88,18 @@ public class ConversationAdapter extends XoAdapter implements IXoMessageListener
     public void onMessageStateChanged(TalkClientMessage message) {
         reload();
     }
-
     @Override
     public void onDownloadStarted(TalkClientDownload download) {
         reload();
     }
-
     @Override
     public void onDownloadProgress(TalkClientDownload download) {
         reload();
     }
-
     @Override
     public void onDownloadFinished(TalkClientDownload download) {
         reload();
     }
-
     @Override
     public void onDownloadStateChanged(TalkClientDownload download) {
         reload();
@@ -114,17 +109,14 @@ public class ConversationAdapter extends XoAdapter implements IXoMessageListener
     public void onUploadStarted(TalkClientUpload upload) {
         reload();
     }
-
     @Override
     public void onUploadProgress(TalkClientUpload upload) {
         reload();
     }
-
     @Override
     public void onUploadFinished(TalkClientUpload upload) {
         reload();
     }
-
     @Override
     public void onUploadStateChanged(TalkClientUpload upload) {
         reload();
@@ -315,7 +307,7 @@ public class ConversationAdapter extends XoAdapter implements IXoMessageListener
     }
 
     private void updateViewCommon(View view, TalkClientMessage message) {
-        TalkClientContact sendingContact = message.getSenderContact();
+        final TalkClientContact sendingContact = message.getSenderContact();
 
         if(!message.isSeen()) {
             markMessageAsSeen(message);
@@ -350,37 +342,31 @@ public class ConversationAdapter extends XoAdapter implements IXoMessageListener
         }
 
         final ImageView avatar = (ImageView)view.findViewById(R.id.message_avatar);
-        String avatarUrl = "content://" + R.drawable.avatar_default_contact;
+        String avatarUri = null;
         if(sendingContact != null) {
-            if(sendingContact.isGroup()) {
-                avatarUrl = "content://" + R.drawable.avatar_default_group;
-            } else {
-                avatarUrl = "content://" + R.drawable.avatar_default_contact;
-            }
-            if(sendingContact.isGroup() || sendingContact.isClient()) {
-                TalkClientDownload avatarDownload = sendingContact.getAvatarDownload();
-                if(avatarDownload != null) {
-                    if(avatarDownload.getState().equals(TalkClientDownload.State.COMPLETE)) {
-                        File avatarFile = XoApplication.getAvatarLocation(avatarDownload);
-                        if(avatarFile != null) {
-                            avatarUrl = "file://" + avatarFile.toString();
-                        }
-                    }
+            TalkClientDownload avatarDownload = sendingContact.getAvatarDownload();
+            TalkClientUpload avatarUpload = sendingContact.getAvatarUpload();
+            avatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mActivity.showContactProfile(sendingContact);
                 }
+            });
+            if(avatarDownload != null && avatarDownload.isContentAvailable()) {
+                avatarUri = avatarDownload.getDataFile();
+            } else if(avatarUpload != null && avatarUpload.isContentAvailable()) {
+                avatarUri = avatarUpload.getDataFile();
             }
-            if(sendingContact.isSelf()) {
-                TalkClientUpload avatarUpload = sendingContact.getAvatarUpload();
-                if(avatarUpload != null) {
-                    if(avatarUpload.getState().equals(TalkClientUpload.State.COMPLETE)) {
-                        File avatarFile = XoApplication.getAvatarLocation(avatarUpload);
-                        if(avatarFile != null) {
-                            avatarUrl = "file://" + avatarFile.toString();
-                        }
-                    }
+            if(avatarUri == null) {
+                if(sendingContact.isGroup()) {
+                    avatarUri = "content://" + R.drawable.avatar_default_group;
                 }
             }
         }
-        loadAvatar(avatar, avatarUrl);
+        if(avatarUri == null) {
+            avatarUri = "content://" + R.drawable.avatar_default_contact;
+        }
+        loadAvatar(avatar, avatarUri);
 
         ContentView contentView = (ContentView)view.findViewById(R.id.message_content);
 

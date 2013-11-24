@@ -11,6 +11,7 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
@@ -131,6 +132,7 @@ public class RichContactsAdapter extends ContactsAdapter {
         }
 
         TalkClientDownload avatarDownload = contact.getAvatarDownload();
+        TalkClientUpload avatarUpload = contact.getAvatarUpload();
         ImageView iconView = (ImageView) view.findViewById(R.id.contact_icon);
         iconView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,23 +140,17 @@ public class RichContactsAdapter extends ContactsAdapter {
                 mActivity.showContactProfile(contact);
             }
         });
-        String avatarUri;
-        if(avatarDownload == null || !avatarDownload.getState().equals(TalkClientDownload.State.COMPLETE)) {
+        String avatarUri = null;
+        if(avatarDownload != null && avatarDownload.isContentAvailable()) {
+            avatarUri = avatarDownload.getDataFile();
+        } else if(avatarUpload != null && avatarUpload.isContentAvailable()) {
+            avatarUri = avatarUpload.getDataFile();
+        }
+        if(avatarUri == null) {
             if(contact.isGroup()) {
                 avatarUri = "content://" + R.drawable.avatar_default_group;
             } else {
                 avatarUri = "content://" + R.drawable.avatar_default_contact;
-            }
-        } else {
-            String avatarFile = avatarDownload.getDataFile();
-            if(avatarFile != null) {
-                avatarUri = avatarFile;
-            } else {
-                if(contact.isGroup()) {
-                    avatarUri = "content://" + R.drawable.avatar_default_group;
-                } else {
-                    avatarUri = "content://" + R.drawable.avatar_default_contact;
-                }
             }
         }
         ImageLoader.getInstance().displayImage(avatarUri, iconView);
