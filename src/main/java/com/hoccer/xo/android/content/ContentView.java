@@ -250,7 +250,10 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 View view = mRegistry.createViewForContent(activity, object, this);
                 if(view != null) {
                     view.setVisibility(VISIBLE);
-                    mContentWrapper.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    mContentWrapper.addView(view,
+                            new ViewGroup.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT));
                 }
             }
         }
