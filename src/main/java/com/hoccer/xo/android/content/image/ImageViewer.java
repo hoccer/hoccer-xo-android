@@ -45,8 +45,9 @@ public class ImageViewer implements IContentViewer {
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        if(object.getContentUrl() != null) {
-            ImageLoader.getInstance().displayImage(object.getContentUrl(), view, new ImageLoadingListener() {
+        String contentUrl = object.getContentUrl();
+        if(object.isContentAvailable() && contentUrl != null) {
+            ImageLoader.getInstance().displayImage(contentUrl, view, new ImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
                     LOG.debug("load of " + imageUri + " started");
