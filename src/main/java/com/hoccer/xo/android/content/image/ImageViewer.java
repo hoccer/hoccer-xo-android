@@ -31,7 +31,7 @@ public class ImageViewer implements IContentViewer {
         if(!canViewObject(object)) {
             return null;
         }
-        LOG.debug("constructing image view");
+
         AspectImageView view = new AspectImageView(context);
 
         int maxContentHeight = contentView.getMaxContentHeight();
@@ -47,22 +47,19 @@ public class ImageViewer implements IContentViewer {
             ImageLoader.getInstance().displayImage(object.getContentUrl(), view, new ImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
-                    LOG.info("load of " + imageUri + " started");
+                    LOG.debug("load of " + imageUri + " started");
                 }
-
                 @Override
                 public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
                     LOG.error("load of " + imageUri + " failed: " + failReason.getType().toString(), failReason.getCause());
                 }
-
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                    LOG.info("load of " + imageUri + " complete");
+                    LOG.debug("load of " + imageUri + " complete");
                 }
-
                 @Override
                 public void onLoadingCancelled(String imageUri, View view) {
-                    LOG.info("load of " + imageUri + " cancelled");
+                    LOG.debug("load of " + imageUri + " cancelled");
                 }
             });
         }
