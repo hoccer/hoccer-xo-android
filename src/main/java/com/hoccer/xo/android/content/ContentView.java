@@ -242,7 +242,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         if(contentChanged || stateChanged) {
             mContentWrapper.removeAllViews();
         }
-        if(state == ContentState.DOWNLOAD_NEW || isInEditMode()) {
+        if(isInEditMode()) {
             mContentWrapper.setVisibility(GONE);
         } else {
             mContentWrapper.setVisibility(VISIBLE);

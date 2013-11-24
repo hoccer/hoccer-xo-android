@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -8,6 +8,7 @@
     <LinearLayout
             android:id="@+id/content_wrapper"
             android:orientation="vertical"
+            android:layout_centerInParent="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
         <ImageView
@@ -18,7 +19,12 @@
 
     <LinearLayout
             android:id="@+id/content_footer"
+            android:background="@android:drawable/screen_background_light"
+            android:alpha="0.9"
             android:orientation="horizontal"
+            android:padding="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -56,12 +62,14 @@
             <Button
                 android:id="@+id/content_download_button"
                 android:text="Download"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
             <Button
                 android:id="@+id/content_upload_button"
                 android:text="Upload"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
@@ -69,4 +77,4 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>
