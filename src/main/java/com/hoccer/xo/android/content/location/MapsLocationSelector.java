@@ -9,12 +9,12 @@ public class MapsLocationSelector implements IContentSelector {
 
     @Override
     public String getName() {
-        return "Location from Map";
+        return "Location on Map";
     }
 
     @Override
     public Intent createSelectionIntent(Context context) {
-        return null;
+        return new Intent(context, MapsLocationActivity.class);
     }
 
     @Override

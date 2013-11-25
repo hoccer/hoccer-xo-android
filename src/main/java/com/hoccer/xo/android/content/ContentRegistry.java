@@ -15,6 +15,7 @@ import com.hoccer.xo.android.content.audio.AudioViewer;
 import com.hoccer.xo.android.content.audio.MusicSelector;
 import com.hoccer.xo.android.content.image.GallerySelector;
 import com.hoccer.xo.android.content.image.ImageViewer;
+import com.hoccer.xo.android.content.location.MapsLocationSelector;
 import com.hoccer.xo.android.content.vcard.ContactSelector;
 import com.hoccer.xo.android.content.vcard.ContactViewer;
 import com.hoccer.xo.android.util.IntentHelper;
@@ -87,6 +88,7 @@ public class ContentRegistry {
         initializeSelector(new GallerySelector());
         initializeSelector(new MusicSelector());
         initializeSelector(new ContactSelector());
+        initializeSelector(new MapsLocationSelector());
 
         mAttachmentViewers.add(new ImageViewer());
         mAttachmentViewers.add(new AudioViewer());

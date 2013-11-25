@@ -31,14 +31,26 @@
             <version>${android.supportv4.version}</version>
         </dependency>
 
+        <!-- Google Play Services -->
+        <dependency>
+            <groupId>com.google.android.gms</groupId>
+            <artifactId>google-play-services</artifactId>
+            <version>13.0.0</version>
+            <type>apklib</type>
+        </dependency>
+        <dependency>
+            <groupId>com.google.android.gms</groupId>
+            <artifactId>google-play-services</artifactId>
+            <version>13.0.0</version>
+            <type>jar</type>
+        </dependency>
+
         <!-- Google Maps API -->
-        <!--
         <dependency>
             <groupId>com.google.android.maps</groupId>
             <artifactId>maps</artifactId>
             <version>${android.gmaps.version}</version>
         </dependency>
-        -->
 
         <!-- ez-vcard for vcard reading/writing -->
         <dependency>
