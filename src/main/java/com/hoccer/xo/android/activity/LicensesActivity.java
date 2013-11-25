@@ -24,7 +24,7 @@ public class LicensesActivity extends XoActivity {
 
     @Override
     protected int getMenuResource() {
-        return R.menu.fragment_about;
+        return -1;
     }
 
     @Override

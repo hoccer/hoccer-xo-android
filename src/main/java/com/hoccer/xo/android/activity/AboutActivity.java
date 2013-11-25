@@ -13,7 +13,7 @@ public class AboutActivity extends XoActivity {
 
     @Override
     protected int getMenuResource() {
-        return R.menu.fragment_about;
+        return -1;
     }
 
     @Override

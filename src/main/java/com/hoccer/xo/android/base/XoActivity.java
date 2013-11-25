@@ -188,7 +188,10 @@ public abstract class XoActivity extends SherlockFragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         LOG.debug("onCreateOptionsMenu()");
         getSupportMenuInflater().inflate(R.menu.common, menu);
-        getSupportMenuInflater().inflate(getMenuResource(), menu);
+        int activityMenu = getMenuResource();
+        if(activityMenu >= 0) {
+            getSupportMenuInflater().inflate(activityMenu, menu);
+        }
         return true;
     }
 
