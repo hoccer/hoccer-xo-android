@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.content.location;
 
+import android.os.Bundle;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.hoccer.xo.android.base.XoActivity;
@@ -19,6 +20,12 @@ public class MapsLocationActivity extends XoActivity {
     @Override
     protected int getMenuResource() {
         return -1;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        enableUpNavigation();
     }
 
     @Override
