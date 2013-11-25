@@ -31,6 +31,8 @@ public class LicensesActivity extends XoActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        enableUpNavigation();
+
         mText = (TextView)findViewById(R.id.licenses_textview);
         mText.setMovementMethod(new ScrollingMovementMethod());
 
