@@ -302,16 +302,20 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         LOG.debug("navigateUp()");
         if(mUpEnabled) {
             Intent upIntent = NavUtils.getParentActivityIntent(this);
-            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-                // we are not on our own task stack, so create one
-                TaskStackBuilder.create(this)
-                        // add parents to back stack
-                        .addNextIntentWithParentStack(upIntent)
-                                // navigate up to next parent
-                        .startActivities();
+            if(upIntent != null) {
+                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                    // we are not on our own task stack, so create one
+                    TaskStackBuilder.create(this)
+                            // add parents to back stack
+                            .addNextIntentWithParentStack(upIntent)
+                                    // navigate up to next parent
+                            .startActivities();
+                } else {
+                    // we are on our own task stack, so navigate upwards
+                    NavUtils.navigateUpTo(this, upIntent);
+                }
             } else {
-                // we are on our own task stack, so navigate upwards
-                NavUtils.navigateUpTo(this, upIntent);
+                onBackPressed();
             }
         }
     }
