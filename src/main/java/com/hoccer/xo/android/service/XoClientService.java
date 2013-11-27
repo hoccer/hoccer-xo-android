@@ -104,7 +104,6 @@ public class XoClientService extends Service {
     long mNotificationTimestamp;
 
     ClientListener mClientListener;
-    DownloadScanListener mDownloadScanListener;
 
     boolean mGcmSupported;
 
@@ -123,11 +122,7 @@ public class XoClientService extends Service {
             mClientListener = new ClientListener();
             mClient.registerStateListener(mClientListener);
             mClient.registerUnseenListener(mClientListener);
-        }
-
-        if(mDownloadScanListener == null) {
-            mDownloadScanListener = new DownloadScanListener();
-            mClient.registerTransferListener(mDownloadScanListener);
+            mClient.registerTransferListener(mClientListener);
         }
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -158,11 +153,8 @@ public class XoClientService extends Service {
         if(mClientListener != null) {
             mClient.unregisterStateListener(mClientListener);
             mClient.unregisterUnseenListener(mClientListener);
+            mClient.unregisterTransferListener(mClientListener);
             mClientListener = null;
-        }
-        if(mDownloadScanListener != null) {
-            mClient.unregisterTransferListener(mDownloadScanListener);
-            mDownloadScanListener = null;
         }
         // XXX unregister client listeners
         if(mPreferencesListener != null) {
@@ -603,7 +595,12 @@ public class XoClientService extends Service {
         }, delay, TimeUnit.MILLISECONDS);
     }
 
-    private class ClientListener implements IXoStateListener, IXoUnseenListener, IXoTokenListener {
+    private class ClientListener implements
+            IXoStateListener,
+            IXoUnseenListener,
+            IXoTokenListener,
+            IXoTransferListener,
+            MediaScannerConnection.OnScanCompletedListener {
         @Override
         public void onClientStateChange(XoClient client, int state) {
             LOG.info("onClientStateChange(" + XoClient.stateToString(state) + ")");
@@ -650,9 +647,7 @@ public class XoClientService extends Service {
                 LOG.error("exception updating invite notification", t);
             }
         }
-    }
 
-    public class DownloadScanListener implements IXoTransferListener, MediaScannerConnection.OnScanCompletedListener {
         @Override
         public void onDownloadRegistered(TalkClientDownload download) {
             if(download.isAttachment()) {
@@ -670,10 +665,6 @@ public class XoClientService extends Service {
                         path, ctype, this
                 );
             }
-        }
-        @Override
-        public void onScanCompleted(String path, Uri uri) {
-            LOG.info("media scan of " + path + " completed - uri " + uri.toString());
         }
         @Override
         public void onDownloadStarted(TalkClientDownload download) {
@@ -695,6 +686,11 @@ public class XoClientService extends Service {
         }
         @Override
         public void onUploadStateChanged(TalkClientUpload upload) {
+        }
+
+        @Override
+        public void onScanCompleted(String path, Uri uri) {
+            LOG.info("media scan of " + path + " completed - uri " + uri.toString());
         }
     }
 
