@@ -102,7 +102,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         if(v == mActionButton) {
             if(mObject instanceof TalkClientDownload) {
                 TalkClientDownload download = (TalkClientDownload)mObject;
-                if(download.getContentState() == ContentState.DOWNLOAD_IN_PROGRESS) {
+                if(download.getContentState() == ContentState.DOWNLOAD_DOWNLOADING) {
                 } else {
                     XoApplication.getXoClient().requestDownload(download);
                 }
@@ -167,11 +167,11 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             case DOWNLOAD_NEW:
                 stateText = "Available for download";
                 break;
-            case DOWNLOAD_IN_PROGRESS:
+            case DOWNLOAD_DOWNLOADING:
                 stateText = "Downloading...";
                 break;
-            case DOWNLOAD_PAUSED:
-                stateText = "Download paused";
+            case DOWNLOAD_DECRYPTING:
+                stateText = "Decrypting...";
                 break;
             case DOWNLOAD_COMPLETE:
                 stateText = "Download complete";
@@ -182,11 +182,14 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             case UPLOAD_NEW:
                 stateText = "New upload";
                 break;
-            case UPLOAD_IN_PROGRESS:
-                stateText = "Uploading...";
+            case UPLOAD_REGISTERING:
+                stateText = "Registering...";
                 break;
-            case UPLOAD_PAUSED:
-                stateText = "Upload paused";
+            case UPLOAD_ENCRYPTING:
+                stateText = "Encrypting...";
+                break;
+            case UPLOAD_UPLOADING:
+                stateText = "Uploading...";
                 break;
             case UPLOAD_COMPLETE:
                 stateText = "Upload complete";
@@ -199,24 +202,35 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         }
 
         // download/upload actions
+        mActionButton.setEnabled(true);
         switch(state) {
             case DOWNLOAD_NEW:
-            case DOWNLOAD_PAUSED:
             case DOWNLOAD_FAILED:
                 mActionButton.setVisibility(VISIBLE);
                 mActionButton.setText("Download");
                 break;
-            case DOWNLOAD_IN_PROGRESS:
+            case DOWNLOAD_DECRYPTING:
+            case DOWNLOAD_DETECTING:
+                mActionButton.setVisibility(VISIBLE);
+                mActionButton.setEnabled(false);
+                mActionButton.setText("Cancel");
+                break;
+            case DOWNLOAD_DOWNLOADING:
                 mActionButton.setVisibility(VISIBLE);
                 mActionButton.setText("Cancel");
                 break;
             case UPLOAD_NEW:
-            case UPLOAD_PAUSED:
             case UPLOAD_FAILED:
                 mActionButton.setVisibility(VISIBLE);
                 mActionButton.setText("Upload");
                 break;
-            case UPLOAD_IN_PROGRESS:
+            case UPLOAD_REGISTERING:
+            case UPLOAD_ENCRYPTING:
+                mActionButton.setVisibility(VISIBLE);
+                mActionButton.setEnabled(false);
+                mActionButton.setText("Cancel");
+                break;
+            case UPLOAD_UPLOADING:
                 mActionButton.setVisibility(VISIBLE);
                 mActionButton.setText("Cancel");
                 break;
@@ -228,19 +242,26 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         }
 
         // progress bar
-        if(state == ContentState.DOWNLOAD_IN_PROGRESS || state == ContentState.UPLOAD_IN_PROGRESS) {
-            mTransferProgress.setVisibility(VISIBLE);
-            int length = object.getTransferLength();
-            int progress = object.getTransferProgress();
-            if(length > 0 && progress > 0) {
+        switch (state) {
+            case DOWNLOAD_DECRYPTING:
+            case DOWNLOAD_DETECTING:
+            case UPLOAD_REGISTERING:
+            case UPLOAD_ENCRYPTING:
+                mTransferProgress.setVisibility(VISIBLE);
+                mTransferProgress.setIndeterminate(true);
+                break;
+            case DOWNLOAD_DOWNLOADING:
+            case UPLOAD_UPLOADING:
+                int length = object.getTransferLength();
+                int progress = object.getTransferProgress();
+                mTransferProgress.setVisibility(VISIBLE);
                 mTransferProgress.setIndeterminate(false);
                 mTransferProgress.setMax(length);
                 mTransferProgress.setProgress(progress);
-            } else {
-                mTransferProgress.setIndeterminate(true);
-            }
-        } else {
-            mTransferProgress.setVisibility(GONE);
+                break;
+            default:
+                mTransferProgress.setVisibility(GONE);
+                break;
         }
 
         // content wrapper
