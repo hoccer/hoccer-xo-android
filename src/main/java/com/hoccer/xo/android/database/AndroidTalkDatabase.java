@@ -19,6 +19,7 @@ import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkPrivateKey;
 import com.hoccer.talk.model.TalkRelationship;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import org.apache.log4j.Logger;
@@ -44,6 +45,13 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
 
     private AndroidTalkDatabase(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    @Override
+    public <D extends Dao<T, ?>, T> D getDao(Class<T> clazz) throws SQLException {
+        D dao = super.getDao(clazz);
+        dao.setObjectCache(true);
+        return dao;
     }
 
     @Override
