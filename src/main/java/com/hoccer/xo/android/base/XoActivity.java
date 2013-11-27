@@ -303,6 +303,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         if(mUpEnabled) {
             Intent upIntent = NavUtils.getParentActivityIntent(this);
             if(upIntent != null) {
+                // we have a parent, navigate up
                 if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                     // we are not on our own task stack, so create one
                     TaskStackBuilder.create(this)
@@ -315,6 +316,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
                     NavUtils.navigateUpTo(this, upIntent);
                 }
             } else {
+                // we don't have a parent, navigate back instead
                 onBackPressed();
             }
         }
