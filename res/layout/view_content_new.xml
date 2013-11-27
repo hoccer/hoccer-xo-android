@@ -53,23 +53,15 @@
                 android:layout_height="wrap_content"/>
 
             <ProgressBar
-                android:id="@+id/content_transfer_progress"
+                android:id="@+id/content_progress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@android:style/Widget.ProgressBar.Horizontal"
                 android:indeterminate="true"/>
 
             <Button
-                android:id="@+id/content_download_button"
+                android:id="@+id/content_action_button"
                 android:text="Download"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <Button
-                android:id="@+id/content_upload_button"
-                android:text="Upload"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 

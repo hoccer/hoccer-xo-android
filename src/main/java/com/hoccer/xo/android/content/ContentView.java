@@ -44,8 +44,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     TextView mContentDescription;
     TextView mContentStatus;
 
-    Button mDownloadButton;
-    Button mUploadButton;
+    Button mActionButton;
 
     ProgressBar mTransferProgress;
 
@@ -85,10 +84,9 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         mContentType = (ImageView)findViewById(R.id.content_type_image);
         mContentDescription = (TextView)findViewById(R.id.content_description_text);
         mContentStatus = (TextView)findViewById(R.id.content_status_text);
-        mDownloadButton = (Button)findViewById(R.id.content_download_button);
-        mDownloadButton.setOnClickListener(this);
-        mUploadButton = (Button)findViewById(R.id.content_upload_button);
-        mTransferProgress = (ProgressBar)findViewById(R.id.content_transfer_progress);
+        mActionButton = (Button)findViewById(R.id.content_action_button);
+        mActionButton.setOnClickListener(this);
+        mTransferProgress = (ProgressBar)findViewById(R.id.content_progress);
     }
 
     public int getMaxContentHeight() {
@@ -101,10 +99,13 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if(v == mDownloadButton) {
+        if(v == mActionButton) {
             if(mObject instanceof TalkClientDownload) {
                 TalkClientDownload download = (TalkClientDownload)mObject;
-                XoApplication.getXoClient().requestDownload(download);
+                if(download.getContentState() == ContentState.DOWNLOAD_IN_PROGRESS) {
+                } else {
+                    XoApplication.getXoClient().requestDownload(download);
+                }
             }
         }
     }
@@ -198,31 +199,32 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         }
 
         // download/upload actions
-        if(state == ContentState.DOWNLOAD_NEW
-                || state == ContentState.DOWNLOAD_PAUSED
-                || state == ContentState.DOWNLOAD_FAILED
-                || state == ContentState.DOWNLOAD_IN_PROGRESS) {
-            mDownloadButton.setVisibility(VISIBLE);
-            if(state == ContentState.DOWNLOAD_IN_PROGRESS) {
-                mDownloadButton.setText("Cancel");
-            } else {
-                mDownloadButton.setText("Download");
-            }
-        } else {
-            mDownloadButton.setVisibility(GONE);
-        }
-        if(state == ContentState.UPLOAD_NEW
-                || state == ContentState.UPLOAD_PAUSED
-                || state == ContentState.UPLOAD_FAILED
-                || state == ContentState.UPLOAD_IN_PROGRESS) {
-            mUploadButton.setVisibility(VISIBLE);
-            if(state == ContentState.UPLOAD_IN_PROGRESS) {
-                mUploadButton.setText("Cancel");
-            } else {
-                mUploadButton.setText("Upload");
-            }
-        } else {
-            mUploadButton.setVisibility(GONE);
+        switch(state) {
+            case DOWNLOAD_NEW:
+            case DOWNLOAD_PAUSED:
+            case DOWNLOAD_FAILED:
+                mActionButton.setVisibility(VISIBLE);
+                mActionButton.setText("Download");
+                break;
+            case DOWNLOAD_IN_PROGRESS:
+                mActionButton.setVisibility(VISIBLE);
+                mActionButton.setText("Cancel");
+                break;
+            case UPLOAD_NEW:
+            case UPLOAD_PAUSED:
+            case UPLOAD_FAILED:
+                mActionButton.setVisibility(VISIBLE);
+                mActionButton.setText("Upload");
+                break;
+            case UPLOAD_IN_PROGRESS:
+                mActionButton.setVisibility(VISIBLE);
+                mActionButton.setText("Cancel");
+                break;
+            case SELECTED:
+            case DOWNLOAD_COMPLETE:
+            case UPLOAD_COMPLETE:
+                mActionButton.setVisibility(GONE);
+                break;
         }
 
         // progress bar
