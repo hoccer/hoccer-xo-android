@@ -23,12 +23,9 @@ import org.apache.log4j.Logger;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Adapter for messages in a conversation
@@ -46,10 +43,6 @@ public class ConversationAdapter extends XoAdapter
     TalkClientContact mContact;
 
     List<TalkClientMessage> mMessages = new ArrayList<TalkClientMessage>();
-
-    Map<Integer, TalkClientContact> mContacts = new HashMap<Integer, TalkClientContact>();
-    Map<Integer, TalkClientDownload> mDownloads = new HashMap<Integer, TalkClientDownload>();
-    Map<Integer, TalkClientUpload> mUploads = new HashMap<Integer, TalkClientUpload>();
 
     long mLastReload = 0;
     ScheduledFuture<?> mReloadFuture;
@@ -75,6 +68,15 @@ public class ConversationAdapter extends XoAdapter
         getXoClient().unregisterTransferListener(this);
     }
 
+    private void update() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
     @Override
     public void onMessageAdded(TalkClientMessage message) {
         reload();
@@ -86,7 +88,7 @@ public class ConversationAdapter extends XoAdapter
 
     @Override
     public void onMessageStateChanged(TalkClientMessage message) {
-        reload();
+        update();
     }
 
     @Override
@@ -94,152 +96,80 @@ public class ConversationAdapter extends XoAdapter
     }
     @Override
     public void onDownloadStarted(TalkClientDownload download) {
-        reload();
+        update();
     }
     @Override
     public void onDownloadProgress(TalkClientDownload download) {
-        reload();
+        update();
     }
     @Override
     public void onDownloadFinished(TalkClientDownload download) {
-        reload();
+        update();
     }
     @Override
     public void onDownloadStateChanged(TalkClientDownload download) {
-        reload();
+        update();
     }
 
     @Override
     public void onUploadStarted(TalkClientUpload upload) {
-        reload();
+        update();
     }
     @Override
     public void onUploadProgress(TalkClientUpload upload) {
-        reload();
+        update();
     }
     @Override
     public void onUploadFinished(TalkClientUpload upload) {
-        reload();
+        update();
     }
     @Override
     public void onUploadStateChanged(TalkClientUpload upload) {
-        reload();
+        update();
     }
 
     @Override
     public void reload() {
         ScheduledExecutorService executor = XoApplication.getExecutor();
-        long now = System.currentTimeMillis();
-        long since = now - mLastReload;
-        if(since < 500) {
-            long delay = Math.max(0, (mLastReload + 500) - now);
-            if(mReloadFuture != null) {
-                mReloadFuture.cancel(false);
-            }
-            mReloadFuture = executor.schedule(new Runnable() {
-                @Override
-                public void run() {
-                    mLastReload = System.currentTimeMillis();
-                    performReload();
-                }
-            }, delay, TimeUnit.MILLISECONDS);
-        } else {
-            if(mReloadFuture != null) {
-                mReloadFuture.cancel(false);
-            }
-            mReloadFuture = executor.schedule(new Runnable() {
-                @Override
-                public void run() {
-                    performReload();
-                }
-            }, 0, TimeUnit.MILLISECONDS);
-            mLastReload = now;
-        }
-    }
-
-    private void performReload() {
-
-        if(mContact != null) {
-            synchronized (this) {
-                try {
-                    mDatabase.refreshClientContact(mContact);
-                    final Map<Integer, TalkClientContact> newContacts = new HashMap<Integer, TalkClientContact>();
-                    final Map<Integer, TalkClientDownload> newDownloads = new HashMap<Integer, TalkClientDownload>();
-                    final Map<Integer, TalkClientUpload> newUploads = new HashMap<Integer, TalkClientUpload>();
-                    final List<TalkClientMessage> newMessages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
-                    for(TalkClientMessage message: newMessages) {
-                        reloadRelated(message, newContacts, newDownloads, newUploads);
-                    }
-                    mContacts = newContacts;
-                    mDownloads = newDownloads;
-                    mUploads = newUploads;
-                    mMessages = newMessages;
-                } catch (SQLException e) {
-                    LOG.error("sql error", e);
-                } catch (Throwable e) {
-                    LOG.error("error reloading", e);
-                }
-            }
-        }
-
-        runOnUiThread(new Runnable() {
+        executor.execute(new Runnable() {
             @Override
             public void run() {
-                notifyDataSetChanged();
+                if(mContact != null) {
+                    synchronized (this) {
+                        try {
+                            mDatabase.refreshClientContact(mContact);
+                            List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
+                            for(TalkClientMessage message: messages) {
+                                reloadRelated(message);
+                            }
+                            LOG.info(messages.size() + " messages");
+                            mMessages = messages;
+                        } catch (SQLException e) {
+                            LOG.error("sql error", e);
+                        } catch (Throwable e) {
+                            LOG.error("error reloading", e);
+                        }
+                    }
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyDataSetChanged();
+                    }
+                });
             }
         });
     }
 
-    private void reloadRelated(TalkClientMessage message,
-                               Map<Integer, TalkClientContact> newContacts,
-                               Map<Integer, TalkClientDownload> newDownloads,
-                               Map<Integer, TalkClientUpload> newUploads) throws SQLException {
-        if(message.getAttachmentDownload() != null) {
-            mDatabase.refreshClientDownload(message.getAttachmentDownload());
-        }
-        if(message.getAttachmentUpload() != null) {
-            mDatabase.refreshClientUpload(message.getAttachmentUpload());
-        }
+    private void reloadRelated(TalkClientMessage message) throws SQLException {
         TalkClientContact sender = message.getSenderContact();
         if(sender != null) {
-            int contactId = sender.getClientContactId();
-            if(newContacts.containsKey(contactId)) {
-                sender = newContacts.get(contactId);
-                message.setSenderContact(sender);
-            } else {
-                mDatabase.refreshClientContact(sender);
-                newContacts.put(contactId, sender);
-            }
-            if(sender.isClient() || sender.isGroup()) {
-                TalkClientDownload avatarDownload = sender.getAvatarDownload();
-                if(avatarDownload != null) {
-                    int avatarDownloadId = avatarDownload.getClientDownloadId();
-                    if(newDownloads.containsKey(avatarDownloadId)) {
-                        avatarDownload = newDownloads.get(avatarDownloadId);
-                        sender.setAvatarDownload(avatarDownload);
-                    } else {
-                        mDatabase.refreshClientDownload(avatarDownload);
-                        newDownloads.put(avatarDownloadId, avatarDownload);
-                    }
-                }
-            }
-            if(sender.isSelf()) {
-                TalkClientUpload avatarUpload = sender.getAvatarUpload();
-                if(avatarUpload != null) {
-                    mDatabase.refreshClientUpload(avatarUpload);
-                }
-            }
+            mDatabase.refreshClientContact(sender);
         }
         TalkClientContact conversation = message.getConversationContact();
         if(conversation != null) {
-            int contactId = conversation.getClientContactId();
-            if(newContacts.containsKey(contactId)) {
-                conversation = newContacts.get(contactId);
-                message.setConversationContact(conversation);
-            } else {
-                mDatabase.refreshClientContact(conversation);
-                newContacts.put(contactId, conversation);
-            }
+            mDatabase.refreshClientContact(conversation);
         }
     }
 
@@ -281,6 +211,7 @@ public class ConversationAdapter extends XoAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         int viewType = getItemViewType(position);
+        TalkClientMessage message = getItem(position);
 
         View v = convertView;
 
@@ -289,13 +220,13 @@ public class ConversationAdapter extends XoAdapter
             if(v == null) {
                 v = mInflater.inflate(R.layout.item_conversation_outgoing, null);
             }
-            updateViewOutgoing(v, getItem(position));
+            updateViewOutgoing(v, message);
             break;
         case VIEW_TYPE_INCOMING:
             if(v == null) {
                 v = mInflater.inflate(R.layout.item_conversation_incoming, null);
             }
-            updateViewIncoming(v, getItem(position));
+            updateViewIncoming(v, message);
             break;
         }
 
