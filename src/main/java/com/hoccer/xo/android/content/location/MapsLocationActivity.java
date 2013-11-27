@@ -41,7 +41,9 @@ public class MapsLocationActivity extends XoActivity
         super.onCreate(savedInstanceState);
         enableUpNavigation();
         mButtonOk = (Button)findViewById(R.id.maps_location_ok);
+        mButtonOk.setOnClickListener(this);
         mButtonCancel = (Button)findViewById(R.id.maps_location_cancel);
+        mButtonCancel.setOnClickListener(this);
     }
 
     @Override
