@@ -10,7 +10,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import com.hoccer.talk.client.XoTransferAgent;
 import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.ContentState;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
@@ -28,6 +30,12 @@ import org.apache.log4j.Logger;
 public class ContentView extends LinearLayout implements View.OnClickListener {
 
     private static final Logger LOG = Logger.getLogger(ContentView.class);
+
+    enum TransferAction {
+        NONE,
+        REQUEST_DOWNLOAD,
+        CANCEL_DOWNLOAD,
+    }
 
     ContentRegistry mRegistry;
 
@@ -47,6 +55,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     Button mActionButton;
 
     ProgressBar mTransferProgress;
+
+    TransferAction mTransferAction = TransferAction.NONE;
 
     /**
      * Maximum height for content view in DP.
@@ -100,14 +110,53 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if(v == mActionButton) {
-            if(mObject instanceof TalkClientDownload) {
-                TalkClientDownload download = (TalkClientDownload)mObject;
-                if(download.getContentState() == ContentState.DOWNLOAD_DOWNLOADING) {
-                } else {
+            switch(mTransferAction) {
+            case REQUEST_DOWNLOAD:
+                if(mObject instanceof TalkClientDownload) {
+                    TalkClientDownload download = (TalkClientDownload)mObject;
                     XoApplication.getXoClient().requestDownload(download);
+                }
+                break;
+            case CANCEL_DOWNLOAD:
+                if(mObject instanceof TalkClientDownload) {
+                    TalkClientDownload download = (TalkClientDownload)mObject;
+                    XoApplication.getXoClient().cancelDownload(download);
+                }
+                break;
+            }
+        }
+    }
+
+    private ContentState getTrueContentState(IContentObject object) {
+        XoTransferAgent agent = XoApplication.getXoClient().getTransferAgent();
+        ContentState state = object.getContentState();
+        if(object instanceof TalkClientDownload) {
+            TalkClientDownload download = (TalkClientDownload)object;
+            switch (state) {
+            case DOWNLOAD_DOWNLOADING:
+            case DOWNLOAD_DECRYPTING:
+            case DOWNLOAD_DETECTING:
+                if(agent.isDownloadActive(download)) {
+                    return state;
+                } else {
+                    return ContentState.DOWNLOAD_PAUSED;
                 }
             }
         }
+        if (object instanceof TalkClientUpload) {
+            TalkClientUpload upload = (TalkClientUpload)object;
+            switch (state) {
+            case UPLOAD_REGISTERING:
+            case UPLOAD_ENCRYPTING:
+            case UPLOAD_UPLOADING:
+                if(agent.isUploadActive(upload)) {
+                    return state;
+                } else {
+                    return ContentState.UPLOAD_PAUSED;
+                }
+            }
+        }
+        return state;
     }
 
     public void displayContent(Activity activity, IContentObject object) {
@@ -141,11 +190,12 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
 
         // remember the new object
         mObject = object;
-        mPreviousContentState = mObject.getContentState();
 
         // we examine the state of the object
         boolean available = object.isContentAvailable();
-        ContentState state = object.getContentState();
+        ContentState state = getTrueContentState(object);
+
+        mPreviousContentState = state;
 
         // footer
         if(state == ContentState.SELECTED || state == ContentState.UPLOAD_COMPLETE || state == ContentState.DOWNLOAD_COMPLETE) {
@@ -179,6 +229,9 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             case DOWNLOAD_FAILED:
                 stateText = "Download failed";
                 break;
+            case DOWNLOAD_PAUSED:
+                stateText = "Download paused";
+                break;
             case UPLOAD_NEW:
                 stateText = "New upload";
                 break;
@@ -194,6 +247,9 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             case UPLOAD_COMPLETE:
                 stateText = "Upload complete";
                 break;
+            case UPLOAD_PAUSED:
+                stateText = "Upload paused";
+                break;
             case UPLOAD_FAILED:
                 stateText = "Upload failed";
                 break;
@@ -203,11 +259,17 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
 
         // download/upload actions
         mActionButton.setEnabled(true);
+        mTransferAction = TransferAction.NONE;
         switch(state) {
             case DOWNLOAD_NEW:
-            case DOWNLOAD_FAILED:
                 mActionButton.setVisibility(VISIBLE);
                 mActionButton.setText("Download");
+                mTransferAction = TransferAction.REQUEST_DOWNLOAD;
+                break;
+            case DOWNLOAD_PAUSED:
+                mActionButton.setVisibility(VISIBLE);
+                mActionButton.setText("Continue");
+                mTransferAction = TransferAction.REQUEST_DOWNLOAD;
                 break;
             case DOWNLOAD_DECRYPTING:
             case DOWNLOAD_DETECTING:
@@ -218,12 +280,15 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             case DOWNLOAD_DOWNLOADING:
                 mActionButton.setVisibility(VISIBLE);
                 mActionButton.setText("Cancel");
+                mTransferAction = TransferAction.CANCEL_DOWNLOAD;
                 break;
             case UPLOAD_NEW:
-            case UPLOAD_FAILED:
                 mActionButton.setVisibility(VISIBLE);
                 mActionButton.setText("Upload");
                 break;
+            case UPLOAD_PAUSED:
+                mActionButton.setVisibility(GONE);
+                mActionButton.setText("Continue");
             case UPLOAD_REGISTERING:
             case UPLOAD_ENCRYPTING:
                 mActionButton.setVisibility(VISIBLE);
@@ -235,8 +300,10 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 mActionButton.setText("Cancel");
                 break;
             case SELECTED:
-            case DOWNLOAD_COMPLETE:
+            case UPLOAD_FAILED:
             case UPLOAD_COMPLETE:
+            case DOWNLOAD_FAILED:
+            case DOWNLOAD_COMPLETE:
                 mActionButton.setVisibility(GONE);
                 break;
         }
@@ -250,7 +317,9 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 mTransferProgress.setVisibility(VISIBLE);
                 mTransferProgress.setIndeterminate(true);
                 break;
+            case DOWNLOAD_PAUSED:
             case DOWNLOAD_DOWNLOADING:
+            case UPLOAD_PAUSED:
             case UPLOAD_UPLOADING:
                 int length = object.getTransferLength();
                 int progress = object.getTransferProgress();
