@@ -654,6 +654,12 @@ public class XoClientService extends Service {
 
     public class DownloadScanListener implements IXoTransferListener, MediaScannerConnection.OnScanCompletedListener {
         @Override
+        public void onDownloadRegistered(TalkClientDownload download) {
+            if(download.isAttachment()) {
+                mClient.requestDownload(download);
+            }
+        }
+        @Override
         public void onDownloadStateChanged(TalkClientDownload download) {
             if(download.isAttachment() && download.isContentAvailable()) {
                 String[] path = new String[]{download.getDataFile()};

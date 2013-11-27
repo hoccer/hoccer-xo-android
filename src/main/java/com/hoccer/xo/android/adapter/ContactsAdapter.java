@@ -194,6 +194,9 @@ public abstract class ContactsAdapter extends XoAdapter
     }
 
     @Override
+    public void onDownloadRegistered(TalkClientDownload download) {
+    }
+    @Override
     public void onDownloadStarted(TalkClientDownload download) {
     }
     @Override

@@ -88,6 +88,10 @@ public class ConversationAdapter extends XoAdapter
     public void onMessageStateChanged(TalkClientMessage message) {
         reload();
     }
+
+    @Override
+    public void onDownloadRegistered(TalkClientDownload download) {
+    }
     @Override
     public void onDownloadStarted(TalkClientDownload download) {
         reload();
