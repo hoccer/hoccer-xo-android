@@ -11,8 +11,10 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
@@ -21,13 +23,16 @@ import android.support.v4.app.TaskStackBuilder;
 import com.google.android.gcm.GCMRegistrar;
 import com.hoccer.talk.client.IXoStateListener;
 import com.hoccer.talk.client.IXoTokenListener;
+import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.IXoUnseenListener;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientConfiguration;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.activity.ContactsActivity;
@@ -98,6 +103,9 @@ public class XoClientService extends Service {
     /** Time of last notification (for cancellation backoff) */
     long mNotificationTimestamp;
 
+    ClientListener mClientListener;
+    DownloadScanListener mDownloadScanListener;
+
     boolean mGcmSupported;
 
 	@Override
@@ -111,9 +119,16 @@ public class XoClientService extends Service {
 
         mClient = XoApplication.getXoClient();
 
-        ClientListener clientListener = new ClientListener();
-        mClient.registerStateListener(clientListener);
-        mClient.registerUnseenListener(clientListener);
+        if(mClientListener == null) {
+            mClientListener = new ClientListener();
+            mClient.registerStateListener(mClientListener);
+            mClient.registerUnseenListener(mClientListener);
+        }
+
+        if(mDownloadScanListener == null) {
+            mDownloadScanListener = new DownloadScanListener();
+            mClient.registerTransferListener(mDownloadScanListener);
+        }
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -139,8 +154,16 @@ public class XoClientService extends Service {
     public void onDestroy() {
         LOG.info("onDestroy()");
         super.onDestroy();
-        mExecutor.shutdownNow();
         unregisterConnectivityReceiver();
+        if(mClientListener != null) {
+            mClient.unregisterStateListener(mClientListener);
+            mClient.unregisterUnseenListener(mClientListener);
+            mClientListener = null;
+        }
+        if(mDownloadScanListener != null) {
+            mClient.unregisterTransferListener(mDownloadScanListener);
+            mDownloadScanListener = null;
+        }
         // XXX unregister client listeners
         if(mPreferencesListener != null) {
             mPreferences.unregisterOnSharedPreferenceChangeListener(mPreferencesListener);
@@ -626,6 +649,46 @@ public class XoClientService extends Service {
             } catch (Throwable t) {
                 LOG.error("exception updating invite notification", t);
             }
+        }
+    }
+
+    public class DownloadScanListener implements IXoTransferListener, MediaScannerConnection.OnScanCompletedListener {
+        @Override
+        public void onDownloadStateChanged(TalkClientDownload download) {
+            if(download.isAttachment() && download.isContentAvailable()) {
+                String[] path = new String[]{download.getDataFile()};
+                String[] ctype = new String[]{download.getContentType()};
+                LOG.info("requesting media scan of " + ctype[0] + " at " + path[0]);
+                MediaScannerConnection.scanFile(
+                        XoClientService.this,
+                        path, ctype, this
+                );
+            }
+        }
+        @Override
+        public void onScanCompleted(String path, Uri uri) {
+            LOG.info("media scan of " + path + " completed - uri " + uri.toString());
+        }
+        @Override
+        public void onDownloadStarted(TalkClientDownload download) {
+        }
+        @Override
+        public void onDownloadProgress(TalkClientDownload download) {
+        }
+        @Override
+        public void onDownloadFinished(TalkClientDownload download) {
+        }
+        @Override
+        public void onUploadStarted(TalkClientUpload upload) {
+        }
+        @Override
+        public void onUploadProgress(TalkClientUpload upload) {
+        }
+        @Override
+        public void onUploadFinished(TalkClientUpload upload) {
+        }
+        @Override
+        public void onUploadStateChanged(TalkClientUpload upload) {
         }
     }
 
