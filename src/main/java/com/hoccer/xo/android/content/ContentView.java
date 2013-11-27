@@ -10,8 +10,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentState;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -84,6 +86,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         mContentDescription = (TextView)findViewById(R.id.content_description_text);
         mContentStatus = (TextView)findViewById(R.id.content_status_text);
         mDownloadButton = (Button)findViewById(R.id.content_download_button);
+        mDownloadButton.setOnClickListener(this);
         mUploadButton = (Button)findViewById(R.id.content_upload_button);
         mTransferProgress = (ProgressBar)findViewById(R.id.content_transfer_progress);
     }
@@ -99,10 +102,10 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if(v == mDownloadButton) {
-
-        }
-        if(v == mUploadButton) {
-
+            if(mObject instanceof TalkClientDownload) {
+                TalkClientDownload download = (TalkClientDownload)mObject;
+                XoApplication.getXoClient().requestDownload(download);
+            }
         }
     }
 

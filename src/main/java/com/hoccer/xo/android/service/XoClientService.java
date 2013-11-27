@@ -103,6 +103,9 @@ public class XoClientService extends Service {
     /** Time of last notification (for cancellation backoff) */
     long mNotificationTimestamp;
 
+    boolean mAutoDownloadMobile = false;
+    boolean mAutoDownloadWifi = true;
+
     ClientListener mClientListener;
 
     boolean mGcmSupported;
@@ -132,9 +135,15 @@ public class XoClientService extends Service {
                 if(key.equals("preference_service_uri")) {
                     configureServiceUri();
                 }
+                if(key.equals("preference_download_auto_mobile")
+                        || key.equals("preference_download_auto_wifi")) {
+                    configureAutoDownloads();
+                }
             }
         };
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
+
+        configureAutoDownloads();
 
         doVerifyGcm();
 
@@ -214,6 +223,11 @@ public class XoClientService extends Service {
         }
         URI uri = URI.create(uriString);
         mClient.setServiceUri(uri);
+    }
+
+    private void configureAutoDownloads() {
+        mAutoDownloadMobile = mPreferences.getBoolean("preference_download_auto_mobile", false);
+        mAutoDownloadWifi = mPreferences.getBoolean("preference_download_auto_wifi", true);
     }
 
     private void wakeClient() {
@@ -650,8 +664,27 @@ public class XoClientService extends Service {
 
         @Override
         public void onDownloadRegistered(TalkClientDownload download) {
+            LOG.info("onDownloadRegistered(" + download.getClientDownloadId() + ")");
             if(download.isAttachment()) {
-                mClient.requestDownload(download);
+                boolean auto = false;
+                switch (mPreviousConnectionType) {
+                    case ConnectivityManager.TYPE_MOBILE:
+                    case ConnectivityManager.TYPE_BLUETOOTH:
+                    case ConnectivityManager.TYPE_WIMAX:
+                        if(mAutoDownloadMobile) {
+                            auto = true;
+                        }
+                        break;
+                    case ConnectivityManager.TYPE_ETHERNET:
+                    case ConnectivityManager.TYPE_WIFI:
+                        if(mAutoDownloadWifi) {
+                            auto = true;
+                        }
+                        break;
+                }
+                if(auto) {
+                    mClient.requestDownload(download);
+                }
             }
         }
         @Override
