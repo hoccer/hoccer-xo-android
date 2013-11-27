@@ -1,6 +1,7 @@
 package com.hoccer.xo.android.content;
 
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.ContentState;
 import com.hoccer.talk.content.IContentObject;
 import org.apache.log4j.Logger;
@@ -59,6 +60,11 @@ public class SelectedContent implements IContentObject {
     @Override
     public ContentState getContentState() {
         return ContentState.SELECTED;
+    }
+
+    @Override
+    public ContentDisposition getContentDisposition() {
+        return ContentDisposition.SELECTED;
     }
 
     @Override
