@@ -112,12 +112,14 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         if(v == mActionButton) {
             switch(mTransferAction) {
             case REQUEST_DOWNLOAD:
+                mActionButton.setEnabled(false);
                 if(mObject instanceof TalkClientDownload) {
                     TalkClientDownload download = (TalkClientDownload)mObject;
                     XoApplication.getXoClient().requestDownload(download);
                 }
                 break;
             case CANCEL_DOWNLOAD:
+                mActionButton.setEnabled(false);
                 if(mObject instanceof TalkClientDownload) {
                     TalkClientDownload download = (TalkClientDownload)mObject;
                     XoApplication.getXoClient().cancelDownload(download);
