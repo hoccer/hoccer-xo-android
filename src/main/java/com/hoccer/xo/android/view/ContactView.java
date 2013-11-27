@@ -38,6 +38,13 @@ public class ContactView extends RelativeLayout {
 
     ScheduledFuture<?> mRefreshFuture;
 
+    public enum Mode {
+        DISPLAY,
+        IMPORT,
+    }
+
+    Mode mMode = Mode.DISPLAY;
+
     public ContactView(Activity activity) {
         super(activity);
         initialize(activity);
@@ -59,6 +66,26 @@ public class ContactView extends RelativeLayout {
         mAvatarImage = (ImageView)findViewById(R.id.vcard_avatar);
         mNameText = (TextView)findViewById(R.id.vcard_name);
         mShowButton = (ImageButton)findViewById(R.id.vcard_view);
+        update();
+    }
+
+    private void update() {
+        if(mActivity != null) {
+            if(mMode == Mode.IMPORT) {
+                mShowButton.setVisibility(VISIBLE);
+            } else {
+                mShowButton.setVisibility(GONE);
+            }
+        }
+    }
+
+    public Mode getMode() {
+        return mMode;
+    }
+
+    public void setMode(Mode mMode) {
+        this.mMode = mMode;
+        update();
     }
 
     public void showContent(final String contentUri) {
