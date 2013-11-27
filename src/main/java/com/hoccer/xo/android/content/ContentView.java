@@ -166,6 +166,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             LOG.debug("displayContent(" + object.getContentUrl() + ")");
         }
 
+        ContentState state = getTrueContentState(object);
+
         // determine if the content url has changed so
         // we know if we need to re-instantiate child views
         boolean contentChanged = true;
@@ -178,26 +180,19 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 }
             }
         }
-
         boolean stateChanged = true;
-        if(mObject != null) {
-            String oldUrl = mObject.getContentUrl();
-            String newUrl = object.getContentUrl();
-            if(oldUrl != null && newUrl != null) {
-                if(oldUrl.equals(newUrl)) {
-                    stateChanged = false;
-                }
+        if(!contentChanged) {;
+            if(mPreviousContentState == state) {
+                stateChanged = false;
             }
         }
 
         // remember the new object
         mObject = object;
+        mPreviousContentState = state;
 
         // we examine the state of the object
         boolean available = object.isContentAvailable();
-        ContentState state = getTrueContentState(object);
-
-        mPreviousContentState = state;
 
         // footer
         if(state == ContentState.SELECTED || state == ContentState.UPLOAD_COMPLETE || state == ContentState.DOWNLOAD_COMPLETE) {
