@@ -348,19 +348,13 @@ public class ConversationAdapter extends XoAdapter
         final ImageView avatar = (ImageView)view.findViewById(R.id.message_avatar);
         String avatarUri = null;
         if(sendingContact != null) {
-            TalkClientDownload avatarDownload = sendingContact.getAvatarDownload();
-            TalkClientUpload avatarUpload = sendingContact.getAvatarUpload();
             avatar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mActivity.showContactProfile(sendingContact);
                 }
             });
-            if(avatarDownload != null && avatarDownload.isContentAvailable()) {
-                avatarUri = avatarDownload.getDataFile();
-            } else if(avatarUpload != null && avatarUpload.isContentAvailable()) {
-                avatarUri = avatarUpload.getDataFile();
-            }
+            avatarUri = sendingContact.getAvatarContentUrl();
             if(avatarUri == null) {
                 if(sendingContact.isGroup()) {
                     avatarUri = "content://" + R.drawable.avatar_default_group;

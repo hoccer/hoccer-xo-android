@@ -4,9 +4,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -54,8 +52,6 @@ public class SimpleContactsAdapter extends ContactsAdapter {
         TextView nameView = (TextView) view.findViewById(R.id.contact_name);
         nameView.setText(contact.getName());
 
-        TalkClientDownload avatarDownload = contact.getAvatarDownload();
-        TalkClientUpload avatarUpload = contact.getAvatarUpload();
         ImageView iconView = (ImageView) view.findViewById(R.id.contact_icon);
         iconView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,12 +59,7 @@ public class SimpleContactsAdapter extends ContactsAdapter {
                 mActivity.showContactProfile(contact);
             }
         });
-        String avatarUri = null;
-        if(avatarDownload != null && avatarDownload.isContentAvailable()) {
-            avatarUri = avatarDownload.getDataFile();
-        } else if(avatarUpload != null && avatarUpload.isContentAvailable()) {
-            avatarUri = avatarUpload.getDataFile();
-        }
+        String avatarUri = contact.getAvatarContentUrl();
         if(avatarUri == null) {
             if(contact.isGroup()) {
                 avatarUri = "content://" + R.drawable.avatar_default_group;
