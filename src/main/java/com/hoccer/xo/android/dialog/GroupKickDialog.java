@@ -20,6 +20,8 @@ public class GroupKickDialog extends SherlockDialogFragment {
 
     TalkClientContact mGroup;
 
+    ContactsAdapter mAdapter;
+
     public GroupKickDialog(XoActivity activity, TalkClientContact group) {
         super();
         mActivity = activity;
@@ -28,14 +30,18 @@ public class GroupKickDialog extends SherlockDialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final ContactsAdapter adapter = new SimpleContactsAdapter(mActivity);
-        adapter.setFilter(new ContactsAdapter.Filter() {
-            @Override
-            public boolean shouldShow(TalkClientContact contact) {
-                return contact.isClientGroupJoined(mGroup);
-            }
-        });
-        adapter.reload();
+        if(mAdapter == null) {
+            mAdapter = new SimpleContactsAdapter(mActivity);
+            mAdapter.onCreate();
+            mAdapter.onResume();
+            mAdapter.setFilter(new ContactsAdapter.Filter() {
+                @Override
+                public boolean shouldShow(TalkClientContact contact) {
+                    return contact.isClientGroupJoined(mGroup);
+                }
+            });
+        }
+        mAdapter.requestReload();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setTitle(R.string.kick_title);
@@ -46,10 +52,10 @@ public class GroupKickDialog extends SherlockDialogFragment {
                 dialog.dismiss();
             }
         });
-        builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+        builder.setAdapter(mAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Object object = adapter.getItem(which);
+                Object object = mAdapter.getItem(which);
                 if(object != null && object instanceof TalkClientContact) {
                     TalkClientContact contact = (TalkClientContact)object;
                     mActivity.getXoClient().kickClientFromGroup(mGroup.getGroupId(), contact.getClientId());
@@ -58,6 +64,15 @@ public class GroupKickDialog extends SherlockDialogFragment {
         });
 
         return builder.create();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if(mAdapter != null) {
+            mAdapter.onPause();
+            mAdapter.onDestroy();
+        }
     }
 
 }

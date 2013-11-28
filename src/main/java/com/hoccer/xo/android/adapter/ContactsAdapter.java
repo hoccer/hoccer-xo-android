@@ -71,7 +71,8 @@ public abstract class ContactsAdapter extends XoAdapter
     }
 
     @Override
-    public void register() {
+    public void onCreate() {
+        super.onCreate();
         getXoClient().registerContactListener(this);
         getXoClient().registerTokenListener(this);
         getXoClient().registerTransferListener(this);
@@ -79,7 +80,8 @@ public abstract class ContactsAdapter extends XoAdapter
     }
 
     @Override
-    public void unregister() {
+    public void onDestroy() {
+        super.onDestroy();
         getXoClient().unregisterContactListener(this);
         getXoClient().unregisterTokenListener(this);
         getXoClient().unregisterTransferListener(this);
@@ -87,7 +89,8 @@ public abstract class ContactsAdapter extends XoAdapter
     }
 
     @Override
-    public void reload() {
+    public void onReloadRequest() {
+        super.onReloadRequest();
         synchronized (this) {
             try {
                 List<TalkClientSmsToken> newTokens = null;
@@ -160,28 +163,28 @@ public abstract class ContactsAdapter extends XoAdapter
 
     @Override
     public void onContactRemoved(TalkClientContact contact) {
-        reload();
+        requestReload();
     }
     @Override
     public void onClientPresenceChanged(TalkClientContact contact) {
-        reload();
+        requestReload();
     }
     @Override
     public void onClientRelationshipChanged(TalkClientContact contact) {
-        reload();
+        requestReload();
     }
     @Override
     public void onGroupPresenceChanged(TalkClientContact contact) {
-        reload();
+        requestReload();
     }
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
-        reload();
+        requestReload();
     }
 
     @Override
     public void onMessageAdded(TalkClientMessage message) {
-        reload();
+        requestReload();
     }
     @Override
     public void onMessageRemoved(TalkClientMessage message) {
@@ -205,7 +208,7 @@ public abstract class ContactsAdapter extends XoAdapter
     @Override
     public void onDownloadStateChanged(TalkClientDownload download) {
         if(download.isAvatar() && download.getState() == TalkClientDownload.State.COMPLETE) {
-            reload();
+            requestReload();
         }
     }
     @Override
@@ -220,7 +223,7 @@ public abstract class ContactsAdapter extends XoAdapter
     @Override
     public void onUploadStateChanged(TalkClientUpload upload) {
         if(upload.isAvatar()) {
-            reload();
+            requestReload();
         }
     }
 
@@ -228,7 +231,7 @@ public abstract class ContactsAdapter extends XoAdapter
     public void onTokensChanged(List<TalkClientSmsToken> tokens, boolean newTokens) {
         LOG.debug("onTokensChanged()");
         if(mShowTokens) {
-            reload();
+            requestReload();
         }
     }
 

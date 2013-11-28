@@ -16,9 +16,18 @@ import java.util.concurrent.TimeUnit;
 /**
  * Base class for list adapters
  *
- * This enforces a registration/deregistration lifecycle
- * for use with client listeners and provides some
- * convenience methods.
+ * This base class implements our own lifecycle for adapters
+ * so that they can attach client listeners and manage resources.
+ *
+ * Adapters get the following lifecycle calls, similar to activities:
+ *    onCreate, onResume, onPause, onDestroy
+ *
+ * Adapter reload is integrated into the lifecycle by implementing
+ * an onRequestReload method. The method requestReload may be used
+ * to request a reload whenever the adapter becomes active.
+ *
+ * Reloads are rate-limited to a minimum interval to prevent
+ * hogging the CPU with superfluous view updates.
  *
  */
 public abstract class XoAdapter extends BaseAdapter {
@@ -66,27 +75,40 @@ public abstract class XoAdapter extends BaseAdapter {
         return mActive;
     }
 
-    public void activate() {
-        LOG.debug("activate()");
+    public void onResume() {
+        LOG.debug("onResume()");
         mActive = true;
         if(mNeedsReload) {
             mNeedsReload = false;
-            reload();
+            onReloadRequest();
         }
     }
 
-    public void deactivate() {
-        LOG.debug("deactivate()");
+    public void onPause() {
+        LOG.debug("onPause()");
         mActive = false;
     }
 
-    protected void requestActivationReload() {
-        mNeedsReload = true;
+    public void requestReload() {
+        LOG.debug("requestReload()");
+        if(mActive) {
+            onReloadRequest();
+        } else {
+            mNeedsReload = true;
+        }
     }
 
-    abstract public void register();
-    abstract public void unregister();
-    abstract public void reload();
+    public void onCreate() {
+        LOG.debug("onCreate()");
+    }
+
+    public void onDestroy() {
+        LOG.debug("onDestroy()");
+    }
+
+    public void onReloadRequest() {
+        LOG.debug("onReloadRequest()");
+    }
 
     @Override
     public void notifyDataSetChanged() {

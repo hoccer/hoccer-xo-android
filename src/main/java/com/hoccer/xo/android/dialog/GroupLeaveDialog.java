@@ -6,8 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.xo.android.adapter.ContactsAdapter;
-import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -28,15 +26,6 @@ public class GroupLeaveDialog extends SherlockDialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        ContactsAdapter adapter = new SimpleContactsAdapter(mActivity);
-        adapter.setFilter(new ContactsAdapter.Filter() {
-            @Override
-            public boolean shouldShow(TalkClientContact contact) {
-                return contact.isClientRelated();
-            }
-        });
-        adapter.reload();
-
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setTitle(R.string.leave_title);
         builder.setMessage(R.string.leave_question);

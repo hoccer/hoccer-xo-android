@@ -71,6 +71,8 @@ public class ProfileFragment extends XoFragment
 
     TalkClientContact mContact;
 
+    ContactsAdapter mGroupMemberAdapter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         LOG.debug("onCreate()");
@@ -137,6 +139,17 @@ public class ProfileFragment extends XoFragment
         LOG.debug("onPause()");
         super.onPause();
         getXoClient().unregisterContactListener(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        LOG.debug("onDestroy()");
+        super.onDestroy();
+        if(mGroupMemberAdapter != null) {
+            mGroupMemberAdapter.onPause();
+            mGroupMemberAdapter.onDestroy();
+            mGroupMemberAdapter = null;
+        }
     }
 
     @Override
@@ -370,15 +383,26 @@ public class ProfileFragment extends XoFragment
             if(groupPresence != null) {
                 name = groupPresence.getGroupName();
             }
-            final ContactsAdapter adapter = new SimpleContactsAdapter(getXoActivity());
-            adapter.setFilter(new ContactsAdapter.Filter() {
+            if(mGroupMemberAdapter == null) {
+                mGroupMemberAdapter = new SimpleContactsAdapter(getXoActivity());
+                mGroupMemberAdapter.onCreate();
+                mGroupMemberAdapter.onResume();
+            }
+            mGroupMemberAdapter.setFilter(new ContactsAdapter.Filter() {
                 @Override
                 public boolean shouldShow(TalkClientContact contact) {
                     return contact.isClientGroupJoined(mContact);
                 }
             });
-            adapter.reload();
-            mGroupMembersList.setAdapter(adapter);
+            mGroupMemberAdapter.requestReload();
+            mGroupMembersList.setAdapter(mGroupMemberAdapter);
+        } else {
+            if(mGroupMemberAdapter != null) {
+                mGroupMemberAdapter.onPause();
+                mGroupMemberAdapter.onDestroy();
+                mGroupMemberAdapter = null;
+                mGroupMembersList.setAdapter(null);
+            }
         }
         if(name == null) {
             if(mMode == Mode.CREATE_GROUP) {

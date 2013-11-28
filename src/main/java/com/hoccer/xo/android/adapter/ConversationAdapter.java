@@ -60,20 +60,29 @@ public class ConversationAdapter extends XoAdapter
             mReloadHappened = false;
             mMessages.clear();
             notifyDataSetChanged();
-            reload();
+            requestReload();
         }
     }
 
     @Override
-    public void register() {
+    public void onCreate() {
+        super.onCreate();
         getXoClient().registerMessageListener(this);
         getXoClient().registerTransferListener(this);
     }
 
     @Override
-    public void unregister() {
+    public void onDestroy() {
+        super.onDestroy();
+        cancelReload();
         getXoClient().unregisterMessageListener(this);
         getXoClient().unregisterTransferListener(this);
+    }
+
+    @Override
+    public void onReloadRequest() {
+        super.onReloadRequest();
+        startReload();
     }
 
     /** Triggers change notification on the ui thread */
@@ -146,10 +155,9 @@ public class ConversationAdapter extends XoAdapter
         }
     }
 
-    /** Performs a full reload */
-    @Override
-    public void reload() {
-        LOG.debug("reload()");
+    /** Performs a full onReloadRequest */
+    public void startReload() {
+        LOG.debug("startReload()");
         ScheduledExecutorService executor = XoApplication.getExecutor();
         final int startVersion = mVersion.get();
         Runnable runnable = new Runnable() {
@@ -165,12 +173,12 @@ public class ConversationAdapter extends XoAdapter
             if(isActive()) {
                 mReloadFuture = executor.schedule(runnable, 0, TimeUnit.MILLISECONDS);
             } else {
-                requestActivationReload();
+                requestReload();
             }
         }
     }
 
-    public boolean cancelReload() {
+    private boolean cancelReload() {
         LOG.trace("cancelReload()");
         boolean cancelled = false;
         synchronized (ConversationAdapter.this) {
@@ -194,7 +202,7 @@ public class ConversationAdapter extends XoAdapter
                     mMessages.add(message);
                     notifyDataSetChanged();
                     if(reloadAgain || forceReload) {
-                        reload();
+                        requestReload();
                     }
                 }
             });
@@ -202,7 +210,7 @@ public class ConversationAdapter extends XoAdapter
     }
     @Override
     public void onMessageRemoved(TalkClientMessage message) {
-        reload();
+        requestReload();
     }
 
     @Override

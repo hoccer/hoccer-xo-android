@@ -45,10 +45,10 @@ public class MessagingFragment extends XoListFragment
 
         if(mAdapter == null) {
             mAdapter = getXoActivity().makeConversationAdapter();
-            mAdapter.register();
+            mAdapter.onCreate();
         }
 
-        mAdapter.activate();
+        mAdapter.onResume();
 
         mMessageList.setAdapter(mAdapter);
 
@@ -61,7 +61,7 @@ public class MessagingFragment extends XoListFragment
     public void onPause() {
         LOG.debug("onPause()");
         super.onPause();
-        mAdapter.deactivate();
+        mAdapter.onPause();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class MessagingFragment extends XoListFragment
         super.onDestroy();
         LOG.debug("onDestroy()");
         if(mAdapter != null) {
-            mAdapter.unregister();
+            mAdapter.onDestroy();
             mAdapter = null;
         }
     }
