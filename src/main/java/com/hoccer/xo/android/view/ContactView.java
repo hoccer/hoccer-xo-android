@@ -32,9 +32,12 @@ public class ContactView extends RelativeLayout {
 
     Activity mActivity;
 
+    RelativeLayout mRoot;
     ImageView mAvatarImage;
     TextView mNameText;
-    ImageButton mShowButton;
+    ImageButton mActionButton;
+
+    String mContentUri;
 
     ScheduledFuture<?> mRefreshFuture;
 
@@ -62,30 +65,33 @@ public class ContactView extends RelativeLayout {
 
     private void initialize(Activity activity) {
         mActivity = activity;
-        addView(inflate(activity, R.layout.content_vcard, null));
+        mRoot = (RelativeLayout)inflate(activity, R.layout.content_vcard, null);
+        mRoot.setVisibility(INVISIBLE);
+        addView(mRoot);
         mAvatarImage = (ImageView)findViewById(R.id.vcard_avatar);
         mNameText = (TextView)findViewById(R.id.vcard_name);
-        mShowButton = (ImageButton)findViewById(R.id.vcard_view);
-        update();
-    }
-
-    private void update() {
-        if(mActivity != null) {
-            if(mMode == Mode.IMPORT) {
-                mShowButton.setVisibility(VISIBLE);
-            } else {
-                mShowButton.setVisibility(GONE);
-            }
-        }
+        mActionButton = (ImageButton)findViewById(R.id.vcard_action);
+        updateMode();
     }
 
     public Mode getMode() {
         return mMode;
     }
 
-    public void setMode(Mode mMode) {
-        this.mMode = mMode;
-        update();
+    public void setMode(Mode mode) {
+        LOG.debug("setMode(" + mode + ")");
+        mMode = mode;
+        updateMode();
+    }
+
+    private void updateMode() {
+        if(mActivity != null) {
+            if(mMode == Mode.IMPORT) {
+                mActionButton.setVisibility(VISIBLE);
+            } else {
+                mActionButton.setVisibility(GONE);
+            }
+        }
     }
 
     public void showContent(final String contentUri) {
@@ -97,70 +103,93 @@ public class ContactView extends RelativeLayout {
             mRefreshFuture = null;
         }
 
-        // schedule a new refresh
-        ScheduledExecutorService executor = XoApplication.getExecutor();
-        mRefreshFuture = executor.schedule(new Runnable() {
-            @Override
-            public void run() {
-                refresh(contentUri);
-            }
-        }, 0, TimeUnit.MILLISECONDS);
+        // schedule new refresh if needed
+        if(mContentUri == null || !mContentUri.equals(contentUri)) {
+            mRoot.setVisibility(INVISIBLE);
+
+            mContentUri = contentUri;
+
+            // schedule a new refresh
+            ScheduledExecutorService executor = XoApplication.getExecutor();
+            mRefreshFuture = executor.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    refresh(mContentUri);
+                }
+            }, 0, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    private void checkInterrupt() throws InterruptedException {
+        if(Thread.interrupted()) {
+            throw new InterruptedException();
+        }
     }
 
     private void refresh(final String contentUri) {
         LOG.debug("refresh(" + contentUri + ")");
-
-        // open input stream for given content
-        InputStream is = openStreamForContent(contentUri);
-        if(is == null) {
-            LOG.error("could not open content");
-            return;
-        }
-
-        // parse the vcard behind the uri
-        VCard card = null;
         try {
-            card = Ezvcard.parse(is).first();
-        } catch (IOException e) {
-            LOG.error("could not parse vcard", e);
-            return;
-        } catch (Throwable t) {
-            LOG.error("could not parse vcard", t);
-            return;
-        }
-
-        // get the name of the contact
-        final String name = card.getFormattedName().getValue();
-
-        // get and load the first photo of the contact
-        final List<PhotoType> photos = card.getPhotos();
-        PhotoType photo = null;
-        if(!photos.isEmpty()) {
-            photo = photos.get(0);
-        }
-
-        // refresh the name text
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mNameText.setText(name);
+            // open input stream for given content
+            InputStream is = openStreamForContent(contentUri);
+            if(is == null) {
+                LOG.error("could not open content");
+                return;
             }
-        });
 
-        // refresh the photo, if there is one
-        if(photo != null) {
-            final byte[] photoData = photo.getData();
+            checkInterrupt();
+
+            // parse the vcard behind the uri
+            VCard card = null;
+            try {
+                card = Ezvcard.parse(is).first();
+            } catch (IOException e) {
+                LOG.error("could not parse vcard", e);
+                return;
+            } catch (Throwable t) {
+                LOG.error("could not parse vcard", t);
+                return;
+            }
+
+            checkInterrupt();
+
+            // get the name of the contact
+            final String name = card.getFormattedName().getValue();
+
+            // get and load the first photo of the contact
+            final List<PhotoType> photos = card.getPhotos();
+            PhotoType photo = null;
+            if(!photos.isEmpty()) {
+                photo = photos.get(0);
+            }
+
+            final byte[] photoData = photo != null ? photo.getData() : null;
+
+            checkInterrupt();
+
+            // refresh ui
             mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Bitmap photoBitmap = BitmapFactory.decodeByteArray(photoData, 0, photoData.length);
+                    mRoot.setVisibility(VISIBLE);
+                    mNameText.setText(name);
+                    Bitmap photoBitmap = null;
+                    if(photoData != null) {
+                        photoBitmap = BitmapFactory.decodeByteArray(photoData, 0, photoData.length);
+                    }
                     if(photoBitmap != null) {
                         mAvatarImage.setImageDrawable(new BitmapDrawable(photoBitmap));
                     } else {
                         mAvatarImage.setImageResource(R.drawable.avatar_default_contact);
                     }
+                    updateMode();
                 }
             });
+
+            mRefreshFuture = null;
+
+        } catch (InterruptedException e) {
+            LOG.debug("refresh interrupted");
+            Thread.currentThread().interrupt();
         }
     }
 

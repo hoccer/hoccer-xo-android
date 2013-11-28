@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"/>
 
     <ImageButton
-            android:id="@+id/vcard_view"
+            android:id="@+id/vcard_action"
             android:src="@drawable/ic_light_social_add_person"
             android:layout_alignParentRight="true"
             android:layout_centerHorizontal="true"
