@@ -162,8 +162,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     }
 
     public void displayContent(Activity activity, IContentObject object) {
-        if(object.getContentUrl() != null) {
-            LOG.debug("displayContent(" + object.getContentUrl() + ")");
+        if(object.getContentDataUrl() != null) {
+            LOG.debug("displayContent(" + object.getContentDataUrl() + ")");
         }
 
         ContentState state = getTrueContentState(object);
@@ -172,8 +172,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         // we know if we need to re-instantiate child views
         boolean contentChanged = true;
         if(mObject != null) {
-            String oldUrl = mObject.getContentUrl();
-            String newUrl = object.getContentUrl();
+            String oldUrl = mObject.getContentDataUrl();
+            String newUrl = object.getContentDataUrl();
             if(oldUrl != null && newUrl != null) {
                 if(oldUrl.equals(newUrl)) {
                     contentChanged = false;

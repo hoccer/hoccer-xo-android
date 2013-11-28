@@ -73,7 +73,7 @@ public class SelectedContent implements IContentObject {
     }
 
     @Override
-    public String getContentUrl() {
+    public String getContentDataUrl() {
         return mContentUrl;
     }
 
@@ -105,7 +105,7 @@ public class SelectedContent implements IContentObject {
     public static TalkClientUpload createAvatarUpload(IContentObject object) {
         TalkClientUpload upload = new TalkClientUpload();
         upload.initializeAsAvatar(
-                object.getContentUrl(),
+                object.getContentDataUrl(),
                 object.getContentType(),
                 object.getContentLength());
         return upload;
@@ -114,7 +114,7 @@ public class SelectedContent implements IContentObject {
     public static TalkClientUpload createAttachmentUpload(IContentObject object) {
         TalkClientUpload upload = new TalkClientUpload();
         upload.initializeAsAttachment(
-                object.getContentUrl(),
+                object.getContentDataUrl(),
                 object.getContentType(),
                 object.getContentMediaType(),
                 object.getContentAspectRatio(),

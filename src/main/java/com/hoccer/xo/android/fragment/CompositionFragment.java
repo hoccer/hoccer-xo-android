@@ -149,7 +149,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
     @Override
     public void onAttachmentSelected(IContentObject contentObject) {
-        LOG.debug("onAttachmentSelected(" + contentObject.getContentUrl() + ")");
+        LOG.debug("onAttachmentSelected(" + contentObject.getContentDataUrl() + ")");
         showAttachment(contentObject);
     }
 
@@ -171,7 +171,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     private void showAttachment(IContentObject contentObject) {
-        LOG.debug("showAttachment(" + contentObject.getContentUrl() + ")");
+        LOG.debug("showAttachment(" + contentObject.getContentDataUrl() + ")");
         mAttachment = contentObject;
         mAttachmentView.displayContent(getXoActivity(), contentObject);
         mAttachmentView.setVisibility(View.VISIBLE);

@@ -48,7 +48,7 @@ public class ImageViewer extends ContentViewer<AspectImageView> implements Image
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        String contentUrl = contentObject.getContentUrl();
+        String contentUrl = contentObject.getContentDataUrl();
         if(contentObject.isContentAvailable() && contentUrl != null) {
             loadImage(view, contentUrl);
         } else {

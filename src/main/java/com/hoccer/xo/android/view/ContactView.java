@@ -104,14 +104,14 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
         if(v == mActionButton) {
             if(mContent != null && mMode == Mode.IMPORT) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.parse(mContent.getContentUrl()), mContent.getContentType());
+                intent.setDataAndType(Uri.parse(mContent.getContentDataUrl()), mContent.getContentType());
                 mActivity.startActivity(intent);
             }
         }
     }
 
     public void showContent(final IContentObject contentObject) {
-        String contentUri = contentObject.getContentUrl();
+        String contentUri = contentObject.getContentDataUrl();
         LOG.debug("showContent(" + contentUri + ")");
 
         // cancel running refresh

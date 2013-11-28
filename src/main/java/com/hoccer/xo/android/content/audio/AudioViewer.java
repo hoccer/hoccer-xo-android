@@ -23,8 +23,8 @@ public class AudioViewer extends ContentViewer<AudioPlayerView> {
 
     @Override
     protected void updateView(AudioPlayerView view, ContentView contentView, IContentObject contentObject) {
-        if(contentObject.getContentUrl() != null) {
-            view.setFile(contentObject.getContentUrl());
+        if(contentObject.getContentDataUrl() != null) {
+            view.setFile(contentObject.getContentDataUrl());
         }
     }
 

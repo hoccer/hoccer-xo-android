@@ -231,7 +231,7 @@ public class ProfileFragment extends XoFragment
 
     @Override
     public void onAvatarSelected(IContentObject contentObject) {
-        LOG.debug("onAvatarSelected(" + contentObject.getContentUrl() + ")");
+        LOG.debug("onAvatarSelected(" + contentObject.getContentDataUrl() + ")");
         mAvatarToSet = contentObject;
     }
 

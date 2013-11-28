@@ -258,7 +258,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
             if(mAvatarSelection != null) {
                 IContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection, data);
                 if(co != null) {
-                    LOG.debug("selected avatar " + co.getContentUrl());
+                    LOG.debug("selected avatar " + co.getContentDataUrl());
                     for(IXoFragment fragment: mTalkFragments) {
                         fragment.onAvatarSelected(co);
                     }
@@ -270,7 +270,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         if(requestCode == REQUEST_SELECT_ATTACHMENT) {
             IContentObject co = ContentRegistry.get(this).createSelectedAttachment(mAttachmentSelection, data);
             if(co != null) {
-                LOG.debug("selected attachment " + co.getContentUrl());
+                LOG.debug("selected attachment " + co.getContentDataUrl());
                 for(IXoFragment fragment: mTalkFragments) {
                     fragment.onAttachmentSelected(co);
                 }
