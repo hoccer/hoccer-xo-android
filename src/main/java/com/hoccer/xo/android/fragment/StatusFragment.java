@@ -1,6 +1,5 @@
 package com.hoccer.xo.android.fragment;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -83,35 +82,34 @@ public class StatusFragment extends XoFragment implements IXoStateListener {
     }
 
     private void applyClientState(int state) {
-        String statusText;
-        Resources r = getResources();
+        int statusText;
         switch(state) {
             case XoClient.STATE_IDLE:
-                statusText = r.getString(R.string.client_state_idle);
+                statusText = R.string.client_state_idle;
                 break;
             case XoClient.STATE_INACTIVE:
-                statusText = r.getString(R.string.client_state_inactive);
+                statusText = R.string.client_state_inactive;
                 break;
             case XoClient.STATE_ACTIVE:
-                statusText = r.getString(R.string.client_state_active);
+                statusText = R.string.client_state_active;
                 break;
             case XoClient.STATE_CONNECTING:
-                statusText = r.getString(R.string.client_state_connecting);
+                statusText = R.string.client_state_connecting;
                 break;
             case XoClient.STATE_LOGIN:
-                statusText = r.getString(R.string.client_state_login);
+                statusText = R.string.client_state_login;
                 break;
             case XoClient.STATE_RECONNECTING:
-                statusText = r.getString(R.string.client_state_reconnecting);
+                statusText = R.string.client_state_reconnecting;
                 break;
             case XoClient.STATE_REGISTERING:
-                statusText = r.getString(R.string.client_state_registering);
+                statusText = R.string.client_state_registering;
                 break;
             case XoClient.STATE_SYNCING:
-                statusText = r.getString(R.string.client_state_syncing);
+                statusText = R.string.client_state_syncing;
                 break;
             default:
-                statusText = r.getString(R.string.client_state_unknown);
+                statusText = R.string.client_state_unknown;
                 break;
         }
         mStatusText.setText(statusText);
