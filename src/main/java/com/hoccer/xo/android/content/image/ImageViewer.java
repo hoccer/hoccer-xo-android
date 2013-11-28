@@ -14,6 +14,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import org.apache.log4j.Logger;
 
+import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 
 public class ImageViewer implements IContentViewer, ImageLoadingListener {
@@ -21,7 +22,8 @@ public class ImageViewer implements IContentViewer, ImageLoadingListener {
     private static final Logger LOG = Logger.getLogger(ImageViewer.class);
 
     WeakHashMap<ImageView, String> mUpdateCache = new WeakHashMap<ImageView, String>();
-    WeakHashMap<ContentView, AspectImageView> mViewCache = new WeakHashMap<ContentView, AspectImageView>();
+    WeakHashMap<ContentView, WeakReference<AspectImageView>> mViewCache =
+            new WeakHashMap<ContentView, WeakReference<AspectImageView>>();
 
     @Override
     public boolean canViewObject(IContentObject object) {
@@ -37,11 +39,17 @@ public class ImageViewer implements IContentViewer, ImageLoadingListener {
             return null;
         }
 
-        AspectImageView view = mViewCache.get(contentView);
+        AspectImageView view = null;
+
+        WeakReference<AspectImageView> viewReference = mViewCache.get(contentView);
+
+        if(viewReference != null) {
+            view = viewReference.get();
+        }
 
         if(view == null) {
             view = new AspectImageView(context);
-            mViewCache.put(contentView, view);
+            mViewCache.put(contentView, new WeakReference<AspectImageView>(view));
         }
 
         int maxContentHeight = contentView.getMaxContentHeight();
