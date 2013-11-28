@@ -2,15 +2,18 @@ package com.hoccer.xo.android.view;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.release.R;
 import ezvcard.Ezvcard;
@@ -26,7 +29,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class ContactView extends RelativeLayout {
+public class ContactView extends RelativeLayout implements View.OnClickListener {
 
     private static final Logger LOG = Logger.getLogger(ContactView.class);
 
@@ -37,6 +40,7 @@ public class ContactView extends RelativeLayout {
     TextView mNameText;
     ImageButton mActionButton;
 
+    IContentObject mContent;
     String mContentUri;
 
     ScheduledFuture<?> mRefreshFuture;
@@ -71,6 +75,7 @@ public class ContactView extends RelativeLayout {
         mAvatarImage = (ImageView)findViewById(R.id.vcard_avatar);
         mNameText = (TextView)findViewById(R.id.vcard_name);
         mActionButton = (ImageButton)findViewById(R.id.vcard_action);
+        mActionButton.setOnClickListener(this);
         updateMode();
     }
 
@@ -94,7 +99,19 @@ public class ContactView extends RelativeLayout {
         }
     }
 
-    public void showContent(final String contentUri) {
+    @Override
+    public void onClick(View v) {
+        if(v == mActionButton) {
+            if(mContent != null && mMode == Mode.IMPORT) {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.parse(mContent.getContentUrl()), mContent.getContentType());
+                mActivity.startActivity(intent);
+            }
+        }
+    }
+
+    public void showContent(final IContentObject contentObject) {
+        String contentUri = contentObject.getContentUrl();
         LOG.debug("showContent(" + contentUri + ")");
 
         // cancel running refresh
@@ -107,6 +124,7 @@ public class ContactView extends RelativeLayout {
         if(mContentUri == null || !mContentUri.equals(contentUri)) {
             mRoot.setVisibility(INVISIBLE);
 
+            mContent = contentObject;
             mContentUri = contentUri;
 
             // schedule a new refresh

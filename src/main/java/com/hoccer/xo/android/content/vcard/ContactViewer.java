@@ -24,7 +24,7 @@ public class ContactViewer extends ContentViewer<ContactView> {
 
     @Override
     protected void updateView(ContactView view, ContentView contentView, IContentObject contentObject) {
-        view.showContent(contentObject.getContentUrl());
+        view.showContent(contentObject);
 
         if(contentObject.getContentDisposition() == ContentDisposition.DOWNLOAD) {
             view.setMode(ContactView.Mode.IMPORT);
