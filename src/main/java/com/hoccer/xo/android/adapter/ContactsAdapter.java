@@ -131,6 +131,7 @@ public abstract class ContactsAdapter extends XoAdapter
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                reloadFinished();
                 notifyDataSetInvalidated();
             }
         });

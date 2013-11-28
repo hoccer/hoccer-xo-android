@@ -5,7 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import com.actionbarsherlock.widget.SearchView;
+import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.release.R;
 import com.hoccer.xo.android.adapter.ConversationAdapter;
@@ -16,11 +18,14 @@ import org.apache.log4j.Logger;
  * Fragment for conversations
  */
 public class MessagingFragment extends XoListFragment
-        implements SearchView.OnQueryTextListener {
+    implements SearchView.OnQueryTextListener,
+               XoAdapter.AdapterReloadListener {
 
 	private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
 
 	ListView mMessageList;
+
+    TextView mEmptyText;
 
     TalkClientContact mContact;
 
@@ -34,6 +39,7 @@ public class MessagingFragment extends XoListFragment
 		View v = inflater.inflate(R.layout.fragment_messaging, container, false);
 
 		mMessageList = (ListView)v.findViewById(android.R.id.list);
+        mEmptyText = (TextView)v.findViewById(R.id.messaging_empty);
 
 		return v;
 	}
@@ -45,6 +51,7 @@ public class MessagingFragment extends XoListFragment
 
         if(mAdapter == null) {
             mAdapter = getXoActivity().makeConversationAdapter();
+            mAdapter.setAdapterReloadListener(this);
             mAdapter.onCreate();
         }
 
@@ -72,6 +79,18 @@ public class MessagingFragment extends XoListFragment
             mAdapter.onDestroy();
             mAdapter = null;
         }
+    }
+
+    @Override
+    public void onAdapterReloadStarted(XoAdapter adapter) {
+        LOG.debug("onAdapterReloadStarted()");
+        mEmptyText.setText(R.string.messaging_loading);
+    }
+
+    @Override
+    public void onAdapterReloadFinished(XoAdapter adapter) {
+        LOG.debug("onAdapterReloadFinished()");
+        mEmptyText.setText(R.string.messaging_no_messages);
     }
 
     @Override

@@ -39,7 +39,8 @@
     <string name="composition_text_hint">Type message</string>
 
     <!-- Messaging fragment -->
-    <string name="messaging_empty_info">No messages yet.</string>
+    <string name="messaging_loading">Loading...</string>
+    <string name="messaging_no_messages">No messages.</string>
     <string name="messaging_invited_join">Join group</string>
 
     <!-- Pairing fragment -->

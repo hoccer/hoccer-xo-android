@@ -137,6 +137,7 @@ public class ConversationAdapter extends XoAdapter
                         LOG.debug("reload updates ui");
                         mReloadHappened = true;
                         mMessages = messages;
+                        reloadFinished();
                         notifyDataSetChanged();
                     } else {
                         LOG.debug("reload has been overtaken");

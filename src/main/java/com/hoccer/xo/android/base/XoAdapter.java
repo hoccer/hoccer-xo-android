@@ -36,6 +36,11 @@ public abstract class XoAdapter extends BaseAdapter {
 
     static final long RATE_LIMIT_MSECS = 1000;
 
+    public interface AdapterReloadListener {
+        public void onAdapterReloadStarted(XoAdapter adapter);
+        public void onAdapterReloadFinished(XoAdapter adapter);
+    }
+
     protected XoActivity mActivity;
     protected XoClientDatabase mDatabase;
 
@@ -46,6 +51,8 @@ public abstract class XoAdapter extends BaseAdapter {
 
     boolean mActive = false;
     boolean mNeedsReload = false;
+
+    AdapterReloadListener mAdapterReloadListener;
 
     ScheduledFuture<?> mNotifyFuture;
     long mNotifyTimestamp;
@@ -71,6 +78,14 @@ public abstract class XoAdapter extends BaseAdapter {
         return new File(mActivity.getFilesDir(), "avatars");
     }
 
+    public AdapterReloadListener getAdapterReloadListener() {
+        return mAdapterReloadListener;
+    }
+
+    public void setAdapterReloadListener(AdapterReloadListener adapterReloadListener) {
+        mAdapterReloadListener = adapterReloadListener;
+    }
+
     public boolean isActive() {
         return mActive;
     }
@@ -80,7 +95,7 @@ public abstract class XoAdapter extends BaseAdapter {
         mActive = true;
         if(mNeedsReload) {
             mNeedsReload = false;
-            onReloadRequest();
+            performReload();
         }
     }
 
@@ -92,9 +107,24 @@ public abstract class XoAdapter extends BaseAdapter {
     public void requestReload() {
         LOG.debug("requestReload()");
         if(mActive) {
-            onReloadRequest();
+            performReload();
         } else {
             mNeedsReload = true;
+        }
+    }
+
+    private void performReload() {
+        LOG.debug("performReload()");
+        if(mAdapterReloadListener != null) {
+            mAdapterReloadListener.onAdapterReloadStarted(this);
+        }
+        onReloadRequest();
+    }
+
+    protected void reloadFinished() {
+        LOG.debug("reloadFinished()");
+        if(mAdapterReloadListener != null) {
+            mAdapterReloadListener.onAdapterReloadFinished(this);
         }
     }
 
