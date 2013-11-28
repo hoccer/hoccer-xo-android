@@ -11,6 +11,9 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientMessage;
@@ -28,13 +31,13 @@ import java.util.UUID;
 
 public class CompositionFragment extends XoFragment implements View.OnClickListener {
 
+    Menu mMenu;
+
     EditText mTextEdit;
     TextWatcher mTextWatcher;
 
     ImageButton mSendButton;
     ImageButton mClearButton;
-
-    ImageButton mAttachmentSelectButton;
 
     IContentObject mAttachment;
     ContentView mAttachmentView;
@@ -47,6 +50,8 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         super.onCreateView(inflater, container, savedInstanceState);
 
         View v = inflater.inflate(R.layout.fragment_composition, container, false);
+
+        setHasOptionsMenu(true);
 
         mTextEdit = (EditText)v.findViewById(R.id.messaging_composer_text);
         mTextEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -65,9 +70,6 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         mSendButton.setEnabled(false);
         mSendButton.setOnClickListener(this);
 
-        mAttachmentSelectButton = (ImageButton)v.findViewById(R.id.messaging_composer_attachment_select);
-        mAttachmentSelectButton.setOnClickListener(this);
-
         mClearButton = (ImageButton)v.findViewById(R.id.messaging_composer_clear);
         mClearButton.setVisibility(View.GONE);
         mClearButton.setOnClickListener(this);
@@ -78,6 +80,14 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         mAttachmentView.setVisibility(View.GONE);
 
         return v;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        LOG.debug("onCreateOptionsMenu()");
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_composition, menu);
+        mMenu = menu;
     }
 
     @Override
@@ -121,14 +131,20 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             LOG.debug("onClick(sendButton)");
             sendComposedMessage();
         }
-        if(v == mAttachmentSelectButton) {
-            LOG.debug("onClick(attachmentSelectButton)");
-            getXoActivity().selectAttachment();
-        }
         if(v == mClearButton) {
-            LOG.debug("onClick(attachmentClearButton)");
+            LOG.debug("onClick(clearButton)");
             clearComposedMessage();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean res = super.onOptionsItemSelected(item);
+        if(item.getItemId() == R.id.menu_attachment) {
+            LOG.debug("onOptionsItemSelected(add_attachment)");
+            getXoActivity().selectAttachment();
+        }
+        return res;
     }
 
     @Override
@@ -159,16 +175,16 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         mAttachment = contentObject;
         mAttachmentView.displayContent(getXoActivity(), contentObject);
         mAttachmentView.setVisibility(View.VISIBLE);
-        mAttachmentSelectButton.setVisibility(View.GONE);
         mSendButton.setEnabled(isComposed());
         mClearButton.setVisibility(isComposed() ? View.VISIBLE : View.GONE);
+        mMenu.findItem(R.id.menu_attachment).setVisible(false);
     }
 
     private void clearAttachment() {
         LOG.debug("clearAttachment()");
         mAttachmentView.clear();
         mAttachmentView.setVisibility(View.GONE);
-        mAttachmentSelectButton.setVisibility(View.VISIBLE);
+        mMenu.findItem(R.id.menu_attachment).setVisible(true);
         mAttachment = null;
     }
 
