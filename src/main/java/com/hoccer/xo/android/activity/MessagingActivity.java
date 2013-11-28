@@ -50,7 +50,9 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
         // get our primary fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         mMessagingFragment = (MessagingFragment) fragmentManager.findFragmentById(R.id.activity_messaging_fragment);
+        mMessagingFragment.setRetainInstance(true);
         mCompositionFragment = (CompositionFragment) fragmentManager.findFragmentById(R.id.activity_messaging_composer);
+        mCompositionFragment.setRetainInstance(true);
     }
 
     @Override
