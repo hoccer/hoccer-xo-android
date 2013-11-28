@@ -8,7 +8,7 @@ import android.provider.MediaStore;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
 
-public class GallerySelector implements IContentSelector {
+public class ImageSelector implements IContentSelector {
 
     @Override
     public String getName() {
@@ -17,7 +17,9 @@ public class GallerySelector implements IContentSelector {
 
     @Override
     public Intent createSelectionIntent(Context context) {
-        return new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        return intent;
     }
 
     @Override

@@ -13,8 +13,9 @@ import android.widget.SimpleAdapter;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.audio.AudioViewer;
 import com.hoccer.xo.android.content.audio.MusicSelector;
-import com.hoccer.xo.android.content.image.GallerySelector;
+import com.hoccer.xo.android.content.image.ImageSelector;
 import com.hoccer.xo.android.content.image.ImageViewer;
+import com.hoccer.xo.android.content.image.VideoSelector;
 import com.hoccer.xo.android.content.location.MapsLocationSelector;
 import com.hoccer.xo.android.content.vcard.ContactSelector;
 import com.hoccer.xo.android.content.vcard.ContactViewer;
@@ -83,9 +84,10 @@ public class ContentRegistry {
      * This methods activates supported content selectors and viewers.
      */
     private void initialize() {
-        mAvatarSelector = new GallerySelector();
+        mAvatarSelector = new ImageSelector();
 
-        initializeSelector(new GallerySelector());
+        initializeSelector(new ImageSelector());
+        initializeSelector(new VideoSelector());
         initializeSelector(new MusicSelector());
         initializeSelector(new ContactSelector());
         initializeSelector(new MapsLocationSelector());
