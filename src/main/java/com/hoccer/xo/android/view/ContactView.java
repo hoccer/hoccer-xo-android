@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.release.R;
@@ -38,19 +39,12 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
     RelativeLayout mRoot;
     ImageView mAvatarImage;
     TextView mNameText;
-    ImageButton mActionButton;
+    ImageButton mShowButton;
+    ImageButton mImportButton;
 
     IContentObject mContent;
-    String mContentUri;
 
     ScheduledFuture<?> mRefreshFuture;
-
-    public enum Mode {
-        DISPLAY,
-        IMPORT,
-    }
-
-    Mode mMode = Mode.DISPLAY;
 
     public ContactView(Activity activity) {
         super(activity);
@@ -74,37 +68,61 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
         addView(mRoot);
         mAvatarImage = (ImageView)findViewById(R.id.vcard_avatar);
         mNameText = (TextView)findViewById(R.id.vcard_name);
-        mActionButton = (ImageButton)findViewById(R.id.vcard_action);
-        mActionButton.setOnClickListener(this);
-        updateMode();
+        mShowButton = (ImageButton)findViewById(R.id.vcard_show_button);
+        mShowButton.setOnClickListener(this);
+        mImportButton = (ImageButton)findViewById(R.id.vcard_import_button);
+        mImportButton.setOnClickListener(this);
+        update();
     }
 
-    public Mode getMode() {
-        return mMode;
+    private boolean isContentImportable() {
+        return mContent != null
+                && mContent.getContentDisposition() == ContentDisposition.DOWNLOAD
+                && mContent.getContentUrl() == null;
     }
 
-    public void setMode(Mode mode) {
-        LOG.debug("setMode(" + mode + ")");
-        mMode = mode;
-        updateMode();
+    private boolean isContentShowable() {
+        return mContent != null
+                && mContent.getContentUrl() != null
+                && mContent.getContentDisposition() != ContentDisposition.SELECTED;
     }
 
-    private void updateMode() {
+    private boolean isContentChanged(IContentObject newContent) {
+        return mContent == null
+                || (newContent.getContentDataUrl() != null
+                    && !newContent.getContentDataUrl().equals(mContent.getContentDataUrl()));
+    }
+
+    private void update() {
+        LOG.debug("update()");
         if(mActivity != null) {
-            if(mMode == Mode.IMPORT) {
-                mActionButton.setVisibility(VISIBLE);
+            if(isContentImportable()) {
+                mImportButton.setVisibility(VISIBLE);
             } else {
-                mActionButton.setVisibility(GONE);
+                mImportButton.setVisibility(GONE);
+            }
+            if(isContentShowable()) {
+                mShowButton.setVisibility(VISIBLE);
+            } else {
+                mShowButton.setVisibility(GONE);
             }
         }
     }
 
     @Override
     public void onClick(View v) {
-        if(v == mActionButton) {
-            if(mContent != null && mMode == Mode.IMPORT) {
+        if(v == mImportButton) {
+            LOG.debug("onClick(importButton)");
+            if(isContentImportable()) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.parse(mContent.getContentDataUrl()), mContent.getContentType());
+                mActivity.startActivity(intent);
+            }
+        }
+        if(v == mShowButton) {
+            LOG.debug("onClick(showButton)");
+            if(isContentShowable()) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mContent.getContentUrl()));
                 mActivity.startActivity(intent);
             }
         }
@@ -121,21 +139,23 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
         }
 
         // schedule new refresh if needed
-        if(mContentUri == null || !mContentUri.equals(contentUri)) {
+        if(isContentChanged(contentObject)) {
             mRoot.setVisibility(INVISIBLE);
 
             mContent = contentObject;
-            mContentUri = contentUri;
 
             // schedule a new refresh
             ScheduledExecutorService executor = XoApplication.getExecutor();
             mRefreshFuture = executor.schedule(new Runnable() {
                 @Override
                 public void run() {
-                    refresh(mContentUri);
+                    update();
+                    refresh(mContent.getContentDataUrl());
                 }
             }, 0, TimeUnit.MILLISECONDS);
         }
+
+        update();
     }
 
     private void checkInterrupt() throws InterruptedException {
@@ -199,7 +219,7 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
                     } else {
                         mAvatarImage.setImageResource(R.drawable.avatar_default_contact);
                     }
-                    updateMode();
+                    update();
                 }
             });
 

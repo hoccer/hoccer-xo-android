@@ -1,7 +1,6 @@
 package com.hoccer.xo.android.content.vcard;
 
 import android.app.Activity;
-import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewer;
@@ -25,12 +24,6 @@ public class ContactViewer extends ContentViewer<ContactView> {
     @Override
     protected void updateView(ContactView view, ContentView contentView, IContentObject contentObject) {
         view.showContent(contentObject);
-
-        if(contentObject.getContentDisposition() == ContentDisposition.DOWNLOAD) {
-            view.setMode(ContactView.Mode.IMPORT);
-        } else {
-            view.setMode(ContactView.Mode.DISPLAY);
-        }
     }
 
 }
