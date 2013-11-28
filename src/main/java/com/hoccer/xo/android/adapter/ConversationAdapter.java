@@ -56,8 +56,14 @@ public class ConversationAdapter extends XoAdapter
     }
 
     public void converseWithContact(TalkClientContact contact) {
-        mContact = contact;
-        reload();
+        if(mContact != contact) {
+            mVersion.incrementAndGet();
+            mContact = contact;
+            mReloadHappened = false;
+            mMessages.clear();
+            notifyDataSetChanged();
+            reload();
+        }
     }
 
     @Override
