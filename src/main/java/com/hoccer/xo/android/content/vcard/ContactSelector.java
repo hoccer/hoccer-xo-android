@@ -47,7 +47,7 @@ public class ContactSelector implements IContentSelector {
 
         cursor.close();
 
-        SelectedContent co = new SelectedContent(contentUri);
+        SelectedContent co = new SelectedContent(intent, contentUri);
         co.setContentType(ContactsContract.Contacts.CONTENT_VCARD_TYPE);
         co.setContentMediaType("contact");
 

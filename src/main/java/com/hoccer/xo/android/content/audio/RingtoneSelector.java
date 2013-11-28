@@ -48,7 +48,7 @@ public class RingtoneSelector implements IContentSelector {
             return null;
         }
 
-        SelectedContent contentObject = new SelectedContent("file://" + filePath);
+        SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);
         contentObject.setContentMediaType("audio");
         contentObject.setContentType(fileType);
         contentObject.setContentLength(fileSize);

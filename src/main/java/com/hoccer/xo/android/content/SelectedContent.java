@@ -1,5 +1,7 @@
 package com.hoccer.xo.android.content;
 
+import android.content.Intent;
+import android.net.Uri;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.ContentState;
@@ -21,6 +23,8 @@ public class SelectedContent implements IContentObject {
 
     private static final Logger LOG = Logger.getLogger(SelectedContent.class);
 
+    String mContentUrl;
+    
     String mContentDataUrl;
 
     String mContentType = null;
@@ -31,9 +35,18 @@ public class SelectedContent implements IContentObject {
 
     double mContentAspectRatio = 1.0;
 
-    public SelectedContent(String contentUrl) {
+    public SelectedContent(Intent resultIntent, String contentDataUrl) {
+        Uri contentUrl = resultIntent.getData();
         LOG.info("new selected content: " + contentUrl);
-        mContentDataUrl = contentUrl;
+        mContentUrl = contentUrl.toString();
+        mContentType = resultIntent.getType();
+        mContentDataUrl = contentDataUrl;
+    }
+
+    public SelectedContent(String contentUrl, String contentDataUrl) {
+        LOG.info("new selected content: " + contentUrl);
+        mContentUrl = contentUrl;
+        mContentDataUrl = contentDataUrl;
     }
 
     public void setContentType(String mContentType) {
@@ -70,6 +83,11 @@ public class SelectedContent implements IContentObject {
     @Override
     public String getContentType() {
         return mContentType;
+    }
+
+    @Override
+    public String getContentUrl() {
+        return mContentUrl;
     }
 
     @Override

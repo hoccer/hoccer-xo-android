@@ -50,7 +50,7 @@ public class CaptureSelector implements IContentSelector {
             return null;
         }
 
-        SelectedContent contentObject = new SelectedContent("file://" + filePath);
+        SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);
         contentObject.setContentMediaType("image");
         contentObject.setContentType(fileType);
         contentObject.setContentLength(fileSize);

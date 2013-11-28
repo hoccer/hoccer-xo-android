@@ -52,9 +52,8 @@ public class ImageSelector implements IContentSelector {
             return null;
         }
 
-        SelectedContent contentObject = new SelectedContent("file://" + filePath);
+        SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);
         contentObject.setContentMediaType("image");
-        contentObject.setContentType(fileType);
         contentObject.setContentLength(fileSize);
         if(fileWidth > 0 && fileHeight > 0) {
             contentObject.setContentAspectRatio(((float)fileWidth) / ((float)fileHeight));
