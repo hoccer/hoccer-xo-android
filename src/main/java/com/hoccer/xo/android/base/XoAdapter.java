@@ -34,7 +34,7 @@ public abstract class XoAdapter extends BaseAdapter {
 
     protected Logger LOG = null;
 
-    static final long RATE_LIMIT_MSECS = 100;
+    static final long RATE_LIMIT_MSECS = 1000;
 
     protected XoActivity mActivity;
     protected XoClientDatabase mDatabase;
