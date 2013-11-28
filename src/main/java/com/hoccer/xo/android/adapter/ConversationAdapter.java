@@ -84,19 +84,21 @@ public class ConversationAdapter extends XoAdapter
     @Override
     public void onMessageAdded(final TalkClientMessage message) {
         LOG.info("REQUEST ADD");
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                boolean reloadAgain = cancelReload();
-                LOG.info("ADD");
-                mVersion.incrementAndGet();
-                mMessages.add(message);
-                notifyDataSetChanged();
-                if(reloadAgain) {
-                    reload();
+        if(mContact != null && message.getConversationContact() == mContact) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    boolean reloadAgain = cancelReload();
+                    LOG.info("ADD");
+                    mVersion.incrementAndGet();
+                    mMessages.add(message);
+                    notifyDataSetChanged();
+                    if(reloadAgain) {
+                        reload();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
     @Override
     public void onMessageRemoved(TalkClientMessage message) {
