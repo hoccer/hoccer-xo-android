@@ -26,6 +26,9 @@ public class MessagingFragment extends XoListFragment
 
     ConversationAdapter mAdapter;
 
+    TalkClientContact mSavedContact;
+    int mSavedScrollPosition = -1;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		LOG.debug("onCreateView()");
@@ -50,17 +53,22 @@ public class MessagingFragment extends XoListFragment
 
         mAdapter.activate();
 
+        mMessageList.setAdapter(mAdapter);
+
         if(mContact != null) {
             mAdapter.converseWithContact(mContact);
+            if(mSavedContact == mContact && mSavedScrollPosition >= 0) {
+                mMessageList.setSelection(mSavedScrollPosition);
+            }
         }
-
-        mMessageList.setAdapter(mAdapter);
     }
 
     @Override
     public void onPause() {
         LOG.debug("onPause()");
         super.onPause();
+        mSavedContact = mContact;
+        mSavedScrollPosition = mMessageList.getLastVisiblePosition();
         mAdapter.deactivate();
     }
 
