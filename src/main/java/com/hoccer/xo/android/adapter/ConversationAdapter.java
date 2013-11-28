@@ -21,11 +21,13 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Adapter for messages in a conversation
@@ -42,10 +44,11 @@ public class ConversationAdapter extends XoAdapter
 
     TalkClientContact mContact;
 
-    List<TalkClientMessage> mMessages = new ArrayList<TalkClientMessage>();
+    List<TalkClientMessage> mMessages = new Vector<TalkClientMessage>();
 
-    long mLastReload = 0;
     ScheduledFuture<?> mReloadFuture;
+
+    AtomicInteger mVersion = new AtomicInteger();
 
     public ConversationAdapter(XoActivity activity) {
         super(activity);
@@ -69,6 +72,7 @@ public class ConversationAdapter extends XoAdapter
     }
 
     private void update() {
+        LOG.info("REQUEST UPDATE");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -78,8 +82,21 @@ public class ConversationAdapter extends XoAdapter
     }
 
     @Override
-    public void onMessageAdded(TalkClientMessage message) {
-        reload();
+    public void onMessageAdded(final TalkClientMessage message) {
+        LOG.info("REQUEST ADD");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                boolean reloadAgain = cancelReload();
+                LOG.info("ADD");
+                mVersion.incrementAndGet();
+                mMessages.add(message);
+                notifyDataSetChanged();
+                if(reloadAgain) {
+                    reload();
+                }
+            }
+        });
     }
     @Override
     public void onMessageRemoved(TalkClientMessage message) {
@@ -128,38 +145,73 @@ public class ConversationAdapter extends XoAdapter
         update();
     }
 
+    public boolean cancelReload() {
+        boolean cancelled = false;
+        synchronized (ConversationAdapter.this) {
+            if(mReloadFuture != null) {
+                cancelled = mReloadFuture.cancel(true);
+                mReloadFuture = null;
+            }
+        }
+        return cancelled;
+    }
+
     @Override
     public void reload() {
+        LOG.info("REQUEST RELOAD");
         ScheduledExecutorService executor = XoApplication.getExecutor();
-        executor.execute(new Runnable() {
+        final int startVersion = mVersion.get();
+        Runnable runnable = new Runnable() {
+
             @Override
             public void run() {
-                if(mContact != null) {
-                    synchronized (this) {
-                        try {
-                            mDatabase.refreshClientContact(mContact);
-                            List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
-                            for(TalkClientMessage message: messages) {
-                                reloadRelated(message);
-                            }
-                            LOG.info(messages.size() + " messages");
-                            mMessages = messages;
-                        } catch (SQLException e) {
-                            LOG.error("sql error", e);
-                        } catch (Throwable e) {
-                            LOG.error("error reloading", e);
+                try {
+                    LOG.info("RELOAD");
+                    mDatabase.refreshClientContact(mContact);
+                    if(Thread.interrupted()) {
+                        throw new InterruptedException();
+                    }
+                    final List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
+                    for(TalkClientMessage message: messages) {
+                        if(Thread.interrupted()) {
+                            throw new InterruptedException();
                         }
+                        reloadRelated(message);
                     }
-                }
+                    if(Thread.interrupted()) {
+                        throw new InterruptedException();
+                    }
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyDataSetChanged();
-                    }
-                });
+                    LOG.info(messages.size() + " messages");
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            LOG.info("new data");
+                            if(mVersion.compareAndSet(startVersion, startVersion + 1)) {
+                                mMessages = messages;
+                            }
+                            notifyDataSetChanged();
+                        }
+                    });
+                } catch (SQLException e) {
+                    LOG.error("sql error", e);
+                } catch (InterruptedException e) {
+                    LOG.info("RELOAD INTERRUPTED");
+                } catch (Throwable e) {
+                    LOG.error("error reloading", e);
+                }
+                synchronized (ConversationAdapter.this) {
+                    mReloadFuture = null;
+                }
             }
-        });
+        };
+        synchronized (this) {
+            if(mReloadFuture != null) {
+                mReloadFuture.cancel(true);
+            }
+            mReloadFuture = executor.schedule(runnable, 0, TimeUnit.MILLISECONDS);
+        }
     }
 
     private void reloadRelated(TalkClientMessage message) throws SQLException {
@@ -195,7 +247,7 @@ public class ConversationAdapter extends XoAdapter
 
     @Override
     public long getItemId(int position) {
-        return mMessages.get(position).getClientMessageId();
+        return getItem(position).getClientMessageId();
     }
 
     @Override
