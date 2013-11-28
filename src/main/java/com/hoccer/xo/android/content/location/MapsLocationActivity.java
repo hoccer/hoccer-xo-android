@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.content.location;
 
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,12 +16,14 @@ import com.hoccer.xo.release.R;
 public class MapsLocationActivity extends XoActivity
     implements GoogleMap.OnMyLocationButtonClickListener,
                GoogleMap.OnMapLongClickListener,
+               GoogleMap.OnMyLocationChangeListener,
                View.OnClickListener {
 
     SupportMapFragment mMapFragment;
 
     GoogleMap mMap;
 
+    Location mMyLocation;
     Marker mMarker;
 
     Button mButtonOk;
@@ -58,12 +61,15 @@ public class MapsLocationActivity extends XoActivity
             mMap = mMapFragment.getMap();
             setupMap();
         }
+        mMyLocation = mMap.getMyLocation();
+        update();
     }
 
     private void setupMap() {
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMapLongClickListener(this);
+        mMap.setOnMyLocationChangeListener(this);
     }
 
     private void removeMarker() {
@@ -76,7 +82,14 @@ public class MapsLocationActivity extends XoActivity
     @Override
     public boolean onMyLocationButtonClick() {
         removeMarker();
+        update();
         return false;
+    }
+
+    @Override
+    public void onMyLocationChange(Location location) {
+        mMyLocation = location;
+        update();
     }
 
     @Override
@@ -89,6 +102,7 @@ public class MapsLocationActivity extends XoActivity
         mMarker = mMap.addMarker(options);
         Toast.makeText(this, "Location set", Toast.LENGTH_SHORT)
              .show();
+        update();
     }
 
     @Override
@@ -98,6 +112,20 @@ public class MapsLocationActivity extends XoActivity
         }
         if(v == mButtonOk) {
         }
+    }
+
+    private LatLng getLocation() {
+        if(mMarker != null) {
+            return mMarker.getPosition();
+        } else if (mMyLocation != null) {
+            return new LatLng(mMyLocation.getLatitude(), mMyLocation.getLongitude());
+        }
+        return null;
+    }
+
+    private void update() {
+        LatLng location = getLocation();
+        mButtonOk.setEnabled(location != null);
     }
 
 }
