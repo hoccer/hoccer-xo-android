@@ -46,6 +46,7 @@ import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
@@ -615,6 +616,9 @@ public class XoClientService extends Service {
             IXoTokenListener,
             IXoTransferListener,
             MediaScannerConnection.OnScanCompletedListener {
+
+        Hashtable<String, TalkClientDownload> mScanningDownloads = new Hashtable<String, TalkClientDownload>();
+
         @Override
         public void onClientStateChange(XoClient client, int state) {
             LOG.info("onClientStateChange(" + XoClient.stateToString(state) + ")");
@@ -689,10 +693,11 @@ public class XoClientService extends Service {
         }
         @Override
         public void onDownloadStateChanged(TalkClientDownload download) {
-            if(download.isAttachment() && download.isContentAvailable()) {
+            if(download.isAttachment() && download.isContentAvailable() && download.getContentUrl() == null) {
                 String[] path = new String[]{download.getDataFile()};
                 String[] ctype = new String[]{download.getContentType()};
                 LOG.info("requesting media scan of " + ctype[0] + " at " + path[0]);
+                mScanningDownloads.put(path[0], download);
                 MediaScannerConnection.scanFile(
                         XoClientService.this,
                         path, ctype, this
@@ -724,6 +729,11 @@ public class XoClientService extends Service {
         @Override
         public void onScanCompleted(String path, Uri uri) {
             LOG.info("media scan of " + path + " completed - uri " + uri.toString());
+            TalkClientDownload download = mScanningDownloads.get(path);
+            if(download != null) {
+                download.provideContentUrl(mClient.getTransferAgent(), uri.toString());
+            }
+            mScanningDownloads.remove(path);
         }
     }
 
