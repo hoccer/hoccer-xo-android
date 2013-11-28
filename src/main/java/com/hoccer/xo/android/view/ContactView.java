@@ -75,16 +75,23 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
         update();
     }
 
+    private boolean isContentImported() {
+        return mContent != null
+                && mContent.getContentUrl() != null
+                && !mContent.getContentUrl().startsWith("file://")
+                && !mContent.getContentUrl().startsWith("content://media/external/file");
+    }
+
     private boolean isContentImportable() {
         return mContent != null
                 && mContent.getContentDisposition() == ContentDisposition.DOWNLOAD
-                && mContent.getContentUrl() == null;
+                && !isContentImported();
     }
 
     private boolean isContentShowable() {
         return mContent != null
-                && mContent.getContentUrl() != null
-                && mContent.getContentDisposition() != ContentDisposition.SELECTED;
+                && mContent.getContentDisposition() != ContentDisposition.SELECTED
+                && isContentImported();
     }
 
     private boolean isContentChanged(IContentObject newContent) {
