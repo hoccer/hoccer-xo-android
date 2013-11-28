@@ -54,9 +54,6 @@ public class MessagingFragment extends XoListFragment
             mAdapter.converseWithContact(mContact);
         }
 
-        // reload the adapter
-        mAdapter.reload();
-
         // pass the adapter to the list
         mMessageList.setAdapter(mAdapter);
     }
