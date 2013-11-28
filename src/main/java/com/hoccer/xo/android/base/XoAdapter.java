@@ -6,6 +6,7 @@ import android.widget.BaseAdapter;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.xo.android.XoApplication;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.concurrent.ScheduledExecutorService;
@@ -22,6 +23,8 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class XoAdapter extends BaseAdapter {
 
+    protected Logger LOG = null;
+
     static final long RATE_LIMIT_MSECS = 100;
 
     protected XoActivity mActivity;
@@ -36,6 +39,7 @@ public abstract class XoAdapter extends BaseAdapter {
     long mNotifyTimestamp;
 
     public XoAdapter(XoActivity activity) {
+        LOG = Logger.getLogger(getClass());
         mActivity = activity;
         mDatabase = mActivity.getXoDatabase();
         mInflater = mActivity.getLayoutInflater();

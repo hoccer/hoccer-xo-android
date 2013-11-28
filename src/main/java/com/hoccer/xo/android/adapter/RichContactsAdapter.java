@@ -14,7 +14,6 @@ import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
 
@@ -25,8 +24,6 @@ import java.sql.SQLException;
  *
  */
 public class RichContactsAdapter extends ContactsAdapter {
-
-    private static final Logger LOG = Logger.getLogger(RichContactsAdapter.class);
 
     public RichContactsAdapter(XoActivity activity) {
         super(activity);

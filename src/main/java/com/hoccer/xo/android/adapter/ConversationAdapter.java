@@ -18,7 +18,6 @@ import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -40,8 +39,6 @@ public class ConversationAdapter extends XoAdapter
 
     private static final int VIEW_TYPE_COUNT = 2;
 
-    private static final Logger LOG = Logger.getLogger(ConversationAdapter.class);
-
     TalkClientContact mContact;
 
     List<TalkClientMessage> mMessages = new Vector<TalkClientMessage>();
@@ -56,6 +53,7 @@ public class ConversationAdapter extends XoAdapter
     }
 
     public void converseWithContact(TalkClientContact contact) {
+        LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
         if(mContact != contact) {
             mVersion.incrementAndGet();
             mContact = contact;
@@ -164,7 +162,11 @@ public class ConversationAdapter extends XoAdapter
             if(mReloadFuture != null) {
                 mReloadFuture.cancel(true);
             }
-            mReloadFuture = executor.schedule(runnable, 0, TimeUnit.MILLISECONDS);
+            if(isActive()) {
+                mReloadFuture = executor.schedule(runnable, 0, TimeUnit.MILLISECONDS);
+            } else {
+                requestActivationReload();
+            }
         }
     }
 

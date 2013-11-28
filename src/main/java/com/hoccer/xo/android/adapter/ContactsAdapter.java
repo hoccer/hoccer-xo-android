@@ -14,7 +14,6 @@ import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
-import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -30,8 +29,6 @@ import java.util.List;
  */
 public abstract class ContactsAdapter extends XoAdapter
         implements IXoContactListener, IXoMessageListener, IXoTokenListener, IXoTransferListener {
-
-    private static final Logger LOG = Logger.getLogger(ContactsAdapter.class);
 
     protected final static long ITEM_ID_UNKNOWN = -1000;
     protected final static long ITEM_ID_CLIENT_HEADER = -1;
