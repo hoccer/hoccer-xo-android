@@ -71,8 +71,9 @@ public class ConversationAdapter extends XoAdapter
         getXoClient().unregisterTransferListener(this);
     }
 
+    /** Triggers change notification on the ui thread */
     private void update() {
-        LOG.info("REQUEST UPDATE");
+        LOG.trace("update()");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -81,15 +82,94 @@ public class ConversationAdapter extends XoAdapter
         });
     }
 
+    /** Used internally to fault in related objects we need */
+    private void reloadRelated(TalkClientMessage message) throws SQLException {
+        TalkClientContact sender = message.getSenderContact();
+        if(sender != null) {
+            mDatabase.refreshClientContact(sender);
+        }
+        TalkClientContact conversation = message.getConversationContact();
+        if(conversation != null) {
+            mDatabase.refreshClientContact(conversation);
+        }
+    }
+
+    /** Performs a full reload */
+    @Override
+    public void reload() {
+        LOG.debug("reload()");
+        ScheduledExecutorService executor = XoApplication.getExecutor();
+        final int startVersion = mVersion.get();
+        Runnable runnable = new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    mDatabase.refreshClientContact(mContact);
+                    if(Thread.interrupted()) {
+                        throw new InterruptedException();
+                    }
+                    final List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
+                    for(TalkClientMessage message: messages) {
+                        if(Thread.interrupted()) {
+                            throw new InterruptedException();
+                        }
+                        reloadRelated(message);
+                    }
+                    if(Thread.interrupted()) {
+                        throw new InterruptedException();
+                    }
+
+                    LOG.info(messages.size() + " messages");
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            LOG.info("new data");
+                            if(mVersion.compareAndSet(startVersion, startVersion + 1)) {
+                                mMessages = messages;
+                            }
+                            notifyDataSetChanged();
+                        }
+                    });
+                } catch (SQLException e) {
+                    LOG.error("sql error", e);
+                } catch (InterruptedException e) {
+                    LOG.info("RELOAD INTERRUPTED");
+                } catch (Throwable e) {
+                    LOG.error("error reloading", e);
+                }
+                synchronized (ConversationAdapter.this) {
+                    mReloadFuture = null;
+                }
+            }
+        };
+        synchronized (this) {
+            if(mReloadFuture != null) {
+                mReloadFuture.cancel(true);
+            }
+            mReloadFuture = executor.schedule(runnable, 0, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    public boolean cancelReload() {
+        boolean cancelled = false;
+        synchronized (ConversationAdapter.this) {
+            if(mReloadFuture != null) {
+                cancelled = mReloadFuture.cancel(true);
+                mReloadFuture = null;
+            }
+        }
+        return cancelled;
+    }
+
     @Override
     public void onMessageAdded(final TalkClientMessage message) {
-        LOG.info("REQUEST ADD");
         if(mContact != null && message.getConversationContact() == mContact) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     boolean reloadAgain = cancelReload();
-                    LOG.info("ADD");
                     mVersion.incrementAndGet();
                     mMessages.add(message);
                     notifyDataSetChanged();
@@ -147,85 +227,8 @@ public class ConversationAdapter extends XoAdapter
         update();
     }
 
-    public boolean cancelReload() {
-        boolean cancelled = false;
-        synchronized (ConversationAdapter.this) {
-            if(mReloadFuture != null) {
-                cancelled = mReloadFuture.cancel(true);
-                mReloadFuture = null;
-            }
-        }
-        return cancelled;
-    }
 
-    @Override
-    public void reload() {
-        LOG.info("REQUEST RELOAD");
-        ScheduledExecutorService executor = XoApplication.getExecutor();
-        final int startVersion = mVersion.get();
-        Runnable runnable = new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    LOG.info("RELOAD");
-                    mDatabase.refreshClientContact(mContact);
-                    if(Thread.interrupted()) {
-                        throw new InterruptedException();
-                    }
-                    final List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
-                    for(TalkClientMessage message: messages) {
-                        if(Thread.interrupted()) {
-                            throw new InterruptedException();
-                        }
-                        reloadRelated(message);
-                    }
-                    if(Thread.interrupted()) {
-                        throw new InterruptedException();
-                    }
-
-                    LOG.info(messages.size() + " messages");
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            LOG.info("new data");
-                            if(mVersion.compareAndSet(startVersion, startVersion + 1)) {
-                                mMessages = messages;
-                            }
-                            notifyDataSetChanged();
-                        }
-                    });
-                } catch (SQLException e) {
-                    LOG.error("sql error", e);
-                } catch (InterruptedException e) {
-                    LOG.info("RELOAD INTERRUPTED");
-                } catch (Throwable e) {
-                    LOG.error("error reloading", e);
-                }
-                synchronized (ConversationAdapter.this) {
-                    mReloadFuture = null;
-                }
-            }
-        };
-        synchronized (this) {
-            if(mReloadFuture != null) {
-                mReloadFuture.cancel(true);
-            }
-            mReloadFuture = executor.schedule(runnable, 0, TimeUnit.MILLISECONDS);
-        }
-    }
-
-    private void reloadRelated(TalkClientMessage message) throws SQLException {
-        TalkClientContact sender = message.getSenderContact();
-        if(sender != null) {
-            mDatabase.refreshClientContact(sender);
-        }
-        TalkClientContact conversation = message.getConversationContact();
-        if(conversation != null) {
-            mDatabase.refreshClientContact(conversation);
-        }
-    }
 
     @Override
     public boolean hasStableIds() {
