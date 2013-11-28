@@ -8,6 +8,9 @@ import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.xo.android.XoApplication;
 
 import java.io.File;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Base class for list adapters
@@ -19,18 +22,25 @@ import java.io.File;
  */
 public abstract class XoAdapter extends BaseAdapter {
 
+    static final long RATE_LIMIT_MSECS = 100;
+
     protected XoActivity mActivity;
     protected XoClientDatabase mDatabase;
 
     protected Resources mResources;
     protected LayoutInflater mInflater;
 
+    ScheduledExecutorService mExecutor;
+
+    ScheduledFuture<?> mNotifyFuture;
+    long mNotifyTimestamp;
 
     public XoAdapter(XoActivity activity) {
         mActivity = activity;
         mDatabase = mActivity.getXoDatabase();
         mInflater = mActivity.getLayoutInflater();
         mResources = mActivity.getResources();
+        mExecutor = mActivity.getBackgroundExecutor();
     }
 
     public void runOnUiThread(Runnable runnable) {
@@ -47,6 +57,36 @@ public abstract class XoAdapter extends BaseAdapter {
 
     public File getAvatarDirectory() {
         return new File(mActivity.getFilesDir(), "avatars");
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        long now = System.currentTimeMillis();
+        long delta = now - mNotifyTimestamp;
+        if(mNotifyFuture != null) {
+            mNotifyFuture.cancel(false);
+            mNotifyFuture = null;
+        }
+        if(delta < RATE_LIMIT_MSECS) {
+            long delay = RATE_LIMIT_MSECS - delta;
+            mNotifyFuture = mExecutor.schedule(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            mNotifyTimestamp = System.currentTimeMillis();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    XoAdapter.super.notifyDataSetChanged();
+                                }
+                            });
+                        }
+                    }
+            , delay, TimeUnit.MILLISECONDS);
+        } else {
+            mNotifyTimestamp = System.currentTimeMillis();
+            super.notifyDataSetChanged();
+        }
     }
 
 }
