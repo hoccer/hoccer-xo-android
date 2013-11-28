@@ -57,6 +57,7 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
         if(mAdapter == null) {
             // create list adapter
             mAdapter = getXoActivity().makeContactListAdapter();
+            mAdapter.register();
 
             // filter out never-related contacts (which we know only via groups)
             mAdapter.setFilter(new ContactsAdapter.Filter() {
@@ -75,6 +76,16 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
 
         // do this late so activity has database initialized
         mContactList.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onPause() {
+        LOG.debug("onPause()");
+        super.onPause();
+        if(mAdapter != null) {
+            mAdapter.unregister();
+            mAdapter = null;
+        }
     }
 
     // XXX @Override

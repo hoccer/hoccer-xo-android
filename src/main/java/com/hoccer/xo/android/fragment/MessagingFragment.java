@@ -46,6 +46,7 @@ public class MessagingFragment extends XoListFragment
         // do this late so activity has database initialized
         if(mAdapter == null) {
             mAdapter = getXoActivity().makeConversationAdapter();
+            mAdapter.register();
         }
 
         // update adapter conversation
@@ -58,6 +59,16 @@ public class MessagingFragment extends XoListFragment
 
         // pass the adapter to the list
         mMessageList.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onPause() {
+        LOG.debug("onPause()");
+        super.onPause();
+        if(mAdapter != null) {
+            mAdapter.unregister();
+            mAdapter = null;
+        }
     }
 
     @Override

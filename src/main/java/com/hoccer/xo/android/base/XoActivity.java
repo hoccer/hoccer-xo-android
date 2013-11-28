@@ -397,15 +397,11 @@ public abstract class XoActivity extends SherlockFragmentActivity {
     }
 
     public ConversationAdapter makeConversationAdapter() {
-        ConversationAdapter adapter = new ConversationAdapter(this);
-        adapter.register();
-        return adapter;
+        return new ConversationAdapter(this);
     }
 
     public ContactsAdapter makeContactListAdapter() {
-        ContactsAdapter adapter = new RichContactsAdapter(this);
-        adapter.register();
-        return adapter;
+        return new RichContactsAdapter(this);
     }
 
     public void wakeClient() {
