@@ -180,7 +180,7 @@ public class XoApplication extends Application {
 
         // create executor
         LOG.info("creating background executor");
-        EXECUTOR = Executors.newScheduledThreadPool(2);
+        EXECUTOR = Executors.newScheduledThreadPool(XoConfiguration.BACKGROUND_THREADS);
 
         // create client instance
         LOG.info("creating client");
