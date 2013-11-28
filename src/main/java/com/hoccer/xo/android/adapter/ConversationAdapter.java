@@ -46,6 +46,7 @@ public class ConversationAdapter extends XoAdapter
 
     List<TalkClientMessage> mMessages = new Vector<TalkClientMessage>();
 
+    boolean mReloadHappened = false;
     ScheduledFuture<?> mReloadFuture;
 
     AtomicInteger mVersion = new AtomicInteger();
@@ -94,6 +95,53 @@ public class ConversationAdapter extends XoAdapter
         }
     }
 
+    private void checkInterrupt() throws InterruptedException {
+        if(Thread.interrupted()) {
+            throw new InterruptedException();
+        }
+    }
+
+    private void performReload(final int version) {
+        LOG.trace("performReload(" + version + ")");
+        try {
+            mDatabase.refreshClientContact(mContact);
+            checkInterrupt();
+
+            final List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
+            checkInterrupt();
+
+            for(TalkClientMessage message: messages) {
+                reloadRelated(message);
+                checkInterrupt();
+            }
+
+            LOG.debug("reload found " + messages.size() + " messages");
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(mVersion.compareAndSet(version, version + 1)) {
+                        LOG.debug("reload updates ui");
+                        mReloadHappened = true;
+                        mMessages = messages;
+                        notifyDataSetChanged();
+                    } else {
+                        LOG.debug("reload has been overtaken");
+                    }
+                }
+            });
+        } catch (SQLException e) {
+            LOG.error("sql error", e);
+        } catch (InterruptedException e) {
+            LOG.trace("reload interrupted");
+        } catch (Throwable e) {
+            LOG.error("error reloading", e);
+        }
+        synchronized (ConversationAdapter.this) {
+            mReloadFuture = null;
+        }
+    }
+
     /** Performs a full reload */
     @Override
     public void reload() {
@@ -101,47 +149,9 @@ public class ConversationAdapter extends XoAdapter
         ScheduledExecutorService executor = XoApplication.getExecutor();
         final int startVersion = mVersion.get();
         Runnable runnable = new Runnable() {
-
             @Override
             public void run() {
-                try {
-                    mDatabase.refreshClientContact(mContact);
-                    if(Thread.interrupted()) {
-                        throw new InterruptedException();
-                    }
-                    final List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
-                    for(TalkClientMessage message: messages) {
-                        if(Thread.interrupted()) {
-                            throw new InterruptedException();
-                        }
-                        reloadRelated(message);
-                    }
-                    if(Thread.interrupted()) {
-                        throw new InterruptedException();
-                    }
-
-                    LOG.info(messages.size() + " messages");
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            LOG.info("new data");
-                            if(mVersion.compareAndSet(startVersion, startVersion + 1)) {
-                                mMessages = messages;
-                            }
-                            notifyDataSetChanged();
-                        }
-                    });
-                } catch (SQLException e) {
-                    LOG.error("sql error", e);
-                } catch (InterruptedException e) {
-                    LOG.info("RELOAD INTERRUPTED");
-                } catch (Throwable e) {
-                    LOG.error("error reloading", e);
-                }
-                synchronized (ConversationAdapter.this) {
-                    mReloadFuture = null;
-                }
+                performReload(startVersion);
             }
         };
         synchronized (this) {
@@ -153,6 +163,7 @@ public class ConversationAdapter extends XoAdapter
     }
 
     public boolean cancelReload() {
+        LOG.trace("cancelReload()");
         boolean cancelled = false;
         synchronized (ConversationAdapter.this) {
             if(mReloadFuture != null) {
@@ -166,6 +177,7 @@ public class ConversationAdapter extends XoAdapter
     @Override
     public void onMessageAdded(final TalkClientMessage message) {
         if(mContact != null && message.getConversationContact() == mContact) {
+            final boolean forceReload = !mReloadHappened;
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -173,7 +185,7 @@ public class ConversationAdapter extends XoAdapter
                     mVersion.incrementAndGet();
                     mMessages.add(message);
                     notifyDataSetChanged();
-                    if(reloadAgain) {
+                    if(reloadAgain || forceReload) {
                         reload();
                     }
                 }
@@ -291,10 +303,12 @@ public class ConversationAdapter extends XoAdapter
     }
 
     private void updateViewOutgoing(View view, TalkClientMessage message) {
+        LOG.trace("updateViewOutgoing(" + message.getClientMessageId() + ")");
         updateViewCommon(view, message);
     }
 
     private void updateViewIncoming(View view, TalkClientMessage message) {
+        LOG.trace("updateViewIncoming(" + message.getClientMessageId() + ")");
         updateViewCommon(view, message);
     }
 
@@ -391,4 +405,5 @@ public class ConversationAdapter extends XoAdapter
             }
         });
     }
+
 }
