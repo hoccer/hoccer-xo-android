@@ -24,10 +24,7 @@ public class ImageViewer extends ContentViewer<AspectImageView> implements Image
 
     @Override
     public boolean canViewObject(IContentObject object) {
-        if(object.getContentMediaType().equals("image")) {
-            return true;
-        }
-        return false;
+        return object.getContentMediaType().equals("image");
     }
 
     @Override
