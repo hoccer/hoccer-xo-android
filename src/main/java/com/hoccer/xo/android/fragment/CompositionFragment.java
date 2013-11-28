@@ -215,7 +215,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             delivery.setReceiverId(mContact.getClientId());
         }
 
-        clientMessage.setSeen(true);
+        clientMessage.markAsSeen();
         clientMessage.setText(messageText);
         clientMessage.setMessageTag(messageTag);
         clientMessage.setConversationContact(mContact);
