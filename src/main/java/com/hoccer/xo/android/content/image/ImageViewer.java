@@ -14,9 +14,14 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import org.apache.log4j.Logger;
 
-public class ImageViewer implements IContentViewer {
+import java.util.WeakHashMap;
+
+public class ImageViewer implements IContentViewer, ImageLoadingListener {
 
     private static final Logger LOG = Logger.getLogger(ImageViewer.class);
+
+    WeakHashMap<ImageView, String> mUpdateCache = new WeakHashMap<ImageView, String>();
+    WeakHashMap<ContentView, AspectImageView> mViewCache = new WeakHashMap<ContentView, AspectImageView>();
 
     @Override
     public boolean canViewObject(IContentObject object) {
@@ -32,7 +37,12 @@ public class ImageViewer implements IContentViewer {
             return null;
         }
 
-        AspectImageView view = new AspectImageView(context);
+        AspectImageView view = mViewCache.get(contentView);
+
+        if(view == null) {
+            view = new AspectImageView(context);
+            mViewCache.put(contentView, view);
+        }
 
         int maxContentHeight = contentView.getMaxContentHeight();
         if(maxContentHeight != Integer.MAX_VALUE) {
@@ -47,26 +57,36 @@ public class ImageViewer implements IContentViewer {
 
         String contentUrl = object.getContentUrl();
         if(object.isContentAvailable() && contentUrl != null) {
-            ImageLoader.getInstance().displayImage(contentUrl, view, new ImageLoadingListener() {
-                @Override
-                public void onLoadingStarted(String imageUri, View view) {
-                    LOG.debug("load of " + imageUri + " started");
-                }
-                @Override
-                public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-                    LOG.error("load of " + imageUri + " failed: " + failReason.getType().toString(), failReason.getCause());
-                }
-                @Override
-                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                    LOG.debug("load of " + imageUri + " complete");
-                }
-                @Override
-                public void onLoadingCancelled(String imageUri, View view) {
-                    LOG.debug("load of " + imageUri + " cancelled");
-                }
-            });
+            updateView(view, contentUrl);
         }
+
         return view;
+    }
+
+    private void updateView(ImageView view, String contentUrl) {
+        String oldUrl = mUpdateCache.get(view);
+        if(oldUrl == null || !oldUrl.equals(contentUrl)) {
+            mUpdateCache.put(view, contentUrl);
+            view.setImageDrawable(null);
+            ImageLoader.getInstance().displayImage(contentUrl, view, this);
+        }
+    }
+
+    @Override
+    public void onLoadingStarted(String imageUri, View view) {
+        LOG.debug("load of " + imageUri + " started");
+    }
+    @Override
+    public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+        LOG.error("load of " + imageUri + " failed: " + failReason.getType().toString(), failReason.getCause());
+    }
+    @Override
+    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+        LOG.debug("load of " + imageUri + " complete");
+    }
+    @Override
+    public void onLoadingCancelled(String imageUri, View view) {
+        LOG.debug("load of " + imageUri + " cancelled");
     }
 
 }
