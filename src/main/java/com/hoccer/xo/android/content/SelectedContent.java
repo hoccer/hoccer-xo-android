@@ -21,7 +21,7 @@ public class SelectedContent implements IContentObject {
 
     private static final Logger LOG = Logger.getLogger(SelectedContent.class);
 
-    String mContentUrl;
+    String mContentDataUrl;
 
     String mContentType = null;
 
@@ -33,7 +33,7 @@ public class SelectedContent implements IContentObject {
 
     public SelectedContent(String contentUrl) {
         LOG.info("new selected content: " + contentUrl);
-        mContentUrl = contentUrl;
+        mContentDataUrl = contentUrl;
     }
 
     public void setContentType(String mContentType) {
@@ -74,7 +74,7 @@ public class SelectedContent implements IContentObject {
 
     @Override
     public String getContentDataUrl() {
-        return mContentUrl;
+        return mContentDataUrl;
     }
 
     @Override
