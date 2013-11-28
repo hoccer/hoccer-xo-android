@@ -24,6 +24,14 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
     /* use this extra to show the given contact */
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 
+    public enum Mode {
+        PROFILE,
+        CREATE_GROUP,
+        CREATE_SELF,
+    }
+
+    Mode mMode;
+
     ActionBar mActionBar;
 
     ProfileFragment mFragment;
@@ -95,6 +103,7 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
 
     public void showProfile(TalkClientContact contact) {
         LOG.debug("showProfile(" + contact.getClientContactId() + ")");
+        mMode = Mode.PROFILE;
         mFragment.showProfile(contact);
         update(contact);
 
@@ -102,12 +111,14 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
 
     public void createGroup() {
         LOG.debug("createGroup()");
+        mMode = Mode.CREATE_GROUP;
         mFragment.createGroup();
         update(mFragment.getContact());
     }
 
     public void createSelf() {
         LOG.debug("createSelf()");
+        mMode = Mode.CREATE_SELF;
         mFragment.createSelf();
         update(mFragment.getContact());
     }
@@ -119,14 +130,26 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
     }
 
     private void update(final TalkClientContact contact) {
-        LOG.info("update(" + contact.getClientContactId() + ")");
+        LOG.debug("update(" + contact.getClientContactId() + ")");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if(contact.isSelf()) {
                     mActionBar.setTitle("My profile");
                 } else {
-                    mActionBar.setTitle(contact.getName());
+                    String title = contact.getName();
+                    if(title == null) {
+                        if(mMode == Mode.CREATE_GROUP) {
+                            title = "New group";
+                        }
+                        if(mMode == Mode.CREATE_SELF) {
+                            title = "Welcome to XO!";
+                        }
+                    }
+                    if(title == null) {
+                        title = "<unnamed>";
+                    }
+                    mActionBar.setTitle(title);
                 }
                 if (contact.isDeleted()) {
                     finish();

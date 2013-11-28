@@ -29,6 +29,9 @@ public class NameDialog extends SherlockDialogFragment {
         mActivity = activity;
         mContact = contact;
         mOldName = mContact.getName();
+        if(mOldName == null) {
+            mOldName = "";
+        }
     }
 
     @Override

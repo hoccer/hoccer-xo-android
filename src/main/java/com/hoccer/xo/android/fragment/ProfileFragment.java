@@ -276,7 +276,6 @@ public class ProfileFragment extends XoFragment
         mContact.updateGroupTag(groupTag);
         TalkGroup groupPresence = new TalkGroup();
         groupPresence.setGroupTag(groupTag);
-        groupPresence.setGroupName("<new group>");
         mContact.updateGroupPresence(groupPresence);
         update(mContact);
     }
@@ -347,10 +346,12 @@ public class ProfileFragment extends XoFragment
         mGroupMembersList.setVisibility(contact.isGroupRegistered() ? View.VISIBLE : View.GONE);
 
         // apply data from the contact that needs to recurse
+        String name = null;
+
         if(contact.isClient() || contact.isSelf()) {
             TalkPresence presence = contact.getClientPresence();
             if(presence != null) {
-                mNameText.setText(presence.getClientName());
+                name = presence.getClientName();
             }
             if(contact.isClient()) {
                 TalkRelationship relationship = contact.getClientRelationship();
@@ -367,7 +368,7 @@ public class ProfileFragment extends XoFragment
         if(contact.isGroup()) {
             TalkGroup groupPresence = contact.getGroupPresence();
             if(groupPresence != null) {
-                mNameText.setText(groupPresence.getGroupName());
+                name = groupPresence.getGroupName();
             }
             final ContactsAdapter adapter = new SimpleContactsAdapter(getXoActivity());
             adapter.setFilter(new ContactsAdapter.Filter() {
@@ -379,6 +380,18 @@ public class ProfileFragment extends XoFragment
             adapter.reload();
             mGroupMembersList.setAdapter(adapter);
         }
+        if(name == null) {
+            if(mMode == Mode.CREATE_GROUP) {
+                name = "<chose a name>";
+            }
+            if(mMode == Mode.CREATE_SELF) {
+                name = "<chose a name>";
+            }
+        }
+        if(name == null) {
+            name = "<unnamed>";
+        }
+        mNameText.setText(name);
 
         if(contact.isEditable()) {
             mNameEditButton.setVisibility(View.VISIBLE);
