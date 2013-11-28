@@ -7,23 +7,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.IContentViewer;
+import com.hoccer.xo.android.content.ContentViewer;
 import com.hoccer.xo.android.view.AspectImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import org.apache.log4j.Logger;
 
-import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 
-public class ImageViewer implements IContentViewer, ImageLoadingListener {
+public class ImageViewer extends ContentViewer<AspectImageView> implements ImageLoadingListener {
 
     private static final Logger LOG = Logger.getLogger(ImageViewer.class);
 
     WeakHashMap<ImageView, String> mUpdateCache = new WeakHashMap<ImageView, String>();
-    WeakHashMap<ContentView, WeakReference<AspectImageView>> mViewCache =
-            new WeakHashMap<ContentView, WeakReference<AspectImageView>>();
 
     @Override
     public boolean canViewObject(IContentObject object) {
@@ -34,44 +31,32 @@ public class ImageViewer implements IContentViewer, ImageLoadingListener {
     }
 
     @Override
-    public View getViewForObject(Activity context, IContentObject object, ContentView contentView) {
-        if(!canViewObject(object)) {
-            return null;
-        }
+    protected AspectImageView makeView(Activity activity) {
+        return new AspectImageView(activity);
+    }
 
-        AspectImageView view = null;
-
-        WeakReference<AspectImageView> viewReference = mViewCache.get(contentView);
-
-        if(viewReference != null) {
-            view = viewReference.get();
-        }
-
-        if(view == null) {
-            view = new AspectImageView(context);
-            mViewCache.put(contentView, new WeakReference<AspectImageView>(view));
-        }
-
+    @Override
+    protected void updateView(AspectImageView view, ContentView contentView, IContentObject contentObject) {
         int maxContentHeight = contentView.getMaxContentHeight();
         if(maxContentHeight != Integer.MAX_VALUE) {
             view.setMaxHeight(maxContentHeight);
         }
         view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        view.setAspectRatio(object.getContentAspectRatio());
+        view.setAspectRatio(contentObject.getContentAspectRatio());
         view.setAdjustViewBounds(true);
         view.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        String contentUrl = object.getContentUrl();
-        if(object.isContentAvailable() && contentUrl != null) {
-            updateView(view, contentUrl);
+        String contentUrl = contentObject.getContentUrl();
+        if(contentObject.isContentAvailable() && contentUrl != null) {
+            loadImage(view, contentUrl);
+        } else {
+            view.setImageDrawable(null);
         }
-
-        return view;
     }
 
-    private void updateView(ImageView view, String contentUrl) {
+    private void loadImage(ImageView view, String contentUrl) {
         String oldUrl = mUpdateCache.get(view);
         if(oldUrl == null || !oldUrl.equals(contentUrl)) {
             mUpdateCache.put(view, contentUrl);

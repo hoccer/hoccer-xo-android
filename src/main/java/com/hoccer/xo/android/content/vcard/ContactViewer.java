@@ -1,14 +1,13 @@
 package com.hoccer.xo.android.content.vcard;
 
 import android.app.Activity;
-import android.view.View;
 import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.IContentViewer;
+import com.hoccer.xo.android.content.ContentViewer;
 import com.hoccer.xo.android.view.ContactView;
 
-public class ContactViewer implements IContentViewer {
+public class ContactViewer extends ContentViewer<ContactView> {
 
     @Override
     public boolean canViewObject(IContentObject object) {
@@ -19,18 +18,19 @@ public class ContactViewer implements IContentViewer {
     }
 
     @Override
-    public View getViewForObject(Activity activity, IContentObject object, ContentView view) {
-        ContactView v = new ContactView(activity);
+    protected ContactView makeView(Activity activity) {
+        return new ContactView(activity);
+    }
 
-        v.showContent(object.getContentUrl());
+    @Override
+    protected void updateView(ContactView view, ContentView contentView, IContentObject contentObject) {
+        view.showContent(contentObject.getContentUrl());
 
-        if(object.getContentDisposition() == ContentDisposition.DOWNLOAD) {
-            v.setMode(ContactView.Mode.IMPORT);
+        if(contentObject.getContentDisposition() == ContentDisposition.DOWNLOAD) {
+            view.setMode(ContactView.Mode.IMPORT);
         } else {
-            v.setMode(ContactView.Mode.DISPLAY);
+            view.setMode(ContactView.Mode.DISPLAY);
         }
-
-        return v;
     }
 
 }

@@ -1,13 +1,12 @@
 package com.hoccer.xo.android.content.audio;
 
 import android.app.Activity;
-import android.view.View;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.IContentViewer;
+import com.hoccer.xo.android.content.ContentViewer;
 import com.hoccer.xo.android.view.AudioPlayerView;
 
-public class AudioViewer implements IContentViewer {
+public class AudioViewer extends ContentViewer<AudioPlayerView> {
 
     @Override
     public boolean canViewObject(IContentObject object) {
@@ -18,15 +17,15 @@ public class AudioViewer implements IContentViewer {
     }
 
     @Override
-    public View getViewForObject(Activity context, IContentObject object, ContentView view) {
-        if(!canViewObject(object)) {
-            return null;
+    protected AudioPlayerView makeView(Activity activity) {
+        return new AudioPlayerView(activity);
+    }
+
+    @Override
+    protected void updateView(AudioPlayerView view, ContentView contentView, IContentObject contentObject) {
+        if(contentObject.getContentUrl() != null) {
+            view.setFile(contentObject.getContentUrl());
         }
-        AudioPlayerView player = new AudioPlayerView(context);
-        if(object.getContentUrl() != null) {
-            player.setFile(object.getContentUrl());
-        }
-        return player;
     }
 
 }

@@ -70,7 +70,7 @@ public class ContentRegistry {
     List<IContentSelector> mAttachmentSelectors = new ArrayList<IContentSelector>();
 
     /** Active attachment viewers (only the supported ones) */
-    List<IContentViewer> mAttachmentViewers = new ArrayList<IContentViewer>();
+    List<ContentViewer> mAttachmentViewers = new ArrayList<ContentViewer>();
 
     private ContentRegistry(Context context) {
         mContext = context;
@@ -123,9 +123,9 @@ public class ContentRegistry {
      * @return a View set up for the given content
      */
     public View createViewForContent(Activity activity, IContentObject contentObject, ContentView view) {
-        IContentViewer viewer = selectViewerForContent(contentObject);
+        ContentViewer viewer = selectViewerForContent(contentObject);
         if(viewer != null) {
-            return viewer.getViewForObject(activity, contentObject, view);
+            return viewer.getViewForObject(activity, view, contentObject);
         }
         return null;
     }
@@ -138,8 +138,8 @@ public class ContentRegistry {
      * @param contentObject that needs a view constructed
      * @return a matching content viewer
      */
-    private IContentViewer selectViewerForContent(IContentObject contentObject) {
-        for(IContentViewer viewer: mAttachmentViewers) {
+    private ContentViewer selectViewerForContent(IContentObject contentObject) {
+        for(ContentViewer viewer: mAttachmentViewers) {
             if(viewer.canViewObject(contentObject)) {
                 return viewer;
             }
