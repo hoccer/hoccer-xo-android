@@ -35,6 +35,9 @@ public abstract class XoAdapter extends BaseAdapter {
 
     ScheduledExecutorService mExecutor;
 
+    boolean mActive = false;
+    boolean mNeedsReload = false;
+
     ScheduledFuture<?> mNotifyFuture;
     long mNotifyTimestamp;
 
@@ -55,13 +58,35 @@ public abstract class XoAdapter extends BaseAdapter {
         return XoApplication.getXoClient();
     }
 
-    abstract public void register();
-    abstract public void unregister();
-    abstract public void reload();
-
     public File getAvatarDirectory() {
         return new File(mActivity.getFilesDir(), "avatars");
     }
+
+    public boolean isActive() {
+        return mActive;
+    }
+
+    public void activate() {
+        LOG.debug("activate()");
+        mActive = true;
+        if(mNeedsReload) {
+            mNeedsReload = false;
+            reload();
+        }
+    }
+
+    public void deactivate() {
+        LOG.debug("deactivate()");
+        mActive = false;
+    }
+
+    protected void requestActivationReload() {
+        mNeedsReload = true;
+    }
+
+    abstract public void register();
+    abstract public void unregister();
+    abstract public void reload();
 
     @Override
     public void notifyDataSetChanged() {
