@@ -35,9 +35,6 @@ public class AboutFragment extends XoFragment {
 
     private WebView mAboutWebView;
 
-    public AboutFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         LOG.debug("onCreate()");

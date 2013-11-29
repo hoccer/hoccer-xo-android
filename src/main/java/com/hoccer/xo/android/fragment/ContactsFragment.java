@@ -32,9 +32,6 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
 
 	ListView mContactList;
 
-    public ContactsFragment() {
-    }
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
