@@ -1,10 +1,13 @@
 package com.hoccer.xo.android.content.location;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -22,6 +25,8 @@ public class MapsLocationActivity extends XoActivity
                GoogleMap.OnMapLongClickListener,
                GoogleMap.OnMyLocationChangeListener,
                View.OnClickListener {
+
+    public static final String EXTRA_GEOJSON = "com.hoccer.xo.android.GEOJSON";
 
     SupportMapFragment mMapFragment;
 
@@ -118,6 +123,8 @@ public class MapsLocationActivity extends XoActivity
             finish();
         }
         if(v == mButtonOk) {
+            Intent intent = createResultIntent();
+            returnResultIntent(intent);
         }
     }
 
@@ -139,8 +146,29 @@ public class MapsLocationActivity extends XoActivity
         coordinates.add(latlng.latitude);
         coordinates.add(latlng.longitude);
         location.put("coordinates", coordinates);
-        root.put("location", root);
+        root.put("location", location);
         return root;
+    }
+
+    private Intent createResultIntent() {
+        Intent intent = new Intent();
+        JsonNode json = createGeoJson();
+        try {
+            String string = mJsonMapper.writeValueAsString(json);
+            intent.putExtra(EXTRA_GEOJSON, string);
+        } catch (JsonProcessingException e) {
+            LOG.error("JSON processing exception", e);
+        }
+        return intent;
+    }
+
+    private void returnResultIntent(Intent intent) {
+        if (getParent() == null) {
+            setResult(Activity.RESULT_OK, intent);
+        } else {
+            getParent().setResult(Activity.RESULT_OK, intent);
+        }
+        finish();
     }
 
     private void update() {

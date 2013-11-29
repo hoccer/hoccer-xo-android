@@ -19,7 +19,14 @@ public class MapsLocationSelector implements IContentSelector {
 
     @Override
     public SelectedContent createObjectFromSelectionResult(Context context, Intent intent) {
-        return null;
+        SelectedContent content = null;
+        if(intent.hasExtra(MapsLocationActivity.EXTRA_GEOJSON)) {
+            String json = intent.getStringExtra(MapsLocationActivity.EXTRA_GEOJSON);
+            content = new SelectedContent(json.getBytes());
+            content.setContentMediaType("location");
+            content.setContentType("application/json");
+        }
+        return content;
     }
 
 }
