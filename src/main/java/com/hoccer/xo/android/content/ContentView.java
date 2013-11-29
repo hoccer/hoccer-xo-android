@@ -37,6 +37,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         REQUEST_DOWNLOAD,
         CANCEL_DOWNLOAD,
         REQUEST_UPLOAD,
+        CANCEL_UPLOAD,
     }
 
     ContentRegistry mRegistry;
@@ -137,6 +138,13 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 if(mObject instanceof TalkClientUpload) {
                     TalkClientUpload upload = (TalkClientUpload)mObject;
                     XoApplication.getXoClient().getTransferAgent().requestUpload(upload);
+                }
+                break;
+            case CANCEL_UPLOAD:
+                mActionButton.setEnabled(false);
+                if(mObject instanceof TalkClientUpload) {
+                    TalkClientUpload upload = (TalkClientUpload)mObject;
+                    XoApplication.getXoClient().getTransferAgent().cancelUpload(upload);
                 }
             }
         }
@@ -303,6 +311,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 break;
             case UPLOAD_UPLOADING:
                 mActionButton.setText("Cancel");
+                mTransferAction = TransferAction.CANCEL_UPLOAD;
                 break;
             case SELECTED:
             case UPLOAD_FAILED:
