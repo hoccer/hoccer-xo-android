@@ -183,7 +183,6 @@
                     <prefix>git</prefix>
                     <dateFormat>yyyy-MM-dd HH:mm:ss z</dateFormat>
                     <verbose>true</verbose>
-                    <!-- <dotGitDirectory>${project.basedir}/.git</dotGitDirectory> -->
                     <!-- skip projects with <packaging>pom</packaging> -->
                     <skipPoms>true</skipPoms>
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
