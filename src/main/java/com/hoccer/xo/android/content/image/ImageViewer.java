@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewer;
 import com.hoccer.xo.android.view.AspectImageView;
@@ -58,7 +59,8 @@ public class ImageViewer extends ContentViewer<AspectImageView> implements Image
         if(oldUrl == null || !oldUrl.equals(contentUrl)) {
             mUpdateCache.put(view, contentUrl);
             view.setImageDrawable(null);
-            ImageLoader.getInstance().displayImage(contentUrl, view, this);
+            ImageLoader.getInstance().displayImage(
+                    contentUrl, view, XoApplication.getContentImageOptions(), this);
         }
     }
 
@@ -80,3 +82,4 @@ public class ImageViewer extends ContentViewer<AspectImageView> implements Image
     }
 
 }
+

@@ -8,6 +8,7 @@ import com.hoccer.talk.client.IXoClientHost;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import org.apache.log4j.Logger;
@@ -46,6 +47,8 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
     /** uncaught exception handler for the client and us */
     private static Thread.UncaughtExceptionHandler UNCAUGHT_EXCEPTION_HANDLER = null;
 
+    private static DisplayImageOptions CONTENT_IMAGE_OPTIONS = null;
+
     /** @return common executor for background tasks */
     public static ScheduledExecutorService getExecutor() {
         return EXECUTOR;
@@ -65,6 +68,10 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
 
     public static Thread.UncaughtExceptionHandler getUncaughtExceptionHandler() {
         return UNCAUGHT_EXCEPTION_HANDLER;
+    }
+
+    public static DisplayImageOptions getContentImageOptions() {
+        return CONTENT_IMAGE_OPTIONS;
     }
 
     /**
@@ -174,6 +181,11 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
 
         // configure image loader
         LOG.info("configuring image loader");
+        CONTENT_IMAGE_OPTIONS = new DisplayImageOptions.Builder()
+                .cacheOnDisc(false)
+                .cacheInMemory(true)
+                .delayBeforeLoading(250)
+                .build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
                 .build();
         ImageLoader.getInstance().init(config);
