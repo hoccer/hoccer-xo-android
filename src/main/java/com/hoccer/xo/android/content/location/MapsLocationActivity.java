@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -29,6 +33,8 @@ public class MapsLocationActivity extends XoActivity
     Button mButtonOk;
     Button mButtonCancel;
 
+    ObjectMapper mJsonMapper;
+
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_maps_location;
@@ -43,6 +49,7 @@ public class MapsLocationActivity extends XoActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         enableUpNavigation();
+        mJsonMapper = new ObjectMapper();
         mButtonOk = (Button)findViewById(R.id.maps_location_ok);
         mButtonOk.setOnClickListener(this);
         mButtonCancel = (Button)findViewById(R.id.maps_location_cancel);
@@ -121,6 +128,19 @@ public class MapsLocationActivity extends XoActivity
             return new LatLng(mMyLocation.getLatitude(), mMyLocation.getLongitude());
         }
         return null;
+    }
+
+    private JsonNode createGeoJson() {
+        LatLng latlng = getLocation();
+        ObjectNode root = mJsonMapper.createObjectNode();
+        ObjectNode location = mJsonMapper.createObjectNode();
+        location.put("type", "point");
+        ArrayNode coordinates = mJsonMapper.createArrayNode();
+        coordinates.add(latlng.latitude);
+        coordinates.add(latlng.longitude);
+        location.put("coordinates", coordinates);
+        root.put("location", root);
+        return root;
     }
 
     private void update() {
