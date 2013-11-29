@@ -17,6 +17,7 @@ import com.hoccer.xo.android.content.image.ImageSelector;
 import com.hoccer.xo.android.content.image.ImageViewer;
 import com.hoccer.xo.android.content.image.VideoSelector;
 import com.hoccer.xo.android.content.image.VideoViewer;
+import com.hoccer.xo.android.content.location.LocationViewer;
 import com.hoccer.xo.android.content.location.MapsLocationSelector;
 import com.hoccer.xo.android.content.vcard.ContactSelector;
 import com.hoccer.xo.android.content.vcard.ContactViewer;
@@ -97,6 +98,7 @@ public class ContentRegistry {
         mAttachmentViewers.add(new VideoViewer());
         mAttachmentViewers.add(new AudioViewer());
         mAttachmentViewers.add(new ContactViewer());
+        mAttachmentViewers.add(new LocationViewer());
     }
 
     /**
