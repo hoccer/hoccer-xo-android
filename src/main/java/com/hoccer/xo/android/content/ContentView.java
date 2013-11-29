@@ -47,6 +47,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
 
     LinearLayout mContentWrapper;
 
+    View mContentChild;
+
     LinearLayout mContentFooter;
 
     ImageView mContentType;
@@ -92,6 +94,9 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     private void initView(Context context) {
         addView(inflate(context, R.layout.view_content_new, null));
         mContentWrapper = (LinearLayout)findViewById(R.id.content_wrapper);
+        if(!isInEditMode()) {
+            mContentWrapper.removeAllViews();
+        }
         mContentFooter = (LinearLayout)findViewById(R.id.content_footer);
         mContentType = (ImageView)findViewById(R.id.content_type_image);
         mContentDescription = (TextView)findViewById(R.id.content_description_text);
@@ -336,21 +341,31 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
 
         // content wrapper
         if(contentChanged || stateChanged) {
-            mContentWrapper.removeAllViews();
+            if(mContentChild != null) {
+                mContentWrapper.removeView(mContentChild);
+                mContentChild = null;
+            }
         }
         if(isInEditMode()) {
             mContentWrapper.setVisibility(GONE);
         } else {
             mContentWrapper.setVisibility(VISIBLE);
-            if(mContentWrapper.getChildCount() == 0) {
-                View view = mRegistry.createViewForContent(activity, object, this);
-                if(view != null) {
-                    view.setVisibility(VISIBLE);
-                    mContentWrapper.addView(view,
+            if(mContentChild == null) {
+                mContentChild = mRegistry.createViewForContent(activity, object, this);
+                if(mContentChild != null) {
+                    mContentChild.setVisibility(VISIBLE);
+                    mContentWrapper.addView(mContentChild,
                             new ViewGroup.LayoutParams(
                                     ViewGroup.LayoutParams.MATCH_PARENT,
                                     ViewGroup.LayoutParams.WRAP_CONTENT));
                 }
+            }
+        }
+        if(mContentChild != null) {
+            if(state == ContentState.SELECTED || state == ContentState.UPLOAD_COMPLETE || state == ContentState.DOWNLOAD_COMPLETE) {
+                mContentChild.setEnabled(true);
+            } else {
+                mContentChild.setEnabled(false);
             }
         }
     }
