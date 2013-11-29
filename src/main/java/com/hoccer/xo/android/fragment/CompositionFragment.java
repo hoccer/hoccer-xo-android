@@ -219,6 +219,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         clientMessage.setText(messageText);
         clientMessage.setMessageTag(messageTag);
         clientMessage.setConversationContact(mContact);
+        clientMessage.setSenderContact(getXoClient().getSelfContact());
         clientMessage.setMessage(message);
         clientMessage.setOutgoingDelivery(delivery);
 
@@ -229,7 +230,6 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         }
 
         try {
-            clientMessage.setSenderContact(db.findSelfContact(false));
             if(upload != null) {
                 db.saveClientUpload(upload);
             }
