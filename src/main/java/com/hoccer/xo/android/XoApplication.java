@@ -43,6 +43,9 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
     /** root of app-private storage (initialized in onCreate) */
     private static File INTERNAL_STORAGE = null;
 
+    /** uncaught exception handler for the client and us */
+    private static Thread.UncaughtExceptionHandler UNCAUGHT_EXCEPTION_HANDLER = null;
+
     /** @return common executor for background tasks */
     public static ScheduledExecutorService getExecutor() {
         return EXECUTOR;
@@ -58,6 +61,10 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
      */
     public static File getExternalStorage() {
         return EXTERNAL_STORAGE;
+    }
+
+    public static Thread.UncaughtExceptionHandler getUncaughtExceptionHandler() {
+        return UNCAUGHT_EXCEPTION_HANDLER;
     }
 
     /**
@@ -127,6 +134,9 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
 	public void onCreate() {
 		super.onCreate();
 
+        // currently we use our own instance here
+        UNCAUGHT_EXCEPTION_HANDLER = this;
+
         // initialize storage roots (do so early for log files)
         EXTERNAL_STORAGE = Environment.getExternalStorageDirectory();
         INTERNAL_STORAGE = this.getFilesDir();
@@ -184,7 +194,7 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
         tfb.setNameFormat("client-%d");
         tfb.setUncaughtExceptionHandler(this);
         EXECUTOR = Executors.newScheduledThreadPool(
-                        XoConfiguration.BACKGROUND_THREADS,
+                        XoConfiguration.CLIENT_THREADS,
                         tfb.build());
 
         // create client instance

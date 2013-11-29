@@ -42,6 +42,11 @@ public class XoHost implements IXoClientHost {
     }
 
     @Override
+    public Thread.UncaughtExceptionHandler getUncaughtExceptionHandler() {
+        return XoApplication.getUncaughtExceptionHandler();
+    }
+
+    @Override
     public InputStream openInputStreamForUrl(String url) throws IOException {
         return mContext.getContentResolver().openInputStream(Uri.parse(url));
     }

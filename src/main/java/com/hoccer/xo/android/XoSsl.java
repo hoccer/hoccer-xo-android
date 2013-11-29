@@ -5,6 +5,7 @@ import com.hoccer.talk.client.XoClientConfiguration;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.eclipse.jetty.websocket.WebSocketClientFactory;
 
 import java.io.InputStream;
@@ -33,7 +34,8 @@ public class XoSsl {
     public static WebSocketClientFactory getWebSocketClientFactory() {
         if(WS_CLIENT_FACTORY == null) {
             LOG.info("creating ws client factory");
-            WebSocketClientFactory wscFactory = new WebSocketClientFactory();
+            ExecutorThreadPool pool = new ExecutorThreadPool(XoApplication.getExecutor());
+            WebSocketClientFactory wscFactory = new WebSocketClientFactory(pool);
             SslContextFactory sslcFactory = wscFactory.getSslContextFactory();
             sslcFactory.setTrustAll(false);
             sslcFactory.setKeyStore(getKeyStore());

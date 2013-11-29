@@ -19,7 +19,7 @@ public class XoConfiguration {
     public static final String INTERNAL_UPLOADS = "uploads";
 
     /** Background executor thread count */
-    public static final int BACKGROUND_THREADS = 2;
+    public static final int CLIENT_THREADS = 4;
 
     /** Notification alarm back-off (msecs) */
     public static final long NOTIFICATION_ALARM_BACKOFF = 5000;
