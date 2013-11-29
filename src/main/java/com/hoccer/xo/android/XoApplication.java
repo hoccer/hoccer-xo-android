@@ -186,7 +186,7 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
                 .cacheInMemory(false)
                 .build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-                .threadPoolSize(2)
+                .threadPoolSize(1)
                 .build();
         ImageLoader.getInstance().init(config);
 
