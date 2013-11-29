@@ -105,10 +105,6 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
         }
     }
 
-    // XXX @Override
-    public void onGroupCreationFailed() {
-    }
-
     @Override
     public void onClick(View v) {
         if(v == mAddUserButton) {
