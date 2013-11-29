@@ -113,7 +113,7 @@ public class XoClientService extends Service {
 
 	@Override
 	public void onCreate() {
-        LOG.info("onCreate()");
+        LOG.debug("onCreate()");
 		super.onCreate();
 
         mExecutor = XoApplication.getExecutor();
@@ -157,7 +157,7 @@ public class XoClientService extends Service {
 
     @Override
     public void onDestroy() {
-        LOG.info("onDestroy()");
+        LOG.debug("onDestroy()");
         super.onDestroy();
         unregisterConnectivityReceiver();
         if(mClientListener != null) {
@@ -175,7 +175,7 @@ public class XoClientService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LOG.info("onStartCommand(" + ((intent == null) ? "null" : intent.toString()) + ")");
+        LOG.debug("onStartCommand(" + ((intent == null) ? "null" : intent.toString()) + ")");
         if(intent != null) {
             if(intent.hasExtra(GcmService.EXTRA_WAKE_CLIENT)) {
                 wakeClient();
@@ -198,7 +198,7 @@ public class XoClientService extends Service {
 
     @Override
 	public IBinder onBind(Intent intent) {
-        LOG.info("onBind(" + intent.toString() + ")");
+        LOG.debug("onBind(" + intent.toString() + ")");
 
         if(!mClient.isActivated()) {
             mClient.activate();
@@ -213,7 +213,7 @@ public class XoClientService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        LOG.info("onUnbind(" + intent.toString() + ")");
+        LOG.debug("onUnbind(" + intent.toString() + ")");
         return super.onUnbind(intent);
     }
 
@@ -326,7 +326,7 @@ public class XoClientService extends Service {
                 new Runnable() {
                     @Override
                     public void run() {
-                        LOG.info("keep-alive timeout");
+                        LOG.debug("keep-alive timeout");
                         doShutdown();
                     }
                 },
@@ -342,7 +342,7 @@ public class XoClientService extends Service {
     }
 
     private void registerConnectivityReceiver() {
-        LOG.info("registerConnectivityReceiver()");
+        LOG.debug("registerConnectivityReceiver()");
         if(mConnectivityReceiver == null) {
             mConnectivityReceiver = new ConnectivityReceiver();
             registerReceiver(mConnectivityReceiver,
@@ -351,7 +351,7 @@ public class XoClientService extends Service {
     }
 
     private void unregisterConnectivityReceiver() {
-        LOG.info("unregisterConnectivityReceiver()");
+        LOG.debug("unregisterConnectivityReceiver()");
         if(mConnectivityReceiver != null) {
             unregisterReceiver(mConnectivityReceiver);
             mConnectivityReceiver = null;
@@ -360,14 +360,14 @@ public class XoClientService extends Service {
 
     private void handleConnectivityChange(NetworkInfo activeNetwork) {
         if(activeNetwork == null) {
-            LOG.info("connectivity change: no connectivity");
+            LOG.debug("connectivity change: no connectivity");
             mClient.deactivate();
             mPreviousConnectionState = false;
             mPreviousConnectionType = -1;
         } else {
-            LOG.info("connectivity change:"
-                    + " type " + activeNetwork.getTypeName()
-                    + " state " + activeNetwork.getState().name());
+            LOG.debug("connectivity change:"
+                      + " type " + activeNetwork.getTypeName()
+                      + " state " + activeNetwork.getState().name());
 
             int previousState = mClient.getState();
             if(activeNetwork.isConnected()) {
@@ -407,13 +407,13 @@ public class XoClientService extends Service {
     private class ConnectivityReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            LOG.info("onConnectivityChange()");
+            LOG.debug("onConnectivityChange()");
             handleConnectivityChange(mConnectivityManager.getActiveNetworkInfo());
         }
     }
 
     private void updateInvitateNotification(List<TalkClientSmsToken> unconfirmedTokens, boolean notify) {
-        LOG.info("updateInvitateNotification()");
+        LOG.debug("updateInvitateNotification()");
         XoClientDatabase db = mClient.getDatabase();
 
         // cancel present notification if everything has been seen
@@ -467,7 +467,7 @@ public class XoClientService extends Service {
     }
 
     private void updateMessageNotification(List<TalkClientMessage> allUnseenMessages, boolean notify) {
-        LOG.info("updateMessageNotification()");
+        LOG.debug("updateMessageNotification()");
         XoClientDatabase db = mClient.getDatabase();
 
         // we re-collect messages to this to eliminate
@@ -621,7 +621,7 @@ public class XoClientService extends Service {
 
         @Override
         public void onClientStateChange(XoClient client, int state) {
-            LOG.info("onClientStateChange(" + XoClient.stateToString(state) + ")");
+            LOG.debug("onClientStateChange(" + XoClient.stateToString(state) + ")");
             if(state == XoClient.STATE_ACTIVE) {
                 mExecutor.execute(new Runnable() {
                     @Override
@@ -668,7 +668,7 @@ public class XoClientService extends Service {
 
         @Override
         public void onDownloadRegistered(TalkClientDownload download) {
-            LOG.info("onDownloadRegistered(" + download.getClientDownloadId() + ")");
+            LOG.debug("onDownloadRegistered(" + download.getClientDownloadId() + ")");
             if(download.isAttachment()) {
                 boolean auto = false;
                 switch (mPreviousConnectionType) {
@@ -696,7 +696,7 @@ public class XoClientService extends Service {
             if(download.isAttachment() && download.isContentAvailable() && download.getContentUrl() == null) {
                 String[] path = new String[]{download.getDataFile()};
                 String[] ctype = new String[]{download.getContentType()};
-                LOG.info("requesting media scan of " + ctype[0] + " at " + path[0]);
+                LOG.debug("requesting media scan of " + ctype[0] + " at " + path[0]);
                 mScanningDownloads.put(path[0], download);
                 MediaScannerConnection.scanFile(
                         XoClientService.this,
@@ -728,7 +728,7 @@ public class XoClientService extends Service {
 
         @Override
         public void onScanCompleted(String path, Uri uri) {
-            LOG.info("media scan of " + path + " completed - uri " + uri.toString());
+            LOG.debug("media scan of " + path + " completed - uri " + uri.toString());
             TalkClientDownload download = mScanningDownloads.get(path);
             if(download != null) {
                 download.provideContentUrl(mClient.getTransferAgent(), uri.toString());
@@ -746,24 +746,24 @@ public class XoClientService extends Service {
         Connection(Intent bindIntent) {
             mId = ID_COUNTER.incrementAndGet();
             mBindIntent = bindIntent;
-            LOG.info("[" + mId + "] connected");
+            LOG.debug("[" + mId + "] connected");
         }
 
         @Override
 		public void keepAlive() throws RemoteException {
-            LOG.info("[" + mId + "] keepAlive()");
+            LOG.debug("[" + mId + "] keepAlive()");
             scheduleShutdown();
 		}
 
         @Override
         public void wake() throws RemoteException {
-            LOG.info("[" + mId + "] wake()");
+            LOG.debug("[" + mId + "] wake()");
             wakeClient();
         }
 
         @Override
         public void reconnect() throws RemoteException {
-            LOG.info("[" + mId + "] reconnect()");
+            LOG.debug("[" + mId + "] reconnect()");
             mClient.reconnect("client request");
         }
     }
