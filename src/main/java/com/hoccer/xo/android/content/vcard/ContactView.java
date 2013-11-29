@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.view;
+package com.hoccer.xo.android.content.vcard;
 
 import android.app.Activity;
 import android.content.ContentResolver;

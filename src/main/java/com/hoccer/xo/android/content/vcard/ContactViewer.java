@@ -4,7 +4,6 @@ import android.app.Activity;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewer;
-import com.hoccer.xo.android.view.ContactView;
 
 public class ContactViewer extends ContentViewer<ContactView> {
 
