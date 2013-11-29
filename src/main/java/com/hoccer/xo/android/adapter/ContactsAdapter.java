@@ -106,10 +106,14 @@ public abstract class ContactsAdapter extends XoAdapter
                 List<TalkClientContact> newClients = mDatabase.findAllClientContacts();
                 List<TalkClientContact> newGroups = mDatabase.findAllGroupContacts();
 
+                LOG.debug("found " + newClients.size() + " friends " + newGroups + " groups");
+
                 if(mFilter != null) {
                     newClients = filter(newClients, mFilter);
                     newGroups = filter(newGroups, mFilter);
                 }
+
+                LOG.debug("filtered " + newClients.size() + " friends " + newGroups.size() + " groups");
 
                 for(TalkClientContact contact: newClients) {
                     TalkClientDownload avatarDownload = contact.getAvatarDownload();
