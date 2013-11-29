@@ -309,17 +309,7 @@ public class ProfileFragment extends XoFragment
             avatarUpload = contact.getAvatarUpload();
             if(avatarUpload != null) {
                 if (avatarUpload.isContentAvailable()) {
-                    LOG.info("avatar upload");
-                    String file = avatarUpload.getDataFile();
-                    if(file == null) {
-                        LOG.warn("duh!? avatar upload without a file");
-                        avatarUpload = null;
-                    } else {
-                        avatarUrl = file;
-                    }
-                } else {
-                    LOG.warn("duh!? avatar upload not available");
-                    avatarUpload = null;
+                    avatarUrl = avatarUpload.getDataFile();
                 }
             }
         }
