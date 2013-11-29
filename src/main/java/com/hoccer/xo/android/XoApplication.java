@@ -95,6 +95,10 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
         return new File(INTERNAL_STORAGE, XoConfiguration.INTERNAL_DOWNLOADS);
     }
 
+    public static File getGeneratedDirectory() {
+        return new File(INTERNAL_STORAGE, XoConfiguration.INTERNAL_GENERATED);
+    }
+
     public static File getAvatarDirectory() {
         return new File(INTERNAL_STORAGE, XoConfiguration.INTERNAL_AVATARS);
     }
@@ -195,6 +199,8 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
         ensureDirectory(getAttachmentDirectory());
         ensureDirectory(getAvatarDirectory());
         ensureNomedia(getAvatarDirectory());
+        ensureDirectory(getGeneratedDirectory());
+        ensureNomedia(getGeneratedDirectory());
         ensureDirectory(getEncryptedUploadDirectory());
         ensureNomedia(getEncryptedUploadDirectory());
         ensureDirectory(getEncryptedDownloadDirectory());

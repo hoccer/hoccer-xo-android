@@ -17,6 +17,8 @@ public class XoConfiguration {
     public static final String INTERNAL_AVATARS = "avatars";
     public static final String INTERNAL_DOWNLOADS = "downloads";
     public static final String INTERNAL_UPLOADS = "uploads";
+    public static final String INTERNAL_GENERATED = "generated";
+
 
     /** Background executor thread count */
     public static final int CLIENT_THREADS = 4;
