@@ -159,6 +159,9 @@ public class XoApplication extends Application {
         LOG.info("internal storage at " + INTERNAL_STORAGE.toString());
         LOG.info("external storage at " + EXTERNAL_STORAGE.toString());
 
+        // initialize version information
+        XoVersion.initialize(this);
+
         // configure ssl
         XoSsl.initialize(this);
 
