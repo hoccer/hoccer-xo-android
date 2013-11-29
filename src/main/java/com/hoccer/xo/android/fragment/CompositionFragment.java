@@ -242,7 +242,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         }
 
         // log to help debugging
-        LOG.info("created message with id " + clientMessage.getClientMessageId() + " and tag " + message.getMessageTag());
+        LOG.debug("created message with id " + clientMessage.getClientMessageId() + " and tag " + message.getMessageTag());
 
         // request delivery from the client
         getXoClient().requestDelivery(clientMessage);

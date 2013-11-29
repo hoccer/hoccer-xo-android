@@ -277,7 +277,7 @@ public class XoClientService extends Service {
         }
         if(mGcmSupported) {
             if (forced || !GCMRegistrar.isRegistered(this)) {
-                LOG.info("requesting GCM registration");
+                LOG.debug("requesting GCM registration");
                 GCMRegistrar.register(this, XoConfiguration.GCM_SENDER_ID);
             }
         }
@@ -290,7 +290,7 @@ public class XoClientService extends Service {
         if(mGcmSupported && GCMRegistrar.isRegistered(this)) {
             // check if we got here already
             if(forced || !GCMRegistrar.isRegisteredOnServer(this)) {
-                LOG.info("updating GCM registration");
+                LOG.debug("updating GCM registration");
                 // perform the registration call
                 mClient.registerGcm(this.getPackageName(), GCMRegistrar.getRegistrationId(this));
                 // set the registration timeout (XXX move elsewhere)
@@ -303,7 +303,7 @@ public class XoClientService extends Service {
             }
         } else {
             if(forced || GCMRegistrar.isRegisteredOnServer(this)) {
-                LOG.info("retracting GCM registration");
+                LOG.debug("retracting GCM registration");
                 mClient.unregisterGcm();
                 GCMRegistrar.setRegisteredOnServer(this, false);
             }
