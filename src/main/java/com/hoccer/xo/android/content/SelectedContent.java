@@ -6,7 +6,13 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.ContentState;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.XoApplication;
 import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Content objects
@@ -35,6 +41,13 @@ public class SelectedContent implements IContentObject {
 
     double mContentAspectRatio = 1.0;
 
+    /**
+     * Literal data.
+     *
+     * Converted to a file when selected content becomes an upload.
+     */
+    byte[] mData = null;
+
     public SelectedContent(Intent resultIntent, String contentDataUrl) {
         Uri contentUrl = resultIntent.getData();
         LOG.info("new selected content: " + contentUrl);
@@ -47,6 +60,12 @@ public class SelectedContent implements IContentObject {
         LOG.info("new selected content: " + contentUrl);
         mContentUrl = contentUrl;
         mContentDataUrl = contentDataUrl;
+    }
+
+    public SelectedContent(byte[] data) {
+        LOG.info("new selected content with raw data");
+        mData = data;
+        mContentLength = data.length;
     }
 
     public void setContentType(String mContentType) {
@@ -120,7 +139,36 @@ public class SelectedContent implements IContentObject {
         return 0;
     }
 
+    public byte[] getData() {
+        return mData;
+    }
+
+    public void setData(byte[] data) {
+        mData = data;
+    }
+
+    private void writeDataToFile() {
+        if(mData != null) {
+            File dir = XoApplication.getGeneratedDirectory();
+            File file = new File(dir, UUID.randomUUID().toString());
+            try {
+                file.createNewFile();
+                FileOutputStream os = new FileOutputStream(file);
+                os.write(mData);
+                os.flush();
+                os.close();
+                mContentDataUrl = "file://" + file.toString();
+                mData = null;
+            } catch (IOException e) {
+                LOG.error("error writing content to file", e);
+            }
+        }
+    }
+
     public static TalkClientUpload createAvatarUpload(IContentObject object) {
+        if(object instanceof SelectedContent) {
+            ((SelectedContent)object).writeDataToFile();
+        }
         TalkClientUpload upload = new TalkClientUpload();
         upload.initializeAsAvatar(
                 object.getContentUrl(),
@@ -131,6 +179,9 @@ public class SelectedContent implements IContentObject {
     }
 
     public static TalkClientUpload createAttachmentUpload(IContentObject object) {
+        if(object instanceof SelectedContent) {
+            ((SelectedContent)object).writeDataToFile();
+        }
         TalkClientUpload upload = new TalkClientUpload();
         upload.initializeAsAttachment(
                 object.getContentUrl(),
