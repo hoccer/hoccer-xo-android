@@ -116,6 +116,37 @@ public class ContentRegistry {
         }
     }
 
+    public String getContentDescription(IContentObject object) {
+        String mediaTypeString = "Unknown file";
+        String mediaType = object.getContentMediaType();
+        if(mediaType != null) {
+            if(mediaType == "image") {
+                mediaTypeString = "Image";
+            } else if(mediaType == "video") {
+                mediaTypeString = "Video";
+            } else if(mediaType == "contact") {
+                mediaTypeString = "Contact";
+            } else if(mediaType == "location") {
+                mediaTypeString = "Location";
+            }
+        }
+
+        String sizeString = "";
+        if(object.getContentLength() > 0) {
+            sizeString = " (" + humanReadableByteCount(object.getContentLength(), true) + ")";
+        }
+
+        return mediaTypeString + sizeString;
+    }
+
+    public static String humanReadableByteCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+
     /**
      * Creates a View for displaying the given content
      *

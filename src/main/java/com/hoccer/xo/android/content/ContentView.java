@@ -222,7 +222,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         }
 
         // description
-        mContentDescription.setText(object.getContentMediaType());
+        mContentDescription.setText(mRegistry.getContentDescription(object));
 
         // status text
         String stateText = null;
