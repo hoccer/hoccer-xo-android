@@ -19,6 +19,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
+import org.apache.commons.codec.binary.Base64OutputStream;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class MapsLocationActivity extends XoActivity
     implements GoogleMap.OnMyLocationButtonClickListener,
@@ -147,6 +152,7 @@ public class MapsLocationActivity extends XoActivity
         coordinates.add(latlng.longitude);
         location.put("coordinates", coordinates);
         root.put("location", location);
+        root.put("previewImage", getPreview());
         return root;
     }
 
@@ -176,4 +182,29 @@ public class MapsLocationActivity extends XoActivity
         mButtonOk.setEnabled(location != null);
     }
 
+
+    private static String PREVIEW_IMAGE = null;
+
+    private String getPreview() {
+        if(PREVIEW_IMAGE == null) {
+            try {
+                ByteArrayOutputStream output = new ByteArrayOutputStream();
+                Base64OutputStream encoder = new Base64OutputStream(output);
+                InputStream is = getResources().openRawResource(R.raw.location_preview_png);
+                byte[] buf = new byte[4096];
+                int bytesRead;
+                while( (bytesRead = is.read(buf)) != -1 ) {
+                    encoder.write(buf, 0, bytesRead);
+                }
+                encoder.flush();
+                encoder.close();
+                output.flush();
+                output.close();
+                PREVIEW_IMAGE = output.toString();
+            } catch (IOException e) {
+                LOG.error("error reading location preview resource", e);
+            }
+        }
+        return PREVIEW_IMAGE;
+    }
 }
