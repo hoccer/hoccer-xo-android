@@ -120,13 +120,13 @@ public class ContentRegistry {
         String mediaTypeString = "Unknown file";
         String mediaType = object.getContentMediaType();
         if(mediaType != null) {
-            if(mediaType == "image") {
+            if(mediaType.equals("image")) {
                 mediaTypeString = "Image";
-            } else if(mediaType == "video") {
+            } else if(mediaType.equals("video")) {
                 mediaTypeString = "Video";
-            } else if(mediaType == "contact") {
+            } else if(mediaType.equals("contact")) {
                 mediaTypeString = "Contact";
-            } else if(mediaType == "location") {
+            } else if(mediaType.equals("location")) {
                 mediaTypeString = "Location";
             }
         }
