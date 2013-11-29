@@ -183,10 +183,10 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
         LOG.info("configuring image loader");
         CONTENT_IMAGE_OPTIONS = new DisplayImageOptions.Builder()
                 .cacheOnDisc(false)
-                .cacheInMemory(true)
-                .delayBeforeLoading(250)
+                .cacheInMemory(false)
                 .build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+                .threadPoolSize(2)
                 .build();
         ImageLoader.getInstance().init(config);
 
