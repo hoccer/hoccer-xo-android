@@ -63,7 +63,6 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
             mAdapter.setFilter(new ContactsAdapter.Filter() {
                 @Override
                 public boolean shouldShow(TalkClientContact contact) {
-                    LOG.trace("contact " + contact.getName() + " related " + contact.isEverRelated());
                     return (contact.isGroup() && contact.isGroupInvolved())
                             || (contact.isClient() && contact.isClientRelated())
                             || contact.isEverRelated();
@@ -108,6 +107,7 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
     @Override
     public void onClick(View v) {
         if(v == mAddUserButton) {
+            LOG.debug("onClick(addUserButton)");
             getXoActivity().showPairing();
         }
     }
@@ -116,6 +116,7 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         if(l == mContactList) {
+            LOG.debug("onListItemClick(contactList," + position + ")");
             Object item = mContactList.getItemAtPosition(position);
             if(item instanceof TalkClientContact) {
                 TalkClientContact contact = (TalkClientContact)item;

@@ -189,6 +189,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     private void sendComposedMessage() {
+        LOG.debug("sendComposedMessage()");
         XoClientDatabase db = getXoDatabase();
 
         if(mContact == null) {
@@ -243,6 +244,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         // log to help debugging
         LOG.info("created message with id " + clientMessage.getClientMessageId() + " and tag " + message.getMessageTag());
 
+        // request delivery from the client
         getXoClient().requestDelivery(clientMessage);
 
         // clear the composer UI to prepare it for the next message

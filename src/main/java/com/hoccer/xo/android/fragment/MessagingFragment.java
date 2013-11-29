@@ -73,8 +73,8 @@ public class MessagingFragment extends XoListFragment
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         LOG.debug("onDestroy()");
+        super.onDestroy();
         if(mAdapter != null) {
             mAdapter.onDestroy();
             mAdapter = null;

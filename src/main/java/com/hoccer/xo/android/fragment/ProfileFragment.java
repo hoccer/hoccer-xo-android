@@ -305,7 +305,6 @@ public class ProfileFragment extends XoFragment
         TalkClientUpload avatarUpload = null;
         TalkClientDownload avatarDownload = null;
         if(contact.isSelf() || contact.isGroup()) {
-            LOG.info("checking for avatar upload");
             avatarUpload = contact.getAvatarUpload();
             if(avatarUpload != null) {
                 if (avatarUpload.isContentAvailable()) {
@@ -314,16 +313,14 @@ public class ProfileFragment extends XoFragment
             }
         }
         if(avatarUpload == null && (contact.isClient() || contact.isGroup())) {
-            LOG.info("checking for avatar download");
             avatarDownload = contact.getAvatarDownload();
             if(avatarDownload != null) {
                 if(avatarDownload.isContentAvailable()) {
-                    LOG.info("avatar download");
                     avatarUrl = avatarDownload.getDataFile();
                 }
             }
         }
-        LOG.info("avatar is " + avatarUrl);
+        LOG.debug("avatar is " + avatarUrl);
         ImageLoader.getInstance().displayImage(avatarUrl, mAvatarImage);
 
         // client operations
@@ -405,6 +402,7 @@ public class ProfileFragment extends XoFragment
         if(name == null) {
             name = "<unnamed>";
         }
+        LOG.debug("name is " + name);
         mNameText.setText(name);
 
         if(contact.isEditable()) {
