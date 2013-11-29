@@ -3,6 +3,7 @@ package com.hoccer.xo.android;
 import android.app.Application;
 import android.os.Build;
 import android.os.Environment;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.hoccer.talk.client.IXoClientHost;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.model.TalkClientDownload;
@@ -24,7 +25,7 @@ import java.util.concurrent.ScheduledExecutorService;
  * XO client itself. All global initialization should go here.
  *
  */
-public class XoApplication extends Application {
+public class XoApplication extends Application implements Thread.UncaughtExceptionHandler {
 
     /** logger for this class (initialized in onCreate) */
     private static Logger LOG = null;
@@ -145,15 +146,7 @@ public class XoApplication extends Application {
         // install a default exception handler
         LOG.info("setting up default exception handler");
         mPreviousHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread thread, Throwable ex) {
-                LOG.error("uncaught exception", ex);
-                if(mPreviousHandler != null) {
-                    mPreviousHandler.uncaughtException(thread, ex);
-                }
-            }
-        });
+        Thread.setDefaultUncaughtExceptionHandler(this);
 
         // log storage roots
         LOG.info("internal storage at " + INTERNAL_STORAGE.toString());
@@ -185,7 +178,12 @@ public class XoApplication extends Application {
 
         // create executor
         LOG.info("creating background executor");
-        EXECUTOR = Executors.newScheduledThreadPool(XoConfiguration.BACKGROUND_THREADS);
+        ThreadFactoryBuilder tfb = new ThreadFactoryBuilder();
+        tfb.setNameFormat("client-%d");
+        tfb.setUncaughtExceptionHandler(this);
+        EXECUTOR = Executors.newScheduledThreadPool(
+                        XoConfiguration.BACKGROUND_THREADS,
+                        tfb.build());
 
         // create client instance
         LOG.info("creating client");
@@ -222,6 +220,14 @@ public class XoApplication extends Application {
 
         LOG.info("shutting down logging");
         XoLogging.shutdown();
+    }
+
+    @Override
+    public void uncaughtException(Thread thread, Throwable ex) {
+        LOG.error("uncaught exception on thread " + thread.getName(), ex);
+        if(mPreviousHandler != null) {
+            mPreviousHandler.uncaughtException(thread, ex);
+        }
     }
 
     public static void ensureDirectory(File directory) {
