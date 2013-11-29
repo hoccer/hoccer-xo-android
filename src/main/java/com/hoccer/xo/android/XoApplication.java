@@ -161,6 +161,8 @@ public class XoApplication extends Application {
 
         // initialize version information
         XoVersion.initialize(this);
+        LOG.info("application branch " + XoVersion.getBranch());
+        LOG.info("application version " + XoVersion.getCommitDescribe());
 
         // configure ssl
         XoSsl.initialize(this);
