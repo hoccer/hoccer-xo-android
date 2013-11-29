@@ -19,8 +19,11 @@ public class XoConfiguration {
     public static final String INTERNAL_UPLOADS = "uploads";
     public static final String INTERNAL_GENERATED = "generated";
 
-
-    /** Background executor thread count */
+    /**
+     * Background executor thread count
+     *
+     * AFAIK this must be at least 3 for RPC to work.
+     */
     public static final int CLIENT_THREADS = 4;
 
     /** Notification alarm back-off (msecs) */
