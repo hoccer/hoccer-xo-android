@@ -154,8 +154,10 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
 
         // initialize version information
         XoVersion.initialize(this);
-        LOG.info("application branch " + XoVersion.getBranch());
-        LOG.info("application version " + XoVersion.getCommitDescribe());
+        LOG.info("build time " + XoVersion.getBuildTime());
+        LOG.info("branch " + XoVersion.getBranch());
+        LOG.info("commit " + XoVersion.getCommitId());
+        LOG.info("describe " + XoVersion.getCommitDescribe());
 
         // configure ssl
         XoSsl.initialize(this);
