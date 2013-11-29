@@ -128,7 +128,8 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
     public void hackReturnedFromDialog() {
         LOG.debug("hackReturnedFromDialog()");
         super.hackReturnedFromDialog();
-        mFragment.refreshContact();
+        update(mFragment.getContact());
+        mFragment.refreshContact(mFragment.getContact());
     }
 
     private void update(final TalkClientContact contact) {

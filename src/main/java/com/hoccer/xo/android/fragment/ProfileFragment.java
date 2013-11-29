@@ -183,6 +183,7 @@ public class ProfileFragment extends XoFragment
             LOG.debug("onClick(groupCreateButton)");
             if(mContact != null && ! mContact.isGroupRegistered()) {
                 getXoClient().createGroup(mContact);
+                mMode = Mode.PROFILE;
             }
         }
         if(v == mGroupJoinButton) {
@@ -272,8 +273,7 @@ public class ProfileFragment extends XoFragment
             LOG.debug("showProfile(" + contact.getClientContactId() + ")");
         }
         mMode = Mode.PROFILE;
-        mContact = contact;
-        refreshContact();
+        refreshContact(contact);
     }
 
     public void createSelf() {
@@ -392,6 +392,11 @@ public class ProfileFragment extends XoFragment
             }
         }
         if(name == null) {
+            mGroupCreateButton.setEnabled(false);
+        } else {
+            mGroupCreateButton.setEnabled(true);
+        }
+        if(name == null) {
             if(mMode == Mode.CREATE_GROUP) {
                 name = "<chose a name>";
             }
@@ -426,41 +431,33 @@ public class ProfileFragment extends XoFragment
         }
     }
 
-    public void refreshContact() {
+    public void refreshContact(TalkClientContact newContact) {
         LOG.debug("refreshContact()");
-        if(mContact != null) {
-            if(mMode == Mode.PROFILE) {
-                LOG.debug("updating from db");
-                try {
-                    mContact = getXoDatabase().findClientContactById(mContact.getClientContactId());
-                    if(mContact.isClient() || mContact.isGroup()) {
-                        TalkClientDownload avatarDownload = mContact.getAvatarDownload();
-                        if(avatarDownload != null) {
-                            getXoDatabase().refreshClientDownload(avatarDownload);
-                        }
-                    }
-                    if(mContact.isSelf()) {
-                        TalkClientUpload avatarUpload = mContact.getAvatarUpload();
-                        if(avatarUpload != null) {
-                            getXoDatabase().refreshClientUpload(avatarUpload);
-                        }
-                    }
-                } catch (SQLException e) {
-                    LOG.error("SQL error", e);
+        if(mMode == Mode.PROFILE) {
+            mContact = newContact;
+            try {
+                getXoDatabase().refreshClientContact(mContact);
+                if(mContact.getAvatarDownload() != null) {
+                    getXoDatabase().refreshClientDownload(mContact.getAvatarDownload());
                 }
+                if(mContact.getAvatarUpload() != null) {
+                    getXoDatabase().refreshClientUpload(mContact.getAvatarUpload());
+                }
+            } catch (SQLException e) {
+                LOG.error("SQL error", e);
             }
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    LOG.debug("updating ui");
-                    update(mContact);
-                }
-            });
         }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LOG.debug("updating ui");
+                update(mContact);
+            }
+        });
     }
 
     private boolean isMyContact(TalkClientContact contact) {
-        return mContact != null && mContact.getClientContactId() == contact.getClientContactId();
+        return mContact != null && mContact == contact || mContact.getClientContactId() == contact.getClientContactId();
     }
 
     @Override
@@ -476,32 +473,28 @@ public class ProfileFragment extends XoFragment
     @Override
     public void onClientPresenceChanged(TalkClientContact contact) {
         if(isMyContact(contact)) {
-            mContact = contact;
-            refreshContact();
+            refreshContact(contact);
         }
     }
 
     @Override
     public void onClientRelationshipChanged(TalkClientContact contact) {
         if(isMyContact(contact)) {
-            mContact = contact;
-            refreshContact();
+            refreshContact(contact);
         }
     }
 
     @Override
     public void onGroupPresenceChanged(TalkClientContact contact) {
         if(isMyContact(contact)) {
-            mContact = contact;
-            refreshContact();
+            refreshContact(contact);
         }
     }
 
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
         if(isMyContact(contact)) {
-            mContact = contact;
-            refreshContact();
+            refreshContact(contact);
         }
     }
 
