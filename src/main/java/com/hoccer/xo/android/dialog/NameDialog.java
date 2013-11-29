@@ -48,6 +48,7 @@ public class NameDialog extends SherlockDialogFragment {
         builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                LOG.debug("onClick(ok)");
                 String newName = mEdit.getText().toString();
                 if(mContact.isSelf()) {
                     mActivity.getXoClient().setClientString(newName, null);
@@ -61,6 +62,7 @@ public class NameDialog extends SherlockDialogFragment {
         builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                LOG.debug("onClick(cancel)");
                 dialog.dismiss();
             }
         });

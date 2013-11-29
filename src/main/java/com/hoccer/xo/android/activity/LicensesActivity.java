@@ -29,6 +29,7 @@ public class LicensesActivity extends XoActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
 
         enableUpNavigation();

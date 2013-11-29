@@ -66,6 +66,7 @@ public class ConversationAdapter extends XoAdapter
 
     @Override
     public void onCreate() {
+        LOG.debug("onCreate()");
         super.onCreate();
         getXoClient().registerMessageListener(this);
         getXoClient().registerTransferListener(this);
@@ -73,6 +74,7 @@ public class ConversationAdapter extends XoAdapter
 
     @Override
     public void onDestroy() {
+        LOG.debug("onDestroy()");
         super.onDestroy();
         cancelReload();
         getXoClient().unregisterMessageListener(this);
@@ -81,13 +83,13 @@ public class ConversationAdapter extends XoAdapter
 
     @Override
     public void onReloadRequest() {
+        LOG.debug("onReloadRequest()");
         super.onReloadRequest();
         startReload();
     }
 
     /** Triggers change notification on the ui thread */
     private void update() {
-        LOG.trace("update()");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -110,26 +112,32 @@ public class ConversationAdapter extends XoAdapter
 
     private void checkInterrupt() throws InterruptedException {
         if(Thread.interrupted()) {
+            LOG.debug("reload interrupted");
             throw new InterruptedException();
         }
     }
 
     private void performReload(final int version) {
-        LOG.trace("performReload(" + version + ")");
+        LOG.debug("performReload(" + version + ")");
         try {
+            // refresh the conversation contact
             mDatabase.refreshClientContact(mContact);
             checkInterrupt();
 
+            // find relevant messages
             final List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
             checkInterrupt();
 
+            // update related objects
             for(TalkClientMessage message: messages) {
                 reloadRelated(message);
                 checkInterrupt();
             }
 
+            // log about it
             LOG.debug("reload found " + messages.size() + " messages");
 
+            // update the ui
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -140,7 +148,7 @@ public class ConversationAdapter extends XoAdapter
                         reloadFinished();
                         notifyDataSetChanged();
                     } else {
-                        LOG.debug("reload has been overtaken");
+                        LOG.debug("reload has been superseded");
                     }
                 }
             });
@@ -193,6 +201,7 @@ public class ConversationAdapter extends XoAdapter
 
     @Override
     public void onMessageAdded(final TalkClientMessage message) {
+        LOG.debug("onMessageAdded()");
         if(mContact != null && message.getConversationContact() == mContact) {
             final boolean forceReload = !mReloadHappened;
             runOnUiThread(new Runnable() {

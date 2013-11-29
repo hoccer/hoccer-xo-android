@@ -93,6 +93,7 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
     }
 
     private TalkClientContact refreshContact(int contactId) {
+        LOG.debug("refreshContact(" + contactId + ")");
         try {
             return getXoDatabase().findClientContactById(contactId);
         } catch (SQLException e) {
@@ -125,6 +126,7 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
 
     @Override
     public void hackReturnedFromDialog() {
+        LOG.debug("hackReturnedFromDialog()");
         super.hackReturnedFromDialog();
         mFragment.refreshContact();
     }

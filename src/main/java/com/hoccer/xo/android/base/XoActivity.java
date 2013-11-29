@@ -511,7 +511,6 @@ public abstract class XoActivity extends SherlockFragmentActivity {
     }
 
     public void hackReturnedFromDialog() {
-        LOG.debug("hackReturnedFromDialog()");
     }
 
 }

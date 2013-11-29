@@ -129,19 +129,17 @@ public abstract class XoAdapter extends BaseAdapter {
     }
 
     public void onCreate() {
-        LOG.debug("onCreate()");
     }
 
     public void onDestroy() {
-        LOG.debug("onDestroy()");
     }
 
     public void onReloadRequest() {
-        LOG.debug("onReloadRequest()");
     }
 
     @Override
     public void notifyDataSetChanged() {
+        LOG.trace("notifyDataSetChanged()");
         long now = System.currentTimeMillis();
         long delta = now - mNotifyTimestamp;
         if(mNotifyFuture != null) {

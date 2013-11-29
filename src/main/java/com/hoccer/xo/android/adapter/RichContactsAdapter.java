@@ -52,6 +52,7 @@ public class RichContactsAdapter extends ContactsAdapter {
 
     @Override
     protected void updateToken(View view, TalkClientSmsToken token) {
+        LOG.debug("updateToken(" + token.getSmsTokenId() + ")");
         ContentResolver resolver = mActivity.getContentResolver();
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(token.getSender()));
 
@@ -83,6 +84,7 @@ public class RichContactsAdapter extends ContactsAdapter {
     }
 
     protected void updateContact(final View view, final TalkClientContact contact) {
+        LOG.debug("updateContact(" + contact.getClientContactId() + ")");
         TextView nameView = (TextView) view.findViewById(R.id.contact_name);
         nameView.setText(contact.getName());
 

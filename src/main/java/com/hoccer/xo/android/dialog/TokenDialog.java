@@ -30,6 +30,7 @@ public class TokenDialog extends SherlockDialogFragment implements DialogInterfa
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        LOG.debug("onCreateDialog()");
 
         // XXX similar code in RichtContactsAdapter.updateToken()
         ContentResolver resolver = mActivity.getContentResolver();
@@ -68,18 +69,21 @@ public class TokenDialog extends SherlockDialogFragment implements DialogInterfa
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if(which == DialogInterface.BUTTON_POSITIVE) {
+            LOG.debug("onClick(accept)");
             if(mToken != null) {
                 mActivity.getXoClient().useSmsToken(mToken);
                 mActivity.hackReturnedFromDialog();
             }
         }
         if(which == DialogInterface.BUTTON_NEGATIVE) {
+            LOG.debug("onClick(decline)");
             if(mToken != null) {
                 mActivity.getXoClient().rejectSmsToken(mToken);
                 mActivity.hackReturnedFromDialog();
             }
         }
         if(which == DialogInterface.BUTTON_NEUTRAL) {
+            LOG.debug("onClick(cancel)");
             dialog.dismiss();
             mActivity.hackReturnedFromDialog();
         }

@@ -30,6 +30,7 @@ public class GroupKickDialog extends SherlockDialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        LOG.debug("onCreateDialog()");
         if(mAdapter == null) {
             mAdapter = new SimpleContactsAdapter(mActivity);
             mAdapter.onCreate();
@@ -49,12 +50,14 @@ public class GroupKickDialog extends SherlockDialogFragment {
         builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                LOG.debug("onClick(cancel)");
                 dialog.dismiss();
             }
         });
         builder.setAdapter(mAdapter, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                LOG.debug("onListItemClick(" + which + ")");
                 Object object = mAdapter.getItem(which);
                 if(object != null && object instanceof TalkClientContact) {
                     TalkClientContact contact = (TalkClientContact)object;
@@ -68,6 +71,7 @@ public class GroupKickDialog extends SherlockDialogFragment {
 
     @Override
     public void onDismiss(DialogInterface dialog) {
+        LOG.debug("onDismiss()");
         super.onDismiss(dialog);
         if(mAdapter != null) {
             mAdapter.onPause();

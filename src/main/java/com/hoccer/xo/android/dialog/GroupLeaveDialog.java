@@ -26,6 +26,7 @@ public class GroupLeaveDialog extends SherlockDialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        LOG.debug("onCreateDialog()");
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         builder.setTitle(R.string.leave_title);
         builder.setMessage(R.string.leave_question);
@@ -33,12 +34,14 @@ public class GroupLeaveDialog extends SherlockDialogFragment {
         builder.setNegativeButton(R.string.common_no, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                LOG.debug("onClick(no)");
                 dialog.dismiss();
             }
         });
         builder.setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                LOG.debug("onClick(yes)");
                 mActivity.getXoClient().leaveGroup(mGroup.getGroupId());
             }
         });

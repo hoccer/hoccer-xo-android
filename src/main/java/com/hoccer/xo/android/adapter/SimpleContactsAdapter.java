@@ -45,10 +45,12 @@ public class SimpleContactsAdapter extends ContactsAdapter {
 
     @Override
     protected void updateToken(View view, TalkClientSmsToken token) {
+        LOG.debug("updateToken(" + token.getSmsTokenId() + ")");
     }
 
     @Override
     protected void updateContact(final View view, final TalkClientContact contact) {
+        LOG.debug("updateContact(" + contact.getClientContactId() + ")");
         TextView nameView = (TextView) view.findViewById(R.id.contact_name);
         nameView.setText(contact.getName());
 

@@ -72,6 +72,7 @@ public abstract class ContactsAdapter extends XoAdapter
 
     @Override
     public void onCreate() {
+        LOG.debug("onCreate()");
         super.onCreate();
         getXoClient().registerContactListener(this);
         getXoClient().registerTokenListener(this);
@@ -81,6 +82,7 @@ public abstract class ContactsAdapter extends XoAdapter
 
     @Override
     public void onDestroy() {
+        LOG.debug("onDestroy()");
         super.onDestroy();
         getXoClient().unregisterContactListener(this);
         getXoClient().unregisterTokenListener(this);
@@ -90,6 +92,7 @@ public abstract class ContactsAdapter extends XoAdapter
 
     @Override
     public void onReloadRequest() {
+        LOG.debug("onReloadRequest()");
         super.onReloadRequest();
         synchronized (this) {
             try {
@@ -125,7 +128,7 @@ public abstract class ContactsAdapter extends XoAdapter
                 mGroupContacts = newGroups;
                 mSmsTokens = newTokens;
             } catch (SQLException e) {
-                LOG.error("sql error", e);
+                LOG.error("SQL error", e);
             }
         }
         runOnUiThread(new Runnable() {
@@ -230,7 +233,6 @@ public abstract class ContactsAdapter extends XoAdapter
 
     @Override
     public void onTokensChanged(List<TalkClientSmsToken> tokens, boolean newTokens) {
-        LOG.debug("onTokensChanged()");
         if(mShowTokens) {
             requestReload();
         }
@@ -417,6 +419,7 @@ public abstract class ContactsAdapter extends XoAdapter
 
 
     protected void updateSeparator(View view, int position) {
+        LOG.debug("updateSeparator()");
         TextView separator = (TextView)view;
         separator.setText((String)getItem(position));
     }

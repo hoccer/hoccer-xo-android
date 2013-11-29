@@ -26,6 +26,7 @@ public class ContactDepairDialog extends SherlockDialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        LOG.debug("onCreateDialog()");
         AlertDialog.Builder builder = new AlertDialog.Builder(getSherlockActivity());
 
         builder.setTitle(R.string.depaircontact_title);
@@ -34,6 +35,7 @@ public class ContactDepairDialog extends SherlockDialogFragment {
         builder.setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                LOG.debug("onClick(yes)");
                 if(mContact != null) {
                     mActivity.getXoClient().depairContact(mContact);
                 }
@@ -43,6 +45,7 @@ public class ContactDepairDialog extends SherlockDialogFragment {
         builder.setNegativeButton(R.string.common_no, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                LOG.debug("onClick(no");
                 dialog.dismiss();
             }
         });
