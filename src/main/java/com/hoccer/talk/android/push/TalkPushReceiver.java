@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.push;
+package com.hoccer.talk.android.push;
 
 import android.content.Context;
 import com.google.android.gcm.GCMBroadcastReceiver;
@@ -10,11 +10,11 @@ import com.google.android.gcm.GCMBroadcastReceiver;
  * intent service to the GCM client implementation.
  *
  */
-public class GcmReceiver extends GCMBroadcastReceiver {
+public class TalkPushReceiver extends GCMBroadcastReceiver {
 
     @Override
     protected String getGCMIntentServiceClassName(Context context) {
-        return GcmService.class.getCanonicalName();
+        return TalkPushService.class.getCanonicalName();
     }
 
 }

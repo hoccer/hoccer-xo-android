@@ -21,6 +21,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import com.google.android.gcm.GCMRegistrar;
+import com.hoccer.talk.android.push.TalkPushService;
 import com.hoccer.talk.client.IXoStateListener;
 import com.hoccer.talk.client.IXoTokenListener;
 import com.hoccer.talk.client.IXoTransferListener;
@@ -37,7 +38,6 @@ import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.activity.ContactsActivity;
 import com.hoccer.xo.android.activity.MessagingActivity;
-import com.hoccer.xo.android.push.GcmService;
 import com.hoccer.xo.android.sms.SmsReceiver;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -177,13 +177,13 @@ public class XoClientService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         LOG.debug("onStartCommand(" + ((intent == null) ? "null" : intent.toString()) + ")");
         if(intent != null) {
-            if(intent.hasExtra(GcmService.EXTRA_WAKE_CLIENT)) {
+            if(intent.hasExtra(TalkPushService.EXTRA_WAKE_CLIENT)) {
                 wakeClient();
             }
-            if(intent.hasExtra(GcmService.EXTRA_GCM_REGISTERED)) {
+            if(intent.hasExtra(TalkPushService.EXTRA_GCM_REGISTERED)) {
                 doUpdateGcm(true);
             }
-            if(intent.hasExtra(GcmService.EXTRA_GCM_UNREGISTERED)) {
+            if(intent.hasExtra(TalkPushService.EXTRA_GCM_UNREGISTERED)) {
                 doUpdateGcm(true);
             }
             if(intent.hasExtra(SmsReceiver.EXTRA_SMS_URL_RECEIVED)) {

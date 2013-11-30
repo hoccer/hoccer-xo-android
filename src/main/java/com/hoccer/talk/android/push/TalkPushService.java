@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.push;
+package com.hoccer.talk.android.push;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,15 +17,15 @@ import org.apache.log4j.Logger;
  * to call the client service to perform appropriate actions.
  *
  */
-public class GcmService extends GCMBaseIntentService {
+public class TalkPushService extends GCMBaseIntentService {
 
     public static final String EXTRA_GCM_REGISTERED = "com.hoccer.xo.GCM_REGISTERED";
     public static final String EXTRA_GCM_UNREGISTERED = "com.hoccer.xo.GCM_UNREGISTERED";
     public static final String EXTRA_WAKE_CLIENT = "com.hoccer.xo.WAKE_CLIENT";
 
-    private static final Logger LOG = Logger.getLogger(GcmService.class);
+    private static final Logger LOG = Logger.getLogger(TalkPushService.class);
 
-    public GcmService() {
+    public TalkPushService() {
         super(XoConfiguration.GCM_SENDER_ID);
     }
 

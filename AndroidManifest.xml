@@ -152,11 +152,11 @@
         <service android:name="com.hoccer.xo.android.service.XoClientService"/>
 
         <!-- GCM push service -->
-        <service android:name="com.hoccer.xo.android.push.GcmService"/>
+        <service android:name="com.hoccer.talk.android.push.TalkPushService"/>
 
         <!-- GCM broadcast receiver -->
         <receiver
-            android:name="com.hoccer.xo.android.push.GcmReceiver"
+            android:name="com.hoccer.talk.android.push.TalkPushReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <!-- Receives the actual messages. -->
