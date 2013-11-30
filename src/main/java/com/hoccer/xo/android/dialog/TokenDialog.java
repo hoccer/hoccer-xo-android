@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.android.base.XoActivity;
@@ -62,6 +63,13 @@ public class TokenDialog extends SherlockDialogFragment implements DialogInterfa
         builder.setNeutralButton("Cancel", this);
 
         builder.setMessage(name + " has sent you an invitation via SMS.\nDo you wish to accept?");
+
+        String body = mToken.getBody();
+        TextView bodyText = new TextView(getSherlockActivity());
+        if(body != null) {
+            bodyText.setText(body);
+            builder.setView(bodyText);
+        }
 
         return builder.create();
     }
