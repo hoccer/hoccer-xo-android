@@ -110,6 +110,9 @@
     <!-- Group invite selection dialog -->
     <string name="invite_title">Invite to group</string>
 
+    <!-- Location selection activity -->
+    <string name="selectlocation_title">Select location</string>
+
     <!-- Group leave dialog -->
     <string name="leave_title">Leave group</string>
     <string name="leave_question">Are you sure you want to leave this group? You will have to be re-invited to participate again.</string>
