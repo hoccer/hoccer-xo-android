@@ -9,7 +9,7 @@ public class MapsLocationSelector implements IContentSelector {
 
     @Override
     public String getName() {
-        return "Location on Map";
+        return "Location";
     }
 
     @Override
