@@ -236,6 +236,9 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         case DOWNLOAD_DECRYPTING:
             stateText = "Decrypting...";
             break;
+        case DOWNLOAD_DETECTING:
+            stateText = "Analyzing...";
+            break;
         case DOWNLOAD_COMPLETE:
             stateText = "Download complete";
             break;
