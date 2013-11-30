@@ -6,12 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
-import com.hoccer.xo.android.XoDialogs;
-import com.hoccer.xo.android.base.XoListFragment;
-import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.xo.release.R;
-import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.xo.android.XoDialogs;
+import com.hoccer.xo.android.adapter.ContactsAdapter;
+import com.hoccer.xo.android.base.XoListFragment;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
@@ -67,14 +67,13 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
             });
 
             mAdapter.requestReload();
+
+            mContactList.setAdapter(mAdapter);
         }
 
-        mAdapter.requestReload(); // XXX fix contact adapter
+        mAdapter.requestReload(); // XXX fix contact adapter and only do this on new adapter
 
         mAdapter.onResume();
-
-        // do this late so activity has database initialized
-        mContactList.setAdapter(mAdapter);
     }
 
     @Override

@@ -53,11 +53,11 @@ public class MessagingFragment extends XoListFragment
             mAdapter = getXoActivity().makeConversationAdapter();
             mAdapter.setAdapterReloadListener(this);
             mAdapter.onCreate();
+            mAdapter.requestReload();
+            mMessageList.setAdapter(mAdapter);
         }
 
         mAdapter.onResume();
-
-        mMessageList.setAdapter(mAdapter);
 
         if(mContact != null) {
             mAdapter.converseWithContact(mContact);
