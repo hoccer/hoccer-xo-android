@@ -115,10 +115,4 @@ public class AspectImageView extends ImageView {
         setMeasuredDimension(width, height);
     }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        setImageDrawable(null);
-    }
-
 }
