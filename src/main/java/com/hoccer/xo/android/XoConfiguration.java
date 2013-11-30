@@ -32,7 +32,7 @@ public class XoConfiguration {
     public static final long NOTIFICATION_CANCEL_BACKOFF = 2000;
 
     /** If true, GCM registration will be performed forcibly on every connect */
-    public static final boolean GCM_ALWAYS_REGISTER = true;
+    public static final boolean GCM_ALWAYS_REGISTER = false;
     /** If true, GCM registration should always be pushed to server */
     public static final boolean GCM_ALWAYS_UPDATE = true;
     /** GCM sender id for push notifications */
