@@ -55,12 +55,6 @@ public class SimpleContactsAdapter extends ContactsAdapter {
         nameView.setText(contact.getName());
 
         ImageView iconView = (ImageView) view.findViewById(R.id.contact_icon);
-        iconView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mActivity.showContactProfile(contact);
-            }
-        });
         String avatarUri = contact.getAvatarContentUrl();
         if(avatarUri == null) {
             if(contact.isGroup()) {

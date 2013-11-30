@@ -377,9 +377,12 @@ public class ConversationAdapter extends XoAdapter
         String avatarUri = null;
         if(sendingContact != null) {
             avatar.setOnClickListener(new View.OnClickListener() {
+                TalkClientContact contact = sendingContact;
                 @Override
                 public void onClick(View v) {
-                    mActivity.showContactProfile(sendingContact);
+                    if(!contact.isSelf()) {
+                        mActivity.showContactProfile(contact);
+                    }
                 }
             });
             avatarUri = sendingContact.getAvatarContentUrl();
