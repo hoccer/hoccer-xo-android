@@ -215,9 +215,13 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         mPreviousContentState = state;
 
         // footer
-        if(state == ContentState.SELECTED || state == ContentState.UPLOAD_COMPLETE || state == ContentState.DOWNLOAD_COMPLETE) {
+        boolean footerVisible = false;
+        if(state == ContentState.SELECTED
+                || state == ContentState.UPLOAD_COMPLETE
+                || state == ContentState.DOWNLOAD_COMPLETE) {
             mContentFooter.setVisibility(GONE);
         } else {
+            footerVisible = true;
             mContentFooter.setVisibility(VISIBLE);
         }
 
@@ -351,13 +355,15 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 break;
         }
 
-        // content wrapper
+        // remove the child view if content has changed
         if(contentChanged || stateChanged) {
             if(mContentChild != null) {
                 mContentWrapper.removeView(mContentChild);
                 mContentChild = null;
             }
         }
+
+        // update the content wrapper, creating a new child view if needed
         if(isInEditMode()) {
             mContentWrapper.setVisibility(GONE);
         } else {
@@ -373,17 +379,16 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 }
             }
         }
+
+        // disable content child when we are showing the footer
         if(mContentChild != null) {
-            if(state == ContentState.SELECTED || state == ContentState.UPLOAD_COMPLETE || state == ContentState.DOWNLOAD_COMPLETE) {
-                mContentChild.setEnabled(true);
-            } else {
-                mContentChild.setEnabled(false);
-            }
+            mContentChild.setEnabled(!footerVisible);
         }
     }
 
     public void clear() {
         mContentWrapper.removeAllViews();
+        mContentChild = null;
         mObject = null;
     }
 
