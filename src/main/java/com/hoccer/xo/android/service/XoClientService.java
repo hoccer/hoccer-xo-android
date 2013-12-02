@@ -279,6 +279,8 @@ public class XoClientService extends Service {
             if (forced || !GCMRegistrar.isRegistered(this)) {
                 LOG.debug("requesting GCM registration");
                 GCMRegistrar.register(this, XoConfiguration.GCM_SENDER_ID);
+            } else {
+                LOG.debug("no need to request GCM registration");
             }
         }
     }
