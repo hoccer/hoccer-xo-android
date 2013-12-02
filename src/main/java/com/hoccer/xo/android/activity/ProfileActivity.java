@@ -89,7 +89,7 @@ public class ProfileActivity extends XoActivity implements IXoContactListener, I
         LOG.debug("onCreateOptionsMenu()");
         boolean result = super.onCreateOptionsMenu(menu);
 
-        TalkClientContact contact = mFragment.getContact();
+        TalkClientContact contact = mFragment == null ? null : mFragment.getContact();
 
         boolean isSelf = mMode == Mode.CREATE_SELF || (contact != null && contact.isSelf());
 
