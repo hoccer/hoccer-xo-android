@@ -23,7 +23,7 @@ public class MapsLocationSelector implements IContentSelector {
         if(intent.hasExtra(MapsLocationActivity.EXTRA_GEOJSON)) {
             String json = intent.getStringExtra(MapsLocationActivity.EXTRA_GEOJSON);
             content = new SelectedContent(json.getBytes());
-            content.setContentMediaType("location");
+            content.setContentMediaType("geolocation");
             content.setContentType("application/json");
         }
         return content;

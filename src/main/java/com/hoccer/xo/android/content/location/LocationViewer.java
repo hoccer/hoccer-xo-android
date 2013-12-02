@@ -31,7 +31,7 @@ public class LocationViewer extends ContentViewer<Button> {
 
     @Override
     public boolean canViewObject(IContentObject object) {
-        return object.getContentMediaType().equals("location");
+        return object.getContentMediaType().equals("geolocation");
     }
 
     @Override
@@ -98,6 +98,7 @@ public class LocationViewer extends ContentViewer<Button> {
 
             JsonNode json = mJsonMapper.readTree(is);
             if(json != null && json.isObject()) {
+                LOG.info("parsing location: " + json.toString());
                 JsonNode location = json.get("location");
                 if(location != null && location.isObject()) {
                     JsonNode type = location.get("type");
