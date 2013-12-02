@@ -9,7 +9,7 @@ public class ContactViewer extends ContentViewer<ContactView> {
 
     @Override
     public boolean canViewObject(IContentObject object) {
-        if(object.getContentMediaType().equals("contact")) {
+        if(object.getContentMediaType().equals("vcard")) {
             return true;
         }
         return false;

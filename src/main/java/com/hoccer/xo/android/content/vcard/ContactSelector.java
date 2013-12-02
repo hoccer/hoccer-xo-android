@@ -49,7 +49,7 @@ public class ContactSelector implements IContentSelector {
 
         SelectedContent co = new SelectedContent(intent, contentUri);
         co.setContentType(ContactsContract.Contacts.CONTENT_VCARD_TYPE);
-        co.setContentMediaType("contact");
+        co.setContentMediaType("vcard");
 
         return co;
     }
