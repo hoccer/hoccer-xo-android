@@ -54,6 +54,8 @@ public class ProfileFragment extends XoFragment
     ImageView mAvatarImage;
     IContentObject mAvatarToSet;
 
+    Button mSelfRegisterButton;
+
     TextView mUserBlockStatus;
     Button   mUserBlockButton;
     Button   mUserDepairButton;
@@ -98,6 +100,10 @@ public class ProfileFragment extends XoFragment
         mNameText.setOnClickListener(this);
         mNameEditButton = (ImageView)v.findViewById(R.id.profile_name_edit_button);
         mNameEditButton.setOnClickListener(this);
+
+        // self operations
+        mSelfRegisterButton = (Button)v.findViewById(R.id.profile_self_register_button);
+        mSelfRegisterButton.setOnClickListener(this);
 
         // client operations
         mUserBlockStatus = (TextView)v.findViewById(R.id.profile_user_block_status);
@@ -164,6 +170,13 @@ public class ProfileFragment extends XoFragment
             LOG.debug("onClick(nameOverlay|nameText|nameEditButton)");
             if(mContact != null && mContact.isEditable()) {
                 XoDialogs.changeName(getXoActivity(), mContact);
+            }
+        }
+        if(v == mSelfRegisterButton) {
+            LOG.debug("onClick(selfRegister)");
+            if(mContact != null && mContact.isSelf() && !mContact.isSelfRegistered()) {
+                mContact.updateSelfConfirmed();
+                getXoClient().register();
             }
         }
         if(v == mUserBlockButton) {
@@ -279,6 +292,8 @@ public class ProfileFragment extends XoFragment
     public void createSelf() {
         LOG.debug("createSelf()");
         mMode = Mode.CREATE_SELF;
+        mContact = getXoClient().getSelfContact();
+        update(mContact);
     }
 
     public void createGroup() {
@@ -323,6 +338,9 @@ public class ProfileFragment extends XoFragment
         LOG.debug("avatar is " + avatarUrl);
         ImageLoader.getInstance().displayImage(avatarUrl, mAvatarImage);
 
+        // self operations
+        int selfRegistrationVisibility = contact.isSelf() && !contact.isSelfRegistered() ? View.VISIBLE : View.GONE;
+        mSelfRegisterButton.setVisibility(selfRegistrationVisibility);
         // client operations
         int clientVisibility = contact.isClient() ? View.VISIBLE : View.GONE;
         int clientRelatedVisibility = contact.isClientRelated() ? View.VISIBLE : View.GONE;
@@ -349,9 +367,13 @@ public class ProfileFragment extends XoFragment
         String name = null;
 
         if(contact.isClient() || contact.isSelf()) {
-            TalkPresence presence = contact.getClientPresence();
-            if(presence != null) {
-                name = presence.getClientName();
+            if(contact.isSelf() && !contact.isSelfRegistered()) {
+                name = contact.getSelf().getRegistrationName();
+            } else {
+                TalkPresence presence = contact.getClientPresence();
+                if(presence != null) {
+                    name = presence.getClientName();
+                }
             }
             if(contact.isClient()) {
                 TalkRelationship relationship = contact.getClientRelationship();

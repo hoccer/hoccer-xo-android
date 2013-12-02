@@ -51,7 +51,11 @@ public class NameDialog extends SherlockDialogFragment {
                 LOG.debug("onClick(ok)");
                 String newName = mEdit.getText().toString();
                 if(mContact.isSelf()) {
-                    mActivity.getXoClient().setClientString(newName, null);
+                    if(mContact.isSelfRegistered()) {
+                        mActivity.getXoClient().setClientString(newName, null);
+                    } else {
+                        mContact.getSelf().setRegistrationName(newName);
+                    }
                 }
                 if(mContact.isGroup()) {
                     mActivity.getXoClient().setGroupName(mContact, newName);

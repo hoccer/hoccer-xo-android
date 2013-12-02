@@ -3,11 +3,16 @@ package com.hoccer.xo.android.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.View;
 import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.Menu;
 import com.hoccer.talk.client.IXoContactListener;
+import com.hoccer.talk.client.IXoStateListener;
+import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.ProfileFragment;
+import com.hoccer.xo.android.fragment.StatusFragment;
 import com.hoccer.xo.release.R;
 
 import java.sql.SQLException;
@@ -15,7 +20,7 @@ import java.sql.SQLException;
 /**
  * Activity wrapping a profile fragment
  */
-public class ProfileActivity extends XoActivity implements IXoContactListener {
+public class ProfileActivity extends XoActivity implements IXoContactListener, IXoStateListener {
 
     /* use this extra to open in "group creation" mode */
     public static final String EXTRA_CLIENT_CREATE_GROUP = "clientCreateGroup";
@@ -35,6 +40,8 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
     ActionBar mActionBar;
 
     ProfileFragment mFragment;
+
+    StatusFragment mStatusFragment;
 
     @Override
     protected int getLayoutResource() {
@@ -57,6 +64,7 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         mFragment = (ProfileFragment)fragmentManager.findFragmentById(R.id.activity_profile_fragment);
+        mStatusFragment = (StatusFragment)fragmentManager.findFragmentById(R.id.activity_profile_status_fragment);
 
         // handle intents
         Intent intent = getIntent();
@@ -77,11 +85,34 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        LOG.debug("onCreateOptionsMenu()");
+        boolean result = super.onCreateOptionsMenu(menu);
+
+        TalkClientContact contact = mFragment.getContact();
+
+        boolean isSelf = mMode == Mode.CREATE_SELF || (contact != null && contact.isSelf());
+
+        menu.findItem(R.id.menu_my_profile).setVisible(!isSelf);
+
+        return result;
+    }
+
+    @Override
     protected void onResume() {
         LOG.debug("onResume()");
         super.onResume();
 
         getXoClient().registerContactListener(this);
+        getXoClient().registerStateListener(this);
+
+        if(mMode == Mode.CREATE_SELF) {
+            mStatusFragment.getView().setVisibility(View.GONE);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        } else {
+            mStatusFragment.getView().setVisibility(View.VISIBLE);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
@@ -89,6 +120,7 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
         LOG.debug("onPause()");
         super.onPause();
 
+        getXoClient().unregisterStateListener(this);
         getXoClient().unregisterContactListener(this);
     }
 
@@ -137,23 +169,20 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(contact.isSelf()) {
-                    mActionBar.setTitle("My profile");
+                String title = contact.getName();
+                if(mMode == Mode.CREATE_SELF) {
+                    title = "Welcome to XO!";
+                } else if (mMode == Mode.CREATE_GROUP) {
+                    title = "New group";
                 } else {
-                    String title = contact.getName();
-                    if(title == null) {
-                        if(mMode == Mode.CREATE_GROUP) {
-                            title = "New group";
-                        }
-                        if(mMode == Mode.CREATE_SELF) {
-                            title = "Welcome to XO!";
-                        }
+                    if(contact.isSelf()) {
+                        title = "My profile";
                     }
                     if(title == null) {
                         title = "<unnamed>";
                     }
-                    mActionBar.setTitle(title);
                 }
+                mActionBar.setTitle(title);
                 if (contact.isDeleted()) {
                     finish();
                 }
@@ -164,6 +193,19 @@ public class ProfileActivity extends XoActivity implements IXoContactListener {
     private boolean isMyContact(TalkClientContact contact) {
         TalkClientContact myContact = mFragment.getContact();
         return myContact != null && myContact.getClientContactId() == contact.getClientContactId();
+    }
+
+    @Override
+    public void onClientStateChange(XoClient client, int state) {
+        if(mMode == Mode.CREATE_SELF && state == XoClient.STATE_LOGIN) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    finish();
+                    startActivity(new Intent(ProfileActivity.this, ContactsActivity.class));
+                }
+            });
+        }
     }
 
     @Override
