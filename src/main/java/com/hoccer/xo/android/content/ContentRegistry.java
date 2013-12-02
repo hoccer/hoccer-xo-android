@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import com.hoccer.talk.content.IContentObject;
-import com.hoccer.xo.android.content.audio.AudioViewer;
+import com.hoccer.xo.android.content.audio.ButtonAudioViewer;
 import com.hoccer.xo.android.content.audio.MusicSelector;
 import com.hoccer.xo.android.content.image.ImageSelector;
 import com.hoccer.xo.android.content.image.ImageViewer;
@@ -96,7 +96,7 @@ public class ContentRegistry {
 
         mAttachmentViewers.add(new ImageViewer());
         mAttachmentViewers.add(new VideoViewer());
-        mAttachmentViewers.add(new AudioViewer());
+        mAttachmentViewers.add(new ButtonAudioViewer());
         mAttachmentViewers.add(new ContactViewer());
         mAttachmentViewers.add(new LocationViewer());
     }
