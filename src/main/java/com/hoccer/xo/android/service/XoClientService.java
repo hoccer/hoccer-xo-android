@@ -124,6 +124,7 @@ public class XoClientService extends Service {
 
         if(mClientListener == null) {
             mClientListener = new ClientListener();
+            mClient.registerTokenListener(mClientListener);
             mClient.registerStateListener(mClientListener);
             mClient.registerUnseenListener(mClientListener);
             mClient.registerTransferListener(mClientListener);
@@ -161,6 +162,7 @@ public class XoClientService extends Service {
         super.onDestroy();
         unregisterConnectivityReceiver();
         if(mClientListener != null) {
+            mClient.unregisterTokenListener(mClientListener);
             mClient.unregisterStateListener(mClientListener);
             mClient.unregisterUnseenListener(mClientListener);
             mClient.unregisterTransferListener(mClientListener);
