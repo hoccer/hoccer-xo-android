@@ -57,6 +57,7 @@ public class ImageViewer extends ContentViewer<AspectImageView> implements Image
 
     @Override
     protected void clearViewInternal(AspectImageView view) {
+        LOG.trace("clearing");
         ImageLoader.getInstance().cancelDisplayTask(view);
         view.setImageDrawable(null);
     }
@@ -64,10 +65,13 @@ public class ImageViewer extends ContentViewer<AspectImageView> implements Image
     private void loadImage(ImageView view, String contentUrl) {
         String oldUrl = mUpdateCache.get(view);
         if(oldUrl == null || !oldUrl.equals(contentUrl)) {
+            LOG.trace("triggering load of " + contentUrl);
             mUpdateCache.put(view, contentUrl);
             view.setImageDrawable(null);
             ImageLoader.getInstance().displayImage(
                     contentUrl, view, XoApplication.getContentImageOptions(), this);
+        } else {
+            LOG.trace("not triggering load of " + contentUrl);
         }
     }
 
@@ -98,6 +102,7 @@ public class ImageViewer extends ContentViewer<AspectImageView> implements Image
         }
         @Override
         protected void onDetachedFromWindow() {
+            LOG.trace("clear on detach");
             super.onDetachedFromWindow();
             ImageLoader.getInstance().cancelDisplayTask(this);
         }
