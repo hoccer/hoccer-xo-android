@@ -1,6 +1,7 @@
 package com.hoccer.xo.android;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Environment;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -199,6 +200,7 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
                 .cacheOnDisc(false)
                 .cacheInMemory(false)
                 .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
+                .bitmapConfig(Bitmap.Config.RGB_565)
                 .build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
                 .threadPoolSize(2)
