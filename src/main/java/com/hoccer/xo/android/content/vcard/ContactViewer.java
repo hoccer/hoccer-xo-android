@@ -21,8 +21,12 @@ public class ContactViewer extends ContentViewer<ContactView> {
     }
 
     @Override
-    protected void updateView(ContactView view, ContentView contentView, IContentObject contentObject) {
+    protected void updateViewInternal(ContactView view, ContentView contentView, IContentObject contentObject) {
         view.showContent(contentObject);
+    }
+
+    @Override
+    protected void clearViewInternal(ContactView view) {
     }
 
 }

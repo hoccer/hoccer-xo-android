@@ -177,7 +177,7 @@ public class ContentRegistry {
      * @param contentObject that needs a view constructed
      * @return a matching content viewer
      */
-    private ContentViewer selectViewerForContent(IContentObject contentObject) {
+    public ContentViewer selectViewerForContent(IContentObject contentObject) {
         for(ContentViewer viewer: mAttachmentViewers) {
             if(viewer.canViewObject(contentObject)) {
                 return viewer;

@@ -42,7 +42,7 @@ public class LocationViewer extends ContentViewer<Button> {
     }
 
     @Override
-    protected void updateView(final Button view, final ContentView contentView, final IContentObject contentObject) {
+    protected void updateViewInternal(final Button view, final ContentView contentView, final IContentObject contentObject) {
         final LatLng location = loadGeoJson(contentObject);
         if(location == null) {
             view.setVisibility(View.INVISIBLE);
@@ -70,6 +70,10 @@ public class LocationViewer extends ContentViewer<Button> {
                 }
             });
         }
+    }
+
+    @Override
+    protected void clearViewInternal(Button view) {
     }
 
     private LatLng loadGeoJson(IContentObject content) {

@@ -22,10 +22,14 @@ public class AudioViewer extends ContentViewer<AudioPlayerView> {
     }
 
     @Override
-    protected void updateView(AudioPlayerView view, ContentView contentView, IContentObject contentObject) {
+    protected void updateViewInternal(AudioPlayerView view, ContentView contentView, IContentObject contentObject) {
         if(contentObject.getContentDataUrl() != null) {
             view.setFile(contentObject.getContentDataUrl());
         }
+    }
+
+    @Override
+    protected void clearViewInternal(AudioPlayerView view) {
     }
 
 }

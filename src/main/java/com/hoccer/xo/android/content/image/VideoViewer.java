@@ -24,7 +24,7 @@ public class VideoViewer extends ContentViewer<Button> {
     }
 
     @Override
-    protected void updateView(final Button view, final ContentView contentView, final IContentObject contentObject) {
+    protected void updateViewInternal(final Button view, final ContentView contentView, final IContentObject contentObject) {
         if(contentObject.isContentAvailable()) {
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new View.OnClickListener() {
@@ -45,6 +45,10 @@ public class VideoViewer extends ContentViewer<Button> {
         } else {
             view.setVisibility(View.INVISIBLE);
         }
+    }
+
+    @Override
+    protected void clearViewInternal(Button view) {
     }
 
 }

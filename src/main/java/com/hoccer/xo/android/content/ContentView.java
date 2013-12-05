@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -43,6 +42,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     ContentRegistry mRegistry;
 
     IContentObject mObject;
+    ContentViewer<?> mViewer;
 
     ContentState mPreviousContentState;
 
@@ -190,6 +190,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         boolean available = object.isContentAvailable();
         ContentState state = getTrueContentState(object);
         ContentDisposition disposition = object.getContentDisposition();
+        ContentViewer<?> viewer = mRegistry.selectViewerForContent(object);
 
         // determine if the content url has changed so
         // we know if we need to re-instantiate child views
@@ -204,14 +205,20 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             }
         }
         boolean stateChanged = true;
-        if(!contentChanged) {;
+        if(!contentChanged) {
             if(mPreviousContentState == state) {
                 stateChanged = false;
             }
         }
+        boolean viewerChanged = true;
+        if(mViewer != null && viewer != null && viewer == mViewer) {
+            viewerChanged = false;
+        }
+        ContentViewer<?> oldViewer = mViewer;
 
         // remember the new object
         mObject = object;
+        mViewer = viewer;
         mPreviousContentState = state;
 
         // footer
@@ -369,21 +376,31 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             }
         }
 
+        if(viewerChanged || mContentChild == null) {
+            // remove old
+            if(mContentChild != null) {
+                View v = mContentChild;
+                mContentChild = null;
+                mContentWrapper.removeView(v);
+                oldViewer.returnView(activity, v);
+            }
+            // add new
+            mContentChild = mViewer.getViewForObject(activity, this, object);
+            mContentWrapper.addView(mContentChild,
+                    new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT));
+        }
+
+        if(viewerChanged || contentChanged || stateChanged) {
+            mViewer.updateView(mContentChild, this, object);
+        }
+
         // update the content wrapper, creating a new child view if needed
         if(isInEditMode()) {
             mContentWrapper.setVisibility(GONE);
         } else {
             mContentWrapper.setVisibility(VISIBLE);
-            if(mContentChild == null) {
-                mContentChild = mRegistry.createViewForContent(activity, object, this);
-                if(mContentChild != null) {
-                    mContentChild.setVisibility(VISIBLE);
-                    mContentWrapper.addView(mContentChild,
-                            new ViewGroup.LayoutParams(
-                                    ViewGroup.LayoutParams.MATCH_PARENT,
-                                    ViewGroup.LayoutParams.WRAP_CONTENT));
-                }
-            }
         }
 
         // disable content child when we are showing the footer

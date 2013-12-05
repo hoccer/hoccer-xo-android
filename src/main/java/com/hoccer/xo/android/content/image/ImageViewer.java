@@ -3,8 +3,8 @@ package com.hoccer.xo.android.content.image;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.ContentView;
@@ -34,7 +34,7 @@ public class ImageViewer extends ContentViewer<AspectImageView> implements Image
     }
 
     @Override
-    protected void updateView(AspectImageView view, ContentView contentView, IContentObject contentObject) {
+    protected void updateViewInternal(AspectImageView view, ContentView contentView, IContentObject contentObject) {
         int maxContentHeight = contentView.getMaxContentHeight();
         if(maxContentHeight != Integer.MAX_VALUE) {
             view.setMaxHeight(maxContentHeight);
@@ -42,16 +42,22 @@ public class ImageViewer extends ContentViewer<AspectImageView> implements Image
         view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         view.setAspectRatio(contentObject.getContentAspectRatio());
         view.setAdjustViewBounds(true);
-        view.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
+        view.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
 
         String contentUrl = contentObject.getContentDataUrl();
         if(contentObject.isContentAvailable() && contentUrl != null) {
             loadImage(view, contentUrl);
         } else {
-            view.setImageDrawable(null);
+            clearViewInternal(view);
         }
+    }
+
+    @Override
+    protected void clearViewInternal(AspectImageView view) {
+        ImageLoader.getInstance().cancelDisplayTask(view);
+        view.setImageDrawable(null);
     }
 
     private void loadImage(ImageView view, String contentUrl) {
