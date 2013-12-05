@@ -139,14 +139,14 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
         String contentUri = contentObject.getContentDataUrl();
         LOG.debug("showContent(" + contentUri + ")");
 
-        // cancel running refresh
-        if(mRefreshFuture != null) {
-            mRefreshFuture.cancel(true);
-            mRefreshFuture = null;
-        }
-
         // schedule new refresh if needed
         if(isContentChanged(contentObject)) {
+            // cancel running refresh
+            if(mRefreshFuture != null) {
+                mRefreshFuture.cancel(true);
+                mRefreshFuture = null;
+            }
+
             mRoot.setVisibility(INVISIBLE);
 
             mContent = contentObject;
@@ -156,13 +156,10 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
             mRefreshFuture = executor.schedule(new Runnable() {
                 @Override
                 public void run() {
-                    update();
                     refresh(mContent.getContentDataUrl());
                 }
             }, 0, TimeUnit.MILLISECONDS);
         }
-
-        update();
     }
 
     private void checkInterrupt() throws InterruptedException {
@@ -215,6 +212,7 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
             mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    LOG.debug("updating ui");
                     mRoot.setVisibility(VISIBLE);
                     mNameText.setText(name);
                     Bitmap photoBitmap = null;
