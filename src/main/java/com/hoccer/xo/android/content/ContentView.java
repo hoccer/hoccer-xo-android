@@ -295,6 +295,9 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 mTransferAction = TransferAction.REQUEST_DOWNLOAD;
                 break;
             case DOWNLOAD_DECRYPTING:
+                mActionButton.setText("Cancel");
+                mTransferAction = TransferAction.CANCEL_DOWNLOAD;
+                break;
             case DOWNLOAD_DETECTING:
                 mActionButton.setEnabled(false);
                 mActionButton.setText("Cancel");
@@ -312,9 +315,12 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 mTransferAction = TransferAction.REQUEST_UPLOAD;
                 break;
             case UPLOAD_REGISTERING:
-            case UPLOAD_ENCRYPTING:
                 mActionButton.setEnabled(false);
                 mActionButton.setText("Cancel");
+                break;
+            case UPLOAD_ENCRYPTING:
+                mActionButton.setText("Cancel");
+                mTransferAction = TransferAction.CANCEL_UPLOAD;
                 break;
             case UPLOAD_UPLOADING:
                 mActionButton.setText("Cancel");
