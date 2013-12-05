@@ -162,7 +162,16 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
         LOG = Logger.getLogger(XoApplication.class);
 
         // announce sdk version
-        LOG.info("running on sdk version " + Build.VERSION.SDK_INT);
+        LOG.info("system sdk " + Build.VERSION.SDK_INT);
+        LOG.info("system release " + Build.VERSION.RELEASE);
+        LOG.info("system codename " + Build.VERSION.CODENAME);
+        LOG.info("system revision " + Build.VERSION.INCREMENTAL);
+        LOG.info("system brand " + Build.BRAND);
+        LOG.info("system model " + Build.MODEL);
+        LOG.info("system manufacturer " + Build.MANUFACTURER);
+        LOG.info("system device " + Build.DEVICE);
+        LOG.info("system product " + Build.PRODUCT);
+        LOG.info("system type " + Build.TYPE);
 
         // install a default exception handler
         LOG.info("setting up default exception handler");
@@ -175,10 +184,10 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
 
         // initialize version information
         XoVersion.initialize(this);
-        LOG.info("build time " + XoVersion.getBuildTime());
-        LOG.info("branch " + XoVersion.getBranch());
-        LOG.info("commit " + XoVersion.getCommitId());
-        LOG.info("describe " + XoVersion.getCommitDescribe());
+        LOG.info("application build time " + XoVersion.getBuildTime());
+        LOG.info("application branch " + XoVersion.getBranch());
+        LOG.info("application commit " + XoVersion.getCommitId());
+        LOG.info("application describe " + XoVersion.getCommitDescribe());
 
         // configure ssl
         XoSsl.initialize(this);
