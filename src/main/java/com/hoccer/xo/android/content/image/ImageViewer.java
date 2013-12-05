@@ -1,6 +1,7 @@
 package com.hoccer.xo.android.content.image;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
@@ -30,7 +31,7 @@ public class ImageViewer extends ContentViewer<AspectImageView> implements Image
 
     @Override
     protected AspectImageView makeView(Activity activity) {
-        return new AspectImageView(activity);
+        return new CancelingAspectImageView(activity);
     }
 
     @Override
@@ -87,5 +88,19 @@ public class ImageViewer extends ContentViewer<AspectImageView> implements Image
         LOG.debug("load of " + imageUri + " cancelled");
     }
 
-}
+    /**
+     * This is specific to using AspectImageView with UIL
+     * and most badly needed here, so we do it here.
+     */
+    private class CancelingAspectImageView extends AspectImageView {
+        public CancelingAspectImageView(Context context) {
+            super(context);
+        }
+        @Override
+        protected void onDetachedFromWindow() {
+            super.onDetachedFromWindow();
+            ImageLoader.getInstance().cancelDisplayTask(this);
+        }
+    }
 
+}
