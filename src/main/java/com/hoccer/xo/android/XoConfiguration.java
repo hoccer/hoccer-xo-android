@@ -49,7 +49,7 @@ public class XoConfiguration {
     /** The maximum number of log files to keep */
     public static final int LOG_FILE_COUNT = 10;
     /** The maximum size of each log file */
-    public static final int LOG_FILE_SIZE = 512 * 1024;
+    public static final int LOG_FILE_SIZE = 1024 * 1024;
     /** The layout for log files */
     public static final Layout LOG_FILE_LAYOUT = new PatternLayout("[%t] %-5p %c - %m%n");
 
