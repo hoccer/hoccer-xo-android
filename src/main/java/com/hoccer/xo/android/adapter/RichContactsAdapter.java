@@ -87,6 +87,7 @@ public class RichContactsAdapter extends ContactsAdapter {
         LOG.debug("updateContact(" + contact.getClientContactId() + ")");
         TextView nameView = (TextView) view.findViewById(R.id.contact_name);
         nameView.setText(contact.getName());
+        TextView typeView = (TextView) view.findViewById(R.id.contact_type);
 
         if(contact.isClient()) {
             TalkPresence presence = contact.getClientPresence();
@@ -97,6 +98,13 @@ public class RichContactsAdapter extends ContactsAdapter {
                 } else {
                     connectedView.setVisibility(View.GONE);
                 }
+            }
+        }
+        if(contact.isGroup()) {
+            if(contact.isGroupInvited()) {
+                typeView.setText("Group Invite"); // XXX i18n
+            } else {
+                typeView.setText(R.string.common_group);
             }
         }
 
