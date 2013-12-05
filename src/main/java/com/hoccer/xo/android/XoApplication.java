@@ -11,6 +11,7 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -197,9 +198,10 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
         CONTENT_IMAGE_OPTIONS = new DisplayImageOptions.Builder()
                 .cacheOnDisc(false)
                 .cacheInMemory(false)
+                .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
                 .build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-                .threadPoolSize(1)
+                .threadPoolSize(2)
                 .build();
         ImageLoader.getInstance().init(config);
 
