@@ -16,6 +16,9 @@ import org.apache.log4j.Logger;
  * For most events this service receives it will generate an Intent
  * to call the client service to perform appropriate actions.
  *
+ * NOTE this class can not be renamed because of upgrade
+ *      issues with respect to GCM registration state
+ *      on target devices
  */
 public class TalkPushService extends GCMBaseIntentService {
 
