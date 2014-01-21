@@ -218,8 +218,6 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             LOG.error("probably received an unkown media-type", exception);
             return;
         }
-
-
         if(viewerChanged || contentChanged || stateChanged) {
             mViewer.updateView(mContentChild, this, object);
         }
