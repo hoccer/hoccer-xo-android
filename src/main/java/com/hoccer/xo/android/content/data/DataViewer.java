@@ -1,8 +1,14 @@
 package com.hoccer.xo.android.content.data;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.graphics.Typeface;
-import android.widget.TextView;
+import android.net.Uri;
+import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.widget.Button;
+import android.widget.Toast;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
@@ -10,7 +16,9 @@ import com.hoccer.xo.android.content.ContentViewer;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
-public class DataViewer extends ContentViewer<TextView> {
+import java.net.URLConnection;
+
+public class DataViewer extends ContentViewer<Button> {
 
     private static final Logger LOG = Logger.getLogger(DataViewer.class);
 
@@ -26,20 +34,49 @@ public class DataViewer extends ContentViewer<TextView> {
     }
 
     @Override
-    protected TextView makeView(Activity activity) {
-        TextView textView = new TextView(activity);
-        textView.setText(R.string.feature_not_available);
-        textView.setTypeface(null, Typeface.BOLD_ITALIC);
-        return textView;
+    protected Button makeView(Activity activity) {
+        Button button = new Button(activity);
+        button.setText(activity.getString(R.string.open_file));
+        return button;
     }
 
     @Override
-    protected void updateViewInternal(TextView view, ContentView contentView, IContentObject contentObject) {
-
+    protected void updateViewInternal(final Button view, ContentView contentView, final IContentObject contentObject) {
+        if(contentObject.isContentAvailable()) {
+            view.setVisibility(View.VISIBLE);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(contentObject.isContentAvailable()) {
+                        String url = contentObject.getContentUrl();
+                        if(url == null) {
+                            url = contentObject.getContentDataUrl();
+                        }
+                        if(url != null) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            String type = URLConnection.guessContentTypeFromName(url);
+                            Uri data = Uri.parse(url);
+                            intent.setDataAndType(data, type);
+                            try {
+                                view.getContext().startActivity(intent);
+                            } catch(ActivityNotFoundException exception) {
+                                // TODO: tell the user there is no app installd which can handle the file
+                                // for now we use a Toast!
+                                Toast.makeText(view.getContext(),
+                                        R.string.error_no_such_app,
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 
     @Override
-    protected void clearViewInternal(TextView view) {
+    protected void clearViewInternal(Button view) {
 
     }
+
+
 }

@@ -134,6 +134,8 @@ public class ContentRegistry {
                 mediaTypeString = "Contact";
             } else if(mediaType.equals("location")) {
                 mediaTypeString = "Location";
+            } else if(mediaType.equals("data")) {
+                mediaTypeString = "Data";
             }
         }
 
