@@ -1,14 +1,16 @@
 package com.hoccer.xo.android.content.data;
 
 import android.app.Activity;
-import android.widget.Button;
+import android.graphics.Typeface;
+import android.widget.TextView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewer;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
-public class DataViewer extends ContentViewer<Button> {
+public class DataViewer extends ContentViewer<TextView> {
 
     private static final Logger LOG = Logger.getLogger(DataViewer.class);
 
@@ -24,19 +26,20 @@ public class DataViewer extends ContentViewer<Button> {
     }
 
     @Override
-    protected Button makeView(Activity activity) {
-        Button button = new Button(activity);
-        button.setText("open file");
-        return button;
+    protected TextView makeView(Activity activity) {
+        TextView textView = new TextView(activity);
+        textView.setText(R.string.feature_not_available);
+        textView.setTypeface(null, Typeface.BOLD_ITALIC);
+        return textView;
     }
 
     @Override
-    protected void updateViewInternal(Button view, ContentView contentView, IContentObject contentObject) {
+    protected void updateViewInternal(TextView view, ContentView contentView, IContentObject contentObject) {
 
     }
 
     @Override
-    protected void clearViewInternal(Button view) {
+    protected void clearViewInternal(TextView view) {
 
     }
 }
