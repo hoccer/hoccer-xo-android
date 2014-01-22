@@ -194,26 +194,9 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
 
         // determine if the content url has changed so
         // we know if we need to re-instantiate child views
-        boolean contentChanged = true;
-        if(mObject != null) {
-            String oldUrl = mObject.getContentDataUrl();
-            String newUrl = object.getContentDataUrl();
-            if(oldUrl != null && newUrl != null) {
-                if(oldUrl.equals(newUrl)) {
-                    contentChanged = false;
-                }
-            }
-        }
-        boolean stateChanged = true;
-        if(!contentChanged) {
-            if(mPreviousContentState == state) {
-                stateChanged = false;
-            }
-        }
-        boolean viewerChanged = true;
-        if(mViewer != null && viewer != null && viewer == mViewer) {
-            viewerChanged = false;
-        }
+        boolean contentChanged = hasContentChanged(object);
+        boolean stateChanged = hasStateChanged(contentChanged, state);
+        boolean viewerChanged = hasViewerChanged(viewer);
         ContentViewer<?> oldViewer = mViewer;
 
         // remember the new object
@@ -221,74 +204,134 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         mViewer = viewer;
         mPreviousContentState = state;
 
-        // footer
-        boolean footerVisible = false;
+        boolean footerVisible = updateFooter(state);
+
+        // description
+        mContentDescription.setText(mRegistry.getContentDescription(object));
+        String stateText = getStateText(state);
+        doDownAndUploadActions(state);
+        updateProgressBar(state, object);
+        removeChildViewIfContentHasChanged(contentChanged, stateChanged);
+        try {
+            updateContentView(viewerChanged, oldViewer, activity, object);
+        } catch (NullPointerException exception) {
+            LOG.error("probably received an unkown media-type", exception);
+            return;
+        }
+        if(viewerChanged || contentChanged || stateChanged) {
+            mViewer.updateView(mContentChild, this, object);
+        }
+        int visibility = isInEditMode() ? GONE : VISIBLE;
+        mContentWrapper.setVisibility(visibility);
+
+        // disable content child when we are showing the footer
+        if(mContentChild != null) {
+            mContentChild.setEnabled(!footerVisible);
+        }
+    }
+
+    private void updateContentView(boolean viewerChanged, ContentViewer<?> oldViewer, Activity activity,
+                                   IContentObject object) {
+        if(viewerChanged || mContentChild == null) {
+            // remove old
+            if(mContentChild != null) {
+                View v = mContentChild;
+                mContentChild = null;
+                mContentWrapper.removeView(v);
+                oldViewer.returnView(activity, v);
+            }
+            // add new
+            mContentChild = mViewer.getViewForObject(activity, this, object);
+            mContentWrapper.addView(mContentChild,
+                    new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT));
+        }
+    }
+
+    private void removeChildViewIfContentHasChanged(boolean contentChanged, boolean stateChanged) {
+        if(contentChanged || stateChanged) {
+            if(mContentChild != null) {
+                mContentWrapper.removeView(mContentChild);
+                mContentChild = null;
+            }
+        }
+    }
+
+    private boolean hasViewerChanged(ContentViewer<?> viewer) {
+        if(mViewer != null && viewer != null && viewer == mViewer) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean hasStateChanged(boolean contentChanged, ContentState state) {
+        if(!contentChanged) {
+            if(mPreviousContentState == state) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean hasContentChanged(IContentObject object) {
+        if(mObject != null) {
+            String oldUrl = mObject.getContentDataUrl();
+            String newUrl = object.getContentDataUrl();
+            if(oldUrl != null && newUrl != null) {
+                if(oldUrl.equals(newUrl)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean updateFooter(ContentState state) {
         if(state == ContentState.SELECTED
                 || state == ContentState.UPLOAD_COMPLETE
                 || state == ContentState.DOWNLOAD_COMPLETE) {
             mContentFooter.setVisibility(GONE);
         } else {
-            footerVisible = true;
             mContentFooter.setVisibility(VISIBLE);
+            return true;
         }
+        return false;
+    }
 
-        // description
-        mContentDescription.setText(mRegistry.getContentDescription(object));
-
-        // status text
-        String stateText = null;
-        switch(state) {
-        case DOWNLOAD_NEW:
-            stateText = "Available for download";
-            break;
-        case DOWNLOAD_DOWNLOADING:
-            stateText = "Downloading...";
-            break;
-        case DOWNLOAD_DECRYPTING:
-            stateText = "Decrypting...";
-            break;
-        case DOWNLOAD_DETECTING:
-            stateText = "Analyzing...";
-            break;
-        case DOWNLOAD_COMPLETE:
-            stateText = "Download complete";
-            break;
-        case DOWNLOAD_FAILED:
-            stateText = "Download failed";
-            break;
-        case DOWNLOAD_PAUSED:
-            stateText = "Download paused";
-            break;
-        case UPLOAD_NEW:
-            stateText = "New upload";
-            break;
-        case UPLOAD_REGISTERING:
-            stateText = "Registering...";
-            break;
-        case UPLOAD_ENCRYPTING:
-            stateText = "Encrypting...";
-            break;
-        case UPLOAD_UPLOADING:
-            stateText = "Uploading...";
-            break;
-        case UPLOAD_COMPLETE:
-            stateText = "Upload complete";
-            break;
-        case UPLOAD_PAUSED:
-            stateText = "Upload paused";
-            break;
-        case UPLOAD_FAILED:
-            stateText = "Upload failed";
-            break;
+    private void updateProgressBar(ContentState state, IContentObject object) {
+        switch (state) {
+            case DOWNLOAD_DECRYPTING:
+                break;
+            case DOWNLOAD_DETECTING:
+                break;
+            case UPLOAD_REGISTERING:
+                break;
+            case UPLOAD_ENCRYPTING:
+                mTransferProgress.setVisibility(VISIBLE);
+                mTransferProgress.setIndeterminate(true);
+                break;
+            case DOWNLOAD_PAUSED:
+                break;
+            case DOWNLOAD_DOWNLOADING:
+                break;
+            case UPLOAD_PAUSED:
+                break;
+            case UPLOAD_UPLOADING:
+                int length = object.getTransferLength();
+                int progress = object.getTransferProgress();
+                mTransferProgress.setVisibility(VISIBLE);
+                mTransferProgress.setIndeterminate(false);
+                mTransferProgress.setMax(length);
+                mTransferProgress.setProgress(progress);
+                break;
+            default:
+                mTransferProgress.setVisibility(GONE);
+                break;
         }
-        if(stateText == null) {
-            mContentStatus.setVisibility(GONE);
-        } else {
-            mContentStatus.setVisibility(VISIBLE);
-            mContentStatus.setText(stateText);
-        }
+    }
 
-        // download/upload actions
+    private void doDownAndUploadActions(ContentState state) {
         mActionButton.setEnabled(true);
         mActionButton.setVisibility(VISIBLE);
         mTransferAction = TransferAction.NONE;
@@ -334,79 +377,74 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 mTransferAction = TransferAction.CANCEL_UPLOAD;
                 break;
             case SELECTED:
+                break;
             case UPLOAD_FAILED:
+                break;
             case UPLOAD_COMPLETE:
+                break;
             case DOWNLOAD_FAILED:
+                break;
             case DOWNLOAD_COMPLETE:
+                break;
             default:
                 mActionButton.setVisibility(GONE);
                 break;
         }
+    }
 
-        // progress bar
-        switch (state) {
+    private String getStateText(ContentState state) {
+        String stateText = null;
+        switch(state) {
+            case DOWNLOAD_NEW:
+                stateText = "Available for download";
+                break;
+            case DOWNLOAD_DOWNLOADING:
+                stateText = "Downloading...";
+                break;
             case DOWNLOAD_DECRYPTING:
+                stateText = "Decrypting...";
+                break;
             case DOWNLOAD_DETECTING:
-            case UPLOAD_REGISTERING:
-            case UPLOAD_ENCRYPTING:
-                mTransferProgress.setVisibility(VISIBLE);
-                mTransferProgress.setIndeterminate(true);
+                stateText = "Analyzing...";
+                break;
+            case DOWNLOAD_COMPLETE:
+                stateText = "Download complete";
+                break;
+            case DOWNLOAD_FAILED:
+                stateText = "Download failed";
                 break;
             case DOWNLOAD_PAUSED:
-            case DOWNLOAD_DOWNLOADING:
-            case UPLOAD_PAUSED:
+                stateText = "Download paused";
+                break;
+            case UPLOAD_NEW:
+                stateText = "New upload";
+                break;
+            case UPLOAD_REGISTERING:
+                stateText = "Registering...";
+                break;
+            case UPLOAD_ENCRYPTING:
+                stateText = "Encrypting...";
+                break;
             case UPLOAD_UPLOADING:
-                int length = object.getTransferLength();
-                int progress = object.getTransferProgress();
-                mTransferProgress.setVisibility(VISIBLE);
-                mTransferProgress.setIndeterminate(false);
-                mTransferProgress.setMax(length);
-                mTransferProgress.setProgress(progress);
+                stateText = "Uploading...";
                 break;
-            default:
-                mTransferProgress.setVisibility(GONE);
+            case UPLOAD_COMPLETE:
+                stateText = "Upload complete";
+                break;
+            case UPLOAD_PAUSED:
+                stateText = "Upload paused";
+                break;
+            case UPLOAD_FAILED:
+                stateText = "Upload failed";
                 break;
         }
-
-        // remove the child view if content has changed
-        if(contentChanged || stateChanged) {
-            if(mContentChild != null) {
-                mContentWrapper.removeView(mContentChild);
-                mContentChild = null;
-            }
-        }
-
-        if(viewerChanged || mContentChild == null) {
-            // remove old
-            if(mContentChild != null) {
-                View v = mContentChild;
-                mContentChild = null;
-                mContentWrapper.removeView(v);
-                oldViewer.returnView(activity, v);
-            }
-            // add new
-            mContentChild = mViewer.getViewForObject(activity, this, object);
-            mContentWrapper.addView(mContentChild,
-                    new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT));
-        }
-
-        if(viewerChanged || contentChanged || stateChanged) {
-            mViewer.updateView(mContentChild, this, object);
-        }
-
-        // update the content wrapper, creating a new child view if needed
-        if(isInEditMode()) {
-            mContentWrapper.setVisibility(GONE);
+        if(stateText == null) {
+            mContentStatus.setVisibility(GONE);
         } else {
-            mContentWrapper.setVisibility(VISIBLE);
+            mContentStatus.setVisibility(VISIBLE);
+            mContentStatus.setText(stateText);
         }
-
-        // disable content child when we are showing the footer
-        if(mContentChild != null) {
-            mContentChild.setEnabled(!footerVisible);
-        }
+        return stateText;
     }
 
     public void clear() {

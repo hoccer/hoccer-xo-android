@@ -13,6 +13,8 @@ import android.widget.SimpleAdapter;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.audio.ButtonAudioViewer;
 import com.hoccer.xo.android.content.audio.MusicSelector;
+import com.hoccer.xo.android.content.data.DataSelector;
+import com.hoccer.xo.android.content.data.DataViewer;
 import com.hoccer.xo.android.content.image.ImageSelector;
 import com.hoccer.xo.android.content.image.ImageViewer;
 import com.hoccer.xo.android.content.image.VideoSelector;
@@ -93,12 +95,14 @@ public class ContentRegistry {
         initializeSelector(new MusicSelector());
         initializeSelector(new ContactSelector());
         initializeSelector(new MapsLocationSelector());
+        initializeSelector(new DataSelector());
 
         mAttachmentViewers.add(new ImageViewer());
         mAttachmentViewers.add(new VideoViewer());
         mAttachmentViewers.add(new ButtonAudioViewer());
         mAttachmentViewers.add(new ContactViewer());
         mAttachmentViewers.add(new LocationViewer());
+        mAttachmentViewers.add(new DataViewer());
     }
 
     /**
@@ -130,6 +134,8 @@ public class ContentRegistry {
                 mediaTypeString = "Contact";
             } else if(mediaType.equals("location")) {
                 mediaTypeString = "Location";
+            } else if(mediaType.equals("data")) {
+                mediaTypeString = "Data";
             }
         }
 

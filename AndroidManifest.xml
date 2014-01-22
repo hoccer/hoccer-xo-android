@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hoccer.xo.release"
-    android:versionCode="11"
-    android:versionName="0.9.1" >
+    android:versionCode="12"
+    android:versionName="0.9.2" >
 
     <!-- We run on 2.3.3 (10) and up, we use features from up to 4.2 (17) -->
     <uses-sdk
