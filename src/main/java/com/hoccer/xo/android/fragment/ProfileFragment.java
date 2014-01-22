@@ -338,11 +338,6 @@ public class ProfileFragment extends XoFragment
             }
         }
         LOG.debug("avatar is " + avatarUrl);
-        DisplayImageOptions.Builder b = new DisplayImageOptions.Builder();
-        b.imageScaleType(ImageScaleType.IN_SAMPLE_INT);
-        mAvatarImage.setScaleType(ImageView.ScaleType.FIT_CENTER);
-//        mAvatarImage.setScaleX(0.5f);
-//        mAvatarImage.setScaleY(0.5f);
         ImageLoader.getInstance().displayImage(avatarUrl, mAvatarImage);
 
         // self operations

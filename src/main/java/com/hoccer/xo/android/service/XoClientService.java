@@ -504,6 +504,7 @@ public class XoClientService extends Service {
         Map<Integer, TalkClientContact> contactsById = new HashMap<Integer, TalkClientContact>();
         for(TalkClientMessage message: allUnseenMessages) {
             TalkClientContact contact = message.getConversationContact();
+            //TODO: check NullPointerException
             int contactId = contact.getClientContactId();
             if(!contactsById.containsKey(contactId)) {
                 try {

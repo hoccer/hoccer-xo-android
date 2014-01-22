@@ -1,11 +1,14 @@
 package com.hoccer.xo.android.base;
 
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.*;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.database.Cursor;
+import android.provider.MediaStore;
 import android.os.RemoteException;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -38,8 +41,10 @@ import com.hoccer.xo.android.service.XoClientService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
+import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -245,6 +250,60 @@ public abstract class XoActivity extends SherlockFragmentActivity {
 
     private String mBarcodeToken = null;
 
+
+    private Intent selectedAvatarPreprocessing(Intent data) {
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        Uri selectedContent = data.getData();
+        Cursor cursor = getBaseContext().getContentResolver().query(
+                selectedContent, filePathColumn, null, null, null);
+        cursor.moveToFirst();
+        int dataIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String filePath = cursor.getString(dataIndex);
+        cursor.close();
+
+        File source = new File(filePath);
+        File destination = new File(XoApplication.getAttachmentDirectory().getPath() + File.separator + source.getName());
+
+        BitmapFactory.Options opt = new BitmapFactory.Options();
+        opt.inSampleSize = 2;
+        Bitmap bmp = BitmapFactory.decodeFile(filePath, opt);
+        try {
+            FileOutputStream out = new FileOutputStream(destination);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Uri uri = getImageContentUri(getBaseContext(), destination);
+        data.setData(uri);
+        return data;
+    }
+
+
+    private Uri getImageContentUri(Context context, File imageFile) {
+        String filePath = imageFile.getAbsolutePath();
+        Cursor cursor = context.getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                new String[] { MediaStore.Images.Media._ID },
+                MediaStore.Images.Media.DATA + "=? ",
+                new String[] { filePath }, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor
+                    .getColumnIndex(MediaStore.MediaColumns._ID));
+            Uri baseUri = Uri.parse("content://media/external/images/media");
+            return Uri.withAppendedPath(baseUri, "" + id);
+        } else {
+            if (imageFile.exists()) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.DATA, filePath);
+                return context.getContentResolver().insert(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            } else {
+                return null;
+            }
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         LOG.debug("onActivityResult(" + requestCode + "," + resultCode);
@@ -256,6 +315,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
 
         if(requestCode == REQUEST_SELECT_AVATAR) {
             if(mAvatarSelection != null) {
+                data = selectedAvatarPreprocessing(data);
                 IContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection, data);
                 if(co != null) {
                     LOG.debug("selected avatar " + co.getContentDataUrl());
