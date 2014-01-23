@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -189,18 +190,16 @@ public class MapsLocationActivity extends XoActivity
         if(PREVIEW_IMAGE == null) {
             try {
                 ByteArrayOutputStream output = new ByteArrayOutputStream();
-                Base64OutputStream encoder = new Base64OutputStream(output);
                 InputStream is = getResources().openRawResource(R.raw.location_preview_png);
                 byte[] buf = new byte[4096];
                 int bytesRead;
                 while( (bytesRead = is.read(buf)) != -1 ) {
-                    encoder.write(buf, 0, bytesRead);
+                    output.write(buf, 0, bytesRead);
                 }
-                encoder.flush();
-                encoder.close();
                 output.flush();
+                byte[] data = Base64.encode(output.toByteArray(), Base64.DEFAULT);
                 output.close();
-                PREVIEW_IMAGE = output.toString();
+                PREVIEW_IMAGE = new String(data);
             } catch (IOException e) {
                 LOG.error("error reading location preview resource", e);
             }
