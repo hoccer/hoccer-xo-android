@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.fragment;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -334,6 +336,8 @@ public class ProfileFragment extends XoFragment
             if(avatarDownload != null) {
                 if(avatarDownload.isContentAvailable()) {
                     avatarUrl = avatarDownload.getDataFile();
+                    Uri uri = Uri.fromFile(new File(avatarUrl));
+                    avatarUrl = uri.toString();
                 }
             }
         }
