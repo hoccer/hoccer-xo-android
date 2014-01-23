@@ -265,7 +265,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         File destination = new File(XoApplication.getAttachmentDirectory().getPath() + File.separator + source.getName());
 
         BitmapFactory.Options opt = new BitmapFactory.Options();
-        opt.inSampleSize = 2;
+        opt.inSampleSize = 4;
         Bitmap bmp = BitmapFactory.decodeFile(filePath, opt);
         try {
             FileOutputStream out = new FileOutputStream(destination);
