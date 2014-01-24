@@ -127,6 +127,7 @@
     <string name="file_chooser_string">choose a file to attach</string>
     <string name="open_file">open file</string>
     <string name="error_no_such_app">there is no App installed which could handle this File</string>
+    <string name="error_no_videoplayer">can\'t handle video. Please install a proper videoplayer.</string>
 
     <string-array name="preference_log_level_names">
       <item>Info</item>

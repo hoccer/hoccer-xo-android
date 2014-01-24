@@ -1,13 +1,16 @@
 package com.hoccer.xo.android.content.image;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewer;
+import com.hoccer.xo.release.R;
 
 public class VideoViewer extends ContentViewer<Button> {
 
@@ -36,8 +39,14 @@ public class VideoViewer extends ContentViewer<Button> {
                             url = contentObject.getContentDataUrl();
                         }
                         if(url != null) {
+                            try {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                             view.getContext().startActivity(intent);
+                            } catch(ActivityNotFoundException exception) {
+                                Toast.makeText(view.getContext(), R.string.error_no_videoplayer,
+                                        Toast.LENGTH_LONG).show();
+                                LOG.error(exception);
+                            }
                         }
                     }
                 }
