@@ -3,10 +3,13 @@ package com.hoccer.xo.android.content.image;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
+
+import java.io.IOException;
 
 public class ImageSelector implements IContentSelector {
 
@@ -57,8 +60,13 @@ public class ImageSelector implements IContentSelector {
         contentObject.setContentLength(fileSize);
         if(fileWidth > 0 && fileHeight > 0) {
             contentObject.setContentAspectRatio(((float)fileWidth) / ((float)fileHeight));
+        } else {
+            try {
+                Bitmap bmp = MediaStore.Images.Media.getBitmap(context.getContentResolver(), selectedContent);
+                contentObject.setContentAspectRatio(((float)bmp.getWidth()) / ((float)bmp.getHeight()));
+            } catch (IOException e) {
+            }
         }
-
         return contentObject;
     }
 
