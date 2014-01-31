@@ -33,6 +33,7 @@ public class ProfileActivity extends XoActivity implements IXoContactListener, I
         PROFILE,
         CREATE_GROUP,
         CREATE_SELF,
+        CONFIRM_SELF
     }
 
     Mode mMode;
@@ -212,7 +213,7 @@ public class ProfileActivity extends XoActivity implements IXoContactListener, I
 
     @Override
     public void onClientStateChange(XoClient client, int state) {
-//        if(mMode == Mode.CONFIRM_SELF && state == XoClient.STATE_LOGIN) {
+//        if(mMode == Mode.CREATE_SELF && state == XoClient.STATE_LOGIN) {
 //            runOnUiThread(new Runnable() {
 //                @Override
 //                public void run() {
