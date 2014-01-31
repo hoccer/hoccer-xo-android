@@ -156,6 +156,21 @@ public class ProfileActivity extends XoActivity implements IXoContactListener, I
         update(mFragment.getContact());
     }
 
+    public void confirmSelf() {
+        LOG.debug("confirmSelf()");
+        mMode = Mode.CONFIRM_SELF;
+        mFragment.confirmSelf();
+        update(mFragment.getContact());
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+                startActivity(new Intent(ProfileActivity.this, ContactsActivity.class));
+            }
+        });
+    }
+
     @Override
     public void hackReturnedFromDialog() {
         LOG.debug("hackReturnedFromDialog()");
@@ -197,15 +212,15 @@ public class ProfileActivity extends XoActivity implements IXoContactListener, I
 
     @Override
     public void onClientStateChange(XoClient client, int state) {
-        if(mMode == Mode.CREATE_SELF && state == XoClient.STATE_LOGIN) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    finish();
-                    startActivity(new Intent(ProfileActivity.this, ContactsActivity.class));
-                }
-            });
-        }
+//        if(mMode == Mode.CONFIRM_SELF && state == XoClient.STATE_LOGIN) {
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    finish();
+//                    startActivity(new Intent(ProfileActivity.this, ContactsActivity.class));
+//                }
+//            });
+//        }
     }
 
     @Override
