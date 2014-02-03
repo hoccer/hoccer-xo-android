@@ -17,26 +17,4 @@
 
   </PreferenceCategory>
 
-  <PreferenceCategory
-          android:title="Development">
-
-    <CheckBoxPreference
-            android:key="preference_log_logcat"
-            android:title="Log via logcat"
-            android:defaultValue="true"/>
-
-    <CheckBoxPreference
-            android:key="preference_log_sd"
-            android:title="Log to SD card"
-            android:defaultValue="false"/>
-
-    <ListPreference
-            android:key="preference_log_level"
-            android:title="Global log level"
-            android:entries="@array/preference_log_level_names"
-            android:entryValues="@array/preference_log_level_values"
-            android:defaultValue="INFO"/>
-
-  </PreferenceCategory>
-
 </PreferenceScreen>
