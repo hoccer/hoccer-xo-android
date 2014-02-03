@@ -20,6 +20,7 @@ import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkRelationship;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoDialogs;
+import com.hoccer.xo.android.activity.ProfileActivity;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
 import com.hoccer.xo.android.base.XoFragment;
@@ -47,6 +48,7 @@ public class ProfileFragment extends XoFragment
         PROFILE,
         CREATE_GROUP,
         CREATE_SELF,
+        CONFIRM_SELF
     }
 
     Mode mMode;
@@ -178,9 +180,11 @@ public class ProfileFragment extends XoFragment
         }
         if(v == mSelfRegisterButton) {
             LOG.debug("onClick(selfRegister)");
-            if(mContact != null && mContact.isSelf() && !mContact.isSelfRegistered()) {
+            if(mContact != null && mContact.isSelf()) {
                 mContact.updateSelfConfirmed();
                 getXoClient().register();
+                ProfileActivity activity = (ProfileActivity) getXoActivity();
+                activity.confirmSelf();
             }
         }
         if(v == mUserBlockButton) {
@@ -300,6 +304,13 @@ public class ProfileFragment extends XoFragment
         update(mContact);
     }
 
+    public void confirmSelf() {
+        LOG.debug("confirmSelf()");
+        mMode = Mode.CONFIRM_SELF;
+        mContact = getXoClient().getSelfContact();
+        update(mContact);
+    }
+
     public void createGroup() {
         LOG.debug("createGroup()");
         mMode = Mode.CREATE_GROUP;
@@ -345,7 +356,7 @@ public class ProfileFragment extends XoFragment
         ImageLoader.getInstance().displayImage(avatarUrl, mAvatarImage);
 
         // self operations
-        int selfRegistrationVisibility = contact.isSelf() && !contact.isSelfRegistered() ? View.VISIBLE : View.GONE;
+        int selfRegistrationVisibility = contact.isSelf() && mMode == Mode.CREATE_SELF ? View.VISIBLE : View.GONE;
         mSelfRegisterButton.setVisibility(selfRegistrationVisibility);
         // client operations
         int clientVisibility = contact.isClient() ? View.VISIBLE : View.GONE;
