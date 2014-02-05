@@ -32,7 +32,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
 
     private static final String DATABASE_NAME    = "hoccer-talk.db";
 
-    private static final int    DATABASE_VERSION = 8;
+    private static final int    DATABASE_VERSION = 9;
 
     private static AndroidTalkDatabase INSTANCE = null;
 
@@ -123,6 +123,10 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
             if(oldVersion < 8) {
                 Dao<TalkClientSelf, Integer> selfs = getDao(TalkClientSelf.class);
                 selfs.executeRaw("ALTER TABLE `clientSelf` ADD COLUMN `registrationName` VARCHAR;");
+            }
+            if(oldVersion < 9) {
+                Dao<TalkClientMessage, Integer> messages = getDao(TalkClientMessage.class);
+                messages.executeRaw("ALTER TABLE `clientMessage` ADD COLUMN `inProgress` BOOLEAN;");
             }
         } catch (SQLException e) {
             LOG.error("sql error upgrading database", e);
