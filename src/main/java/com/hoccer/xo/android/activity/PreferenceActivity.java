@@ -16,7 +16,7 @@ public class PreferenceActivity extends SherlockPreferenceActivity {
         LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        if (XoConfiguration.DEVELOPMENT_SETTINGS_ENABLED) {
+        if (XoConfiguration.DEVELOPMENT_MODE_ENABLED) {
             addPreferencesFromResource(R.xml.development_preferences);
         } else {
             addPreferencesFromResource(R.xml.preferences);
