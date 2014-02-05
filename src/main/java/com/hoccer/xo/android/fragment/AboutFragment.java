@@ -2,7 +2,7 @@
  * AboutFragment.java
  * HoccerXO Chat
  *
- * Created by Björn Heller 5/16/13 1:16 AM
+ * Created by Bjoern Heller 5/16/13 1:16 AM
  * Copyright (c) 2013. Hoccer Betriebs GmbH
  */
 
