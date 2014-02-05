@@ -6,8 +6,10 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.talk.model.TalkPresence;
@@ -127,7 +129,12 @@ public class RichContactsAdapter extends ContactsAdapter {
             TalkClientMessage lastMessage = mDatabase.findLatestMessageByContactId(contact.getClientContactId());
             if(lastMessage != null) {
                 lastMessageText.setVisibility(View.VISIBLE);
-                lastMessageText.setText(lastMessage.getText());
+                if (lastMessage.getAttachmentDownload() != null) {
+                    TalkClientDownload attachment = lastMessage.getAttachmentDownload();
+                    lastMessageText.setText(chooseAttachmentType(attachment.getMediaType()));
+                } else {
+                    lastMessageText.setText(lastMessage.getText());
+                }
             } else {
                 lastMessageText.setVisibility(View.GONE);
             }
@@ -152,6 +159,10 @@ public class RichContactsAdapter extends ContactsAdapter {
             }
         }
         ImageLoader.getInstance().displayImage(avatarUri, iconView);
+    }
+
+    private String chooseAttachmentType(String attachmentType) {
+        return "Received " + attachmentType + " attachment";
     }
 
 }

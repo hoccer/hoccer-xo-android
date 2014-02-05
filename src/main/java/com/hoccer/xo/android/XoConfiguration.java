@@ -19,6 +19,9 @@ public class XoConfiguration {
     public static final String INTERNAL_UPLOADS = "uploads";
     public static final String INTERNAL_GENERATED = "generated";
 
+    /* Enable or disable development settings in preferences */
+    public static final boolean DEVELOPMENT_SETTINGS_ENABLED = true;
+
     /**
      * Background executor thread count
      *
