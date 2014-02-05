@@ -21,6 +21,7 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.talk.model.TalkDelivery;
 import com.hoccer.talk.model.TalkMessage;
+import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.SelectedContent;
@@ -29,7 +30,8 @@ import com.hoccer.xo.release.R;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class CompositionFragment extends XoFragment implements View.OnClickListener {
+public class CompositionFragment extends XoFragment implements View.OnClickListener,
+        View.OnLongClickListener {
 
     Menu mMenu;
 
@@ -43,6 +45,8 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     ContentView mAttachmentView;
 
     TalkClientContact mContact;
+
+    private String mLastMessage = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,8 +71,12 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         });
 
         mSendButton = (ImageButton)v.findViewById(R.id.messaging_composer_send);
-        mSendButton.setEnabled(false);
+        mSendButton.setEnabled(false || XoConfiguration.DEVELOPMENT_MODE_ENABLED);
         mSendButton.setOnClickListener(this);
+        mSendButton.setOnLongClickListener(this);
+        if(XoConfiguration.DEVELOPMENT_MODE_ENABLED) {
+            mSendButton.setLongClickable(true);
+        }
 
         mClearButton = (ImageButton)v.findViewById(R.id.messaging_composer_clear);
         mClearButton.setVisibility(View.GONE);
@@ -106,7 +114,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             @Override
             public void afterTextChanged(Editable s) {
                 boolean enable = isComposed() || s.toString().length() > 0;
-                mSendButton.setEnabled(enable);
+                mSendButton.setEnabled(enable  || XoConfiguration.DEVELOPMENT_MODE_ENABLED);
                 mClearButton.setVisibility(enable ? View.VISIBLE : View.GONE);
             }
         };
@@ -165,7 +173,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     private void clearComposedMessage() {
         LOG.debug("clearComposedMessage()");
         mTextEdit.setText(null);
-        mSendButton.setEnabled(false);
+        mSendButton.setEnabled(false || XoConfiguration.DEVELOPMENT_MODE_ENABLED);
         mClearButton.setVisibility(View.GONE);
         clearAttachment();
     }
@@ -175,7 +183,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         mAttachment = contentObject;
         mAttachmentView.displayContent(getXoActivity(), contentObject);
         mAttachmentView.setVisibility(View.VISIBLE);
-        mSendButton.setEnabled(isComposed());
+        mSendButton.setEnabled(isComposed() || XoConfiguration.DEVELOPMENT_MODE_ENABLED);
         mClearButton.setVisibility(isComposed() ? View.VISIBLE : View.GONE);
         mMenu.findItem(R.id.menu_attachment).setVisible(false);
     }
@@ -188,16 +196,8 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         mAttachment = null;
     }
 
-    private void sendComposedMessage() {
-        LOG.debug("sendComposedMessage()");
+    private TalkClientMessage composeMessage(String messageText) {
         XoClientDatabase db = getXoDatabase();
-
-        if(mContact == null) {
-            return;
-        }
-
-        String messageText = mTextEdit.getText().toString();
-
         // construct message and delivery objects
         final TalkClientMessage clientMessage = new TalkClientMessage();
         final TalkMessage message = new TalkMessage();
@@ -244,11 +244,37 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         // log to help debugging
         LOG.debug("created message with id " + clientMessage.getClientMessageId() + " and tag " + message.getMessageTag());
 
-        // request delivery from the client
-        getXoClient().requestDelivery(clientMessage);
+        return clientMessage;
+    }
 
-        // clear the composer UI to prepare it for the next message
+    private void sendComposedMessage() {
+        LOG.debug("sendComposedMessage()");
+
+        if(mContact == null) {
+            return;
+        }
+
+        String messageText = mTextEdit.getText().toString();
+
+        if(messageText == null || messageText.equals("")) {
+            return;
+        }
+
+        mLastMessage = messageText;
+        getXoClient().requestDelivery(composeMessage(messageText));
         clearComposedMessage();
     }
 
+    @Override
+    public boolean onLongClick(View v) {
+        boolean longpressHandled = false;
+        if(mLastMessage != null || !mLastMessage.equals("")) {
+            for(int i = 0; i < 10; i++) {
+                getXoClient().requestDelivery(composeMessage(mLastMessage));
+            }
+            longpressHandled = true;
+        }
+        clearComposedMessage();
+        return longpressHandled;
+    }
 }
