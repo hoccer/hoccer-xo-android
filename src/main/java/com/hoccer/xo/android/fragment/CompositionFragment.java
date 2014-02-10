@@ -269,7 +269,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     public boolean onLongClick(View v) {
         boolean longpressHandled = false;
         if(mLastMessage != null || !mLastMessage.equals("")) {
-            for(int i = 0; i < 10; i++) {
+            for(int i = 0; i < 15; i++) {
                 getXoClient().requestDelivery(composeMessage(mLastMessage + " " + String.valueOf(i)));
             }
             longpressHandled = true;
