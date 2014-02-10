@@ -32,6 +32,11 @@ public class XoHost implements IXoClientHost {
     }
 
     @Override
+    public ScheduledExecutorService getIncomingBackgroundExecutor() {
+        return XoApplication.getIncomingExecutor();
+    }
+
+    @Override
     public IXoClientDatabaseBackend getDatabaseBackend() {
         return AndroidTalkDatabase.getInstance(mContext);
     }
