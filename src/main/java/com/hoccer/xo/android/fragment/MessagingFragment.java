@@ -1,29 +1,31 @@
 package com.hoccer.xo.android.fragment;
 
+import com.actionbarsherlock.widget.SearchView;
+import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.xo.android.adapter.ConversationAdapter;
+import com.hoccer.xo.android.base.XoAdapter;
+import com.hoccer.xo.android.base.XoListFragment;
+import com.hoccer.xo.release.R;
+
+import org.apache.log4j.Logger;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.actionbarsherlock.widget.SearchView;
-import com.hoccer.xo.android.base.XoAdapter;
-import com.hoccer.xo.android.base.XoListFragment;
-import com.hoccer.xo.release.R;
-import com.hoccer.xo.android.adapter.ConversationAdapter;
-import com.hoccer.talk.client.model.TalkClientContact;
-import org.apache.log4j.Logger;
 
 /**
  * Fragment for conversations
  */
 public class MessagingFragment extends XoListFragment
-    implements SearchView.OnQueryTextListener,
-               XoAdapter.AdapterReloadListener {
+        implements SearchView.OnQueryTextListener,
+        XoAdapter.AdapterReloadListener {
 
-	private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
+    private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
 
-	ListView mMessageList;
+    ListView mMessageList;
 
     TextView mEmptyText;
 
@@ -31,25 +33,26 @@ public class MessagingFragment extends XoListFragment
 
     ConversationAdapter mAdapter;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		LOG.debug("onCreateView()");
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        LOG.debug("onCreateView()");
         super.onCreateView(inflater, container, savedInstanceState);
 
-		View v = inflater.inflate(R.layout.fragment_messaging, container, false);
+        View view = inflater.inflate(R.layout.fragment_messaging, container, false);
 
-		mMessageList = (ListView)v.findViewById(android.R.id.list);
-        mEmptyText = (TextView)v.findViewById(R.id.messaging_empty);
+        mMessageList = (ListView) view.findViewById(android.R.id.list);
+        mEmptyText = (TextView) view.findViewById(R.id.messaging_empty);
 
-		return v;
-	}
+        return view;
+    }
 
     @Override
     public void onResume() {
         LOG.debug("onResume()");
         super.onResume();
 
-        if(mAdapter == null) {
+        if (mAdapter == null) {
             mAdapter = getXoActivity().makeConversationAdapter();
             mAdapter.setAdapterReloadListener(this);
             mAdapter.onCreate();
@@ -59,7 +62,7 @@ public class MessagingFragment extends XoListFragment
 
         mAdapter.onResume();
 
-        if(mContact != null) {
+        if (mContact != null) {
             mAdapter.converseWithContact(mContact);
         }
     }
@@ -75,7 +78,7 @@ public class MessagingFragment extends XoListFragment
     public void onDestroy() {
         LOG.debug("onDestroy()");
         super.onDestroy();
-        if(mAdapter != null) {
+        if (mAdapter != null) {
             mAdapter.onDestroy();
             mAdapter = null;
         }
@@ -108,7 +111,7 @@ public class MessagingFragment extends XoListFragment
     public void converseWithContact(TalkClientContact contact) {
         LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
         mContact = contact;
-        if(mAdapter != null) {
+        if (mAdapter != null) {
             mAdapter.converseWithContact(contact);
         }
     }
