@@ -25,13 +25,13 @@ public class MessagingFragment extends XoListFragment
 
     private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
 
-    ListView mMessageList;
+    private ListView mMessageList;
 
-    TextView mEmptyText;
+    private TextView mEmptyText;
 
-    TalkClientContact mContact;
+    private TalkClientContact mContact;
 
-    ConversationAdapter mAdapter;
+    private ConversationAdapter mAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,7 +53,7 @@ public class MessagingFragment extends XoListFragment
         super.onResume();
 
         if (mAdapter == null) {
-            mAdapter = getXoActivity().makeConversationAdapter();
+            mAdapter = new ConversationAdapter(getXoActivity());
             mAdapter.setAdapterReloadListener(this);
             mAdapter.onCreate();
             mAdapter.requestReload();
