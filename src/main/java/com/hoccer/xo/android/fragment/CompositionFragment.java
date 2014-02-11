@@ -257,10 +257,9 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         String messageText = mTextEdit.getText().toString();
 
         if(messageText == null || messageText.equals("")) {
-            return;
+            mLastMessage = messageText;
         }
 
-        mLastMessage = messageText;
         getXoClient().requestDelivery(composeMessage(messageText));
         clearComposedMessage();
     }
