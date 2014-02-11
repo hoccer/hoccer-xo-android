@@ -41,15 +41,15 @@ public class ConversationAdapter extends XoAdapter
 
     private static final int VIEW_TYPE_COUNT = 2;
 
-    boolean mReloadHappened = false;
+    private final AtomicInteger mVersion = new AtomicInteger();
+
+    private boolean mReloadHappened = false;
 
     private TalkClientContact mContact;
 
     private List<TalkClientMessage> mMessages = new Vector<TalkClientMessage>();
 
     private ScheduledFuture<?> mReloadFuture;
-
-    private AtomicInteger mVersion = new AtomicInteger();
 
     public ConversationAdapter(XoActivity activity) {
         super(activity);
@@ -169,7 +169,7 @@ public class ConversationAdapter extends XoAdapter
     }
 
     /** Performs a full onReloadRequest */
-    public void startReload() {
+    void startReload() {
         LOG.debug("startReload()");
         ScheduledExecutorService executor = XoApplication.getExecutor();
         final int startVersion = mVersion.get();
@@ -387,7 +387,7 @@ public class ConversationAdapter extends XoAdapter
         String avatarUri = null;
         if (sendingContact != null) {
             avatar.setOnClickListener(new View.OnClickListener() {
-                TalkClientContact contact = sendingContact;
+                final TalkClientContact contact = sendingContact;
 
                 @Override
                 public void onClick(View v) {

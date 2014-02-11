@@ -1,12 +1,14 @@
 package com.hoccer.xo.android.base;
 
-import android.content.res.Resources;
-import android.view.LayoutInflater;
-import android.widget.BaseAdapter;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.xo.android.XoApplication;
+
 import org.apache.log4j.Logger;
+
+import android.content.res.Resources;
+import android.view.LayoutInflater;
+import android.widget.BaseAdapter;
 
 import java.io.File;
 import java.util.concurrent.ScheduledExecutorService;
@@ -20,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * so that they can attach client listeners and manage resources.
  *
  * Adapters get the following lifecycle calls, similar to activities:
- *    onCreate, onResume, onPause, onDestroy
+ * onCreate, onResume, onPause, onDestroy
  *
  * Adapter reload is integrated into the lifecycle by implementing
  * an onRequestReload method. The method requestReload may be used
@@ -28,34 +30,32 @@ import java.util.concurrent.TimeUnit;
  *
  * Reloads are rate-limited to a minimum interval to prevent
  * hogging the CPU with superfluous view updates.
- *
  */
 public abstract class XoAdapter extends BaseAdapter {
 
+    private static final long RATE_LIMIT_MSECS = 1000;
+
+    protected final XoActivity mActivity;
+
+    protected final XoClientDatabase mDatabase;
+
+    protected final Resources mResources;
+
+    protected final LayoutInflater mInflater;
+
+    private final ScheduledExecutorService mExecutor;
+
     protected Logger LOG = null;
 
-    static final long RATE_LIMIT_MSECS = 1000;
+    private boolean mActive = false;
 
-    public interface AdapterReloadListener {
-        public void onAdapterReloadStarted(XoAdapter adapter);
-        public void onAdapterReloadFinished(XoAdapter adapter);
-    }
+    private boolean mNeedsReload = false;
 
-    protected XoActivity mActivity;
-    protected XoClientDatabase mDatabase;
+    private AdapterReloadListener mAdapterReloadListener;
 
-    protected Resources mResources;
-    protected LayoutInflater mInflater;
+    private ScheduledFuture<?> mNotifyFuture;
 
-    ScheduledExecutorService mExecutor;
-
-    boolean mActive = false;
-    boolean mNeedsReload = false;
-
-    AdapterReloadListener mAdapterReloadListener;
-
-    ScheduledFuture<?> mNotifyFuture;
-    long mNotifyTimestamp;
+    private long mNotifyTimestamp;
 
     public XoAdapter(XoActivity activity) {
         LOG = Logger.getLogger(getClass());
@@ -93,7 +93,7 @@ public abstract class XoAdapter extends BaseAdapter {
     public void onResume() {
         LOG.debug("onResume()");
         mActive = true;
-        if(mNeedsReload) {
+        if (mNeedsReload) {
             mNeedsReload = false;
             performReload();
         }
@@ -106,7 +106,7 @@ public abstract class XoAdapter extends BaseAdapter {
 
     public void requestReload() {
         LOG.debug("requestReload()");
-        if(mActive) {
+        if (mActive) {
             performReload();
         } else {
             mNeedsReload = true;
@@ -115,7 +115,7 @@ public abstract class XoAdapter extends BaseAdapter {
 
     private void performReload() {
         LOG.debug("performReload()");
-        if(mAdapterReloadListener != null) {
+        if (mAdapterReloadListener != null) {
             mAdapterReloadListener.onAdapterReloadStarted(this);
         }
         onReloadRequest();
@@ -123,7 +123,7 @@ public abstract class XoAdapter extends BaseAdapter {
 
     protected void reloadFinished() {
         LOG.debug("reloadFinished()");
-        if(mAdapterReloadListener != null) {
+        if (mAdapterReloadListener != null) {
             mAdapterReloadListener.onAdapterReloadFinished(this);
         }
     }
@@ -142,11 +142,11 @@ public abstract class XoAdapter extends BaseAdapter {
         LOG.trace("notifyDataSetChanged()");
         long now = System.currentTimeMillis();
         long delta = now - mNotifyTimestamp;
-        if(mNotifyFuture != null) {
+        if (mNotifyFuture != null) {
             mNotifyFuture.cancel(false);
             mNotifyFuture = null;
         }
-        if(delta < RATE_LIMIT_MSECS) {
+        if (delta < RATE_LIMIT_MSECS) {
             long delay = RATE_LIMIT_MSECS - delta;
             mNotifyFuture = mExecutor.schedule(
                     new Runnable() {
@@ -161,11 +161,18 @@ public abstract class XoAdapter extends BaseAdapter {
                             });
                         }
                     }
-            , delay, TimeUnit.MILLISECONDS);
+                    , delay, TimeUnit.MILLISECONDS);
         } else {
             mNotifyTimestamp = System.currentTimeMillis();
             super.notifyDataSetChanged();
         }
+    }
+
+    public interface AdapterReloadListener {
+
+        public void onAdapterReloadStarted(XoAdapter adapter);
+
+        public void onAdapterReloadFinished(XoAdapter adapter);
     }
 
 }
