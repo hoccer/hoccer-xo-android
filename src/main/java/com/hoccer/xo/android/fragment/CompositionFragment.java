@@ -33,18 +33,18 @@ import java.util.UUID;
 public class CompositionFragment extends XoFragment implements View.OnClickListener,
         View.OnLongClickListener {
 
-    Menu mMenu;
+    private Menu mMenu;
 
-    EditText mTextEdit;
-    TextWatcher mTextWatcher;
+    private EditText mTextEdit;
+    private TextWatcher mTextWatcher;
 
-    ImageButton mSendButton;
-    ImageButton mClearButton;
+    private ImageButton mSendButton;
+    private ImageButton mClearButton;
 
-    IContentObject mAttachment;
-    ContentView mAttachmentView;
+    private IContentObject mAttachment;
+    private ContentView mAttachmentView;
 
-    TalkClientContact mContact;
+    private TalkClientContact mContact;
 
     private String mLastMessage = null;
 
@@ -257,10 +257,9 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         String messageText = mTextEdit.getText().toString();
 
         if(messageText == null || messageText.equals("")) {
-            return;
+            mLastMessage = messageText;
         }
 
-        mLastMessage = messageText;
         getXoClient().requestDelivery(composeMessage(messageText));
         clearComposedMessage();
     }

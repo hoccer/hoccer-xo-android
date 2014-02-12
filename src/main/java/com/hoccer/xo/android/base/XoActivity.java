@@ -67,8 +67,6 @@ public abstract class XoActivity extends SherlockFragmentActivity {
 
     protected Logger LOG = null;
 
-    private ActionBar mActionBar;
-
     /** Executor for background tasks */
     ScheduledExecutorService mBackgroundExecutor;
 
@@ -98,11 +96,16 @@ public abstract class XoActivity extends SherlockFragmentActivity {
 
     boolean mUpEnabled = false;
 
+    private ActionBar mActionBar;
+
+    private String mBarcodeToken = null;
+
     public XoActivity() {
         LOG = Logger.getLogger(getClass());
     }
 
     protected abstract int getLayoutResource();
+
     protected abstract int getMenuResource();
 
     public XoClient getXoClient() {
@@ -247,9 +250,6 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         }
         return true;
     }
-
-    private String mBarcodeToken = null;
-
 
     private Intent selectedAvatarPreprocessing(Intent data) {
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -414,40 +414,6 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         }
     }
 
-    /**
-     * Connection to our backend service
-     */
-    public class MainServiceConnection implements ServiceConnection {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            LOG.debug("onServiceConnected()");
-            mService = (IXoClientService)service;
-            scheduleKeepAlive();
-            try {
-                mService.wake();
-            } catch (RemoteException e) {
-                LOG.error("remote error", e);
-            }
-            for(IXoFragment fragment: mTalkFragments) {
-                fragment.onServiceConnected();
-            }
-            if(mBarcodeToken != null) {
-                // XXX perform token pairing with callback
-                getXoClient().performTokenPairing(mBarcodeToken);
-                mBarcodeToken = null;
-            }
-        }
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            LOG.debug("onServiceDisconnected()");
-            shutdownKeepAlive();
-            mService = null;
-            for(IXoFragment fragment: mTalkFragments) {
-                fragment.onServiceDisconnected();
-            }
-        }
-    }
-
     public IXoClientService getXoService() {
         return mService;
     }
@@ -456,13 +422,13 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         return mDatabase;
     }
 
-    public ConversationAdapter makeConversationAdapter() {
-        return new ConversationAdapter(this);
-    }
-
     public ContactsAdapter makeContactListAdapter() {
         return new RichContactsAdapter(this);
     }
+
+//    public ConversationAdapter makeConversationAdapter() {
+//        return new ConversationAdapter(this);
+//    }
 
     public void wakeClient() {
         if(mService != null) {
@@ -571,6 +537,40 @@ public abstract class XoActivity extends SherlockFragmentActivity {
     }
 
     public void hackReturnedFromDialog() {
+    }
+
+    /**
+     * Connection to our backend service
+     */
+    public class MainServiceConnection implements ServiceConnection {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            LOG.debug("onServiceConnected()");
+            mService = (IXoClientService)service;
+            scheduleKeepAlive();
+            try {
+                mService.wake();
+            } catch (RemoteException e) {
+                LOG.error("remote error", e);
+            }
+            for(IXoFragment fragment: mTalkFragments) {
+                fragment.onServiceConnected();
+            }
+            if(mBarcodeToken != null) {
+                // XXX perform token pairing with callback
+                getXoClient().performTokenPairing(mBarcodeToken);
+                mBarcodeToken = null;
+            }
+        }
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            LOG.debug("onServiceDisconnected()");
+            shutdownKeepAlive();
+            mService = null;
+            for(IXoFragment fragment: mTalkFragments) {
+                fragment.onServiceDisconnected();
+            }
+        }
     }
 
 }

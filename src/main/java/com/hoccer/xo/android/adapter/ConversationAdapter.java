@@ -1,10 +1,5 @@
 package com.hoccer.xo.android.adapter;
 
-import android.text.format.DateUtils;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import com.hoccer.talk.client.IXoMessageListener;
 import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -18,6 +13,12 @@ import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import android.text.format.DateUtils;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -35,18 +36,20 @@ public class ConversationAdapter extends XoAdapter
         implements IXoMessageListener, IXoTransferListener {
 
     private static final int VIEW_TYPE_INCOMING = 0;
+
     private static final int VIEW_TYPE_OUTGOING = 1;
 
     private static final int VIEW_TYPE_COUNT = 2;
 
-    TalkClientContact mContact;
+    private final AtomicInteger mVersion = new AtomicInteger();
 
-    List<TalkClientMessage> mMessages = new Vector<TalkClientMessage>();
+    private boolean mReloadHappened = false;
 
-    boolean mReloadHappened = false;
-    ScheduledFuture<?> mReloadFuture;
+    private TalkClientContact mContact;
 
-    AtomicInteger mVersion = new AtomicInteger();
+    private List<TalkClientMessage> mMessages = new Vector<TalkClientMessage>();
+
+    private ScheduledFuture<?> mReloadFuture;
 
     public ConversationAdapter(XoActivity activity) {
         super(activity);
@@ -54,7 +57,7 @@ public class ConversationAdapter extends XoAdapter
 
     public void converseWithContact(TalkClientContact contact) {
         LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
-        if(mContact != contact) {
+        if (mContact != contact) {
             mVersion.incrementAndGet();
             mContact = contact;
             mReloadHappened = false;
@@ -101,17 +104,17 @@ public class ConversationAdapter extends XoAdapter
     /** Used internally to fault in related objects we need */
     private void reloadRelated(TalkClientMessage message) throws SQLException {
         TalkClientContact sender = message.getSenderContact();
-        if(sender != null) {
+        if (sender != null) {
             mDatabase.refreshClientContact(sender);
         }
         TalkClientContact conversation = message.getConversationContact();
-        if(conversation != null) {
+        if (conversation != null) {
             mDatabase.refreshClientContact(conversation);
         }
     }
 
     private void checkInterrupt() throws InterruptedException {
-        if(Thread.interrupted()) {
+        if (Thread.interrupted()) {
             LOG.debug("reload interrupted");
             throw new InterruptedException();
         }
@@ -125,11 +128,12 @@ public class ConversationAdapter extends XoAdapter
             checkInterrupt();
 
             // find relevant messages
-            final List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
+            final List<TalkClientMessage> messages = mDatabase
+                    .findMessagesByContactId(mContact.getClientContactId());
             checkInterrupt();
 
             // update related objects
-            for(TalkClientMessage message: messages) {
+            for (TalkClientMessage message : messages) {
                 reloadRelated(message);
                 checkInterrupt();
             }
@@ -141,7 +145,7 @@ public class ConversationAdapter extends XoAdapter
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(mVersion.compareAndSet(version, version + 1)) {
+                    if (mVersion.compareAndSet(version, version + 1)) {
                         LOG.debug("reload updates ui");
                         mReloadHappened = true;
                         mMessages = messages;
@@ -165,7 +169,7 @@ public class ConversationAdapter extends XoAdapter
     }
 
     /** Performs a full onReloadRequest */
-    public void startReload() {
+    void startReload() {
         LOG.debug("startReload()");
         ScheduledExecutorService executor = XoApplication.getExecutor();
         final int startVersion = mVersion.get();
@@ -176,10 +180,10 @@ public class ConversationAdapter extends XoAdapter
             }
         };
         synchronized (this) {
-            if(mReloadFuture != null) {
+            if (mReloadFuture != null) {
                 mReloadFuture.cancel(true);
             }
-            if(isActive()) {
+            if (isActive()) {
                 mReloadFuture = executor.schedule(runnable, 0, TimeUnit.MILLISECONDS);
             } else {
                 requestReload();
@@ -191,7 +195,7 @@ public class ConversationAdapter extends XoAdapter
         LOG.trace("cancelReload()");
         boolean cancelled = false;
         synchronized (ConversationAdapter.this) {
-            if(mReloadFuture != null) {
+            if (mReloadFuture != null) {
                 cancelled = mReloadFuture.cancel(true);
                 mReloadFuture = null;
             }
@@ -202,7 +206,7 @@ public class ConversationAdapter extends XoAdapter
     @Override
     public void onMessageAdded(final TalkClientMessage message) {
         LOG.debug("onMessageAdded()");
-        if(mContact != null && message.getConversationContact() == mContact) {
+        if (mContact != null && message.getConversationContact() == mContact) {
             final boolean forceReload = !mReloadHappened;
             runOnUiThread(new Runnable() {
                 @Override
@@ -211,13 +215,14 @@ public class ConversationAdapter extends XoAdapter
                     mVersion.incrementAndGet();
                     mMessages.add(message);
                     notifyDataSetChanged();
-                    if(reloadAgain || forceReload) {
+                    if (reloadAgain || forceReload) {
                         requestReload();
                     }
                 }
             });
         }
     }
+
     @Override
     public void onMessageRemoved(TalkClientMessage message) {
         requestReload();
@@ -231,18 +236,22 @@ public class ConversationAdapter extends XoAdapter
     @Override
     public void onDownloadRegistered(TalkClientDownload download) {
     }
+
     @Override
     public void onDownloadStarted(TalkClientDownload download) {
         update();
     }
+
     @Override
     public void onDownloadProgress(TalkClientDownload download) {
         update();
     }
+
     @Override
     public void onDownloadFinished(TalkClientDownload download) {
         update();
     }
+
     @Override
     public void onDownloadStateChanged(TalkClientDownload download) {
         update();
@@ -252,20 +261,21 @@ public class ConversationAdapter extends XoAdapter
     public void onUploadStarted(TalkClientUpload upload) {
         update();
     }
+
     @Override
     public void onUploadProgress(TalkClientUpload upload) {
         update();
     }
+
     @Override
     public void onUploadFinished(TalkClientUpload upload) {
         update();
     }
+
     @Override
     public void onUploadStateChanged(TalkClientUpload upload) {
         update();
     }
-
-
 
 
     @Override
@@ -296,7 +306,7 @@ public class ConversationAdapter extends XoAdapter
     @Override
     public int getItemViewType(int position) {
         TalkClientMessage msg = getItem(position);
-        if(msg.isOutgoing()) {
+        if (msg.isOutgoing()) {
             return VIEW_TYPE_OUTGOING;
         } else {
             return VIEW_TYPE_INCOMING;
@@ -311,18 +321,18 @@ public class ConversationAdapter extends XoAdapter
         View v = convertView;
 
         switch (viewType) {
-        case VIEW_TYPE_OUTGOING:
-            if(v == null) {
-                v = mInflater.inflate(R.layout.item_conversation_outgoing, null);
-            }
-            updateViewOutgoing(v, message);
-            break;
-        case VIEW_TYPE_INCOMING:
-            if(v == null) {
-                v = mInflater.inflate(R.layout.item_conversation_incoming, null);
-            }
-            updateViewIncoming(v, message);
-            break;
+            case VIEW_TYPE_OUTGOING:
+                if (v == null) {
+                    v = mInflater.inflate(R.layout.item_conversation_outgoing, null);
+                }
+                updateViewOutgoing(v, message);
+                break;
+            case VIEW_TYPE_INCOMING:
+                if (v == null) {
+                    v = mInflater.inflate(R.layout.item_conversation_incoming, null);
+                }
+                updateViewIncoming(v, message);
+                break;
         }
 
         return v;
@@ -341,26 +351,26 @@ public class ConversationAdapter extends XoAdapter
     private void updateViewCommon(View view, TalkClientMessage message) {
         final TalkClientContact sendingContact = message.getSenderContact();
 
-        if(!message.isSeen()) {
+        if (!message.isSeen()) {
             markMessageAsSeen(message);
         }
 
-        TextView text = (TextView)view.findViewById(R.id.message_text);
+        TextView text = (TextView) view.findViewById(R.id.message_text);
         String textString = message.getText();
-        if(textString == null) {
+        if (textString == null) {
             text.setText("<Unreadable>"); // XXX
         } else {
             text.setText(textString);
-            if(textString.length() > 0) {
+            if (textString.length() > 0) {
                 text.setVisibility(View.VISIBLE);
             } else {
                 text.setVisibility(View.GONE);
             }
         }
 
-        TextView timestamp = (TextView)view.findViewById(R.id.message_time);
+        TextView timestamp = (TextView) view.findViewById(R.id.message_time);
         Date time = message.getTimestamp();
-        if(time != null) {
+        if (time != null) {
             timestamp.setVisibility(View.VISIBLE);
             timestamp.setText(DateUtils.getRelativeDateTimeString(
                     mActivity,
@@ -373,31 +383,32 @@ public class ConversationAdapter extends XoAdapter
             timestamp.setVisibility(View.GONE);
         }
 
-        final ImageView avatar = (ImageView)view.findViewById(R.id.message_avatar);
+        final ImageView avatar = (ImageView) view.findViewById(R.id.message_avatar);
         String avatarUri = null;
-        if(sendingContact != null) {
+        if (sendingContact != null) {
             avatar.setOnClickListener(new View.OnClickListener() {
-                TalkClientContact contact = sendingContact;
+                final TalkClientContact contact = sendingContact;
+
                 @Override
                 public void onClick(View v) {
-                    if(!contact.isSelf()) {
+                    if (!contact.isSelf()) {
                         mActivity.showContactProfile(contact);
                     }
                 }
             });
             avatarUri = sendingContact.getAvatarContentUrl();
-            if(avatarUri == null) {
-                if(sendingContact.isGroup()) {
+            if (avatarUri == null) {
+                if (sendingContact.isGroup()) {
                     avatarUri = "content://" + R.drawable.avatar_default_group;
                 }
             }
         }
-        if(avatarUri == null) {
+        if (avatarUri == null) {
             avatarUri = "content://" + R.drawable.avatar_default_contact;
         }
         loadAvatar(avatar, avatarUri);
 
-        ContentView contentView = (ContentView)view.findViewById(R.id.message_content);
+        ContentView contentView = (ContentView) view.findViewById(R.id.message_content);
 
         int displayHeight = mResources.getDisplayMetrics().heightPixels;
         // XXX better place for this? also we might want to use the measured height of our list view
@@ -405,15 +416,15 @@ public class ConversationAdapter extends XoAdapter
 
         IContentObject contentObject = null;
         TalkClientUpload attachmentUpload = message.getAttachmentUpload();
-        if(attachmentUpload != null) {
+        if (attachmentUpload != null) {
             contentObject = attachmentUpload;
         } else {
             TalkClientDownload attachmentDownload = message.getAttachmentDownload();
-            if(attachmentDownload != null) {
+            if (attachmentDownload != null) {
                 contentObject = attachmentDownload;
             }
         }
-        if(contentObject == null) {
+        if (contentObject == null) {
             contentView.setVisibility(View.GONE);
             contentView.clear();
         } else {
