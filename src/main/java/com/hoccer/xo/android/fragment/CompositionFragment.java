@@ -73,8 +73,8 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         mSendButton = (ImageButton)v.findViewById(R.id.messaging_composer_send);
         mSendButton.setEnabled(false || XoConfiguration.DEVELOPMENT_MODE_ENABLED);
         mSendButton.setOnClickListener(this);
-        mSendButton.setOnLongClickListener(this);
         if(XoConfiguration.DEVELOPMENT_MODE_ENABLED) {
+            mSendButton.setOnLongClickListener(this);
             mSendButton.setLongClickable(true);
         }
 
@@ -256,7 +256,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
         String messageText = mTextEdit.getText().toString();
 
-        if(messageText == null || messageText.equals("")) {
+        if(messageText != null && !messageText.equals("")) {
             mLastMessage = messageText;
         }
 
