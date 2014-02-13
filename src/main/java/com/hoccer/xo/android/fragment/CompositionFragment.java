@@ -196,6 +196,9 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         mAttachment = null;
     }
 
+
+    /* @deprecated Use XoClient.composeClientMessage() instead */
+    @Deprecated
     private TalkClientMessage composeMessage(String messageText) {
         XoClientDatabase db = getXoDatabase();
         // construct message and delivery objects
@@ -260,6 +263,16 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             mLastMessage = messageText;
         }
 
+        /*
+        composeMessage is deprecated. The following is an example how to use the new way:
+
+        TalkClientUpload upload = null;
+        if (mAttachment != null) {
+            upload = SelectedContent.createAttachmentUpload(mAttachment);
+        }
+        getXoClient().composeClientMessage(mContact, messageText, upload);
+
+        */
         getXoClient().requestDelivery(composeMessage(messageText));
         clearComposedMessage();
     }
