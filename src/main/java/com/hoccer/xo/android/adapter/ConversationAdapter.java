@@ -11,10 +11,12 @@ import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentView;
+import com.hoccer.xo.android.view.OnOverscrollListener;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -41,6 +43,8 @@ public class ConversationAdapter extends XoAdapter
 
     private static final int VIEW_TYPE_COUNT = 2;
 
+    private static final long LOAD_MESSAGES = 10L;
+
     private final AtomicInteger mVersion = new AtomicInteger();
 
     private boolean mReloadHappened = false;
@@ -50,6 +54,8 @@ public class ConversationAdapter extends XoAdapter
     private List<TalkClientMessage> mMessages = new Vector<TalkClientMessage>();
 
     private ScheduledFuture<?> mReloadFuture;
+
+    private int mHistoryCount = 0;
 
     public ConversationAdapter(XoActivity activity) {
         super(activity);
@@ -124,15 +130,18 @@ public class ConversationAdapter extends XoAdapter
         LOG.debug("performReload(" + version + ")");
         try {
             // refresh the conversation contact
+
             mDatabase.refreshClientContact(mContact);
             checkInterrupt();
 
             // find relevant messages
+//            final List<TalkClientMessage> messages = mDatabase
+//                    .findMessagesByContactId(mContact.getClientContactId());
+            long offset = LOAD_MESSAGES * mHistoryCount;
             final List<TalkClientMessage> messages = mDatabase
-                    .findMessagesByContactId(mContact.getClientContactId());
+                    .findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
             checkInterrupt();
 
-            // update related objects
             for (TalkClientMessage message : messages) {
                 reloadRelated(message);
                 checkInterrupt();
@@ -318,24 +327,22 @@ public class ConversationAdapter extends XoAdapter
         int viewType = getItemViewType(position);
         TalkClientMessage message = getItem(position);
 
-        View v = convertView;
-
         switch (viewType) {
             case VIEW_TYPE_OUTGOING:
-                if (v == null) {
-                    v = mInflater.inflate(R.layout.item_conversation_outgoing, null);
+                if (convertView == null) {
+                    convertView = mInflater.inflate(R.layout.item_conversation_outgoing, null);
                 }
-                updateViewOutgoing(v, message);
+                updateViewOutgoing(convertView, message);
                 break;
             case VIEW_TYPE_INCOMING:
-                if (v == null) {
-                    v = mInflater.inflate(R.layout.item_conversation_incoming, null);
+                if (convertView == null) {
+                    convertView = mInflater.inflate(R.layout.item_conversation_incoming, null);
                 }
-                updateViewIncoming(v, message);
+                updateViewIncoming(convertView, message);
                 break;
         }
 
-        return v;
+        return convertView;
     }
 
     private void updateViewOutgoing(View view, TalkClientMessage message) {
@@ -445,5 +452,6 @@ public class ConversationAdapter extends XoAdapter
             }
         });
     }
+
 
 }

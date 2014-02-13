@@ -5,11 +5,14 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.adapter.ConversationAdapter;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
+import com.hoccer.xo.android.view.OnOverscrollListener;
+import com.hoccer.xo.android.view.OverscrollListView;
 import com.hoccer.xo.release.R;
 
 import org.apache.log4j.Logger;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,17 +24,21 @@ import android.widget.TextView;
  */
 public class MessagingFragment extends XoListFragment
         implements SearchView.OnQueryTextListener,
-        XoAdapter.AdapterReloadListener {
+        XoAdapter.AdapterReloadListener, OnOverscrollListener {
 
     private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
 
-    private ListView mMessageList;
+    private static final int OVERSCROLL_THRESHOLD = 15;
+
+    private OverscrollListView mMessageList;
 
     private TextView mEmptyText;
 
     private TalkClientContact mContact;
 
     private ConversationAdapter mAdapter;
+
+    private int mLastOverscrollDeltaY = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,7 +48,9 @@ public class MessagingFragment extends XoListFragment
 
         View view = inflater.inflate(R.layout.fragment_messaging, container, false);
 
-        mMessageList = (ListView) view.findViewById(android.R.id.list);
+        mMessageList = (OverscrollListView) view.findViewById(android.R.id.list);
+        mMessageList.setOverScrollMode(ListView.OVER_SCROLL_IF_CONTENT_SCROLLS);
+        mMessageList.addOverScrollListener(this);
         mEmptyText = (TextView) view.findViewById(R.id.messaging_empty);
 
         return view;
@@ -116,4 +125,12 @@ public class MessagingFragment extends XoListFragment
         }
     }
 
+    @Override
+    public void onOverscroll(int deltaX, int deltaY, boolean clampedX, boolean clampedY) {
+        if(deltaY > OVERSCROLL_THRESHOLD) {
+
+        }
+
+        Log.d("zalem", "overscrolled: " + deltaY + " clamped: " + clampedY);
+    }
 }
