@@ -358,7 +358,7 @@ public class ConversationAdapter extends XoAdapter
         TextView text = (TextView) view.findViewById(R.id.message_text);
         String textString = message.getText();
         if (textString == null) {
-            text.setText("<Unreadable>"); // XXX
+            text.setText("");
         } else {
             text.setText(textString);
             if (textString.length() > 0) {
