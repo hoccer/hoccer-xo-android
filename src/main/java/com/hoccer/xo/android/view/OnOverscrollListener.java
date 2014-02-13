@@ -5,5 +5,6 @@ package com.hoccer.xo.android.view;
  */
 public interface OnOverscrollListener {
 
-    public void onOverscroll(int deltaX, int deltaY, boolean clampedX, boolean clampedY);
+    public void onOverscroll(int deltaX, int deltaY, boolean clampedX,
+            boolean clampedY);
 }

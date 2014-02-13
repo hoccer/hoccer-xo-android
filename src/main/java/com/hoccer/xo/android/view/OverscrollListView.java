@@ -2,6 +2,7 @@ package com.hoccer.xo.android.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -52,12 +53,12 @@ public class OverscrollListView extends ListView {
 
     @Override
     protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
-        super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
         if (!mOnOverscrollListeners.isEmpty() && (clampedX || clampedY)) {
             for (OnOverscrollListener listener : mOnOverscrollListeners) {
                 listener.onOverscroll(mOverScrollByDeltaX, mOverScrollByDeltaY, clampedX,
                         clampedY);
             }
         }
+        super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
     }
 }

@@ -12,7 +12,6 @@ import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,7 @@ public class MessagingFragment extends XoListFragment
 
     private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
 
-    private static final int OVERSCROLL_THRESHOLD = 15;
+    private static final int OVERSCROLL_THRESHOLD = -45;
 
     private OverscrollListView mMessageList;
 
@@ -38,7 +37,11 @@ public class MessagingFragment extends XoListFragment
 
     private ConversationAdapter mAdapter;
 
-    private int mLastOverscrollDeltaY = 0;
+    private boolean inOverscrollProgress = false;
+
+    private View mOverscrollIndicator;
+
+    private int mLastDeltaY;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,6 +55,7 @@ public class MessagingFragment extends XoListFragment
         mMessageList.setOverScrollMode(ListView.OVER_SCROLL_IF_CONTENT_SCROLLS);
         mMessageList.addOverScrollListener(this);
         mEmptyText = (TextView) view.findViewById(R.id.messaging_empty);
+        mOverscrollIndicator = view.findViewById(R.id.overscroll_indicator);
 
         return view;
     }
@@ -127,10 +131,9 @@ public class MessagingFragment extends XoListFragment
 
     @Override
     public void onOverscroll(int deltaX, int deltaY, boolean clampedX, boolean clampedY) {
-        if(deltaY > OVERSCROLL_THRESHOLD) {
-
+        if(mLastDeltaY > deltaY) {
+            mAdapter.loadNextMessages();
         }
-
-        Log.d("zalem", "overscrolled: " + deltaY + " clamped: " + clampedY);
     }
+
 }

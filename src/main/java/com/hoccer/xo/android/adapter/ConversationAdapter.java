@@ -11,7 +11,6 @@ import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.view.OnOverscrollListener;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -134,12 +133,13 @@ public class ConversationAdapter extends XoAdapter
             mDatabase.refreshClientContact(mContact);
             checkInterrupt();
 
-            // find relevant messages
-//            final List<TalkClientMessage> messages = mDatabase
-//                    .findMessagesByContactId(mContact.getClientContactId());
-            long offset = LOAD_MESSAGES * mHistoryCount;
+            long messagesToLoad = LOAD_MESSAGES;
+            if(mMessages != null && !mMessages.isEmpty()) {
+                messagesToLoad = mMessages.size();
+            }
+
             final List<TalkClientMessage> messages = mDatabase
-                    .findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
+                    .findMessagesByContactId(mContact.getClientContactId(), messagesToLoad, 0);
             checkInterrupt();
 
             for (TalkClientMessage message : messages) {
@@ -327,17 +327,20 @@ public class ConversationAdapter extends XoAdapter
         int viewType = getItemViewType(position);
         TalkClientMessage message = getItem(position);
 
+//        Log.d("zalem", message.getText() + " | isOutgoing = " + message.isOutgoing() + " | isIncoming = " + message.isIncoming());
         switch (viewType) {
             case VIEW_TYPE_OUTGOING:
                 if (convertView == null) {
                     convertView = mInflater.inflate(R.layout.item_conversation_outgoing, null);
                 }
+//                Log.d("zalem", "outgoing");
                 updateViewOutgoing(convertView, message);
                 break;
             case VIEW_TYPE_INCOMING:
                 if (convertView == null) {
                     convertView = mInflater.inflate(R.layout.item_conversation_incoming, null);
                 }
+//                Log.d("zalem", "incoming");
                 updateViewIncoming(convertView, message);
                 break;
         }
@@ -365,7 +368,7 @@ public class ConversationAdapter extends XoAdapter
         TextView text = (TextView) view.findViewById(R.id.message_text);
         String textString = message.getText();
         if (textString == null) {
-            text.setText("<Unreadable>"); // XXX
+            text.setText(""); // XXX
         } else {
             text.setText(textString);
             if (textString.length() > 0) {
@@ -454,4 +457,25 @@ public class ConversationAdapter extends XoAdapter
     }
 
 
+    public synchronized void loadNextMessages() {
+        try {
+            mHistoryCount++;
+            long offset = mHistoryCount * LOAD_MESSAGES;
+            final List<TalkClientMessage> messages = mDatabase
+                    .findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
+            for (TalkClientMessage message : messages) {
+                reloadRelated(message);
+            }
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mMessages.addAll(0, messages);
+                    notifyDataSetChanged();
+                }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
