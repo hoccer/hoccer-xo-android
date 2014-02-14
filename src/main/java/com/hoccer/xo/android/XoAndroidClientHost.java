@@ -1,16 +1,21 @@
 package com.hoccer.xo.android;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import com.hoccer.talk.client.IXoClientDatabaseBackend;
 import com.hoccer.talk.client.IXoClientHost;
 import com.hoccer.talk.client.XoClientConfiguration;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.WebSocketClientFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
@@ -22,10 +27,24 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 public class XoAndroidClientHost implements IXoClientHost {
 
-    Context mContext;
+    private static final String SYSTEM_NAME = "Android";
+
+    Context mContext = null;
+    Locale mLocale = null;
+    PackageInfo mPackageInfo = null;
 
     public XoAndroidClientHost(Context context) {
         mContext = context;
+        mLocale = mContext.getResources().getConfiguration().locale;
+        try {
+            PackageManager packageManager = mContext.getPackageManager();
+            if (packageManager != null) {
+                mPackageInfo = packageManager.getPackageInfo(mContext.getPackageName(), 0);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -70,17 +89,29 @@ public class XoAndroidClientHost implements IXoClientHost {
 
     @Override
     public String getClientName() {
-        return null;
+        String clientName = null;
+        if (mPackageInfo != null) {
+            clientName = mPackageInfo.packageName;
+        }
+        return clientName;
     }
 
     @Override
     public String getClientLanguage() {
-        return null;
+        String clientLanguage = null;
+        if (mLocale != null) {
+            clientLanguage = mLocale.getISO3Language();
+        }
+        return clientLanguage;
     }
 
     @Override
     public String getClientVersion() {
-        return null;
+        String clientVersion = null;
+        if (mPackageInfo != null) {
+            clientVersion = mPackageInfo.versionName;
+        }
+        return clientVersion;
     }
 
     @Override
@@ -90,23 +121,26 @@ public class XoAndroidClientHost implements IXoClientHost {
 
     @Override
     public String getDeviceModel() {
-        return null;
+        return Build.MANUFACTURER + " " + Build.MODEL;
     }
 
     @Override
     public String getSystemName() {
-        return null;
+        return SYSTEM_NAME;
     }
 
     @Override
     public String getSystemLanguage() {
-        return null;
+        String systemLanguage = null;
+        if (mLocale != null) {
+            systemLanguage = mLocale.getISO3Language();
+        }
+        return systemLanguage;
     }
 
     @Override
     public String getSystemVersion() {
-        return null;
+        return Build.VERSION.RELEASE;
     }
-
 
 }
