@@ -326,21 +326,17 @@ public class ConversationAdapter extends XoAdapter
     public View getView(int position, View convertView, ViewGroup parent) {
         int viewType = getItemViewType(position);
         TalkClientMessage message = getItem(position);
-
-//        Log.d("zalem", message.getText() + " | isOutgoing = " + message.isOutgoing() + " | isIncoming = " + message.isIncoming());
         switch (viewType) {
             case VIEW_TYPE_OUTGOING:
                 if (convertView == null) {
                     convertView = mInflater.inflate(R.layout.item_conversation_outgoing, null);
                 }
-//                Log.d("zalem", "outgoing");
                 updateViewOutgoing(convertView, message);
                 break;
             case VIEW_TYPE_INCOMING:
                 if (convertView == null) {
                     convertView = mInflater.inflate(R.layout.item_conversation_incoming, null);
                 }
-//                Log.d("zalem", "incoming");
                 updateViewIncoming(convertView, message);
                 break;
         }
