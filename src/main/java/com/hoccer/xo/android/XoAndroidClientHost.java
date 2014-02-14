@@ -10,6 +10,7 @@ import org.eclipse.jetty.websocket.WebSocketClientFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
@@ -66,4 +67,46 @@ public class XoAndroidClientHost implements IXoClientHost {
     public String getSupportTag() {
         return XoConfiguration.SERVER_SUPPORT_TAG;
     }
+
+    @Override
+    public String getClientName() {
+        return null;
+    }
+
+    @Override
+    public String getClientLanguage() {
+        return null;
+    }
+
+    @Override
+    public String getClientVersion() {
+        return null;
+    }
+
+    @Override
+    public Date getClientTime() {
+        return new Date();
+    }
+
+    @Override
+    public String getDeviceModel() {
+        return null;
+    }
+
+    @Override
+    public String getSystemName() {
+        return null;
+    }
+
+    @Override
+    public String getSystemLanguage() {
+        return null;
+    }
+
+    @Override
+    public String getSystemVersion() {
+        return null;
+    }
+
+
 }
