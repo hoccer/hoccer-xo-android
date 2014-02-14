@@ -113,28 +113,5 @@ public class XoConfiguration {
     public static boolean isSupportModeEnabled() {
         return mIsSupportModeEnabled;
     }
-
-    public static String getClientName() {
-        String clientName = null;
-        if (mPackageInfo != null) {
-            clientName = mPackageInfo.packageName;
-        }
-        return clientName;
-    }
-
-    public static String getClientLanguage() {
-        String clientLanguage = null;
-        if (mLocale != null) {
-            clientLanguage = mLocale.getISO3Language();
-        }
-        return clientLanguage;
-    }
-
-    public static String getClientVersion() {
-        String clientVersion = null;
-        if (mPackageInfo != null) {
-            clientVersion = mPackageInfo.versionName;
-        }
-        return clientVersion;
-    }
+    
 }
