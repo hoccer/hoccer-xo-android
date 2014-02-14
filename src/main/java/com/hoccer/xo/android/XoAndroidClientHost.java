@@ -57,13 +57,4 @@ public class XoAndroidClientHost implements IXoClientHost {
         return mContext.getContentResolver().openInputStream(Uri.parse(url));
     }
 
-    @Override
-    public boolean isSupportModeEnabled() {
-        return XoConfiguration.ENABLE_SERVER_SIDE_SUPPORT_MODE;
-    }
-
-    @Override
-    public String getSupportTag() {
-        return XoConfiguration.SERVER_SUPPORT_TAG;
-    }
 }
