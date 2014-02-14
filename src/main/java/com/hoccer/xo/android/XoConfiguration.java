@@ -72,16 +72,13 @@ public class XoConfiguration {
     /** Timeout after which the client service terminates automatically (seconds) */
     public static final int SERVICE_KEEPALIVE_TIMEOUT       = 1800;
 
-    /** If true, the server will enable support mode for debugging */
-    public static final boolean ENABLE_SERVER_SIDE_SUPPORT_MODE = false;
     /** The tag describing server-side support mode */
     public static final String SERVER_SUPPORT_TAG = "log";
 
+    private static boolean sIsSupportModeEnabled = false;
 
     private static SharedPreferences sPreferences;
     private static SharedPreferences.OnSharedPreferenceChangeListener sPreferencesListener;
-
-    private static boolean mIsSupportModeEnabled = XoConfiguration.ENABLE_SERVER_SIDE_SUPPORT_MODE;
 
     public static void initialize(XoApplication application) {
         sPreferences = PreferenceManager.getDefaultSharedPreferences(application);
@@ -89,12 +86,14 @@ public class XoConfiguration {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if(key.equals("preference_enable_server_side_support_mode")) {
-                    mIsSupportModeEnabled = sPreferences.getBoolean("preference_log_sd", false);
+                    sIsSupportModeEnabled = sPreferences.getBoolean("preference_enable_server_side_support_mode", false);
                 }
             }
         };
         sPreferences.registerOnSharedPreferenceChangeListener(sPreferencesListener);
+        sIsSupportModeEnabled = sPreferences.getBoolean("preference_enable_server_side_support_mode", false);
     }
+
 
     public static final void shutdown() {
         if(sPreferencesListener != null) {
@@ -104,7 +103,7 @@ public class XoConfiguration {
     }
 
     public static boolean isSupportModeEnabled() {
-        return mIsSupportModeEnabled;
+        return sIsSupportModeEnabled;
     }
 
 }
