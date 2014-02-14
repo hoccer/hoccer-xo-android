@@ -28,7 +28,7 @@ public class XoAndroidClient extends XoClient {
         String protocol = XoClientConfiguration.USE_BSON_PROTOCOL
                 ? XoClientConfiguration.PROTOCOL_STRING_BSON
                 : XoClientConfiguration.PROTOCOL_STRING_JSON;
-        mConnection = new JsonRpcWsClient(uri, protocol, wsClient, rpcMapper, mHost.getIncomingBackgroundExecutor());
+        mConnection = new JsonRpcWsClient(uri, protocol, wsClient, rpcMapper, mClientHost.getIncomingBackgroundExecutor());
         mConnection.setMaxIdleTime(XoClientConfiguration.CONNECTION_IDLE_TIMEOUT);
         mConnection.setSendKeepAlives(XoClientConfiguration.KEEPALIVE_ENABLED);
         if(XoClientConfiguration.USE_BSON_PROTOCOL) {

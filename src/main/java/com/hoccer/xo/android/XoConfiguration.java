@@ -66,4 +66,6 @@ public class XoConfiguration {
     /** Timeout after which the client service terminates automatically (seconds) */
     public static final int SERVICE_KEEPALIVE_TIMEOUT       = 1800;
 
+    /** If true, the server will enable support mode for debugging */
+    public static final boolean ENABLE_SERVER_SIDE_SUPPORT_MODE = true;
 }

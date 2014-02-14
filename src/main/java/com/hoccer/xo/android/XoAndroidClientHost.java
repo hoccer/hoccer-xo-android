@@ -18,11 +18,11 @@ import java.util.concurrent.ScheduledExecutorService;
  * binds it to the right WS socket factory for SSL security
  * and allows the client to read files from content providers.
  */
-public class XoHost implements IXoClientHost {
+public class XoAndroidClientHost implements IXoClientHost {
 
     Context mContext;
 
-    public XoHost(Context context) {
+    public XoAndroidClientHost(Context context) {
         mContext = context;
     }
 
@@ -54,6 +54,11 @@ public class XoHost implements IXoClientHost {
     @Override
     public InputStream openInputStreamForUrl(String url) throws IOException {
         return mContext.getContentResolver().openInputStream(Uri.parse(url));
+    }
+
+    @Override
+    public boolean isSupportModeEnabled() {
+        return XoConfiguration.ENABLE_SERVER_SIDE_SUPPORT_MODE;
     }
 
 }
