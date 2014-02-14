@@ -1,10 +1,12 @@
 package com.hoccer.xo.android;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import com.hoccer.talk.client.IXoClientDatabaseBackend;
 import com.hoccer.talk.client.IXoClientHost;
 import com.hoccer.talk.client.XoClientConfiguration;
@@ -17,6 +19,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.prefs.Preferences;
 
 /**
  * Android-specific implementation of an XO client host
@@ -30,12 +33,10 @@ public class XoAndroidClientHost implements IXoClientHost {
     private static final String SYSTEM_NAME = "Android";
 
     Context mContext = null;
-    Locale mLocale = null;
     PackageInfo mPackageInfo = null;
 
     public XoAndroidClientHost(Context context) {
         mContext = context;
-        mLocale = mContext.getResources().getConfiguration().locale;
         try {
             PackageManager packageManager = mContext.getPackageManager();
             if (packageManager != null) {
@@ -44,7 +45,6 @@ public class XoAndroidClientHost implements IXoClientHost {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -79,7 +79,7 @@ public class XoAndroidClientHost implements IXoClientHost {
 
     @Override
     public boolean isSupportModeEnabled() {
-        return XoConfiguration.ENABLE_SERVER_SIDE_SUPPORT_MODE;
+        return XoConfiguration.isSupportModeEnabled();
     }
 
     @Override
@@ -99,8 +99,9 @@ public class XoAndroidClientHost implements IXoClientHost {
     @Override
     public String getClientLanguage() {
         String clientLanguage = null;
-        if (mLocale != null) {
-            clientLanguage = mLocale.getISO3Language();
+        Locale locale = mContext.getResources().getConfiguration().locale;
+        if (locale != null) {
+            clientLanguage = locale.getISO3Language();
         }
         return clientLanguage;
     }
@@ -132,8 +133,9 @@ public class XoAndroidClientHost implements IXoClientHost {
     @Override
     public String getSystemLanguage() {
         String systemLanguage = null;
-        if (mLocale != null) {
-            systemLanguage = mLocale.getISO3Language();
+        Locale locale = mContext.getResources().getConfiguration().locale;
+        if (locale != null) {
+            systemLanguage = locale.getISO3Language();
         }
         return systemLanguage;
     }
@@ -142,5 +144,6 @@ public class XoAndroidClientHost implements IXoClientHost {
     public String getSystemVersion() {
         return Build.VERSION.RELEASE;
     }
+
 
 }

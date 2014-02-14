@@ -1,7 +1,13 @@
 package com.hoccer.xo.android;
 
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import org.apache.log4j.Layout;
 import org.apache.log4j.PatternLayout;
+
+import java.util.Locale;
 
 /**
  * Static client configuration
@@ -71,4 +77,64 @@ public class XoConfiguration {
     /** The tag describing server-side support mode */
     public static final String SERVER_SUPPORT_TAG = "log";
 
+
+    private static SharedPreferences sPreferences;
+    private static SharedPreferences.OnSharedPreferenceChangeListener sPreferencesListener;
+
+    private static Locale mLocale = null;
+    private static PackageInfo mPackageInfo = null;
+
+    private static boolean mIsSupportModeEnabled = XoConfiguration.ENABLE_SERVER_SIDE_SUPPORT_MODE;
+
+    public static void initialize(XoApplication application) {
+
+        mLocale = application.getResources().getConfiguration().locale;
+        try {
+            PackageManager packageManager = application.getPackageManager();
+            if (packageManager != null) {
+                mPackageInfo = packageManager.getPackageInfo(application.getPackageName(), 0);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        sPreferences = PreferenceManager.getDefaultSharedPreferences(application);
+        sPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                if(key.equals("preference_enable_server_side_support_mode")) {
+                    mIsSupportModeEnabled = sPreferences.getBoolean("preference_log_sd", false);
+                }
+            }
+        };
+        sPreferences.registerOnSharedPreferenceChangeListener(sPreferencesListener);
+    }
+
+    public static boolean isSupportModeEnabled() {
+        return mIsSupportModeEnabled;
+    }
+
+    public static String getClientName() {
+        String clientName = null;
+        if (mPackageInfo != null) {
+            clientName = mPackageInfo.packageName;
+        }
+        return clientName;
+    }
+
+    public static String getClientLanguage() {
+        String clientLanguage = null;
+        if (mLocale != null) {
+            clientLanguage = mLocale.getISO3Language();
+        }
+        return clientLanguage;
+    }
+
+    public static String getClientVersion() {
+        String clientVersion = null;
+        if (mPackageInfo != null) {
+            clientVersion = mPackageInfo.versionName;
+        }
+        return clientVersion;
+    }
 }
