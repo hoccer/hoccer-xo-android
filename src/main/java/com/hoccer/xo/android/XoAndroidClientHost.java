@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import com.hoccer.talk.client.IXoClientDatabaseBackend;
 import com.hoccer.talk.client.IXoClientHost;
+import com.hoccer.talk.client.XoClientConfiguration;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import org.eclipse.jetty.websocket.WebSocketClientFactory;
 
@@ -18,11 +19,11 @@ import java.util.concurrent.ScheduledExecutorService;
  * binds it to the right WS socket factory for SSL security
  * and allows the client to read files from content providers.
  */
-public class XoHost implements IXoClientHost {
+public class XoAndroidClientHost implements IXoClientHost {
 
     Context mContext;
 
-    public XoHost(Context context) {
+    public XoAndroidClientHost(Context context) {
         mContext = context;
     }
 
@@ -56,4 +57,13 @@ public class XoHost implements IXoClientHost {
         return mContext.getContentResolver().openInputStream(Uri.parse(url));
     }
 
+    @Override
+    public boolean isSupportModeEnabled() {
+        return XoConfiguration.ENABLE_SERVER_SIDE_SUPPORT_MODE;
+    }
+
+    @Override
+    public String getSupportTag() {
+        return XoConfiguration.SERVER_SUPPORT_TAG;
+    }
 }
