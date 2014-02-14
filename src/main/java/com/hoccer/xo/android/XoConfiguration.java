@@ -70,4 +70,5 @@ public class XoConfiguration {
     public static final boolean ENABLE_SERVER_SIDE_SUPPORT_MODE = true;
     /** The tag describing server-side support mode */
     public static final String SERVER_SUPPORT_TAG = "log";
+
 }
