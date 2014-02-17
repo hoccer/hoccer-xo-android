@@ -39,7 +39,7 @@
 
       <CheckBoxPreference
           android:key="preference_enable_server_side_support_mode"
-          android:title="Enable server-side support mode"
+          android:title="Enable support mode on server"
           android:defaultValue="false"/>
 
   </PreferenceCategory>
