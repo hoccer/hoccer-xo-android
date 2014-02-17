@@ -1,7 +1,15 @@
 package com.hoccer.xo.android;
 
+import com.hoccer.talk.client.XoClient;
+
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import org.apache.log4j.Layout;
 import org.apache.log4j.PatternLayout;
+
+import java.util.Locale;
 
 /**
  * Static client configuration
@@ -65,5 +73,41 @@ public class XoConfiguration {
     public static final int SERVICE_KEEPALIVE_PING_INTERVAL = 600;
     /** Timeout after which the client service terminates automatically (seconds) */
     public static final int SERVICE_KEEPALIVE_TIMEOUT       = 1800;
+
+    /** The tag describing server-side support mode */
+    public static final String SERVER_SUPPORT_TAG = "log";
+
+    private static boolean sIsSupportModeEnabled = false;
+
+    private static SharedPreferences sPreferences;
+    private static SharedPreferences.OnSharedPreferenceChangeListener sPreferencesListener;
+
+    public static void initialize(XoApplication application) {
+        sPreferences = PreferenceManager.getDefaultSharedPreferences(application);
+        sPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                if(key.equals("preference_enable_server_side_support_mode")) {
+                    sIsSupportModeEnabled = sPreferences.getBoolean("preference_enable_server_side_support_mode", false);
+                    XoApplication.getXoClient().hello();
+                } else if(key.equals("preference_server_uri")) {
+                    XoApplication.reinitializeXoClient();
+                }
+            }
+        };
+        sPreferences.registerOnSharedPreferenceChangeListener(sPreferencesListener);
+        sIsSupportModeEnabled = sPreferences.getBoolean("preference_enable_server_side_support_mode", false);
+    }
+
+    public static final void shutdown() {
+        if(sPreferencesListener != null) {
+            sPreferences.unregisterOnSharedPreferenceChangeListener(sPreferencesListener);
+            sPreferencesListener = null;
+        }
+    }
+
+    public static boolean isSupportModeEnabled() {
+        return sIsSupportModeEnabled;
+    }
 
 }
