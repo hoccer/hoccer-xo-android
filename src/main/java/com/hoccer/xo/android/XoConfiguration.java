@@ -87,13 +87,13 @@ public class XoConfiguration {
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if(key.equals("preference_enable_server_side_support_mode")) {
                     sIsSupportModeEnabled = sPreferences.getBoolean("preference_enable_server_side_support_mode", false);
+                    XoApplication.getXoClient().hello();
                 }
             }
         };
         sPreferences.registerOnSharedPreferenceChangeListener(sPreferencesListener);
         sIsSupportModeEnabled = sPreferences.getBoolean("preference_enable_server_side_support_mode", false);
     }
-
 
     public static final void shutdown() {
         if(sPreferencesListener != null) {
