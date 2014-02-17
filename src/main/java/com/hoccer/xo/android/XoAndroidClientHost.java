@@ -1,12 +1,17 @@
 package com.hoccer.xo.android;
 
-import android.content.Context;
-import android.net.Uri;
 import com.hoccer.talk.client.IXoClientDatabaseBackend;
 import com.hoccer.talk.client.IXoClientHost;
+import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientConfiguration;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
+
 import org.eclipse.jetty.websocket.WebSocketClientFactory;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.preference.PreferenceManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,6 +60,21 @@ public class XoAndroidClientHost implements IXoClientHost {
     @Override
     public InputStream openInputStreamForUrl(String url) throws IOException {
         return mContext.getContentResolver().openInputStream(Uri.parse(url));
+    }
+
+    @Override
+    public String getServerUri() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String serverUri = preferences.getString("preference_server_uri", null);
+        if (serverUri == null || serverUri.equalsIgnoreCase("") || !serverUri
+                .startsWith("wss://")) {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("preference_server_uri", XoClientConfiguration.SERVER_URI);
+            editor.commit();
+            serverUri = XoClientConfiguration.SERVER_URI;
+        }
+
+        return serverUri;
     }
 
 }
