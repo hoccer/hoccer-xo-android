@@ -1,5 +1,7 @@
 package com.hoccer.xo.android;
 
+import com.hoccer.talk.client.XoClient;
+
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -88,6 +90,8 @@ public class XoConfiguration {
                 if(key.equals("preference_enable_server_side_support_mode")) {
                     sIsSupportModeEnabled = sPreferences.getBoolean("preference_enable_server_side_support_mode", false);
                     XoApplication.getXoClient().hello();
+                } else if(key.equals("preference_server_uri")) {
+                    XoApplication.reinitializeXoClient();
                 }
             }
         };

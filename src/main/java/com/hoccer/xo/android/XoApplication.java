@@ -300,4 +300,8 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
     public static ScheduledExecutorService getIncomingExecutor() {
         return INCOMING_EXECUTOR;
     }
+
+    public static void reinitializeXoClient() {
+        CLIENT.initialize(CLIENT_HOST);
+    }
 }
