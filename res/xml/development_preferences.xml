@@ -37,6 +37,11 @@
             android:entryValues="@array/preference_log_level_values"
             android:defaultValue="INFO"/>
 
+      <CheckBoxPreference
+          android:key="preference_enable_server_side_support_mode"
+          android:title="Enable server-side support mode"
+          android:defaultValue="false"/>
+
   </PreferenceCategory>
 
 </PreferenceScreen>
