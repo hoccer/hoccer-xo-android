@@ -30,7 +30,7 @@ public class MessagingFragment extends XoListFragment
 
     private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
 
-    private static final int OVERSCROLL_THRESHOLD = -45;
+    private static final int OVERSCROLL_THRESHOLD = -5;
 
     private OverscrollListView mMessageList;
 
@@ -40,11 +40,7 @@ public class MessagingFragment extends XoListFragment
 
     private ConversationAdapter mAdapter;
 
-    private boolean inOverscrollProgress = false;
-
     private View mOverscrollIndicator;
-
-    private int mLastDeltaY;
 
     private boolean mInOverscroll = false;
 
@@ -60,6 +56,8 @@ public class MessagingFragment extends XoListFragment
         mMessageList.setOverScrollMode(ListView.OVER_SCROLL_IF_CONTENT_SCROLLS);
         mMessageList.addOverScrollListener(this);
         mMessageList.setOnTouchListener(this);
+        mMessageList.setMaxOverScrollY(150);
+//        mMessageList.setOverscrollHeader(getResources().getDrawable(R.drawable.ic_light_av_replay));
         mEmptyText = (TextView) view.findViewById(R.id.messaging_empty);
         mOverscrollIndicator = view.findViewById(R.id.overscroll_indicator);
 
@@ -137,41 +135,42 @@ public class MessagingFragment extends XoListFragment
 
     @Override
     public void onOverscroll(int deltaX, int deltaY, boolean clampedX, boolean clampedY) {
-        if (deltaY < -20 && !mInOverscroll) {
-
+        if (deltaY < OVERSCROLL_THRESHOLD && !mInOverscroll && clampedY) {
             mInOverscroll = true;
-            mOverscrollIndicator.setVisibility(View.VISIBLE);
-            mOverscrollIndicator.animate().scaleX(0.0f).setDuration(0).start();
-            mOverscrollIndicator.animate().scaleX(1.0f).setDuration(3000)
-                    .setListener(new Animator.AnimatorListener() {
-                        @Override
-                        public void onAnimationStart(Animator animation) {
-                            Log.d("zalem", "start animation");
-                        }
-
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mOverscrollIndicator.setVisibility(View.GONE);
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onAnimationCancel(Animator animation) {
-
-                        }
-
-                        @Override
-                        public void onAnimationRepeat(Animator animation) {
-
-                        }
-                    }).start();
-
             mAdapter.loadNextMessages();
         }
+    }
+
+    private void animateOverscroll() {
+        mOverscrollIndicator.setVisibility(View.VISIBLE);
+        mOverscrollIndicator.animate().scaleX(0.0f).setDuration(0).start();
+        mOverscrollIndicator.animate().scaleX(1.0f).setDuration(3000)
+                .setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        Log.d("zalem", "start animation");
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mOverscrollIndicator.setVisibility(View.GONE);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                }).start();
     }
 
     @Override
