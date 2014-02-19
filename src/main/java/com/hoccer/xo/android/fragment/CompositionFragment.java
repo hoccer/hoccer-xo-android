@@ -35,8 +35,6 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
     private ImageButton mSendButton;
 
-    private ImageButton mClearButton;
-
     private IContentObject mAttachment;
 
     private ContentView mAttachmentView;
@@ -68,7 +66,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             }
         });
 
-        mSendButton = (ImageButton) v.findViewById(R.id.messaging_composer_send);
+        mSendButton = (ImageButton) v.findViewById(R.id.btn_messaging_composer_send);
         mSendButton.setEnabled(false || XoConfiguration.DEVELOPMENT_MODE_ENABLED);
         mSendButton.setOnClickListener(this);
         if (XoConfiguration.DEVELOPMENT_MODE_ENABLED) {
@@ -76,9 +74,9 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             mSendButton.setLongClickable(true);
         }
 
-        mClearButton = (ImageButton) v.findViewById(R.id.messaging_composer_clear);
-        mClearButton.setVisibility(View.GONE);
-        mClearButton.setOnClickListener(this);
+        ImageButton addAttachmentButton = (ImageButton) v
+                .findViewById(R.id.btn_messaging_composer_add_attachment);
+        addAttachmentButton.setOnClickListener(this);
 
         mAttachmentView = (ContentView) v.findViewById(R.id.messaging_composer_attachment);
         int displayHeight = getResources().getDisplayMetrics().heightPixels;
@@ -90,7 +88,6 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        LOG.debug("onCreateOptionsMenu()");
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_composition, menu);
         mMenu = menu;
@@ -98,7 +95,6 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
     @Override
     public void onResume() {
-        LOG.debug("onResume()");
         super.onResume();
 
         // watch message editor
@@ -115,7 +111,6 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             public void afterTextChanged(Editable s) {
                 boolean enable = isComposed() || s.toString().length() > 0;
                 mSendButton.setEnabled(enable || XoConfiguration.DEVELOPMENT_MODE_ENABLED);
-                mClearButton.setVisibility(enable ? View.VISIBLE : View.GONE);
             }
         };
         mTextEdit.addTextChangedListener(mTextWatcher);
@@ -123,9 +118,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
     @Override
     public void onPause() {
-        LOG.debug("onPause()");
         super.onPause();
-
         // unregister text watcher
         if (mTextWatcher != null) {
             mTextEdit.removeTextChangedListener(mTextWatcher);
@@ -135,24 +128,14 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if (v == mSendButton) {
-            LOG.debug("onClick(sendButton)");
-            sendComposedMessage();
+        switch(v.getId()) {
+            case R.id.btn_messaging_composer_send:
+                sendComposedMessage();
+                break;
+            case R.id.btn_messaging_composer_add_attachment:
+                getXoActivity().selectAttachment();
+                break;
         }
-        if (v == mClearButton) {
-            LOG.debug("onClick(clearButton)");
-            clearComposedMessage();
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        boolean res = super.onOptionsItemSelected(item);
-        if (item.getItemId() == R.id.menu_attachment) {
-            LOG.debug("onOptionsItemSelected(add_attachment)");
-            getXoActivity().selectAttachment();
-        }
-        return res;
     }
 
     @Override
@@ -171,10 +154,8 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     private void clearComposedMessage() {
-        LOG.debug("clearComposedMessage()");
         mTextEdit.setText(null);
         mSendButton.setEnabled(false || XoConfiguration.DEVELOPMENT_MODE_ENABLED);
-        mClearButton.setVisibility(View.GONE);
         clearAttachment();
     }
 
@@ -184,21 +165,17 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         mAttachmentView.displayContent(getXoActivity(), contentObject);
         mAttachmentView.setVisibility(View.VISIBLE);
         mSendButton.setEnabled(isComposed() || XoConfiguration.DEVELOPMENT_MODE_ENABLED);
-        mClearButton.setVisibility(isComposed() ? View.VISIBLE : View.GONE);
-        mMenu.findItem(R.id.menu_attachment).setVisible(false);
+//        mMenu.findItem(R.id.menu_attachment).setVisible(false);
     }
 
     private void clearAttachment() {
-        LOG.debug("clearAttachment()");
         mAttachmentView.clear();
         mAttachmentView.setVisibility(View.GONE);
-        mMenu.findItem(R.id.menu_attachment).setVisible(true);
+//        mMenu.findItem(R.id.menu_attachment).setVisible(true);
         mAttachment = null;
     }
 
     private void sendComposedMessage() {
-        LOG.debug("sendComposedMessage()");
-
         if (mContact == null) {
             return;
         }
