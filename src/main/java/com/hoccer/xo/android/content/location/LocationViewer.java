@@ -58,10 +58,7 @@ public class LocationViewer extends ContentViewer<Button> {
                         }
                         if(url != null) {
                             String label = "Received Location";
-                            String uriBegin = "geo:" + location.latitude + "," + location.longitude;
-                            String query = location.latitude + "," + location.longitude + "(" + label + ")";
-                            String encodedQuery = Uri.encode(query);
-                            String uriString = uriBegin + "?q=" + encodedQuery;
+                            String uriString = "http://maps.google.com/maps?q=loc:" + location.latitude + "," + location.longitude + " (" + label + ")";
                             Uri uri = Uri.parse(uriString);
                             Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
                             view.getContext().startActivity(intent);
