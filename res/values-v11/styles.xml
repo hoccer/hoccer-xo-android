@@ -5,8 +5,12 @@
         AppBaseTheme from res/values/styles.xml on API 11+ devices.
     -->
     <style name="AppBaseTheme" parent="Theme.Sherlock.Light.DarkActionBar">
-        <item name="android:background">#ff000000</item>
-        <item name="background">#ff000000</item>
+        <item name="actionBarStyle">@style/AppBaseTheme.ActionBar.Background</item>
+        <item name="android:actionBarStyle">@style/AppBaseTheme.ActionBar.Background</item>
+        <item name="android:actionOverflowButtonStyle">@style/AppBaseTheme.ActionBar.OverflowButton</item>
+        <item name="android:popupMenuStyle">@style/AppBaseTheme.PopupMenu</item>
+        <item name="android:spinnerDropDownItemStyle">@style/AppBaseTheme.SpinnerDropDown</item>
+        <item name="android:editTextBackground">@drawable/apptheme_edit_text_holo_light</item>
     </style>
 
 </resources>

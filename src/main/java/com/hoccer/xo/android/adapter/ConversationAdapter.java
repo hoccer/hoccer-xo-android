@@ -355,39 +355,42 @@ public class ConversationAdapter extends XoAdapter
 
     private void updateViewCommon(View view, TalkClientMessage message) {
         final TalkClientContact sendingContact = message.getSenderContact();
-
         if (!message.isSeen()) {
             markMessageAsSeen(message);
         }
+        setMessageText(view, message);
+        setTimestamp(view, message);
+        setAvatar(view, sendingContact);
+        setAttachment(view, message);
+    }
 
-        TextView text = (TextView) view.findViewById(R.id.message_text);
-        String textString = message.getText();
-        if (textString == null) {
-            text.setText(""); // XXX
+    private void setAttachment(View view, TalkClientMessage message) {
+        ContentView contentView = (ContentView) view.findViewById(R.id.message_content);
+        int displayHeight = mResources.getDisplayMetrics().heightPixels;
+        // XXX better place for this? also we might want to use the measured height of our list view
+        contentView.setMaxContentHeight(Math.round(displayHeight * 0.8f));
+
+        IContentObject contentObject = null;
+        TalkClientUpload attachmentUpload = message.getAttachmentUpload();
+        if (attachmentUpload != null) {
+            contentObject = attachmentUpload;
         } else {
-            text.setText(textString);
-            if (textString.length() > 0) {
-                text.setVisibility(View.VISIBLE);
-            } else {
-                text.setVisibility(View.GONE);
+            TalkClientDownload attachmentDownload = message.getAttachmentDownload();
+            if (attachmentDownload != null) {
+                contentObject = attachmentDownload;
             }
         }
-
-        TextView timestamp = (TextView) view.findViewById(R.id.message_time);
-        Date time = message.getTimestamp();
-        if (time != null) {
-            timestamp.setVisibility(View.VISIBLE);
-            timestamp.setText(DateUtils.getRelativeDateTimeString(
-                    mActivity,
-                    message.getTimestamp().getTime(),
-                    DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.WEEK_IN_MILLIS,
-                    0
-            ));
+        if (contentObject == null) {
+            contentView.setVisibility(View.GONE);
+            contentView.clear();
         } else {
-            timestamp.setVisibility(View.GONE);
+            contentView.setVisibility(View.VISIBLE);
+            contentView.displayContent(mActivity, contentObject);
         }
+    }
 
+    // TODO: dont reload the avatar for each list item! Cache them!!
+    private void setAvatar(View view, final TalkClientContact sendingContact) {
         final ImageView avatar = (ImageView) view.findViewById(R.id.message_avatar);
         String avatarUri = null;
         if (sendingContact != null) {
@@ -412,29 +415,37 @@ public class ConversationAdapter extends XoAdapter
             avatarUri = "content://" + R.drawable.avatar_default_contact;
         }
         loadAvatar(avatar, avatarUri);
+    }
 
-        ContentView contentView = (ContentView) view.findViewById(R.id.message_content);
-
-        int displayHeight = mResources.getDisplayMetrics().heightPixels;
-        // XXX better place for this? also we might want to use the measured height of our list view
-        contentView.setMaxContentHeight(Math.round(displayHeight * 0.8f));
-
-        IContentObject contentObject = null;
-        TalkClientUpload attachmentUpload = message.getAttachmentUpload();
-        if (attachmentUpload != null) {
-            contentObject = attachmentUpload;
+    private void setMessageText(View view, TalkClientMessage message) {
+        TextView text = (TextView) view.findViewById(R.id.message_text);
+        String textString = message.getText();
+        if (textString == null) {
+            text.setText(""); // XXX
         } else {
-            TalkClientDownload attachmentDownload = message.getAttachmentDownload();
-            if (attachmentDownload != null) {
-                contentObject = attachmentDownload;
+            text.setText(textString);
+            if (textString.length() > 0) {
+                text.setVisibility(View.VISIBLE);
+            } else {
+                text.setVisibility(View.GONE);
             }
         }
-        if (contentObject == null) {
-            contentView.setVisibility(View.GONE);
-            contentView.clear();
+    }
+
+    private void setTimestamp(View view, TalkClientMessage message) {
+        TextView timestamp = (TextView) view.findViewById(R.id.message_time);
+        Date time = message.getTimestamp();
+        if (time != null) {
+            timestamp.setVisibility(View.VISIBLE);
+            timestamp.setText(DateUtils.getRelativeDateTimeString(
+                    mActivity,
+                    message.getTimestamp().getTime(),
+                    DateUtils.MINUTE_IN_MILLIS,
+                    DateUtils.WEEK_IN_MILLIS,
+                    0
+            ));
         } else {
-            contentView.setVisibility(View.VISIBLE);
-            contentView.displayContent(mActivity, contentObject);
+            timestamp.setVisibility(View.GONE);
         }
     }
 
