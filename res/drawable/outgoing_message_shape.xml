@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners
+        android:bottomLeftRadius="@dimen/xo_message_corner_radius"
+        android:bottomRightRadius="0dp"
+        android:topLeftRadius="@dimen/xo_message_corner_radius"
+        android:topRightRadius="@dimen/xo_message_corner_radius"/>
+    <solid android:color="@color/xo_outgoing_message_background"/>
+</shape>

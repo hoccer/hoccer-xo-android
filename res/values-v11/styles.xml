@@ -5,7 +5,8 @@
         AppBaseTheme from res/values/styles.xml on API 11+ devices.
     -->
     <style name="AppBaseTheme" parent="Theme.Sherlock.Light.DarkActionBar">
-        <!-- API 11 theme customizations can go here. -->
+        <item name="android:background">#ff000000</item>
+        <item name="background">#ff000000</item>
     </style>
 
 </resources>

@@ -7,6 +7,28 @@
     -->
     <style name="AppBaseTheme" parent="Theme.Sherlock.Light.DarkActionBar">
         <!-- API 14 theme customizations can go here. -->
+        <item name="actionBarStyle">@style/AppBaseTheme.ActionBar.Background</item>
+        <item name="android:actionBarStyle">@style/AppBaseTheme.ActionBar.Background</item>
+        <item name="android:actionOverflowButtonStyle">@style/AppBaseTheme.ActionBar.OverflowButton</item>
+        <item name="android:popupMenuStyle">@style/AppBaseTheme.PopupMenu</item>
+        <item name="android:spinnerDropDownItemStyle">@style/AppBaseTheme.SpinnerDropDown</item>
     </style>
+
+    <style name="AppBaseTheme.ActionBar.Background" parent="Widget.Sherlock.ActionBar">
+        <item name="android:background">@color/xo_app_main_color</item>
+        <item name="background">@color/xo_app_main_color</item>
+    </style>
+
+    <style name="AppBaseTheme.ActionBar.OverflowButton" parent="Widget.Sherlock.ActionButton.Overflow">
+        <item name="android:src">@android:drawable/ic_menu_more</item>
+    </style>
+
+    <style name="AppBaseTheme.PopupMenu" parent="android:style/Widget.Holo.Light.ListPopupWindow">
+        <item name="android:background">@color/xo_app_main_color</item>
+    </style>
+    <style name="AppBaseTheme.SpinnerDropDown" parent="Widget.Sherlock.TextView.SpinnerItem">
+        <item name="android:background">@color/xo_app_main_color</item>
+    </style>
+
 
 </resources>
