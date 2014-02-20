@@ -30,16 +30,14 @@
             android:gravity="center_vertical"
             style="@style/AppBaseTheme.Message.Outgoing"/>
 
-    <com.hoccer.xo.android.view.AspectImageView
+    <com.hoccer.xo.android.view.AvatarView
             android:id="@+id/message_avatar"
             android:layout_width="54dp"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/message_text"
             android:src="@drawable/avatar_default_contact"
             android:layout_alignParentRight="true"
-            android:padding="2dp"
-            android:scaleType="centerCrop"
-            custom:aspectRatio="1.0"/>
+            android:padding="2dp"/>
 
     <com.hoccer.xo.android.content.ContentView
             android:id="@+id/message_content"

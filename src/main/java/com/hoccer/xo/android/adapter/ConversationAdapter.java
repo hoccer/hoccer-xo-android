@@ -7,10 +7,12 @@ import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentView;
+import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -391,10 +393,10 @@ public class ConversationAdapter extends XoAdapter
 
     // TODO: dont reload the avatar for each list item! Cache them!!
     private void setAvatar(View view, final TalkClientContact sendingContact) {
-        final ImageView avatar = (ImageView) view.findViewById(R.id.message_avatar);
+        final AvatarView avatarView = (AvatarView) view.findViewById(R.id.message_avatar);
         String avatarUri = null;
         if (sendingContact != null) {
-            avatar.setOnClickListener(new View.OnClickListener() {
+            avatarView.setOnClickListener(new View.OnClickListener() {
                 final TalkClientContact contact = sendingContact;
 
                 @Override
@@ -414,7 +416,18 @@ public class ConversationAdapter extends XoAdapter
         if (avatarUri == null) {
             avatarUri = "content://" + R.drawable.avatar_default_contact;
         }
-        loadAvatar(avatar, avatarUri);
+
+        loadAvatar(avatarView, avatarUri);
+        setPresence(avatarView, sendingContact);
+    }
+
+    private void setPresence(AvatarView avatarView, final TalkClientContact sendingContact) {
+        avatarView.setPresence(false);
+
+        String status = sendingContact.getClientPresence().getConnectionStatus();
+        if (status != null && status.equalsIgnoreCase(TalkPresence.CONN_STATUS_ONLINE)) {
+            avatarView.setPresence(true);
+        }
     }
 
     private void setMessageText(View view, TalkClientMessage message) {
@@ -449,8 +462,8 @@ public class ConversationAdapter extends XoAdapter
         }
     }
 
-    private void loadAvatar(ImageView view, String url) {
-        ImageLoader.getInstance().displayImage(url, view);
+    private void loadAvatar(AvatarView avatarView, String url) {
+        avatarView.setAvatarImage(url);
     }
 
     private void markMessageAsSeen(final TalkClientMessage message) {
