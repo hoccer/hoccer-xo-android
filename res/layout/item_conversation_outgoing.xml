@@ -23,7 +23,7 @@
             android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="50dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="5dp"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@id/message_avatar"
             android:minHeight="50dp"
@@ -32,10 +32,12 @@
 
     <com.hoccer.xo.android.view.AvatarView
             android:id="@+id/message_avatar"
-            android:layout_width="54dp"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/message_text"
             android:layout_alignParentRight="true"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
             android:padding="2dp"
             custom:defaultAvatarImageUrl="@drawable/avatar_default_contact"/>
 
