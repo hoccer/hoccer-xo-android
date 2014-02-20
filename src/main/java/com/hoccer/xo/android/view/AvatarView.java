@@ -5,7 +5,6 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -48,21 +47,18 @@ public class AvatarView extends LinearLayout {
         }
     }
 
-    public ImageView getAvatarImage() {
-        return mAvatarImage;
-    }
-
     /**
      * Sets the avatar image. Value can be null. Uses default avatar image url instead (if specified).
      *
      * @param avatarImageUrl Url of the given image resource  to load.
      */
     public void setAvatarImage(String avatarImageUrl) {
+        ImageLoader imageLoader = ImageLoader.getInstance();
         mAvatarImage.setVisibility(View.VISIBLE);
         if (avatarImageUrl != null) {
-            ImageLoader.getInstance().displayImage(avatarImageUrl, mAvatarImage);
+            imageLoader.displayImage(avatarImageUrl, mAvatarImage);
         } else if (mDefaultAvatarImageUrl != null) {
-            ImageLoader.getInstance().displayImage(null, mAvatarImage);
+            imageLoader.displayImage(mDefaultAvatarImageUrl, mAvatarImage);
         } else {
             mAvatarImage.setVisibility(View.INVISIBLE);
         }
@@ -75,7 +71,6 @@ public class AvatarView extends LinearLayout {
      */
     public void setDefaultAvatarImageUrl(String defaultAvatarImageUrl) {
         mDefaultAvatarImageUrl = defaultAvatarImageUrl;
-        this.setAvatarImage(mDefaultAvatarImageUrl);
     }
 
     public void setPresence(boolean isPresent) {
@@ -84,11 +79,6 @@ public class AvatarView extends LinearLayout {
         } else {
             mPresenceIndicator.setVisibility(View.INVISIBLE);
         }
-    }
-
-    private AspectImageView maskImage(ImageView imageView) {
-        AspectImageView maskedImage = null;
-        return maskedImage;
     }
 
 }

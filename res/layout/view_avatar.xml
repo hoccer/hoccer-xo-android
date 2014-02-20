@@ -7,19 +7,20 @@
 
     <com.hoccer.xo.android.view.AspectImageView
             android:id="@+id/avatar_image"
-            android:layout_width="54dp"
-            android:layout_height="54dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="5dp"
             android:scaleType="centerCrop"
             custom:aspectRatio="1.0"/>
 
     <View
             android:id="@+id/presence_indicator_view"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:visibility="invisible"
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:visibility="visible"
             android:layout_toRightOf="@+id/avatar_image"
-            android:layout_marginTop="0dp"
-            android:layout_marginLeft="-10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="-6dp"
             style="@style/AppBaseTheme.Contact.Presence"/>
 
 </RelativeLayout>
