@@ -17,8 +17,6 @@ import org.apache.log4j.Logger;
  */
 public class AspectImageView extends ImageView {
 
-    private static final Logger LOG = Logger.getLogger(AspectImageView.class);
-
     double mAspectRatio = 0.0;
 
     int mMaxHeight = Integer.MAX_VALUE;

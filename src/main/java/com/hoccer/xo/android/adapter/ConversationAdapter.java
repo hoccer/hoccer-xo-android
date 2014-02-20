@@ -404,15 +404,8 @@ public class ConversationAdapter extends XoAdapter
                     }
                 }
             });
+
             avatarUri = sendingContact.getAvatarContentUrl();
-            if (avatarUri == null) {
-                if (sendingContact.isGroup()) {
-                    avatarUri = "content://" + R.drawable.avatar_default_group;
-                }
-            }
-        }
-        if (avatarUri == null) {
-            avatarUri = "content://" + R.drawable.avatar_default_contact;
         }
 
         loadAvatar(avatarView, avatarUri);
