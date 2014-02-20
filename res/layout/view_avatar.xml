@@ -10,17 +10,16 @@
             android:layout_width="54dp"
             android:layout_height="54dp"
             android:scaleType="centerCrop"
-            custom:aspectRatio="1.0"
-            android:src="@drawable/avatar_default_contact"/>
+            custom:aspectRatio="1.0"/>
 
     <View
             android:id="@+id/presence_indicator_view"
-            android:layout_width="5dp"
-            android:layout_height="5dp"
-            android:background="@color/xo_presence"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
             android:visibility="invisible"
             android:layout_toRightOf="@+id/avatar_image"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="-10dp"/>
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="-10dp"
+            style="@style/AppBaseTheme.Contact.Presence"/>
 
 </RelativeLayout>

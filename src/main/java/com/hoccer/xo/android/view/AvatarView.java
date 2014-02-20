@@ -34,6 +34,7 @@ public class AvatarView extends LinearLayout {
     private void initializeView() {
         View layout = LayoutInflater.from(mContext).inflate(R.layout.view_avatar, null);
         this.addView(layout);
+
         mAvatarImage = (AspectImageView) this.findViewById(R.id.avatar_image);
         mPresenceIndicator = this.findViewById(R.id.presence_indicator_view);
     }
@@ -73,7 +74,8 @@ public class AvatarView extends LinearLayout {
      * @param defaultAvatarImageUrl Url of the given image resource  to load.
      */
     public void setDefaultAvatarImageUrl(String defaultAvatarImageUrl) {
-        this.mDefaultAvatarImageUrl = defaultAvatarImageUrl;
+        mDefaultAvatarImageUrl = defaultAvatarImageUrl;
+        this.setAvatarImage(mDefaultAvatarImageUrl);
     }
 
     public void setPresence(boolean isPresent) {
