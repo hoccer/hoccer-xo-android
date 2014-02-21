@@ -1,6 +1,8 @@
 package com.hoccer.xo.android.view;
 
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.release.R;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.content.Context;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 /**
  * A view holding an AspectImageView and a presence indicator.
@@ -17,7 +20,10 @@ import android.widget.LinearLayout;
 public class AvatarView extends LinearLayout {
 
     private Context mContext;
-    private String mDefaultAvatarImageUrl = null;
+    private String mDefaultAvatarImageUrl;
+    private DisplayImageOptions mDefaultOptions;
+    private float mCornerRadius = 0.0f;
+
     private AspectImageView mAvatarImage;
     private View mPresenceIndicator;
 
@@ -25,23 +31,33 @@ public class AvatarView extends LinearLayout {
         super(context, attrs);
 
         mContext = context;
-        this.initializeView();
-        this.applyAttributes(context, attrs);
-        this.setAvatarImage(mDefaultAvatarImageUrl);
+        applyAttributes(context, attrs);
+        initializeView();
     }
 
     private void initializeView() {
         View layout = LayoutInflater.from(mContext).inflate(R.layout.view_avatar, null);
-        this.addView(layout);
+        addView(layout);
 
         mAvatarImage = (AspectImageView) this.findViewById(R.id.avatar_image);
         mPresenceIndicator = this.findViewById(R.id.presence_indicator_view);
+
+        float scale = getResources().getDisplayMetrics().density;
+        int pixel = (int) (mCornerRadius * scale + 0.5f);
+
+        if (isInEditMode()) {
+            mDefaultOptions = new DisplayImageOptions.Builder().displayer(new RoundedBitmapDisplayer(pixel)).build();
+        } else {
+            mDefaultOptions = new DisplayImageOptions.Builder().cloneFrom(XoApplication.getContentImageOptions()).displayer(new RoundedBitmapDisplayer(pixel)).build();
+        }
+        setAvatarImage(mDefaultAvatarImageUrl);
     }
 
     private void applyAttributes(Context context, AttributeSet attributes) {
         TypedArray a = context.getTheme().obtainStyledAttributes(attributes, R.styleable.AvatarView, 0, 0);
         try {
             mDefaultAvatarImageUrl = a.getString(R.styleable.AvatarView_defaultAvatarImageUrl);
+            mCornerRadius = a.getFloat(R.styleable.AvatarView_cornerRadius, 0.0f);
         } finally {
             a.recycle();
         }
@@ -53,16 +69,16 @@ public class AvatarView extends LinearLayout {
      * @param avatarImageUrl Url of the given image resource  to load.
      */
     public void setAvatarImage(String avatarImageUrl) {
-        if(isInEditMode()) {
+        if (isInEditMode()) {
             ImageView avatar = (ImageView) this.findViewById(R.id.avatar_image);
             avatar.setImageResource(R.drawable.avatar_default_contact);
         } else {
-            ImageLoader imageLoader = ImageLoader.getInstance();
             mAvatarImage.setVisibility(View.VISIBLE);
+
             if (avatarImageUrl != null) {
-                imageLoader.displayImage(avatarImageUrl, mAvatarImage);
+                ImageLoader.getInstance().displayImage(avatarImageUrl, mAvatarImage, mDefaultOptions, null);
             } else if (mDefaultAvatarImageUrl != null) {
-                imageLoader.displayImage(mDefaultAvatarImageUrl, mAvatarImage);
+                ImageLoader.getInstance().displayImage(mDefaultAvatarImageUrl, mAvatarImage, mDefaultOptions, null);
             } else {
                 mAvatarImage.setVisibility(View.INVISIBLE);
             }

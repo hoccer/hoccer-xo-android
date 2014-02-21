@@ -39,6 +39,7 @@
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
             android:padding="2dp"
+            custom:cornerRadius="60"
             custom:defaultAvatarImageUrl="@drawable/avatar_default_contact"/>
 
     <com.hoccer.xo.android.content.ContentView
