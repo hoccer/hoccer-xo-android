@@ -43,7 +43,8 @@
         android:layout_width="match_parent"
         android:layout_toRightOf="@id/message_avatar"
         android:layout_below="@id/message_text"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        style="@style/AppBaseTheme.Message.Incoming"/>
 
     <TextView
         android:id="@+id/message_time"
@@ -55,7 +56,6 @@
         android:layout_alignParentBottom="true"
         android:gravity="right"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/AppBaseTheme.Message.Incoming"/>
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>
