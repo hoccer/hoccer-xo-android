@@ -56,7 +56,6 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     LinearLayout mContentFooter;
 
     TextView mContentDescription;
-    TextView mContentStatus;
 
     AttachmentTransferControlView mTransferProgress;
 
@@ -99,7 +98,6 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         }
         mContentFooter = (LinearLayout)findViewById(R.id.content_footer);
         mContentDescription = (TextView)findViewById(R.id.content_description_text);
-        mContentStatus = (TextView)findViewById(R.id.content_status_text);
         mTransferProgress = (AttachmentTransferControlView)findViewById(R.id.content_progress);
         mTransferProgress.setOnClickListener(this);
     }
@@ -184,9 +182,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             LOG.debug("displayContent(" + content.getContentDataUrl() + ")");
         }
 
-        boolean available = content.isContentAvailable();
         ContentState state = getTrueContentState(content);
-        ContentDisposition disposition = content.getContentDisposition();
         ContentViewer<?> viewer = mRegistry.selectViewerForContent(content);
 
         // determine if the content url has changed so
@@ -205,7 +201,6 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
 
         // description
         mContentDescription.setText(mRegistry.getContentDescription(content));
-        String stateText = getStateText(state);
         doDownAndUploadActions(state);
         updateProgressBar(state, content);
         removeChildViewIfContentHasChanged(contentChanged, stateChanged);
@@ -218,8 +213,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         if(viewerChanged || contentChanged || stateChanged) {
             mViewer.updateView(mContentChild, this, content);
         }
-        int visibility = isInEditMode() ? GONE : VISIBLE;
-        mContentWrapper.setVisibility(visibility);
+//        int visibility = isInEditMode() ? GONE : VISIBLE;
+//        mContentWrapper.setVisibility(visibility);
 
         // disable content child when we are showing the footer
         if(mContentChild != null) {
@@ -396,61 +391,6 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             default:
                 break;
         }
-    }
-
-    private String getStateText(ContentState state) {
-        String stateText = null;
-        switch(state) {
-            case DOWNLOAD_NEW:
-                stateText = "Available for download";
-                break;
-            case DOWNLOAD_DOWNLOADING:
-                stateText = "Downloading...";
-                break;
-            case DOWNLOAD_DECRYPTING:
-                stateText = "Decrypting...";
-                break;
-            case DOWNLOAD_DETECTING:
-                stateText = "Analyzing...";
-                break;
-            case DOWNLOAD_COMPLETE:
-                stateText = "Download complete";
-                break;
-            case DOWNLOAD_FAILED:
-                stateText = "Download failed";
-                break;
-            case DOWNLOAD_PAUSED:
-                stateText = "Download paused";
-                break;
-            case UPLOAD_NEW:
-                stateText = "New upload";
-                break;
-            case UPLOAD_REGISTERING:
-                stateText = "Registering...";
-                break;
-            case UPLOAD_ENCRYPTING:
-                stateText = "Encrypting...";
-                break;
-            case UPLOAD_UPLOADING:
-                stateText = "Uploading...";
-                break;
-            case UPLOAD_COMPLETE:
-                stateText = "Upload complete";
-                break;
-            case UPLOAD_PAUSED:
-                stateText = "Upload paused";
-                break;
-            case UPLOAD_FAILED:
-                stateText = "Upload failed";
-                break;
-        }
-        if(stateText == null) {
-            mContentStatus.setVisibility(GONE);
-        } else {
-            mContentStatus.setVisibility(VISIBLE);
-            mContentStatus.setText(stateText);
-        }
-        return stateText;
     }
 
     public void clear() {
