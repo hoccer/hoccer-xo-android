@@ -41,7 +41,6 @@ public class ImageViewer extends ContentViewer<AspectImageView> implements Image
             view.setMaxHeight(maxContentHeight);
         }
         view.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        view.setCornerRadius(20f);
         view.setAspectRatio(contentObject.getContentAspectRatio());
         view.setAdjustViewBounds(true);
         view.setLayoutParams(new LinearLayout.LayoutParams(

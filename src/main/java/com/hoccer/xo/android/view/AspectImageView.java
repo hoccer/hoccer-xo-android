@@ -21,8 +21,6 @@ import org.apache.log4j.Logger;
 public class AspectImageView extends ImageView {
 
     private double mAspectRatio = 0.0;
-    private float mCornerRadius = 0.0f;
-    private float mCornerRadiusPx = 0.0f;
 
     private int mMaxHeight = Integer.MAX_VALUE;
 
@@ -50,8 +48,6 @@ public class AspectImageView extends ImageView {
        try {
            float aspectRatio = a.getFloat(R.styleable.AspectView_aspectRatio, 0.0f);
            setAspectRatio(aspectRatio);
-           float cornerRadius = a.getFloat(R.styleable.AspectView_cornerRadius, 0.0f);
-           setCornerRadius(cornerRadius);
        } finally {
            a.recycle();
        }
@@ -75,16 +71,6 @@ public class AspectImageView extends ImageView {
     /** set the enforced aspect ratio */
     public void setAspectRatio(double aspectRatio) {
         this.mAspectRatio = aspectRatio;
-    }
-
-    public float getCornerRadius() {
-        return mCornerRadius;
-    }
-
-    public void setCornerRadius(float cornerRadius) {
-        mCornerRadius = cornerRadius;
-        float scale = getResources().getDisplayMetrics().density;
-        mCornerRadiusPx = (int) (mCornerRadius * scale + 0.5f);
     }
 
     /**
@@ -130,14 +116,4 @@ public class AspectImageView extends ImageView {
         // set new dimensions
         setMeasuredDimension(width, height);
     }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        Path clipPath = new Path();
-        RectF rect = new RectF(0, 0, this.getWidth(), this.getHeight());
-        clipPath.addRoundRect(rect, mCornerRadiusPx, mCornerRadiusPx, Path.Direction.CW);
-        canvas.clipPath(clipPath);
-        super.onDraw(canvas);
-    }
-
 }

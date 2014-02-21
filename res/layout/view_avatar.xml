@@ -10,8 +10,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:scaleType="centerCrop"
-            custom:aspectRatio="1.0"
-            custom:cornerRadius="30"/>
+            custom:aspectRatio="1.0"/>
 
     <View
             android:id="@+id/presence_indicator_view"
