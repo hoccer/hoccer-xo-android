@@ -3,7 +3,6 @@ package com.hoccer.xo.android.base;
 import android.content.*;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -24,14 +23,9 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
-import com.hoccer.xo.android.activity.AboutActivity;
-import com.hoccer.xo.android.activity.LicensesActivity;
-import com.hoccer.xo.android.activity.MessagingActivity;
-import com.hoccer.xo.android.activity.PairingActivity;
-import com.hoccer.xo.android.activity.PreferenceActivity;
-import com.hoccer.xo.android.activity.ProfileActivity;
+import com.hoccer.xo.android.activity.*;
+import com.hoccer.xo.android.activity.SingleProfileActivity;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
-import com.hoccer.xo.android.adapter.ConversationAdapter;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
 import com.hoccer.xo.android.content.ContentRegistry;
 import com.hoccer.xo.android.content.ContentSelection;
@@ -44,7 +38,6 @@ import org.apache.log4j.Logger;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -442,16 +435,21 @@ public abstract class XoActivity extends SherlockFragmentActivity {
 
     public void showContactProfile(TalkClientContact contact) {
         LOG.debug("showContactProfile(" + contact.getClientContactId() + ")");
-        Intent intent = new Intent(this, ProfileActivity.class);
-        intent.putExtra(ProfileActivity.EXTRA_CLIENT_CONTACT_ID,
-                        contact.getClientContactId());
+        Intent intent;
+        if (contact.isGroup()) {
+            intent = new Intent(this, GroupProfileActivity.class);
+            intent.putExtra(GroupProfileActivity.EXTRA_CLIENT_CONTACT_ID, contact.getClientContactId());
+        } else {
+            intent = new Intent(this, SingleProfileActivity.class);
+            intent.putExtra(SingleProfileActivity.EXTRA_CLIENT_CONTACT_ID, contact.getClientContactId());
+        }
         startActivity(intent);
     }
 
     public void showNewGroup() {
         LOG.debug("showNewGroup()");
-        Intent intent = new Intent(this, ProfileActivity.class);
-        intent.putExtra(ProfileActivity.EXTRA_CLIENT_CREATE_GROUP, true);
+        Intent intent = new Intent(this, GroupProfileActivity.class);
+        intent.putExtra(GroupProfileActivity.EXTRA_CLIENT_CREATE_GROUP, true);
         startActivity(intent);
     }
 

@@ -12,8 +12,8 @@
           android:layout_height="wrap_content"/>
 
   <fragment
-          class="com.hoccer.xo.android.fragment.ProfileFragment"
-          android:id="@+id/activity_profile_fragment"
+          class="com.hoccer.xo.android.fragment.SingleProfileFragment"
+          android:id="@+id/activity_single_profile_fragment"
           android:layout_width="match_parent"
           android:layout_height="match_parent"/>
 

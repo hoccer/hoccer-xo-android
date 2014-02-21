@@ -22,8 +22,8 @@ public class ContactsActivity extends XoActivity {
         super.onCreate(savedInstanceState);
         if(!getXoClient().isRegistered()) {
             LOG.info("not registered - redirecting to profile activity");
-            Intent intent = new Intent(this, ProfileActivity.class);
-            intent.putExtra(ProfileActivity.EXTRA_CLIENT_CREATE_SELF, true);
+            Intent intent = new Intent(this, SingleProfileActivity.class);
+            intent.putExtra(SingleProfileActivity.EXTRA_CLIENT_CREATE_SELF, true);
             startActivity(intent);
         }
     }

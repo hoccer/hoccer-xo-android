@@ -93,9 +93,20 @@
                     android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
         </activity>
 
-        <!-- Profile activity -->
+        <!-- Single Profile activity -->
         <activity
-                android:name="com.hoccer.xo.android.activity.ProfileActivity"
+                android:name="com.hoccer.xo.android.activity.SingleProfileActivity"
+                android:label="@string/app_name"
+                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
+                android:windowSoftInputMode="stateHidden">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
+        </activity>
+
+        <!-- Group Profile activity -->
+        <activity
+                android:name="com.hoccer.xo.android.activity.GroupProfileActivity"
                 android:label="@string/app_name"
                 android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:windowSoftInputMode="stateHidden">

@@ -8,45 +8,37 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
-import com.hoccer.talk.model.TalkGroup;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkRelationship;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoDialogs;
-import com.hoccer.xo.android.activity.ProfileActivity;
-import com.hoccer.xo.android.adapter.ContactsAdapter;
-import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
+import com.hoccer.xo.android.activity.SingleProfileActivity;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.UUID;
 
 /**
- * Fragment for display and editing of profiles
+ * Fragment for display and editing of single-contact profiles.
  *
  */
-public class ProfileFragment extends XoFragment
+public class SingleProfileFragment extends XoFragment
         implements View.OnClickListener, IXoContactListener {
 
-    private static final Logger LOG = Logger.getLogger(ProfileFragment.class);
+    private static final Logger LOG = Logger.getLogger(SingleProfileFragment.class);
 
     public enum Mode {
         PROFILE,
-        CREATE_GROUP,
         CREATE_SELF,
         CONFIRM_SELF
     }
@@ -67,19 +59,7 @@ public class ProfileFragment extends XoFragment
     Button   mUserDepairButton;
     Button   mUserDeleteButton;
 
-    Button mGroupCreateButton;
-    Button mGroupJoinButton;
-    Button mGroupInviteButton;
-    Button mGroupLeaveButton;
-    Button mGroupKickButton;
-    Button mGroupDeleteButton;
-
-    TextView mGroupMembersTitle;
-    ListView mGroupMembersList;
-
     TalkClientContact mContact;
-
-    ContactsAdapter mGroupMemberAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,7 +73,7 @@ public class ProfileFragment extends XoFragment
                              Bundle savedInstanceState) {
         LOG.debug("onCreateView()");
 
-        View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        View v = inflater.inflate(R.layout.fragment_single_profile, container, false);
 
         // avatar
         mAvatarImage = (ImageView)v.findViewById(R.id.profile_avatar_image);
@@ -120,22 +100,6 @@ public class ProfileFragment extends XoFragment
         mUserDeleteButton = (Button)v.findViewById(R.id.profile_user_delete_button);
         mUserDeleteButton.setOnClickListener(this);
 
-        // group operations
-        mGroupCreateButton = (Button)v.findViewById(R.id.profile_newgroup_create_button);
-        mGroupCreateButton.setOnClickListener(this);
-        mGroupJoinButton = (Button)v.findViewById(R.id.profile_group_join_button);
-        mGroupJoinButton.setOnClickListener(this);
-        mGroupInviteButton = (Button)v.findViewById(R.id.profile_group_invite_button);
-        mGroupInviteButton.setOnClickListener(this);
-        mGroupLeaveButton = (Button)v.findViewById(R.id.profile_group_leave_button);
-        mGroupLeaveButton.setOnClickListener(this);
-        mGroupKickButton = (Button)v.findViewById(R.id.profile_group_kick_button);
-        mGroupKickButton.setOnClickListener(this);
-        mGroupDeleteButton = (Button)v.findViewById(R.id.profile_group_delete_button);
-        mGroupDeleteButton.setOnClickListener(this);
-        mGroupMembersTitle = (TextView)v.findViewById(R.id.profile_group_members_title);
-        mGroupMembersList = (ListView)v.findViewById(R.id.profile_group_members_list);
-
         return v;
     }
 
@@ -157,11 +121,6 @@ public class ProfileFragment extends XoFragment
     public void onDestroy() {
         LOG.debug("onDestroy()");
         super.onDestroy();
-        if(mGroupMemberAdapter != null) {
-            mGroupMemberAdapter.onPause();
-            mGroupMemberAdapter.onDestroy();
-            mGroupMemberAdapter = null;
-        }
     }
 
     @Override
@@ -183,7 +142,7 @@ public class ProfileFragment extends XoFragment
             if(mContact != null && mContact.isSelf()) {
                 mContact.updateSelfConfirmed();
                 getXoClient().register();
-                ProfileActivity activity = (ProfileActivity) getXoActivity();
+                SingleProfileActivity activity = (SingleProfileActivity) getXoActivity();
                 activity.confirmSelf();
             }
         }
@@ -198,43 +157,6 @@ public class ProfileFragment extends XoFragment
                         blockContact();
                     }
                 }
-            }
-        }
-        if(v == mGroupCreateButton) {
-            LOG.debug("onClick(groupCreateButton)");
-            if(mContact != null && ! mContact.isGroupRegistered()) {
-                getXoClient().createGroup(mContact);
-                mMode = Mode.PROFILE;
-            }
-        }
-        if(v == mGroupJoinButton) {
-            LOG.debug("onClick(groupJoinButton)");
-            if(mContact != null && mContact.isGroup()) {
-                getXoClient().joinGroup(mContact.getGroupId());
-            }
-        }
-        if(v == mGroupLeaveButton) {
-            LOG.debug("onClick(groupLeaveButton)");
-            if(mContact != null && mContact.isGroupJoined() && !mContact.isGroupAdmin()) {
-                XoDialogs.confirmGroupLeave(getXoActivity(), mContact);
-            }
-        }
-        if(v == mGroupDeleteButton) {
-            LOG.debug("onClick(groupDeleteButton)");
-            if(mContact != null) {
-                XoDialogs.confirmDeleteContact(getXoActivity(), mContact);
-            }
-        }
-        if(v == mGroupInviteButton) {
-            LOG.debug("onClick(groupInviteButton)");
-            if(mContact != null && mContact.isGroup()) {
-                XoDialogs.selectGroupInvite(getXoActivity(), mContact);
-            }
-        }
-        if(v == mGroupKickButton) {
-            LOG.debug("onClick(groupKickButton)");
-            if(mContact != null && mContact.isGroup()) {
-                XoDialogs.selectGroupKick(getXoActivity(), mContact);
             }
         }
         if(v == mUserDepairButton) {
@@ -310,19 +232,6 @@ public class ProfileFragment extends XoFragment
         mContact = getXoClient().getSelfContact();
         update(mContact);
     }
-
-    public void createGroup() {
-        LOG.debug("createGroup()");
-        mMode = Mode.CREATE_GROUP;
-        String groupTag = UUID.randomUUID().toString();
-        mContact = new TalkClientContact(TalkClientContact.TYPE_GROUP);
-        mContact.updateGroupTag(groupTag);
-        TalkGroup groupPresence = new TalkGroup();
-        groupPresence.setGroupTag(groupTag);
-        mContact.updateGroupPresence(groupPresence);
-        update(mContact);
-    }
-
     private void update(TalkClientContact contact) {
         LOG.debug("update(" + contact.getClientContactId() + ")");
 
@@ -365,20 +274,6 @@ public class ProfileFragment extends XoFragment
         mUserBlockButton.setVisibility(clientRelatedVisibility);
         mUserDepairButton.setVisibility(clientRelatedVisibility);
         mUserDeleteButton.setVisibility(clientVisibility);
-        // group operations
-        int groupCreateVisibility = (contact.isGroup() && !contact.isGroupRegistered()) ? View.VISIBLE : View.GONE;
-        int groupJoinedVisibility = (contact.isGroupRegistered() && contact.isGroupJoined()) ? View.VISIBLE : View.GONE;
-        int groupInvitedVisibility = (contact.isGroupRegistered() && contact.isGroupInvited()) ? View.VISIBLE : View.GONE;
-        int groupAdminVisibility = (contact.isGroupRegistered() && contact.isGroupAdmin()) ? View.VISIBLE : View.GONE;
-        int groupMemberVisibility = (contact.isGroupRegistered() && (contact.isGroupJoined() && !contact.isGroupAdmin())) ? View.VISIBLE : View.GONE;
-        mGroupCreateButton.setVisibility(groupCreateVisibility);
-        mGroupJoinButton.setVisibility(groupInvitedVisibility);
-        mGroupInviteButton.setVisibility(groupAdminVisibility);
-        mGroupLeaveButton.setVisibility(groupMemberVisibility);
-        mGroupKickButton.setVisibility(groupAdminVisibility);
-        mGroupDeleteButton.setVisibility(contact.isGroupRegistered() ? View.VISIBLE : View.GONE);
-        mGroupMembersTitle.setVisibility(contact.isGroupRegistered() ? View.VISIBLE : View.GONE);
-        mGroupMembersList.setVisibility(contact.isGroupRegistered() ? View.VISIBLE : View.GONE);
 
         // apply data from the contact that needs to recurse
         String name = null;
@@ -404,41 +299,7 @@ public class ProfileFragment extends XoFragment
                 }
             }
         }
-        if(contact.isGroup()) {
-            TalkGroup groupPresence = contact.getGroupPresence();
-            if(groupPresence != null) {
-                name = groupPresence.getGroupName();
-            }
-            if(mGroupMemberAdapter == null) {
-                mGroupMemberAdapter = new SimpleContactsAdapter(getXoActivity());
-                mGroupMemberAdapter.onCreate();
-                mGroupMemberAdapter.onResume();
-            }
-            mGroupMemberAdapter.setFilter(new ContactsAdapter.Filter() {
-                @Override
-                public boolean shouldShow(TalkClientContact contact) {
-                    return contact.isClientGroupJoined(mContact);
-                }
-            });
-            mGroupMemberAdapter.requestReload();
-            mGroupMembersList.setAdapter(mGroupMemberAdapter);
-        } else {
-            if(mGroupMemberAdapter != null) {
-                mGroupMemberAdapter.onPause();
-                mGroupMemberAdapter.onDestroy();
-                mGroupMemberAdapter = null;
-                mGroupMembersList.setAdapter(null);
-            }
-        }
         if(name == null) {
-            mGroupCreateButton.setEnabled(false);
-        } else {
-            mGroupCreateButton.setEnabled(true);
-        }
-        if(name == null) {
-            if(mMode == Mode.CREATE_GROUP) {
-                name = "<chose a name>";
-            }
             if(mMode == Mode.CREATE_SELF) {
                 name = "<chose a name>";
             }
@@ -525,16 +386,12 @@ public class ProfileFragment extends XoFragment
 
     @Override
     public void onGroupPresenceChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
-            refreshContact(contact);
-        }
+
     }
 
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
-            refreshContact(contact);
-        }
+
     }
 
 }
