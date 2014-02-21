@@ -9,18 +9,18 @@
     <com.hoccer.xo.android.view.AvatarView
             android:id="@+id/contact_icon"
             android:clickable="true"
-            android:layout_margin="2dp"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             custom:cornerRadius="60"
-            custom:defaultAvatarImageUrl="@drawable/avatar_default_contact"/>
+            custom:defaultAvatarImageUrl="@drawable/avatar_default_contact"
+            style="@style/AppBaseTheme.Contact.Avatar"/>
     
     <TextView
         android:id="@+id/contact_name"
         android:text="@string/contact_name_new_client"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-        android:paddingLeft="5dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        style="@style/AppBaseTheme.Contact.Name"/>
 
 </LinearLayout>

@@ -10,18 +10,18 @@
         <item name="android:paddingRight">20dp</item>
     </style>
 
-    <style name="AppBaseTheme.Group.Title">
+    <style name="AppBaseTheme.Group.Title" parent="AppBaseTheme.Group">
         <item name="android:textSize">16dp</item>
     </style>
-
-    <style name="AppBaseTheme.Group.Name">
+    <style name="AppBaseTheme.Group.Name" parent="AppBaseTheme.Group">
         <item name="android:textSize">24dp</item>
     </style>
-    <style name="AppBaseTheme.Group.Members"/>
-    <style name="AppBaseTheme.Group.Members.Title">
+
+    <style name="AppBaseTheme.Group.Members" parent="AppBaseTheme.Group"/>
+    <style name="AppBaseTheme.Group.Members.Title" parent="AppBaseTheme.Group.Members">
         <item name="android:layout_marginTop">30dp</item>
     </style>
-    <style name="AppBaseTheme.Group.Members.List">
+    <style name="AppBaseTheme.Group.Members.List" parent="AppBaseTheme.Group.Members">
         <item name="android:divider">@color/xo_group_members_divder</item>
         <item name="android:dividerHeight">1dp</item>
     </style>
