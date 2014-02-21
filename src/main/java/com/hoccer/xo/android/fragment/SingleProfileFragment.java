@@ -82,7 +82,7 @@ public class SingleProfileFragment extends XoFragment
         // name
         mNameOverlay = (LinearLayout)v.findViewById(R.id.profile_name_overlay);
         mNameOverlay.setOnClickListener(this);
-        mNameText = (TextView)v.findViewById(R.id.profile_name_text);
+        mNameText = (TextView)v.findViewById(R.id.profile_group_name);
         mNameText.setOnClickListener(this);
         mNameEditButton = (ImageView)v.findViewById(R.id.profile_name_edit_button);
         mNameEditButton.setOnClickListener(this);

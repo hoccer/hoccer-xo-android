@@ -4,24 +4,25 @@
     <style name="AppBaseTheme.Group"/>
 
     <style name="AppBaseTheme.Group.Layout" parent="AppBaseTheme.Group">
-        <item name="android:layout_marginTop">20dp</item>
-        <item name="android:layout_marginBottom">20dp</item>
-        <item name="android:layout_marginLeft">20dp</item>
-        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:paddingBottom">20dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
     </style>
 
-    <style name="AppBaseTheme.Group.GroupText">
+    <style name="AppBaseTheme.Group.Title">
+        <item name="android:textSize">16dp</item>
+    </style>
+
+    <style name="AppBaseTheme.Group.Name">
         <item name="android:textSize">24dp</item>
-        <item name="android:textColor">@color/xo_app_main_color</item>
     </style>
-
-    <style name="AppBaseTheme.Group.GroupName">
-        <item name="android:textSize">30dp</item>
-        <item name="android:textColor">@color/xo_presence</item>
+    <style name="AppBaseTheme.Group.Members"/>
+    <style name="AppBaseTheme.Group.Members.Title">
+        <item name="android:layout_marginTop">30dp</item>
     </style>
-    <style name="AppBaseTheme.Group.Member"/>
-    <style name="AppBaseTheme.Group.Member.List">
+    <style name="AppBaseTheme.Group.Members.List">
         <item name="android:divider">@color/xo_group_members_divder</item>
-        <item name="android:dividerHeight">2dp</item>
+        <item name="android:dividerHeight">1dp</item>
     </style>
 </resources>

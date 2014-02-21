@@ -8,33 +8,33 @@
             style="@style/AppBaseTheme.Group.Layout">
 
         <TextView
-                android:id="@+id/profile_group_members_title"
+                android:id="@+id/profile_group_title"
                 android:text="@string/profile_name_title"
                 android:gravity="left"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/AppBaseTheme.Group.GroupText"/>
+                style="@style/AppBaseTheme.Group.Title"/>
 
         <TextView
-                android:id="@+id/profile_name_text"
+                android:id="@+id/profile_group_name"
                 android:text="@string/profile_name_title"
                 android:gravity="left"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/AppBaseTheme.Group.GroupName"/>
+                style="@style/AppBaseTheme.Group.Name"/>
 
         <TextView
-                android:id="@+id/profile_group_members_title"
+                android:id="@+id/profile_group_title"
                 android:text="@string/profile_group_members_title"
                 android:gravity="left"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/AppBaseTheme.Group.GroupText"/>
+                style="@style/AppBaseTheme.Group.Members.Title"/>
 
         <ListView
                 android:id="@+id/profile_group_members_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/AppBaseTheme.Group.Member.List"/>
+                style="@style/AppBaseTheme.Group.Members.List"/>
 
     </LinearLayout>

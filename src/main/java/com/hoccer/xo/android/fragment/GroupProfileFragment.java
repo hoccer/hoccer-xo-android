@@ -12,10 +12,7 @@ import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.talk.model.TalkGroup;
-import com.hoccer.talk.model.TalkPresence;
-import com.hoccer.talk.model.TalkRelationship;
 import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
 import com.hoccer.xo.android.base.XoFragment;
@@ -68,7 +65,7 @@ public class GroupProfileFragment  extends XoFragment
         View v = inflater.inflate(R.layout.fragment_group_profile, container, false);
 
         // name
-        mNameText = (TextView)v.findViewById(R.id.profile_name_text);
+        mNameText = (TextView)v.findViewById(R.id.profile_group_name);
 
         //mNameEditButton = (ImageView)v.findViewById(R.id.profile_name_edit_button);
         //mNameEditButton.setOnClickListener(this);
@@ -89,7 +86,7 @@ public class GroupProfileFragment  extends XoFragment
         mGroupDeleteButton.setOnClickListener(this);
         */
 
-        mGroupMembersTitle = (TextView)v.findViewById(R.id.profile_group_members_title);
+        mGroupMembersTitle = (TextView)v.findViewById(R.id.profile_group_title);
         mGroupMembersList = (ListView)v.findViewById(R.id.profile_group_members_list);
 
         return v;
