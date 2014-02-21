@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:background="@drawable/abs__ab_solid_dark_holo"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:background="@color/xo_app_main_color">
 
   <TextView
         android:id="@+id/status_text"
         android:gravity="center"
         android:text="@string/client_state_inactive"
-        android:textColor="@android:color/secondary_text_dark"
+        android:textColor="@android:color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
