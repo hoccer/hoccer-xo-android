@@ -13,6 +13,7 @@
         <item name="android:popupMenuStyle">@style/AppBaseTheme.PopupMenu</item>
         <item name="android:spinnerDropDownItemStyle">@style/AppBaseTheme.SpinnerDropDown</item>
         <item name="android:editTextBackground">@drawable/apptheme_edit_text_holo_light</item>
+        <item name="android:titleTextStyle">@style/AppBaseTheme.ActionBar.TitleText</item>
     </style>
 
 
