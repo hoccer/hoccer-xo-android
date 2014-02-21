@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 /**
- * Created by juliank on 20.02.14.
+ * A view holding an AspectImageView and a presence indicator.
  */
 public class AvatarView extends LinearLayout {
 

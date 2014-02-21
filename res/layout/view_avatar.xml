@@ -11,7 +11,7 @@
             android:layout_height="60dp"
             android:scaleType="centerCrop"
             custom:aspectRatio="1.0"
-            custom:cornerRadius="120.0"/>
+            custom:cornerRadius="60"/>
 
     <View
             android:id="@+id/presence_indicator_view"
@@ -19,7 +19,6 @@
             android:layout_height="6dp"
             android:visibility="invisible"
             android:layout_toRightOf="@+id/avatar_image"
-            android:layout_marginTop="5dp"
             android:layout_marginLeft="-6dp"
             style="@style/AppBaseTheme.Contact.Presence"/>
 
