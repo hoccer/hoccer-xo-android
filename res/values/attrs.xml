@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <declare-styleable name="TransferWheel">
+        <attr name="outerWheelSize" format="dimension"/>
+        <attr name="innerWheelSize" format="dimension"/>
+        <attr name="wheelColor" format="color"/>
+        <attr name="wheelDiameter" format="dimension"/>
+    </declare-styleable>
     <declare-styleable name="AspectView">
        <attr name="aspectRatio" format="float"/>
     </declare-styleable>
