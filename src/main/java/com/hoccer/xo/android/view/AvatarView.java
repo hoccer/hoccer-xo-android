@@ -44,7 +44,6 @@ public class AvatarView extends LinearLayout {
 
         float scale = getResources().getDisplayMetrics().density;
         int pixel = (int) (mCornerRadius * scale + 0.5f);
-
         if (isInEditMode()) {
             mDefaultOptions = new DisplayImageOptions.Builder().displayer(new RoundedBitmapDisplayer(pixel)).build();
         } else {
@@ -74,7 +73,6 @@ public class AvatarView extends LinearLayout {
             avatar.setImageResource(R.drawable.avatar_default_contact);
         } else {
             mAvatarImage.setVisibility(View.VISIBLE);
-
             if (avatarImageUrl != null) {
                 ImageLoader.getInstance().displayImage(avatarImageUrl, mAvatarImage, mDefaultOptions, null);
             } else if (mDefaultAvatarImageUrl != null) {
