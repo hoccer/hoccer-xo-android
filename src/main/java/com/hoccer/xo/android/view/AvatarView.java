@@ -10,7 +10,7 @@ import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
- * Created by juliank on 20.02.14.
+ * A view holding an AspectImageView and a presence indicator.
  */
 public class AvatarView extends LinearLayout {
 
