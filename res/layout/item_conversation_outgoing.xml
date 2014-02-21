@@ -52,7 +52,6 @@
             android:paddingRight="0dp"
             android:layout_toLeftOf="@id/message_avatar"
             android:layout_below="@id/message_text"
-            android:layout_height="wrap_content"
-            android:background="@drawable/message_attachment"/>
+            android:layout_height="wrap_content"/>
 
 </RelativeLayout>
