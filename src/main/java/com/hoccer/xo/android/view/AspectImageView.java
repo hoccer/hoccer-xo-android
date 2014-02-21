@@ -2,6 +2,9 @@ package com.hoccer.xo.android.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
+import android.graphics.Path;
+import android.graphics.RectF;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -17,9 +20,8 @@ import org.apache.log4j.Logger;
  */
 public class AspectImageView extends ImageView {
 
-    private static final Logger LOG = Logger.getLogger(AspectImageView.class);
-
     double mAspectRatio = 0.0;
+    float mCornerRadius = 0.0f;
 
     int mMaxHeight = Integer.MAX_VALUE;
 
@@ -46,6 +48,7 @@ public class AspectImageView extends ImageView {
             0, 0);
        try {
            mAspectRatio = a.getFloat(R.styleable.AspectView_aspectRatio, 0.0f);
+           mCornerRadius = a.getFloat(R.styleable.AspectView_cornerRadius, 0.0f);
        } finally {
            a.recycle();
        }
@@ -69,6 +72,14 @@ public class AspectImageView extends ImageView {
     /** set the enforced aspect ratio */
     public void setAspectRatio(double aspectRatio) {
         this.mAspectRatio = aspectRatio;
+    }
+
+    public float getCornerRadius() {
+        return mCornerRadius;
+    }
+
+    public void setCornerRadius(float cornerRadius) {
+        mCornerRadius = cornerRadius;
     }
 
     /**
@@ -113,6 +124,15 @@ public class AspectImageView extends ImageView {
         }
         // set new dimensions
         setMeasuredDimension(width, height);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        Path clipPath = new Path();
+        RectF rect = new RectF(0, 0, this.getWidth(), this.getHeight());
+        clipPath.addRoundRect(rect, mCornerRadius, mCornerRadius, Path.Direction.CW);
+        canvas.clipPath(clipPath);
+        super.onDraw(canvas);
     }
 
 }

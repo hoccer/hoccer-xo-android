@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppBaseTheme.Contact"/>
+
+    <style name="AppBaseTheme.Contact.Presence" parent="AppBaseTheme.Contact">
+        <item name="android:background">@drawable/presence_indicator_shape</item>
+    </style>
+</resources>

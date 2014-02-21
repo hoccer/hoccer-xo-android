@@ -30,16 +30,16 @@
             android:gravity="center_vertical"
             style="@style/AppBaseTheme.Message.Outgoing"/>
 
-    <com.hoccer.xo.android.view.AspectImageView
+    <com.hoccer.xo.android.view.AvatarView
             android:id="@+id/message_avatar"
-            android:layout_width="54dp"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/message_time"
-            android:src="@drawable/avatar_default_contact"
+            android:layout_alignTop="@+id/message_text"
             android:layout_alignParentRight="true"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
             android:padding="2dp"
-            android:scaleType="centerCrop"
-            custom:aspectRatio="1.0"/>
+            custom:defaultAvatarImageUrl="@drawable/avatar_default_contact"/>
 
     <com.hoccer.xo.android.content.ContentView
             android:id="@+id/message_content"
@@ -50,6 +50,9 @@
             android:paddingBottom="2dp"
             android:paddingLeft="2dp"
             android:paddingRight="0dp"
-            android:layout_height="wrap_content"/>
+            android:layout_toLeftOf="@id/message_avatar"
+            android:layout_below="@id/message_text"
+            android:layout_height="wrap_content"
+            android:background="@drawable/message_attachment"/>
 
 </RelativeLayout>
