@@ -16,4 +16,8 @@
     <style name="AppBaseTheme.SpinnerDropDown" parent="Widget.Sherlock.TextView.SpinnerItem">
         <item name="android:background">@color/xo_app_main_color</item>
     </style>
+    <style name="AppBaseTheme.ActionBar.TitleText" parent="TextAppearance.Sherlock.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    
 </resources>

@@ -1,13 +1,15 @@
 package com.hoccer.xo.android.view;
 
+import com.hoccer.xo.release.R;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import com.hoccer.xo.release.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * A view holding an AspectImageView and a presence indicator.
@@ -15,7 +17,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 public class AvatarView extends LinearLayout {
 
     private Context mContext;
-    private String mDefaultAvatarImageUrl;
+    private String mDefaultAvatarImageUrl = null;
     private AspectImageView mAvatarImage;
     private View mPresenceIndicator;
 
@@ -23,11 +25,9 @@ public class AvatarView extends LinearLayout {
         super(context, attrs);
 
         mContext = context;
-        mDefaultAvatarImageUrl = null;
-
         this.initializeView();
         this.applyAttributes(context, attrs);
-        this.setAvatarImage(null);
+        this.setAvatarImage(mDefaultAvatarImageUrl);
     }
 
     private void initializeView() {
@@ -53,14 +53,19 @@ public class AvatarView extends LinearLayout {
      * @param avatarImageUrl Url of the given image resource  to load.
      */
     public void setAvatarImage(String avatarImageUrl) {
-        ImageLoader imageLoader = ImageLoader.getInstance();
-        mAvatarImage.setVisibility(View.VISIBLE);
-        if (avatarImageUrl != null) {
-            imageLoader.displayImage(avatarImageUrl, mAvatarImage);
-        } else if (mDefaultAvatarImageUrl != null) {
-            imageLoader.displayImage(mDefaultAvatarImageUrl, mAvatarImage);
+        if(isInEditMode()) {
+            ImageView avatar = (ImageView) this.findViewById(R.id.avatar_image);
+            avatar.setImageResource(R.drawable.avatar_default_contact);
         } else {
-            mAvatarImage.setVisibility(View.INVISIBLE);
+            ImageLoader imageLoader = ImageLoader.getInstance();
+            mAvatarImage.setVisibility(View.VISIBLE);
+            if (avatarImageUrl != null) {
+                imageLoader.displayImage(avatarImageUrl, mAvatarImage);
+            } else if (mDefaultAvatarImageUrl != null) {
+                imageLoader.displayImage(mDefaultAvatarImageUrl, mAvatarImage);
+            } else {
+                mAvatarImage.setVisibility(View.INVISIBLE);
+            }
         }
     }
 
