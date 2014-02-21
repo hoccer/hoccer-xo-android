@@ -21,10 +21,11 @@ public class AvatarView extends LinearLayout {
 
     private Context mContext;
     private String mDefaultAvatarImageUrl;
-    private AspectImageView mAvatarImage;
-    private View mPresenceIndicator;
     private DisplayImageOptions mDefaultOptions;
     private float mCornerRadius = 0.0f;
+
+    private AspectImageView mAvatarImage;
+    private View mPresenceIndicator;
 
     public AvatarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -43,7 +44,12 @@ public class AvatarView extends LinearLayout {
 
         float scale = getResources().getDisplayMetrics().density;
         int pixel = (int) (mCornerRadius * scale + 0.5f);
-        mDefaultOptions = new DisplayImageOptions.Builder().cloneFrom(XoApplication.getContentImageOptions()).displayer(new RoundedBitmapDisplayer(pixel)).build();
+
+        if (isInEditMode()) {
+            mDefaultOptions = new DisplayImageOptions.Builder().displayer(new RoundedBitmapDisplayer(pixel)).build();
+        } else {
+            mDefaultOptions = new DisplayImageOptions.Builder().cloneFrom(XoApplication.getContentImageOptions()).displayer(new RoundedBitmapDisplayer(pixel)).build();
+        }
         setAvatarImage(mDefaultAvatarImageUrl);
     }
 
@@ -63,7 +69,7 @@ public class AvatarView extends LinearLayout {
      * @param avatarImageUrl Url of the given image resource  to load.
      */
     public void setAvatarImage(String avatarImageUrl) {
-        if(isInEditMode()) {
+        if (isInEditMode()) {
             ImageView avatar = (ImageView) this.findViewById(R.id.avatar_image);
             avatar.setImageResource(R.drawable.avatar_default_contact);
         } else {
