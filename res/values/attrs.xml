@@ -12,4 +12,8 @@
     <declare-styleable name="AspectLimits">
         <attr name="maxHeight" format="dimension"/>
     </declare-styleable>
+    <declare-styleable name="AvatarView">
+        <attr name="defaultAvatarImageUrl" format="string"/>
+        <attr name="cornerRadius" format="float"/>
+    </declare-styleable>
 </resources>

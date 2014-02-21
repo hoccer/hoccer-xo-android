@@ -1,14 +1,5 @@
 package com.hoccer.xo.android.content;
 
-import android.app.Activity;
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import com.hoccer.talk.client.XoTransferAgent;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
@@ -18,7 +9,18 @@ import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
+
 import org.apache.log4j.Logger;
+
+import android.app.Activity;
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 /**
  * Content view
@@ -42,7 +44,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
 
     ContentRegistry mRegistry;
 
-    IContentObject mObject;
+    IContentObject mContent;
     ContentViewer<?> mViewer;
 
     ContentState mPreviousContentState;
@@ -116,29 +118,29 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             switch(mTransferAction) {
             case REQUEST_DOWNLOAD:
                 mTransferProgress.setEnabled(false);
-                if(mObject instanceof TalkClientDownload) {
-                    TalkClientDownload download = (TalkClientDownload)mObject;
+                if(mContent instanceof TalkClientDownload) {
+                    TalkClientDownload download = (TalkClientDownload)mContent;
                     XoApplication.getXoClient().requestDownload(download);
                 }
                 break;
             case CANCEL_DOWNLOAD:
                 mTransferProgress.setEnabled(false);
-                if(mObject instanceof TalkClientDownload) {
-                    TalkClientDownload download = (TalkClientDownload)mObject;
+                if(mContent instanceof TalkClientDownload) {
+                    TalkClientDownload download = (TalkClientDownload)mContent;
                     XoApplication.getXoClient().cancelDownload(download);
                 }
                 break;
             case REQUEST_UPLOAD:
                 mTransferProgress.setEnabled(false);
-                if(mObject instanceof TalkClientUpload) {
-                    TalkClientUpload upload = (TalkClientUpload)mObject;
+                if(mContent instanceof TalkClientUpload) {
+                    TalkClientUpload upload = (TalkClientUpload)mContent;
                     XoApplication.getXoClient().getTransferAgent().requestUpload(upload);
                 }
                 break;
             case CANCEL_UPLOAD:
                 mTransferProgress.setEnabled(false);
-                if(mObject instanceof TalkClientUpload) {
-                    TalkClientUpload upload = (TalkClientUpload)mObject;
+                if(mContent instanceof TalkClientUpload) {
+                    TalkClientUpload upload = (TalkClientUpload)mContent;
                     XoApplication.getXoClient().getTransferAgent().cancelUpload(upload);
                 }
             }
@@ -177,44 +179,44 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         return state;
     }
 
-    public void displayContent(Activity activity, IContentObject object) {
-        if(object.getContentDataUrl() != null) {
-            LOG.debug("displayContent(" + object.getContentDataUrl() + ")");
+    public void displayContent(Activity activity, IContentObject content) {
+        if(content.getContentDataUrl() != null) {
+            LOG.debug("displayContent(" + content.getContentDataUrl() + ")");
         }
 
-        boolean available = object.isContentAvailable();
-        ContentState state = getTrueContentState(object);
-        ContentDisposition disposition = object.getContentDisposition();
-        ContentViewer<?> viewer = mRegistry.selectViewerForContent(object);
+        boolean available = content.isContentAvailable();
+        ContentState state = getTrueContentState(content);
+        ContentDisposition disposition = content.getContentDisposition();
+        ContentViewer<?> viewer = mRegistry.selectViewerForContent(content);
 
         // determine if the content url has changed so
         // we know if we need to re-instantiate child views
-        boolean contentChanged = hasContentChanged(object);
+        boolean contentChanged = hasContentChanged(content);
         boolean stateChanged = hasStateChanged(contentChanged, state);
         boolean viewerChanged = hasViewerChanged(viewer);
         ContentViewer<?> oldViewer = mViewer;
 
         // remember the new object
-        mObject = object;
+        mContent = content;
         mViewer = viewer;
         mPreviousContentState = state;
 
         boolean footerVisible = updateFooter(state);
 
         // description
-        mContentDescription.setText(mRegistry.getContentDescription(object));
+        mContentDescription.setText(mRegistry.getContentDescription(content));
         String stateText = getStateText(state);
         doDownAndUploadActions(state);
-        updateProgressBar(state, object);
+        updateProgressBar(state, content);
         removeChildViewIfContentHasChanged(contentChanged, stateChanged);
         try {
-            updateContentView(viewerChanged, oldViewer, activity, object);
+            updateContentView(viewerChanged, oldViewer, activity, content);
         } catch (NullPointerException exception) {
             LOG.error("probably received an unkown media-type", exception);
             return;
         }
         if(viewerChanged || contentChanged || stateChanged) {
-            mViewer.updateView(mContentChild, this, object);
+            mViewer.updateView(mContentChild, this, content);
         }
         int visibility = isInEditMode() ? GONE : VISIBLE;
         mContentWrapper.setVisibility(visibility);
@@ -270,8 +272,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     }
 
     private boolean hasContentChanged(IContentObject object) {
-        if(mObject != null) {
-            String oldUrl = mObject.getContentDataUrl();
+        if(mContent != null) {
+            String oldUrl = mContent.getContentDataUrl();
             String newUrl = object.getContentDataUrl();
             if(oldUrl != null && newUrl != null) {
                 if(oldUrl.equals(newUrl)) {
@@ -454,7 +456,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     public void clear() {
         mContentWrapper.removeAllViews();
         mContentChild = null;
-        mObject = null;
+        mContent = null;
     }
 
+    
 }

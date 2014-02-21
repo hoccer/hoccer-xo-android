@@ -1,13 +1,12 @@
 package com.hoccer.xo.android.adapter;
 
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * Contacts adapter for simple lists
@@ -54,7 +53,7 @@ public class SimpleContactsAdapter extends ContactsAdapter {
         TextView nameView = (TextView) view.findViewById(R.id.contact_name);
         nameView.setText(contact.getName());
 
-        ImageView iconView = (ImageView) view.findViewById(R.id.contact_icon);
+        AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
         String avatarUri = contact.getAvatarContentUrl();
         if(avatarUri == null) {
             if(contact.isGroup()) {
@@ -63,7 +62,7 @@ public class SimpleContactsAdapter extends ContactsAdapter {
                 avatarUri = "content://" + R.drawable.avatar_default_contact;
             }
         }
-        ImageLoader.getInstance().displayImage(avatarUri, iconView);
+        avatarView.setAvatarImage(avatarUri);
     }
 
 }

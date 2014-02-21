@@ -11,12 +11,4 @@
         android:title="Search"/>
         -->
 
-    <item
-        android:id="@+id/menu_attachment"
-        android:title="@string/menu_add_attachment"
-        android:icon="@drawable/ic_dark_content_new_attachment"
-        android:visible="true"
-        android:showAsAction="ifRoom"
-        android:orderInCategory="250"/>
-
 </menu>

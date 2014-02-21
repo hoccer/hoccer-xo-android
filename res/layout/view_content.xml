@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
               xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:custom="http://schemas.android.com/apk/res-auto"
               android:id="@+id/content_root"
               android:orientation="vertical"
               android:layout_width="match_parent"
@@ -12,11 +13,14 @@
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <ImageView
+
+        <com.hoccer.xo.android.view.AspectImageView
                 android:src="@drawable/ic_launcher"
-                android:scaleType="fitCenter"
+                android:scaleType="centerCrop"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                custom:cornerRadius="30.0"
+                />
     </LinearLayout>
 
     <LinearLayout

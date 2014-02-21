@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
@@ -14,6 +13,7 @@ import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -143,8 +143,8 @@ public class RichContactsAdapter extends ContactsAdapter {
             lastMessageText.setVisibility(View.GONE);
         }
 
-        ImageView iconView = (ImageView) view.findViewById(R.id.contact_icon);
-        iconView.setOnClickListener(new View.OnClickListener() {
+        AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
+        avatarView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mActivity.showContactProfile(contact);
@@ -158,7 +158,7 @@ public class RichContactsAdapter extends ContactsAdapter {
                 avatarUri = "content://" + R.drawable.avatar_default_contact;
             }
         }
-        ImageLoader.getInstance().displayImage(avatarUri, iconView);
+        avatarView.setAvatarImage(avatarUri);
     }
 
     private String chooseAttachmentType(String attachmentType) {

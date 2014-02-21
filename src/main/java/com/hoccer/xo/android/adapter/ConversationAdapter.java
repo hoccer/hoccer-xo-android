@@ -7,17 +7,17 @@ import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentView;
+import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.sql.SQLException;
@@ -355,66 +355,17 @@ public class ConversationAdapter extends XoAdapter
 
     private void updateViewCommon(View view, TalkClientMessage message) {
         final TalkClientContact sendingContact = message.getSenderContact();
-
         if (!message.isSeen()) {
             markMessageAsSeen(message);
         }
+        setMessageText(view, message);
+        setTimestamp(view, message);
+        setAvatar(view, sendingContact);
+        setAttachment(view, message);
+    }
 
-        TextView text = (TextView) view.findViewById(R.id.message_text);
-        String textString = message.getText();
-        if (textString == null) {
-            text.setText(""); // XXX
-        } else {
-            text.setText(textString);
-            if (textString.length() > 0) {
-                text.setVisibility(View.VISIBLE);
-            } else {
-                text.setVisibility(View.GONE);
-            }
-        }
-
-        TextView timestamp = (TextView) view.findViewById(R.id.message_time);
-        Date time = message.getTimestamp();
-        if (time != null) {
-            timestamp.setVisibility(View.VISIBLE);
-            timestamp.setText(DateUtils.getRelativeDateTimeString(
-                    mActivity,
-                    message.getTimestamp().getTime(),
-                    DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.WEEK_IN_MILLIS,
-                    0
-            ));
-        } else {
-            timestamp.setVisibility(View.GONE);
-        }
-
-        final ImageView avatar = (ImageView) view.findViewById(R.id.message_avatar);
-        String avatarUri = null;
-        if (sendingContact != null) {
-            avatar.setOnClickListener(new View.OnClickListener() {
-                final TalkClientContact contact = sendingContact;
-
-                @Override
-                public void onClick(View v) {
-                    if (!contact.isSelf()) {
-                        mActivity.showContactProfile(contact);
-                    }
-                }
-            });
-            avatarUri = sendingContact.getAvatarContentUrl();
-            if (avatarUri == null) {
-                if (sendingContact.isGroup()) {
-                    avatarUri = "content://" + R.drawable.avatar_default_group;
-                }
-            }
-        }
-        if (avatarUri == null) {
-            avatarUri = "content://" + R.drawable.avatar_default_contact;
-        }
-        loadAvatar(avatar, avatarUri);
-
+    private void setAttachment(View view, TalkClientMessage message) {
         ContentView contentView = (ContentView) view.findViewById(R.id.message_content);
-
         int displayHeight = mResources.getDisplayMetrics().heightPixels;
         // XXX better place for this? also we might want to use the measured height of our list view
         contentView.setMaxContentHeight(Math.round(displayHeight * 0.8f));
@@ -438,8 +389,72 @@ public class ConversationAdapter extends XoAdapter
         }
     }
 
-    private void loadAvatar(ImageView view, String url) {
-        ImageLoader.getInstance().displayImage(url, view);
+    // TODO: dont reload the avatar for each list item! Cache them!!
+    private void setAvatar(View view, final TalkClientContact sendingContact) {
+        final AvatarView avatarView = (AvatarView) view.findViewById(R.id.message_avatar);
+        String avatarUri = null;
+        if (sendingContact != null) {
+            avatarView.setOnClickListener(new View.OnClickListener() {
+                final TalkClientContact contact = sendingContact;
+
+                @Override
+                public void onClick(View v) {
+                    if (!contact.isSelf()) {
+                        mActivity.showContactProfile(contact);
+                    }
+                }
+            });
+
+            avatarUri = sendingContact.getAvatarContentUrl();
+        }
+
+        loadAvatar(avatarView, avatarUri);
+        setPresence(avatarView, sendingContact);
+    }
+
+    private void setPresence(AvatarView avatarView, final TalkClientContact sendingContact) {
+        avatarView.setPresence(false);
+
+        String status = sendingContact.getClientPresence().getConnectionStatus();
+        if (status != null && status.equalsIgnoreCase(TalkPresence.CONN_STATUS_ONLINE)) {
+            avatarView.setPresence(true);
+        }
+    }
+
+    private void setMessageText(View view, TalkClientMessage message) {
+        TextView text = (TextView) view.findViewById(R.id.message_text);
+        String textString = message.getText();
+        if (textString == null) {
+            text.setText(""); // XXX
+        } else {
+            text.setText(textString);
+            if (textString.length() > 0) {
+                text.setVisibility(View.VISIBLE);
+            } else {
+                text.setVisibility(View.GONE);
+            }
+        }
+    }
+
+    private void setTimestamp(View view, TalkClientMessage message) {
+        TextView timestamp = (TextView) view.findViewById(R.id.message_time);
+        Date time = message.getTimestamp();
+        if (time != null) {
+            timestamp.setVisibility(View.VISIBLE);
+            timestamp.setText(DateUtils.getRelativeDateTimeString(
+                    mActivity,
+                    message.getTimestamp().getTime(),
+                    DateUtils.MINUTE_IN_MILLIS,
+                    DateUtils.WEEK_IN_MILLIS,
+                    0
+            ));
+        } else {
+            timestamp.setVisibility(View.GONE);
+        }
+    }
+
+    private void loadAvatar(AvatarView avatarView, String url) {
+        avatarView.setAvatarImage(url);
     }
 
     private void markMessageAsSeen(final TalkClientMessage message) {

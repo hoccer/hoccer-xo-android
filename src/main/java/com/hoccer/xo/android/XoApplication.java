@@ -302,6 +302,8 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
     }
 
     public static void reinitializeXoClient() {
-        CLIENT.initialize(CLIENT_HOST);
+        if(CLIENT != null) {
+            CLIENT.initialize(CLIENT_HOST);
+        }
     }
 }
