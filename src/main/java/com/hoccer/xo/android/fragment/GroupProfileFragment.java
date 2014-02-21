@@ -21,7 +21,6 @@ import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -37,27 +36,22 @@ public class GroupProfileFragment  extends XoFragment
 
     private static final Logger LOG = Logger.getLogger(SingleProfileFragment.class);
 
-    LinearLayout mNameOverlay;
     TextView mNameText;
-    ImageView mNameEditButton;
+    TextView mGroupMembersTitle;
+    ListView mGroupMembersList;
 
-    ImageView mAvatarImage;
-    IContentObject mAvatarToSet;
-
-
+    /*
     Button mGroupCreateButton;
     Button mGroupJoinButton;
     Button mGroupInviteButton;
     Button mGroupLeaveButton;
     Button mGroupKickButton;
     Button mGroupDeleteButton;
-
-    TextView mGroupMembersTitle;
-    ListView mGroupMembersList;
+    */
 
     ContactsAdapter mGroupMemberAdapter;
-
     TalkClientContact mContact;
+    IContentObject mAvatarToSet;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,19 +67,14 @@ public class GroupProfileFragment  extends XoFragment
 
         View v = inflater.inflate(R.layout.fragment_group_profile, container, false);
 
-        // avatar
-        mAvatarImage = (ImageView)v.findViewById(R.id.profile_avatar_image);
-        mAvatarImage.setOnClickListener(this);
-
         // name
-        mNameOverlay = (LinearLayout)v.findViewById(R.id.profile_name_overlay);
-        mNameOverlay.setOnClickListener(this);
         mNameText = (TextView)v.findViewById(R.id.profile_name_text);
-        mNameText.setOnClickListener(this);
-        mNameEditButton = (ImageView)v.findViewById(R.id.profile_name_edit_button);
-        mNameEditButton.setOnClickListener(this);
+
+        //mNameEditButton = (ImageView)v.findViewById(R.id.profile_name_edit_button);
+        //mNameEditButton.setOnClickListener(this);
 
         // group operations
+        /*
         mGroupCreateButton = (Button)v.findViewById(R.id.profile_newgroup_create_button);
         mGroupCreateButton.setOnClickListener(this);
         mGroupJoinButton = (Button)v.findViewById(R.id.profile_group_join_button);
@@ -98,6 +87,8 @@ public class GroupProfileFragment  extends XoFragment
         mGroupKickButton.setOnClickListener(this);
         mGroupDeleteButton = (Button)v.findViewById(R.id.profile_group_delete_button);
         mGroupDeleteButton.setOnClickListener(this);
+        */
+
         mGroupMembersTitle = (TextView)v.findViewById(R.id.profile_group_members_title);
         mGroupMembersList = (ListView)v.findViewById(R.id.profile_group_members_list);
 
@@ -160,9 +151,9 @@ public class GroupProfileFragment  extends XoFragment
             }
         }
         LOG.debug("avatar is " + avatarUrl);
-        ImageLoader.getInstance().displayImage(avatarUrl, mAvatarImage);
 
         // group operations
+        /*
         int groupCreateVisibility = (contact.isGroup() && !contact.isGroupRegistered()) ? View.VISIBLE : View.GONE;
         int groupJoinedVisibility = (contact.isGroupRegistered() && contact.isGroupJoined()) ? View.VISIBLE : View.GONE;
         int groupInvitedVisibility = (contact.isGroupRegistered() && contact.isGroupInvited()) ? View.VISIBLE : View.GONE;
@@ -174,6 +165,7 @@ public class GroupProfileFragment  extends XoFragment
         mGroupLeaveButton.setVisibility(groupMemberVisibility);
         mGroupKickButton.setVisibility(groupAdminVisibility);
         mGroupDeleteButton.setVisibility(contact.isGroupRegistered() ? View.VISIBLE : View.GONE);
+        */
         mGroupMembersTitle.setVisibility(contact.isGroupRegistered() ? View.VISIBLE : View.GONE);
         mGroupMembersList.setVisibility(contact.isGroupRegistered() ? View.VISIBLE : View.GONE);
 
@@ -199,9 +191,9 @@ public class GroupProfileFragment  extends XoFragment
             mGroupMembersList.setAdapter(mGroupMemberAdapter);
 
         if(name == null) {
-            mGroupCreateButton.setEnabled(false);
+            //mGroupCreateButton.setEnabled(false);
         } else {
-            mGroupCreateButton.setEnabled(true);
+            //mGroupCreateButton.setEnabled(true);
         }
         if(name == null) {
             name = "<unnamed>";
@@ -210,9 +202,9 @@ public class GroupProfileFragment  extends XoFragment
         mNameText.setText(name);
 
         if(contact.isEditable()) {
-            mNameEditButton.setVisibility(View.VISIBLE);
+            //mNameEditButton.setVisibility(View.VISIBLE);
         } else {
-            mNameEditButton.setVisibility(View.GONE);
+            //mNameEditButton.setVisibility(View.GONE);
         }
     }
 
@@ -316,13 +308,8 @@ public class GroupProfileFragment  extends XoFragment
 
     @Override
     public void onClick(View v) {
-        if(v == mAvatarImage) {
-            LOG.debug("onClick(avatarSetButton)");
-            if(mContact != null && mContact.isEditable()) {
-                getXoActivity().selectAvatar();
-            }
-        }
-        if(v == mNameOverlay || v == mNameText || v == mNameEditButton) {
+        /*
+        if(v == mNameOverlay || v == mNameText) {
             LOG.debug("onClick(nameOverlay|nameText|nameEditButton)");
             if(mContact != null && mContact.isEditable()) {
                 XoDialogs.changeName(getXoActivity(), mContact);
@@ -364,6 +351,7 @@ public class GroupProfileFragment  extends XoFragment
                 XoDialogs.selectGroupKick(getXoActivity(), mContact);
             }
         }
+        */
     }
 
     @Override

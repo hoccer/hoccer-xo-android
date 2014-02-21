@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="AppBaseTheme.ActionBar.Background" parent="Widget.Sherlock.ActionBar">
         <item name="android:background">@color/xo_app_main_color</item>
         <item name="background">@color/xo_app_main_color</item>
@@ -7,7 +8,7 @@
 
     <style name="AppBaseTheme.ActionBar.OverflowButton"
            parent="Widget.Sherlock.ActionButton.Overflow">
-        <item name="android:src">@android:drawable/ic_menu_more</item>
+        <item name="android:src">@drawable/abs__ic_menu_moreoverflow_normal_holo_light</item>
     </style>
 
     <style name="AppBaseTheme.PopupMenu" parent="android:style/Widget.Holo.Light.ListPopupWindow">
@@ -16,8 +17,9 @@
     <style name="AppBaseTheme.SpinnerDropDown" parent="Widget.Sherlock.TextView.SpinnerItem">
         <item name="android:background">@color/xo_app_main_color</item>
     </style>
-    <style name="AppBaseTheme.ActionBar.TitleText" parent="TextAppearance.Sherlock.Widget.ActionBar.Title">
+    <style name="AppBaseTheme.ActionBar.TitleText"
+           parent="TextAppearance.Sherlock.Widget.ActionBar.Title">
         <item name="android:textColor">@android:color/white</item>
     </style>
-    
+
 </resources>

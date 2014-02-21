@@ -141,9 +141,9 @@ public class ContentRegistry {
 
         String sizeString = "";
         if(object.getContentLength() > 0) {
-            sizeString = " (" + humanReadableByteCount(object.getContentLength(), true) + ")";
+            sizeString = " —" + humanReadableByteCount(object.getContentLength(), true);
         } else if (object.getTransferLength() > 0) {
-            sizeString = " (" + humanReadableByteCount(object.getTransferLength(), true) + ")";
+            sizeString = " —" + humanReadableByteCount(object.getTransferLength(), true);
         }
 
         return mediaTypeString + sizeString;

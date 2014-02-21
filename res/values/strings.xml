@@ -54,7 +54,7 @@
 
     <!-- Profile fragment -->
     <string name="profile_avatar_set_button">Change my image</string>
-    <string name="profile_name_text">Username</string>
+    <string name="profile_name_title">Name</string>
     <string name="profile_status_text">status</string>
     <string name="profile_name_edit">Change name</string>
     <string name="profile_name_set_button">Set new username</string>
@@ -65,6 +65,7 @@
     <string name="profile_user_block_button">Block this user</string>
     <string name="profile_user_depair_button">Depair this user</string>
     <string name="profile_user_delete_button">Delete this user</string>
+    <string name="profile_group_members_title">Members</string>
     <string name="profile_group_create_button">Create group</string>
     <string name="profile_group_join_button">Join group</string>
     <string name="profile_group_invite_button">Invite users to this Group</string>
@@ -120,7 +121,6 @@
     <string name="common_group">Group</string>
     <string name="common_friend">Friend</string>
     <string name="menu_licenses">Licenses</string>
-    <string name="profile_group_members_title">Members in this group:</string>
     <string name="pairing_token_generating">Generating...</string>
     <string name="pairing_token_sendsms">Send via SMS</string>
     <string name="feature_not_available">feature not available yet</string>
@@ -130,15 +130,15 @@
     <string name="error_no_videoplayer">can\'t handle video. Please install a proper videoplayer.</string>
 
     <string-array name="preference_log_level_names">
-      <item>Info</item>
-      <item>Debug</item>
-      <item>Trace</item>
+        <item>Info</item>
+        <item>Debug</item>
+        <item>Trace</item>
     </string-array>
 
     <string-array name="preference_log_level_values">
-      <item>INFO</item>
-      <item>DEBUG</item>
-      <item>TRACE</item>
+        <item>INFO</item>
+        <item>DEBUG</item>
+        <item>TRACE</item>
     </string-array>
 
 </resources>
