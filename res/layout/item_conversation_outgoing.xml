@@ -23,7 +23,7 @@
             android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="50dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginRight="10dp"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@id/message_avatar"
             android:minHeight="50dp"
@@ -44,7 +44,6 @@
     <com.hoccer.xo.android.content.ContentView
             android:id="@+id/message_content"
             android:gravity="center"
-
             custom:maxHeight="50dp"
             android:layout_width="match_parent"
             android:paddingTop="2dp"
@@ -53,7 +52,6 @@
             android:paddingRight="0dp"
             android:layout_toLeftOf="@id/message_avatar"
             android:layout_below="@id/message_text"
-            android:layout_height="wrap_content"
-            android:background="@drawable/message_attachment"/>
+            android:layout_height="wrap_content"/>
 
 </RelativeLayout>
