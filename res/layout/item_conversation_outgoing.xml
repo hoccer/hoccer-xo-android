@@ -34,7 +34,7 @@
             android:id="@+id/message_avatar"
             android:layout_width="54dp"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/message_text"
+            android:layout_below="@+id/message_time"
             android:src="@drawable/avatar_default_contact"
             android:layout_alignParentRight="true"
             android:padding="2dp"
@@ -44,16 +44,12 @@
     <com.hoccer.xo.android.content.ContentView
             android:id="@+id/message_content"
             android:gravity="center"
-
             custom:maxHeight="50dp"
             android:layout_width="match_parent"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
             android:paddingLeft="2dp"
             android:paddingRight="0dp"
-            android:layout_toLeftOf="@id/message_avatar"
-            android:layout_below="@id/message_text"
-            android:layout_height="wrap_content"
-            android:background="@drawable/message_attachment"/>
+            android:layout_height="wrap_content"/>
 
 </RelativeLayout>
