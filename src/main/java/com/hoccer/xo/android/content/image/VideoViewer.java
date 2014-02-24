@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -40,7 +41,8 @@ public class VideoViewer extends ContentViewer<Button> {
                         }
                         if(url != null) {
                             try {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setDataAndType(Uri.parse(url), "video/*");
                             view.getContext().startActivity(intent);
                             } catch(ActivityNotFoundException exception) {
                                 Toast.makeText(view.getContext(), R.string.error_no_videoplayer,
