@@ -129,6 +129,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         getXoClient().unregisterContactListener(this);
     }
 
+    
     private TalkClientContact refreshContact(int contactId) {
         LOG.debug("refreshContact(" + contactId + ")");
         try {
