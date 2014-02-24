@@ -2,11 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+            android:id="@+id/menu_group_profile_delete"
+            android:title="@string/menu_delete_profile"
+            android:icon="@drawable/ic_dark_content_remove"
+            android:visible="true"
+            android:showAsAction="ifRoom"
+            android:orderInCategory="200"/>
+
+    <item
             android:id="@+id/menu_group_profile_edit"
             android:title="@string/menu_edit_profile"
             android:icon="@drawable/ic_dark_content_edit"
             android:visible="true"
             android:showAsAction="ifRoom"
-            android:orderInCategory="200"/>
+            android:orderInCategory="210"/>
 
 </menu>

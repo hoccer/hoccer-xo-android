@@ -128,6 +128,7 @@
     <string name="open_file">open file</string>
     <string name="error_no_such_app">there is no App installed which could handle this File</string>
     <string name="error_no_videoplayer">can\'t handle video. Please install a proper videoplayer.</string>
+    <string name="menu_delete_profile">Delete Profile</string>
     <string name="menu_edit_profile">Edit Profile</string>
 
     <string-array name="preference_log_level_names">

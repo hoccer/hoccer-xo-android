@@ -33,9 +33,9 @@ public class GroupProfileFragment  extends XoFragment
 
     private static final Logger LOG = Logger.getLogger(SingleProfileFragment.class);
 
-    TextView mNameText;
-    TextView mGroupMembersTitle;
-    ListView mGroupMembersList;
+    private TextView mNameText;
+    private TextView mGroupMembersTitle;
+    private ListView mGroupMembersList;
 
     /*
     Button mGroupCreateButton;
@@ -49,6 +49,8 @@ public class GroupProfileFragment  extends XoFragment
     ContactsAdapter mGroupMemberAdapter;
     TalkClientContact mContact;
     IContentObject mAvatarToSet;
+
+    private boolean mIsEditing = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,6 +117,16 @@ public class GroupProfileFragment  extends XoFragment
             mGroupMemberAdapter.onPause();
             mGroupMemberAdapter.onDestroy();
             mGroupMemberAdapter = null;
+        }
+    }
+
+    public void toggleEditMode() {
+        mIsEditing = !mIsEditing;
+
+        if (mIsEditing) {
+            
+        } else {
+
         }
     }
 
@@ -261,9 +273,6 @@ public class GroupProfileFragment  extends XoFragment
     private boolean isMyContact(TalkClientContact contact) {
         return mContact != null && mContact == contact || mContact.getClientContactId() == contact.getClientContactId();
     }
-
-
-
 
     @Override
     public void onContactAdded(TalkClientContact contact) {
