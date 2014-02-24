@@ -5,4 +5,5 @@
     <color name="xo_compose_message_divider">#ffbfbfbf</color>
     <color name="xo_presence">#ff0000</color>
     <color name="xo_group_members_divder">#ffbfbfbf</color>
+    <color name="xo_app_main_color">#4dbfac</color>
 </resources>
