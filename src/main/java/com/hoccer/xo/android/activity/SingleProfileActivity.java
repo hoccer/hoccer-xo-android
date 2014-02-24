@@ -48,7 +48,7 @@ public class SingleProfileActivity extends XoActivity implements IXoContactListe
 
     @Override
     protected int getMenuResource() {
-        return R.menu.fragment_profile;
+        return R.menu.fragment_single_profile;
     }
 
     @Override

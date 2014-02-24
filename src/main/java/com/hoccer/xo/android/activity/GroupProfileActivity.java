@@ -40,7 +40,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
     @Override
     protected int getMenuResource() {
-        return R.menu.fragment_profile;
+        return R.menu.fragment_single_profile;
     }
 
     @Override
