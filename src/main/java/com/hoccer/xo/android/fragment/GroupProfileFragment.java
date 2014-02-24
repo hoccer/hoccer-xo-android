@@ -88,7 +88,7 @@ public class GroupProfileFragment  extends XoFragment
         mGroupDeleteButton.setOnClickListener(this);
         */
 
-        mGroupMembersTitle = (TextView)v.findViewById(R.id.profile_group_title);
+        mGroupMembersTitle = (TextView)v.findViewById(R.id.profile_group_name_title);
         mGroupMembersList = (ListView)v.findViewById(R.id.profile_group_members_list);
 
         return v;
