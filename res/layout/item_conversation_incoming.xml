@@ -8,8 +8,8 @@
     <com.hoccer.xo.android.view.AvatarView
         android:id="@+id/message_avatar"
         android:padding="2dp"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
