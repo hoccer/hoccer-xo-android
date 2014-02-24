@@ -28,11 +28,9 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     /* use this extra to show the given contact */
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 
-    ActionBar mActionBar;
-
-    GroupProfileFragment mGroupProfileFragment;
-
-    StatusFragment mStatusFragment;
+    private ActionBar mActionBar;
+    private GroupProfileFragment mGroupProfileFragment;
+    private StatusFragment mStatusFragment;
 
     @Override
     protected int getLayoutResource() {
@@ -50,7 +48,6 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         super.onCreate(savedInstanceState);
 
         enableUpNavigation();
-
         mActionBar = getActionBar();
 
         FragmentManager fragmentManager = getFragmentManager();
@@ -77,9 +74,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     public boolean onCreateOptionsMenu(Menu menu) {
         LOG.debug("onCreateOptionsMenu()");
         boolean result = super.onCreateOptionsMenu(menu);
-
         menu.findItem(R.id.menu_my_profile).setVisible(true);
-
         return result;
     }
 
@@ -88,23 +83,18 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
         switch (item.getItemId()) {
             case R.id.menu_group_profile_delete:
-                deleteProfile();
+                removeContact();
+                break;
+            case R.id.menu_group_profile_add_person:
+                addContact();
                 break;
             case R.id.menu_group_profile_edit:
-                toggleEditMode();
+                editGroupToggle();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
-    }
-
-    private void deleteProfile() {
-
-    }
-
-    private void toggleEditMode() {
-        mGroupProfileFragment.toggleEditMode();
     }
 
     @Override
@@ -114,7 +104,6 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
         getXoClient().registerContactListener(this);
         getXoClient().registerStateListener(this);
-
 
         mStatusFragment.getView().setVisibility(View.VISIBLE);
         getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -145,7 +134,6 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
         mGroupProfileFragment.showProfile(contact);
         update(contact);
-
     }
 
     public void createGroup() {
@@ -153,6 +141,21 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
         mGroupProfileFragment.createGroup();
         update(mGroupProfileFragment.getContact());
+    }
+
+    private void removeContact() {
+        LOG.debug("removeContact()");
+        mGroupProfileFragment.removeContact();
+    }
+
+    private void addContact() {
+        LOG.debug("addContact()");
+        mGroupProfileFragment.addContact();
+    }
+
+    private void editGroupToggle() {
+        LOG.debug("editContact()");
+        mGroupProfileFragment.editGroupToggle();
     }
 
     @Override
