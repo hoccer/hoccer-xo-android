@@ -28,6 +28,8 @@ import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import android.app.ActionBar;
+import android.app.Activity;
+import android.app.TaskStackBuilder;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
@@ -41,9 +43,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.provider.MediaStore;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -65,7 +64,7 @@ import java.util.concurrent.TimeUnit;
  * we use for connection retention alive by calling it via RPC.
  *
  */
-public abstract class XoActivity extends FragmentActivity {
+public abstract class XoActivity extends Activity {
 
     public final static int REQUEST_SELECT_AVATAR = 23;
     public final static int REQUEST_SELECT_ATTACHMENT = 42;
@@ -367,10 +366,10 @@ public abstract class XoActivity extends FragmentActivity {
     private void navigateUp() {
         LOG.debug("navigateUp()");
         if(mUpEnabled) {
-            Intent upIntent = NavUtils.getParentActivityIntent(this);
+            Intent upIntent = getParentActivityIntent();
             if(upIntent != null) {
                 // we have a parent, navigate up
-                if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                if (shouldUpRecreateTask(upIntent)) {
                     // we are not on our own task stack, so create one
                     TaskStackBuilder.create(this)
                             // add parents to back stack
@@ -379,7 +378,7 @@ public abstract class XoActivity extends FragmentActivity {
                             .startActivities();
                 } else {
                     // we are on our own task stack, so navigate upwards
-                    NavUtils.navigateUpTo(this, upIntent);
+                    navigateUpTo(upIntent);
                 }
             } else {
                 // we don't have a parent, navigate back instead

@@ -27,37 +27,37 @@ public class XoDialogs {
 
     public static void changeName(XoActivity activity, TalkClientContact contact) {
         new NameDialog(activity, contact)
-                .show(activity.getSupportFragmentManager(), DIALOG_NAME);
+                .show(activity.getFragmentManager(), DIALOG_NAME);
     }
 
     public static void confirmDeleteContact(XoActivity activity, TalkClientContact contact) {
         new ContactDeleteDialog(activity, contact)
-                .show(activity.getSupportFragmentManager(), DIALOG_CONTACT_DELETE);
+                .show(activity.getFragmentManager(), DIALOG_CONTACT_DELETE);
     }
 
     public static void confirmDepairContact(XoActivity activity, TalkClientContact contact) {
         new ContactDepairDialog(activity, contact)
-                .show(activity.getSupportFragmentManager(), DIALOG_CONTACT_DEPAIR);
+                .show(activity.getFragmentManager(), DIALOG_CONTACT_DEPAIR);
     }
 
     public static void confirmGroupLeave(XoActivity activity, TalkClientContact group) {
         new GroupLeaveDialog(activity, group)
-                .show(activity.getSupportFragmentManager(), DIALOG_GROUP_KICK);
+                .show(activity.getFragmentManager(), DIALOG_GROUP_KICK);
     }
 
     public static void selectGroupInvite(XoActivity activity, TalkClientContact group) {
         new GroupInviteDialog(activity, group)
-                .show(activity.getSupportFragmentManager(), DIALOG_GROUP_INVITE);
+                .show(activity.getFragmentManager(), DIALOG_GROUP_INVITE);
     }
 
     public static void selectGroupKick(XoActivity activity, TalkClientContact group) {
         new GroupKickDialog(activity, group)
-                .show(activity.getSupportFragmentManager(), DIALOG_GROUP_KICK);
+                .show(activity.getFragmentManager(), DIALOG_GROUP_KICK);
     }
 
     public static void showTokenDialog(XoActivity activity, TalkClientSmsToken token) {
         new TokenDialog(activity, token)
-                .show(activity.getSupportFragmentManager(), DIALOG_TOKEN);
+                .show(activity.getFragmentManager(), DIALOG_TOKEN);
     }
 
 }

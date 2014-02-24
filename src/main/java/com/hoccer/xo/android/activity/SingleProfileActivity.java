@@ -1,9 +1,9 @@
 package com.hoccer.xo.android.activity;
 
 import android.app.ActionBar;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.View;
 import com.hoccer.talk.client.IXoContactListener;
@@ -60,7 +60,7 @@ public class SingleProfileActivity extends XoActivity implements IXoContactListe
 
         mActionBar = getActionBar();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         mSingleProfileFragment = (SingleProfileFragment)fragmentManager.findFragmentById(R.id.activity_single_profile_fragment);
         mStatusFragment = (StatusFragment)fragmentManager.findFragmentById(R.id.activity_profile_status_fragment);
 
