@@ -8,9 +8,9 @@ import com.hoccer.xo.android.fragment.MessagingFragment;
 import com.hoccer.xo.release.R;
 
 import android.app.ActionBar;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -49,7 +49,7 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
         enableUpNavigation();
 
         // get our primary fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         mMessagingFragment = (MessagingFragment) fragmentManager.findFragmentById(R.id.activity_messaging_fragment);
         mMessagingFragment.setRetainInstance(true);
         mCompositionFragment = (CompositionFragment) fragmentManager.findFragmentById(R.id.activity_messaging_composer);

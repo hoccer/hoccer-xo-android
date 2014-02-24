@@ -1,9 +1,9 @@
 package com.hoccer.xo.android.activity;
 
 import android.app.ActionBar;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,7 +53,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
         mActionBar = getActionBar();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getFragmentManager();
         mGroupProfileFragment = (GroupProfileFragment)fragmentManager.findFragmentById(R.id.activity_group_profile_fragment);
         mStatusFragment = (StatusFragment)fragmentManager.findFragmentById(R.id.activity_profile_status_fragment);
 
@@ -103,6 +103,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
         getXoClient().registerContactListener(this);
         getXoClient().registerStateListener(this);
+
 
         mStatusFragment.getView().setVisibility(View.VISIBLE);
         getActionBar().setDisplayHomeAsUpEnabled(true);

@@ -28,7 +28,7 @@ public class PairingActivity extends XoActivity {
     public void hackReturnedFromDialog() {
         LOG.debug("hackReturnedFromDialog()");
         super.hackReturnedFromDialog();
-        PairingFragment fragment = (PairingFragment)getSupportFragmentManager()
+        PairingFragment fragment = (PairingFragment)getFragmentManager()
                 .findFragmentById(R.id.activity_pairing_fragment);
         fragment.requestNewToken();
     }
