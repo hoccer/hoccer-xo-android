@@ -1,5 +1,8 @@
 package com.hoccer.xo.android.content;
 
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import com.hoccer.talk.client.XoTransferAgent;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
@@ -21,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 
 /**
  * Content view
@@ -73,6 +77,19 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
      * Any container may and should set this according to its layout requirements
      */
     int mMaxContentHeight = Integer.MAX_VALUE;
+
+    private boolean mWaitUntilUploaded = false;
+    private  Handler mUploadHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (mTransferProgress.getVisibility() == VISIBLE) {
+                mUploadHandler.sendEmptyMessageDelayed(0, 500);
+            } else {
+                updateFooter(ContentState.UPLOAD_COMPLETE);
+                mWaitUntilUploaded = false;
+            }
+        }
+    };
 
     /**
      * Standard view constructor
@@ -197,12 +214,17 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         mViewer = viewer;
         mPreviousContentState = state;
 
-        boolean footerVisible = updateFooter(state);
-
         // description
         mContentDescription.setText(mRegistry.getContentDescription(content));
         doDownAndUploadActions(state);
         updateProgressBar(state, content);
+        boolean footerVisible = false;
+        if (mWaitUntilUploaded) {
+            mUploadHandler.sendEmptyMessage(0);
+        } else {
+            footerVisible = updateFooter(state);
+        }
+
         removeChildViewIfContentHasChanged(contentChanged, stateChanged);
         try {
             updateContentView(viewerChanged, oldViewer, activity, content);
@@ -210,7 +232,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             LOG.error("probably received an unkown media-type", exception);
             return;
         }
-        if(viewerChanged || contentChanged || stateChanged) {
+        if(viewerChanged || contentChanged || stateChanged){
             mViewer.updateView(mContentChild, this, content);
         }
 //        int visibility = isInEditMode() ? GONE : VISIBLE;
@@ -328,6 +350,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 mTransferProgress.pause();
                 break;
             case UPLOAD_UPLOADING:
+                mWaitUntilUploaded = true;
                 length = object.getTransferLength();
                 progress = object.getTransferProgress();
                 mTransferProgress.play();
@@ -336,7 +359,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 mTransferProgress.setProgress(progress);
                 break;
             case UPLOAD_COMPLETE:
-                mTransferProgress.setCompleteAndGone();
+                mTransferProgress.setCompletedAndGone();
                 break;
             default:
                 mTransferProgress.setVisibility(GONE);
