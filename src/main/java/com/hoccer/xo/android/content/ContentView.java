@@ -210,7 +210,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             LOG.error("probably received an unkown media-type", exception);
             return;
         }
-        if(viewerChanged || contentChanged || stateChanged) {
+        if((viewerChanged || contentChanged || stateChanged) &&
+                (state == ContentState.UPLOAD_COMPLETE || state == ContentState.DOWNLOAD_COMPLETE)) {
             mViewer.updateView(mContentChild, this, content);
         }
 //        int visibility = isInEditMode() ? GONE : VISIBLE;
