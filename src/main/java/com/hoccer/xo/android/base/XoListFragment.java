@@ -1,15 +1,17 @@
 package com.hoccer.xo.android.base;
 
-import android.app.Activity;
-import com.actionbarsherlock.app.SherlockListFragment;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.service.IXoClientService;
+
 import org.apache.log4j.Logger;
+
+import android.app.Activity;
+import android.support.v4.app.ListFragment;
 
 import java.io.File;
 
-public abstract class XoListFragment extends SherlockListFragment implements IXoFragment {
+public abstract class XoListFragment extends ListFragment implements IXoFragment {
 
     protected Logger LOG = null;
 

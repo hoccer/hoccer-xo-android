@@ -1,16 +1,18 @@
 package com.hoccer.xo.android.dialog;
 
+import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.release.R;
+
+import org.apache.log4j.Logger;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.release.R;
-import org.apache.log4j.Logger;
+import android.support.v4.app.DialogFragment;
 
-public class ContactDeleteDialog extends SherlockDialogFragment {
+public class ContactDeleteDialog extends DialogFragment {
 
     private static final Logger LOG = Logger.getLogger(ContactDeleteDialog.class);
 
@@ -27,7 +29,7 @@ public class ContactDeleteDialog extends SherlockDialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LOG.debug("onCreateDialog()");
-        AlertDialog.Builder builder = new AlertDialog.Builder(getSherlockActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         builder.setTitle(R.string.deletecontact_title);
         builder.setMessage(R.string.deletecontact_question);

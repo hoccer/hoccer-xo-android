@@ -1,29 +1,20 @@
 package com.hoccer.xo.android.base;
 
-import android.content.*;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.database.Cursor;
-import android.provider.MediaStore;
-import android.os.RemoteException;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
-import com.hoccer.xo.android.activity.*;
+import com.hoccer.xo.android.activity.AboutActivity;
+import com.hoccer.xo.android.activity.GroupProfileActivity;
+import com.hoccer.xo.android.activity.LicensesActivity;
+import com.hoccer.xo.android.activity.MessagingActivity;
+import com.hoccer.xo.android.activity.PairingActivity;
+import com.hoccer.xo.android.activity.XoPreferenceActivity;
 import com.hoccer.xo.android.activity.SingleProfileActivity;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
@@ -33,9 +24,31 @@ import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.IXoClientService;
 import com.hoccer.xo.android.service.XoClientService;
 import com.hoccer.xo.release.R;
+
 import org.apache.log4j.Logger;
 
-import java.io.*;
+import android.app.ActionBar;
+import android.content.ComponentName;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
+import android.provider.MediaStore;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledExecutorService;
@@ -52,7 +65,7 @@ import java.util.concurrent.TimeUnit;
  * we use for connection retention alive by calling it via RPC.
  *
  */
-public abstract class XoActivity extends SherlockFragmentActivity {
+public abstract class XoActivity extends FragmentActivity {
 
     public final static int REQUEST_SELECT_AVATAR = 23;
     public final static int REQUEST_SELECT_ATTACHMENT = 42;
@@ -138,7 +151,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
         setContentView(getLayoutResource());
 
         // get and configure the action bar
-        mActionBar = getSupportActionBar();
+        mActionBar = getActionBar();
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 
         // get the barcode scanning service
@@ -188,10 +201,10 @@ public abstract class XoActivity extends SherlockFragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         LOG.debug("onCreateOptionsMenu()");
-        getSupportMenuInflater().inflate(R.menu.common, menu);
+        getMenuInflater().inflate(R.menu.common, menu);
         int activityMenu = getMenuResource();
         if(activityMenu >= 0) {
-            getSupportMenuInflater().inflate(activityMenu, menu);
+            getMenuInflater().inflate(activityMenu, menu);
         }
         return true;
     }
@@ -348,7 +361,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
     protected void enableUpNavigation() {
         LOG.debug("enableUpNavigation()");
         mUpEnabled = true;
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void navigateUp() {
@@ -478,7 +491,7 @@ public abstract class XoActivity extends SherlockFragmentActivity {
 
     public void showPreferences() {
         LOG.debug("showPreferences()");
-        startActivity(new Intent(this, PreferenceActivity.class));
+        startActivity(new Intent(this, XoPreferenceActivity.class));
     }
 
     public void selectAvatar() {

@@ -130,7 +130,7 @@
 
         <!-- Preference activity -->
         <activity
-                android:name="com.hoccer.xo.android.activity.PreferenceActivity"
+                android:name="com.hoccer.xo.android.activity.XoPreferenceActivity"
                 android:label="@string/app_name"
                 android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity">
             <meta-data

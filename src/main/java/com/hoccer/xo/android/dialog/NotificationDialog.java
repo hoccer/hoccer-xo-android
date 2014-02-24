@@ -1,15 +1,16 @@
 package com.hoccer.xo.android.dialog;
 
+import org.apache.log4j.Logger;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockDialogFragment;
-import org.apache.log4j.Logger;
 
 
-public class NotificationDialog extends SherlockDialogFragment {
+public class NotificationDialog extends DialogFragment {
 
     private static final Logger LOG = Logger.getLogger(NotificationDialog.class);
     private final int mMessageResource;
@@ -22,10 +23,10 @@ public class NotificationDialog extends SherlockDialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        TextView textView = new TextView(getSherlockActivity());
+        TextView textView = new TextView(getActivity());
         textView.setText(mMessageResource);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getSherlockActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(mTitleResource);
         builder.setView(textView);
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {

@@ -1,11 +1,11 @@
 package com.hoccer.xo.android.activity;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.Menu;
 import android.view.View;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.view.Menu;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.IXoStateListener;
 import com.hoccer.talk.client.XoClient;
@@ -58,7 +58,7 @@ public class SingleProfileActivity extends XoActivity implements IXoContactListe
 
         enableUpNavigation();
 
-        mActionBar = getSupportActionBar();
+        mActionBar = getActionBar();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         mSingleProfileFragment = (SingleProfileFragment)fragmentManager.findFragmentById(R.id.activity_single_profile_fragment);
@@ -104,10 +104,10 @@ public class SingleProfileActivity extends XoActivity implements IXoContactListe
 
         if(mMode == Mode.CREATE_SELF) {
             mStatusFragment.getView().setVisibility(View.GONE);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getActionBar().setDisplayHomeAsUpEnabled(false);
         } else {
             mStatusFragment.getView().setVisibility(View.VISIBLE);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 

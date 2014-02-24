@@ -59,20 +59,6 @@
             <version>${ez-vcard.version}</version>
         </dependency>
 
-        <!-- Action Bar Sherlock -->
-        <dependency>
-          <groupId>com.actionbarsherlock</groupId>
-          <artifactId>actionbarsherlock</artifactId>
-          <version>${actionbarsherlock.version}</version>
-          <type>apklib</type>
-          <exclusions>
-            <exclusion>
-                <groupId>com.google.android</groupId>
-                <artifactId>support-v4</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency>
-
         <!-- Universal image loader -->
         <dependency>
             <groupId>com.nostra13.universalimageloader</groupId>

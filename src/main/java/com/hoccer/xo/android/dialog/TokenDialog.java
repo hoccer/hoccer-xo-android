@@ -8,14 +8,14 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v4.app.DialogFragment;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
-public class TokenDialog extends SherlockDialogFragment implements DialogInterface.OnClickListener {
+public class TokenDialog extends DialogFragment implements DialogInterface.OnClickListener {
 
     private static final Logger LOG = Logger.getLogger(TokenDialog.class);
 
@@ -53,7 +53,7 @@ public class TokenDialog extends SherlockDialogFragment implements DialogInterfa
         }
 
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getSherlockActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         // XXX i18n mess
         builder.setTitle("Invitation");
@@ -65,7 +65,7 @@ public class TokenDialog extends SherlockDialogFragment implements DialogInterfa
         builder.setMessage(name + " has sent you an invitation via SMS.\nDo you wish to accept?");
 
         String body = mToken.getBody();
-        TextView bodyText = new TextView(getSherlockActivity());
+        TextView bodyText = new TextView(getActivity());
         if(body != null) {
             bodyText.setText(body);
             builder.setView(bodyText);

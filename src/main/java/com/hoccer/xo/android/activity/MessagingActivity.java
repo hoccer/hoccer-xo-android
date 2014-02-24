@@ -1,17 +1,18 @@
 package com.hoccer.xo.android.activity;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.CompositionFragment;
 import com.hoccer.xo.android.fragment.MessagingFragment;
 import com.hoccer.xo.release.R;
+
+import android.app.ActionBar;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import java.sql.SQLException;
 
@@ -42,7 +43,7 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
         super.onCreate(savedInstanceState);
 
         // get action bar (for setting title)
-        mActionBar = getSupportActionBar();
+        mActionBar = getActionBar();
 
         // enable up navigation
         enableUpNavigation();
@@ -101,7 +102,7 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
             clientItem.setVisible(mContact.isClient());
             MenuItem groupItem = menu.findItem(R.id.menu_profile_group);
             groupItem.setVisible(mContact.isGroup());
-            getSupportActionBar().setIcon(android.R.color.transparent);
+            getActionBar().setIcon(android.R.color.transparent);
         }
 
         return result;

@@ -1,18 +1,20 @@
 package com.hoccer.xo.android.dialog;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
+
 import org.apache.log4j.Logger;
 
-public class GroupKickDialog extends SherlockDialogFragment {
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+
+public class GroupKickDialog extends DialogFragment {
 
     private static final Logger LOG = Logger.getLogger(GroupInviteDialog.class);
 

@@ -1,7 +1,8 @@
 package com.hoccer.xo.android.base;
 
 import android.app.Activity;
-import com.actionbarsherlock.app.SherlockFragment;
+import android.support.v4.app.Fragment;
+
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.content.IContentObject;
@@ -18,7 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
  * This encapsulated commonalities:
  *  - access to activity for db and services
  */
-public abstract class XoFragment extends SherlockFragment implements IXoFragment {
+public abstract class XoFragment extends Fragment implements IXoFragment {
 
     protected Logger LOG = null;
 

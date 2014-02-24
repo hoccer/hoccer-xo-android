@@ -1,21 +1,23 @@
 package com.hoccer.xo.android.activity;
 
-import android.os.Bundle;
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.release.R;
+
 import org.apache.log4j.Logger;
 
-public class PreferenceActivity extends SherlockPreferenceActivity {
+import android.os.Bundle;
+import android.preference.PreferenceActivity;
+import android.view.MenuItem;
 
-    private static final Logger LOG = Logger.getLogger(PreferenceActivity.class);
+public class XoPreferenceActivity extends PreferenceActivity {
+
+    private static final Logger LOG = Logger.getLogger(XoPreferenceActivity.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
         if (XoConfiguration.DEVELOPMENT_MODE_ENABLED) {
             addPreferencesFromResource(R.xml.development_preferences);
         } else {
