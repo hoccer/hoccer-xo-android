@@ -14,6 +14,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/AppBaseTheme.Group.Title"/>
+        <View
+                android:layout_width="fill_parent"
+                style="@style/AppBaseTheme.Content.HorizontalDivider"/>
 
         <TextView
                 android:id="@+id/profile_group_name"
@@ -31,10 +34,14 @@
                 android:layout_height="wrap_content"
                 style="@style/AppBaseTheme.Group.Members.Title"/>
 
+        <View
+            android:layout_width="fill_parent"
+            style="@style/AppBaseTheme.Content.HorizontalDivider"/>
+
         <ListView
                 android:id="@+id/profile_group_members_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/AppBaseTheme.Group.Members.List"/>
+                style="@style/AppBaseTheme.Content.ListItem"/>
 
     </LinearLayout>

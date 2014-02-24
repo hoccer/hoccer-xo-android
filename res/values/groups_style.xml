@@ -19,8 +19,4 @@
     <style name="AppBaseTheme.Group.Members.Title" parent="AppBaseTheme.Content.ContentDescription">
         <item name="android:layout_marginTop">30dp</item>
     </style>
-    <style name="AppBaseTheme.Group.Members.List" parent="AppBaseTheme.Group">
-        <item name="android:divider">@color/xo_group_members_divder</item>
-        <item name="android:dividerHeight">1dp</item>
-    </style>
 </resources>
