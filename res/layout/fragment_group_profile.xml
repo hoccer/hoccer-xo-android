@@ -8,12 +8,15 @@
             style="@style/AppBaseTheme.Group.Layout">
 
         <TextView
-                android:id="@+id/profile_group_title"
+                android:id="@+id/profile_group_name_title"
                 android:text="@string/profile_name_title"
                 android:gravity="left"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/AppBaseTheme.Group.Title"/>
+        <View
+                android:layout_width="fill_parent"
+                style="@style/AppBaseTheme.Content.HorizontalDivider"/>
 
         <TextView
                 android:id="@+id/profile_group_name"
@@ -24,17 +27,21 @@
                 style="@style/AppBaseTheme.Group.Name"/>
 
         <TextView
-                android:id="@+id/profile_group_title"
+                android:id="@+id/profile_group_members_title"
                 android:text="@string/profile_group_members_title"
                 android:gravity="left"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/AppBaseTheme.Group.Members.Title"/>
 
+        <View
+            android:layout_width="fill_parent"
+            style="@style/AppBaseTheme.Content.HorizontalDivider"/>
+
         <ListView
                 android:id="@+id/profile_group_members_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/AppBaseTheme.Group.Members.List"/>
+                style="@style/AppBaseTheme.Content.ListItem"/>
 
     </LinearLayout>

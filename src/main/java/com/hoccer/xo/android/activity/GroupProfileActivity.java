@@ -87,13 +87,24 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     public boolean onOptionsItemSelected(MenuItem item) {
         LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
         switch (item.getItemId()) {
+            case R.id.menu_group_profile_delete:
+                deleteProfile();
+                break;
             case R.id.menu_group_profile_edit:
-                // TODO: switch to edit state.
+                toggleEditMode();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    private void deleteProfile() {
+
+    }
+
+    private void toggleEditMode() {
+        mGroupProfileFragment.toggleEditMode();
     }
 
     @Override
