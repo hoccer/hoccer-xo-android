@@ -4,25 +4,38 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+<!--    <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">-->
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
-        <item name="android:actionBarStyle">@style/AppBaseTheme.ActionBar.Background</item>
-        <item name="android:actionOverflowButtonStyle">
-            @style/AppBaseTheme.ActionBar.OverflowButton
-        </item>
-        <item name="android:spinnerDropDownItemStyle">@style/AppBaseTheme.SpinnerDropDown</item>
-        <item name="android:titleTextStyle">@style/AppBaseTheme.ActionBar.TitleText</item>
-
-        <item name="android:editTextBackground">@drawable/apptheme_edit_text_holo_light</item>
+<!--
+        <item name="android:actionBarStyle">@style/AppBaseTheme.Contact.Avata</item>
     </style>
+-->
 
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <style name="AppBaseTheme" parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_appbasetheme</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu.AppBaseTheme</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.AppBaseTheme</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.AppBaseTheme</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.AppBaseTheme</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.AppBaseTheme</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_appbasetheme</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_appbasetheme</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.AppBaseTheme</item>
+
+        <item name="android:editTextBackground">@drawable/apptheme_edit_text_holo_light</item>
+
+        <!-- Light.DarkActionBar specific -->
+        <item name="android:actionBarWidgetTheme">@style/Theme.AppBaseTheme.Widget</item>
+
     </style>
 
 

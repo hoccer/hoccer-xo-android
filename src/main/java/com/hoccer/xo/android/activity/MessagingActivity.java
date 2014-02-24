@@ -100,7 +100,7 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
         if(mContact != null) {
             MenuItem clientItem = menu.findItem(R.id.menu_profile_client);
             clientItem.setVisible(mContact.isClient());
-            MenuItem groupItem = menu.findItem(R.id.menu_profile_group);
+            MenuItem groupItem = menu.findItem(R.id.menu_single_profile);
             groupItem.setVisible(mContact.isGroup());
             getActionBar().setIcon(android.R.color.transparent);
         }
@@ -113,7 +113,7 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
         LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
         switch (item.getItemId()) {
             case R.id.menu_profile_client:
-            case R.id.menu_profile_group:
+            case R.id.menu_single_profile:
                 if(mContact != null) {
                     showContactProfile(mContact);
                 }

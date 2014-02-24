@@ -32,8 +32,8 @@
 
     <com.hoccer.xo.android.view.AvatarView
             android:id="@+id/message_avatar"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_below="@+id/message_time"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="3dp"

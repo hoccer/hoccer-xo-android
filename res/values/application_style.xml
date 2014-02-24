@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppBaseTheme.Content"/>
+    <style name="AppBaseTheme.Content.ContentDescription" parent="AppBaseTheme.Content">
+        <item name="android:textColor">@color/xo_content_description_text</item>
+        <item name="android:textSize">16dp</item>
+    </style>
+    <style name="AppBaseTheme.Content.HorizontalDivider" parent="AppBaseTheme.Content">
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/xo_content_horizontal_divider</item>
+    </style>
+    <style name="AppBaseTheme.Content.ListItem" parent="AppBaseTheme.Content">
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:divider">@color/xo_content_horizontal_divider</item>
+    </style>
+</resources>

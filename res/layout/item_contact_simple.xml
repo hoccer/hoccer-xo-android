@@ -7,13 +7,13 @@
     android:layout_height="wrap_content" >
 
     <com.hoccer.xo.android.view.AvatarView
-            android:id="@+id/contact_icon"
-            android:clickable="true"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            custom:cornerRadius="60"
-            custom:defaultAvatarImageUrl="@drawable/avatar_default_contact"
-            style="@style/AppBaseTheme.Contact.Avatar"/>
+        android:id="@+id/contact_icon"
+        android:clickable="true"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        custom:cornerRadius="45"
+        custom:defaultAvatarImageUrl="@drawable/avatar_default_contact"
+        style="@style/AppBaseTheme.Contact.Avatar"/>
     
     <TextView
         android:id="@+id/contact_name"
