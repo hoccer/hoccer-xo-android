@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.IXoStateListener;
@@ -40,7 +41,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
     @Override
     protected int getMenuResource() {
-        return R.menu.fragment_profile;
+        return R.menu.fragment_group_profile;
     }
 
     @Override
@@ -80,6 +81,19 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         menu.findItem(R.id.menu_my_profile).setVisible(true);
 
         return result;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
+        switch (item.getItemId()) {
+            case R.id.menu_group_profile_edit:
+                // TODO: switch to edit state.
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 
     @Override
