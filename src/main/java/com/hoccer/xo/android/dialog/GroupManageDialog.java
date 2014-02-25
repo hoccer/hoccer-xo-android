@@ -44,7 +44,7 @@ public class GroupManageDialog extends DialogFragment {
             mAdapter.setFilter(new ContactsAdapter.Filter() {
                 @Override
                 public boolean shouldShow(TalkClientContact contact) {
-                    return contact.isClientGroupJoined(mGroup);
+                    return (!contact.isGroup());
                 }
             });
         }
