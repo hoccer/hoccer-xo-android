@@ -113,6 +113,9 @@
     <!-- Group invite selection dialog -->
     <string name="invite_title">Invite to group</string>
 
+    <!-- Group manage selection dialog -->
+    <string name="manage_title">Manage Members</string>
+
     <!-- Location selection activity -->
     <string name="selectlocation_title">Select location</string>
 

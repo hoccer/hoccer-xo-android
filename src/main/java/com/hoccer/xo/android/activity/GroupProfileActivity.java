@@ -11,6 +11,7 @@ import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.IXoStateListener;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.GroupProfileFragment;
 import com.hoccer.xo.android.fragment.StatusFragment;
@@ -31,6 +32,8 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     private ActionBar mActionBar;
     private GroupProfileFragment mGroupProfileFragment;
     private StatusFragment mStatusFragment;
+
+    private int mContactId;
 
     @Override
     protected int getLayoutResource() {
@@ -60,11 +63,11 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
             if(intent.hasExtra(EXTRA_CLIENT_CREATE_GROUP)) {
                 createGroup();
             } else if(intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
-                int contactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
-                if(contactId == -1) {
+                mContactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
+                if(mContactId == -1) {
                     LOG.error("invalid contact id");
                 } else {
-                    showProfile(refreshContact(contactId));
+                    showProfile(refreshContact(mContactId));
                 }
             }
         }
@@ -75,6 +78,13 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         LOG.debug("onCreateOptionsMenu()");
         boolean result = super.onCreateOptionsMenu(menu);
         menu.findItem(R.id.menu_my_profile).setVisible(true);
+
+        TalkClientContact contact = refreshContact(mContactId);
+        if (!contact.isEditable()) {
+            menu.findItem(R.id.menu_group_profile_delete).setVisible(false);
+            menu.findItem(R.id.menu_group_profile_add_person).setVisible(false);
+        }
+
         return result;
     }
 
@@ -83,13 +93,10 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
         switch (item.getItemId()) {
             case R.id.menu_group_profile_delete:
-                removeContact();
+                // TODO: delete whatever...
                 break;
             case R.id.menu_group_profile_add_person:
-                addContact();
-                break;
-            case R.id.menu_group_profile_edit:
-                editGroupToggle();
+                manageContacts();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -143,19 +150,20 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         update(mGroupProfileFragment.getContact());
     }
 
-    private void removeContact() {
-        LOG.debug("removeContact()");
-        mGroupProfileFragment.removeContact();
-    }
-
-    private void addContact() {
+    public void addContact() {
         LOG.debug("addContact()");
         mGroupProfileFragment.addContact();
     }
 
-    private void editGroupToggle() {
-        LOG.debug("editContact()");
-        mGroupProfileFragment.editGroupToggle();
+    public void removeContact() {
+        LOG.debug("removeContact()");
+        mGroupProfileFragment.removeContact();
+    }
+
+    private void manageContacts() {
+        LOG.debug("manageContacts()");
+        TalkClientContact contact = refreshContact(mContactId);
+        XoDialogs.selectGroupManage(this, contact);
     }
 
     @Override

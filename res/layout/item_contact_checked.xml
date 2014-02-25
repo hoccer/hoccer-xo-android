@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:gravity="center|left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+
+    <com.hoccer.xo.android.view.AvatarView
+            android:id="@+id/contact_icon"
+            android:clickable="true"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            custom:cornerRadius="45"
+            custom:defaultAvatarImageUrl="@drawable/avatar_default_contact"
+            style="@style/AppBaseTheme.Contact.Avatar"/>
+
+    <CheckedTextView
+            android:id="@+id/contact_name"
+            android:text="@string/contact_name_new_client"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/contact_icon"
+            android:layout_alignParentRight="true"
+            android:checkMark="@drawable/ic_light_social_person"
+            android:checked="true"
+            style="@style/AppBaseTheme.Contact.Name"/>
+
+</RelativeLayout>

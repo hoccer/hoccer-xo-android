@@ -183,14 +183,6 @@ public class GroupProfileFragment  extends XoFragment
         update(mContact);
     }
 
-    public void editGroupToggle() {
-        if (mMode == Mode.EDIT_GROUP) {
-            editGroup(false);
-        } else {
-            editGroup(true);
-        }
-    }
-
     public void addContact() {
         LOG.debug("addContact()");
         if(mContact != null) {

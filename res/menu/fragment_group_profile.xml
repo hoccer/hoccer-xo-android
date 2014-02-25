@@ -16,12 +16,4 @@
             android:visible="true"
             android:showAsAction="always"
             android:orderInCategory="210"/>
-
-    <item
-            android:id="@+id/menu_group_profile_edit"
-            android:title="@string/menu_group_edit_profile"
-            android:icon="@drawable/ic_dark_content_edit"
-            android:visible="true"
-            android:showAsAction="always"
-            android:orderInCategory="220"/>
 </menu>

@@ -5,8 +5,7 @@ import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.dialog.ContactDeleteDialog;
 import com.hoccer.xo.android.dialog.ContactDepairDialog;
-import com.hoccer.xo.android.dialog.GroupInviteDialog;
-import com.hoccer.xo.android.dialog.GroupKickDialog;
+import com.hoccer.xo.android.dialog.GroupManageDialog;
 import com.hoccer.xo.android.dialog.GroupLeaveDialog;
 import com.hoccer.xo.android.dialog.NameDialog;
 import com.hoccer.xo.android.dialog.TokenDialog;
@@ -23,7 +22,8 @@ public class XoDialogs {
     public final static String DIALOG_CONTACT_DELETE = "ContactDeleteDialog";
     public final static String DIALOG_CONTACT_DEPAIR = "ContactDepairDialog";
     public final static String DIALOG_GROUP_KICK = "GroupKickDialog";
-    public final static String DIALOG_GROUP_INVITE = "GroupInviteDialog";
+    public final static String DIALOG_GROUP_INVITE = "GroupManageDialog";
+    public final static String DIALOG_GROUP_MANAGE = "GroupManageDialog";
 
     public static void changeName(XoActivity activity, TalkClientContact contact) {
         new NameDialog(activity, contact)
@@ -45,14 +45,9 @@ public class XoDialogs {
                 .show(activity.getFragmentManager(), DIALOG_GROUP_KICK);
     }
 
-    public static void selectGroupInvite(XoActivity activity, TalkClientContact group) {
-        new GroupInviteDialog(activity, group)
-                .show(activity.getFragmentManager(), DIALOG_GROUP_INVITE);
-    }
-
-    public static void selectGroupKick(XoActivity activity, TalkClientContact group) {
-        new GroupKickDialog(activity, group)
-                .show(activity.getFragmentManager(), DIALOG_GROUP_KICK);
+    public static void selectGroupManage(XoActivity activity, TalkClientContact group) {
+        new GroupManageDialog(activity, group)
+                .show(activity.getFragmentManager(), DIALOG_GROUP_MANAGE);
     }
 
     public static void showTokenDialog(XoActivity activity, TalkClientSmsToken token) {
