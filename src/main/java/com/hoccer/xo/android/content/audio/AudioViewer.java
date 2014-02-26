@@ -1,16 +1,17 @@
 package com.hoccer.xo.android.content.audio;
 
-import android.app.Activity;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewer;
 import com.hoccer.xo.android.view.AudioPlayerView;
 
+import android.app.Activity;
+
 public class AudioViewer extends ContentViewer<AudioPlayerView> {
 
     @Override
     public boolean canViewObject(IContentObject object) {
-        if(object.getContentMediaType().equals("audio")) {
+        if (object.getContentMediaType().equals("audio")) {
             return true;
         }
         return false;
@@ -22,8 +23,9 @@ public class AudioViewer extends ContentViewer<AudioPlayerView> {
     }
 
     @Override
-    protected void updateViewInternal(AudioPlayerView view, ContentView contentView, IContentObject contentObject) {
-        if(contentObject.getContentDataUrl() != null) {
+    protected void updateViewInternal(AudioPlayerView view, ContentView contentView,
+            IContentObject contentObject, boolean isLightTheme) {
+        if (contentObject.getContentDataUrl() != null) {
             view.setFile(contentObject.getContentDataUrl());
         }
     }

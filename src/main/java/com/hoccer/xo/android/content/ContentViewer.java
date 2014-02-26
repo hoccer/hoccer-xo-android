@@ -28,12 +28,12 @@ public abstract class ContentViewer<V extends View> {
 
     protected abstract V makeView(Activity activity);
 
-    protected abstract void updateViewInternal(V view, ContentView contentView, IContentObject contentObject);
+    protected abstract void updateViewInternal(V view, ContentView contentView, IContentObject contentObject, boolean isLightTheme);
     protected abstract void clearViewInternal(V view);
 
-    public V getViewForObject(Activity activity, ContentView contentView, IContentObject contentObject) {
+    public V getViewForObject(Activity activity, ContentView contentView, IContentObject contentObject, boolean isLightTheme) {
         V view = getView(activity, contentView);
-        updateViewInternal(view, contentView, contentObject);
+        updateViewInternal(view, contentView, contentObject, isLightTheme);
         return view;
     }
 
@@ -49,8 +49,8 @@ public abstract class ContentViewer<V extends View> {
         }
     }
 
-    public void updateView(View view, ContentView contentView, IContentObject contentObject) {
-        updateViewInternal((V)view, contentView, contentObject);
+    public void updateView(View view, ContentView contentView, IContentObject contentObject, boolean isLightTheme) {
+        updateViewInternal((V)view, contentView, contentObject, isLightTheme);
     }
 
     public void clearView(View view) {

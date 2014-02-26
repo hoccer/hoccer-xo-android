@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import com.hoccer.talk.client.XoTransferAgent;
 import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.ContentState;
@@ -208,7 +209,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         return state;
     }
 
-    public void displayContent(Activity activity, IContentObject content) {
+    public void displayContent(Activity activity, IContentObject content, TalkClientMessage message) {
         if(content.getContentDataUrl() != null) {
             LOG.debug("displayContent(" + content.getContentDataUrl() + ")");
         }
@@ -241,13 +242,14 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
 
         removeChildViewIfContentHasChanged(contentChanged, stateChanged);
         try {
-            updateContentView(viewerChanged, oldViewer, activity, content);
+            updateContentView(viewerChanged, oldViewer, activity, content, message);
         } catch (NullPointerException exception) {
             LOG.error("probably received an unkown media-type", exception);
             return;
         }
         if(viewerChanged || contentChanged || stateChanged){
-            mViewer.updateView(mContentChild, this, content);
+            boolean isLightTheme = message != null ? message.isIncoming() : true;
+            mViewer.updateView(mContentChild, this, content, isLightTheme);
         }
 //        int visibility = isInEditMode() ? GONE : VISIBLE;
 //        mContentWrapper.setVisibility(visibility);
@@ -258,8 +260,9 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         }
     }
 
-    private void updateContentView(boolean viewerChanged, ContentViewer<?> oldViewer, Activity activity,
-                                   IContentObject object) {
+    private void updateContentView(boolean viewerChanged, ContentViewer<?> oldViewer,
+            Activity activity,
+            IContentObject object, TalkClientMessage message) {
         if(viewerChanged || mContentChild == null) {
             // remove old
             if(mContentChild != null) {
@@ -269,7 +272,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 oldViewer.returnView(activity, v);
             }
             // add new
-            mContentChild = mViewer.getViewForObject(activity, this, object);
+            mContentChild = mViewer.getViewForObject(activity, this, object, message.isIncoming());
             mContentWrapper.addView(mContentChild,
                     new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,

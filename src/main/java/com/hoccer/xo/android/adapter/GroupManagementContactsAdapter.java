@@ -1,6 +1,7 @@
 package com.hoccer.xo.android.adapter;
 
 import android.view.View;
+import android.widget.CheckedTextView;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
@@ -18,8 +19,12 @@ import com.hoccer.xo.release.R;
  */
 public class GroupManagementContactsAdapter extends ContactsAdapter {
 
-    public GroupManagementContactsAdapter(XoActivity activity) {
+    private TalkClientContact mGroup;
+
+    public GroupManagementContactsAdapter(XoActivity activity, TalkClientContact group) {
         super(activity);
+
+        mGroup = group;
     }
 
     @Override
@@ -56,14 +61,14 @@ public class GroupManagementContactsAdapter extends ContactsAdapter {
         AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
         String avatarUri = contact.getAvatarContentUrl();
         if(avatarUri == null) {
-            if(contact.isGroup()) {
-                avatarUri = "content://" + R.drawable.avatar_default_group;
-            } else {
-                avatarUri = "content://" + R.drawable.avatar_default_contact;
-            }
+            avatarUri = "content://" + R.drawable.avatar_default_contact;
         }
         avatarView.setAvatarImage(avatarUri);
 
+        CheckedTextView checkedTextView = (CheckedTextView)view.findViewById(R.id.contact_name);
+        if (contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup)) {
+            checkedTextView.setChecked(true);
+        }
     }
 
 }

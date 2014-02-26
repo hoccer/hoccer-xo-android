@@ -167,10 +167,10 @@ public class ContentRegistry {
      * @param view that will host the returned view
      * @return a View set up for the given content
      */
-    public View createViewForContent(Activity activity, IContentObject contentObject, ContentView view) {
+    public View createViewForContent(Activity activity, IContentObject contentObject, ContentView view, boolean isLightTheme) {
         ContentViewer viewer = selectViewerForContent(contentObject);
         if(viewer != null) {
-            return viewer.getViewForObject(activity, view, contentObject);
+            return viewer.getViewForObject(activity, view, contentObject, isLightTheme);
         }
         return null;
     }

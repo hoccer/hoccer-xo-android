@@ -161,7 +161,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     private void showAttachment(IContentObject contentObject) {
         LOG.debug("showAttachment(" + contentObject.getContentDataUrl() + ")");
         mAttachment = contentObject;
-        mAttachmentView.displayContent(getXoActivity(), contentObject);
+        mAttachmentView.displayContent(getXoActivity(), contentObject, null);
         mAttachmentView.setVisibility(View.VISIBLE);
         mSendButton.setEnabled(isComposed() || XoConfiguration.DEVELOPMENT_MODE_ENABLED);
 //        mMenu.findItem(R.id.menu_attachment).setVisible(false);

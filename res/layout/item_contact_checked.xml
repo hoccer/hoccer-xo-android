@@ -23,8 +23,8 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/contact_icon"
             android:layout_alignParentRight="true"
-            android:checkMark="@drawable/ic_light_social_person"
-            android:checked="true"
+            android:checkMark="@drawable/appbasetheme_btn_check_holo_light"
+            android:checked="false"
             style="@style/AppBaseTheme.Contact.Name"/>
 
 </RelativeLayout>
