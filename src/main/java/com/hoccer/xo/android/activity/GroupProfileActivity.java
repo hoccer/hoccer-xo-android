@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.IXoStateListener;
 import com.hoccer.talk.client.XoClient;
@@ -53,6 +54,28 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         enableUpNavigation();
         mActionBar = getActionBar();
 
+        // add the custom view to the action bar
+        mActionBar.setCustomView(R.layout.view_actionbar_group_profile);
+        mActionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        ImageButton doneButton = (ImageButton)mActionBar.getCustomView().findViewById(R.id.image_button_done);
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // save name and leave
+                finish();
+            }
+        });
+
+        /*
+        RelativeLayout customView = (RelativeLayout)mActionBar.getCustomView();
+        customView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // leave.
+            }
+        });
+        */
+
         FragmentManager fragmentManager = getFragmentManager();
         mGroupProfileFragment = (GroupProfileFragment)fragmentManager.findFragmentById(R.id.activity_group_profile_fragment);
         mStatusFragment = (StatusFragment)fragmentManager.findFragmentById(R.id.activity_profile_status_fragment);
@@ -80,9 +103,11 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         menu.findItem(R.id.menu_my_profile).setVisible(true);
 
         TalkClientContact contact = refreshContact(mContactId);
-        if (!contact.isEditable()) {
-            menu.findItem(R.id.menu_group_profile_delete).setVisible(false);
-            menu.findItem(R.id.menu_group_profile_add_person).setVisible(false);
+        if (contact != null) {
+            if (!contact.isEditable()) {
+                menu.findItem(R.id.menu_group_profile_delete).setVisible(false);
+                menu.findItem(R.id.menu_group_profile_add_person).setVisible(false);
+            }
         }
 
         return result;
@@ -150,16 +175,6 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         update(mGroupProfileFragment.getContact());
     }
 
-    public void addContact() {
-        LOG.debug("addContact()");
-        mGroupProfileFragment.addContact();
-    }
-
-    public void removeContact() {
-        LOG.debug("removeContact()");
-        mGroupProfileFragment.removeContact();
-    }
-
     private void manageContacts() {
         LOG.debug("manageContacts()");
         TalkClientContact contact = refreshContact(mContactId);
@@ -179,14 +194,6 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                String title = contact.getName();
-                if(contact.isSelf()) {
-                    title = "My profile";
-                }
-                if(title == null) {
-                    title = "<unnamed>";
-                }
-                mActionBar.setTitle(title);
                 if (contact.isDeleted()) {
                     finish();
                 }

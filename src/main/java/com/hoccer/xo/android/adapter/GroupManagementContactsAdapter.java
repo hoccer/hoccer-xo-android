@@ -68,6 +68,8 @@ public class GroupManagementContactsAdapter extends ContactsAdapter {
         CheckedTextView checkedTextView = (CheckedTextView)view.findViewById(R.id.contact_name);
         if (contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup)) {
             checkedTextView.setChecked(true);
+        } else {
+            checkedTextView.setChecked(false);
         }
     }
 
