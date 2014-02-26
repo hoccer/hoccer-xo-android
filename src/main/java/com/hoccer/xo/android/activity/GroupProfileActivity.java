@@ -66,16 +66,6 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
             }
         });
 
-        /*
-        RelativeLayout customView = (RelativeLayout)mActionBar.getCustomView();
-        customView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // leave.
-            }
-        });
-        */
-
         FragmentManager fragmentManager = getFragmentManager();
         mGroupProfileFragment = (GroupProfileFragment)fragmentManager.findFragmentById(R.id.activity_group_profile_fragment);
         mStatusFragment = (StatusFragment)fragmentManager.findFragmentById(R.id.activity_profile_status_fragment);
