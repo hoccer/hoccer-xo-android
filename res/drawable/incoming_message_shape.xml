@@ -6,5 +6,5 @@
         android:bottomRightRadius="@dimen/xo_message_corner_radius"
         android:topLeftRadius="@dimen/xo_message_corner_radius"
         android:topRightRadius="@dimen/xo_message_corner_radius" />
-    <solid android:color="@color/xo_app_main_color"/>
+    <solid android:color="@color/xo_incoming_message_background"/>
 </shape>

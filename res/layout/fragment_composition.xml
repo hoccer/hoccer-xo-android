@@ -5,7 +5,8 @@
         android:id="@+id/messaging_composer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/xo_compose_message_background">
 
     <View
             android:layout_width="match_parent"
@@ -16,8 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top"
-            android:orientation="horizontal"
-            android:background="@color/xo_compose_message_background">
+            android:orientation="horizontal">
 
 
         <ImageButton

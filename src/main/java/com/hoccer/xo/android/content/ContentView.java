@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -88,6 +89,19 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         }
         // initialize views
         initView(context);
+        applyAttributes(context, attrs);
+    }
+
+    private void applyAttributes(Context context, AttributeSet attributes) {
+        TypedArray a = context.getTheme().obtainStyledAttributes(attributes, R.styleable.AspectLimits, 0, 0);
+        try {
+            float maxHeightDp = a.getDimension(R.styleable.AspectLimits_maxHeight, -1f);
+
+            mMaxContentHeight = a.getDimensionPixelSize(R.styleable.AspectLimits_maxHeight, Integer.MAX_VALUE);
+
+        } finally {
+            a.recycle();
+        }
     }
 
     private void initView(Context context) {
@@ -398,6 +412,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         mContentChild = null;
         mContent = null;
     }
+
 
     
 }
