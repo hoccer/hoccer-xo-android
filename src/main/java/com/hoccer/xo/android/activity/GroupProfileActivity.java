@@ -97,10 +97,12 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
             if (contact.isEditable()) {
                 menu.findItem(R.id.menu_group_profile_delete).setVisible(true);
                 menu.findItem(R.id.menu_group_profile_add_person).setVisible(true);
+                menu.findItem(R.id.menu_group_profile_join).setVisible(false);
                 menu.findItem(R.id.menu_group_profile_leave).setVisible(false);
             } else {
                 menu.findItem(R.id.menu_group_profile_delete).setVisible(false);
                 menu.findItem(R.id.menu_group_profile_add_person).setVisible(false);
+                menu.findItem(R.id.menu_group_profile_join).setVisible(true);
                 menu.findItem(R.id.menu_group_profile_leave).setVisible(true);
             }
         }
@@ -115,11 +117,14 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
             case R.id.menu_group_profile_delete:
                 deleteGroup();
                 break;
-            case R.id.menu_group_profile_leave:
-                leaveGroup();
-                break;
             case R.id.menu_group_profile_add_person:
                 manageGroupMembers();
+                break;
+            case R.id.menu_group_profile_join:
+                joinGroup();
+                break;
+            case R.id.menu_group_profile_leave:
+                leaveGroup();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -182,6 +187,11 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     private void deleteGroup() {
         TalkClientContact contact = refreshContact(mContactId);
         getXoClient().deleteContact(contact);
+    }
+
+    private void joinGroup() {
+        TalkClientContact contact = refreshContact(mContactId);
+        getXoClient().joinGroup(contact.getGroupId());
     }
 
     private void leaveGroup() {

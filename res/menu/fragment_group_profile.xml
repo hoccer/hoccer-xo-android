@@ -10,18 +10,27 @@
             android:orderInCategory="200"/>
 
     <item
-            android:id="@+id/menu_group_profile_leave"
-            android:title="@string/menu_group_profile_leave"
-            android:icon="@drawable/ic_leave"
-            android:visible="true"
-            android:showAsAction="always"
-            android:orderInCategory="210"/>
-
-    <item
             android:id="@+id/menu_group_profile_add_person"
             android:title="@string/menu_group_profile_add_person"
             android:icon="@drawable/ic_contact_new"
             android:visible="true"
             android:showAsAction="always"
+            android:orderInCategory="210"/>
+
+    <item
+            android:id="@+id/menu_group_profile_join"
+            android:title="@string/menu_group_profile_join"
+            android:icon="@drawable/ic_contact_new"
+            android:visible="true"
+            android:showAsAction="always"
             android:orderInCategory="220"/>
+
+    <item
+            android:id="@+id/menu_group_profile_leave"
+            android:title="@string/menu_group_profile_leave"
+            android:icon="@drawable/ic_leave"
+            android:visible="true"
+            android:showAsAction="always"
+            android:orderInCategory="230"/>
+
 </menu>
