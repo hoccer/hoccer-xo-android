@@ -36,6 +36,7 @@
     <string name="contact_name_new_client">New Friend</string>
     <string name="contact_name_new_group">New Group</string>
     <string name="contact_status">Hello there!</string>
+    <string name="contact_role_owner">Owner</string>
 
     <!-- Composition fragment -->
     <string name="composition_text_hint">Type message</string>

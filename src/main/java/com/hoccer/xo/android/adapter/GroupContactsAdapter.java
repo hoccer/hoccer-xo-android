@@ -16,20 +16,24 @@ import com.hoccer.xo.release.R;
  * It is used mostly for selecting users in a group context.
  *
  */
-public class SimpleContactsAdapter extends ContactsAdapter {
+public class GroupContactsAdapter extends ContactsAdapter {
 
-    public SimpleContactsAdapter(XoActivity activity) {
+    private TalkClientContact mGroup;
+
+    public GroupContactsAdapter(XoActivity activity, TalkClientContact group) {
         super(activity);
+
+        mGroup = group;
     }
 
     @Override
     protected int getClientLayout() {
-        return R.layout.item_contact_simple;
+        return R.layout.item_contact_group_member;
     }
 
     @Override
     protected int getGroupLayout() {
-        return R.layout.item_contact_simple;
+        return R.layout.item_contact_group;
     }
 
     @Override
@@ -63,6 +67,15 @@ public class SimpleContactsAdapter extends ContactsAdapter {
             }
         }
         avatarView.setAvatarImage(avatarUri);
+
+        if (contact.isClient()) {
+            TextView roleView = (TextView)view.findViewById(R.id.contact_role);
+            if (contact.isGroupAdmin()) {
+                roleView.setVisibility(View.VISIBLE);
+            } else {
+                roleView.setVisibility(View.GONE);
+            }
+        }
     }
 
 }
