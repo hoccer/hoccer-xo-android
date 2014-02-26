@@ -41,7 +41,7 @@ public class DataViewer extends ContentViewer<Button> {
     }
 
     @Override
-    protected void updateViewInternal(final Button view, ContentView contentView, final IContentObject contentObject) {
+    protected void updateViewInternal(final Button view, ContentView contentView, final IContentObject contentObject, boolean isLightTheme) {
         if(contentObject.isContentAvailable()) {
             view.setVisibility(View.VISIBLE);
             view.setOnClickListener(new View.OnClickListener() {

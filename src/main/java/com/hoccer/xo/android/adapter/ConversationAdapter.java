@@ -385,7 +385,7 @@ public class ConversationAdapter extends XoAdapter
             contentView.clear();
         } else {
             contentView.setVisibility(View.VISIBLE);
-            contentView.displayContent(mActivity, contentObject);
+            contentView.displayContent(mActivity, contentObject, message);
         }
     }
 
