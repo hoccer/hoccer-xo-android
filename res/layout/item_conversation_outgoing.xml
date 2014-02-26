@@ -23,7 +23,7 @@
             android:text="@string/message_text"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@id/message_avatar"
@@ -50,11 +50,12 @@
             android:layout_width="match_parent"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_toLeftOf="@id/message_avatar"
             android:layout_below="@id/message_text"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            style="@style/AppBaseTheme.Message.Outgoing"/>
 
 
     <!--style="@style/AppBaseTheme.Message.Outgoing"-->
