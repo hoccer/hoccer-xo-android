@@ -1,0 +1,69 @@
+package com.hoccer.xo.android.adapter;
+
+import android.view.View;
+import android.widget.TextView;
+import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.view.AvatarView;
+import com.hoccer.xo.release.R;
+
+/**
+ * Contacts adapter for group management lists
+ *
+ * This displays the avatar and the name of a contact and a checkbox.
+ *
+ * It is used mostly for managing users in a group context.
+ *
+ */
+public class GroupManagementContactsAdapter extends ContactsAdapter {
+
+    public GroupManagementContactsAdapter(XoActivity activity) {
+        super(activity);
+    }
+
+    @Override
+    protected int getClientLayout() {
+        return R.layout.item_contact_checked;
+    }
+
+    @Override
+    protected int getGroupLayout() {
+        return R.layout.item_contact_checked;
+    }
+
+    @Override
+    protected int getSeparatorLayout() {
+        return R.layout.item_contact_separator;
+    }
+
+    @Override
+    protected int getTokenLayout() {
+        return -1;
+    }
+
+    @Override
+    protected void updateToken(View view, TalkClientSmsToken token) {
+        LOG.debug("updateToken(" + token.getSmsTokenId() + ")");
+    }
+
+    @Override
+    protected void updateContact(final View view, final TalkClientContact contact) {
+        LOG.debug("updateContact(" + contact.getClientContactId() + ")");
+        TextView nameView = (TextView) view.findViewById(R.id.contact_name);
+        nameView.setText(contact.getName());
+
+        AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
+        String avatarUri = contact.getAvatarContentUrl();
+        if(avatarUri == null) {
+            if(contact.isGroup()) {
+                avatarUri = "content://" + R.drawable.avatar_default_group;
+            } else {
+                avatarUri = "content://" + R.drawable.avatar_default_contact;
+            }
+        }
+        avatarView.setAvatarImage(avatarUri);
+
+    }
+
+}

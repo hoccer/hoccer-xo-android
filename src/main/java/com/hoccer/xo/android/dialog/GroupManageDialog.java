@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.*;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
-import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
+import com.hoccer.xo.android.adapter.GroupManagementContactsAdapter;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
 
@@ -15,8 +15,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-
-import java.util.ArrayList;
 
 public class GroupManageDialog extends DialogFragment {
 
@@ -38,7 +36,7 @@ public class GroupManageDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LOG.debug("onCreateDialog()");
         if(mAdapter == null) {
-            mAdapter = new SimpleContactsAdapter(mActivity);
+            mAdapter = new GroupManagementContactsAdapter(mActivity);
             mAdapter.onCreate();
             mAdapter.onResume();
             mAdapter.setFilter(new ContactsAdapter.Filter() {
@@ -75,20 +73,17 @@ public class GroupManageDialog extends DialogFragment {
         dialog.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int index, long id) {
-                //RelativeLayout contactView = (RelativeLayout) view;
-                //CheckedTextView checkedTextView = (CheckedTextView)contactView.findViewById(R.id.contact_name);
+                RelativeLayout contactView = (RelativeLayout) view;
+                CheckedTextView checkedTextView = (CheckedTextView)contactView.findViewById(R.id.contact_name);
 
                 Object object = mAdapter.getItem(index);
                 if (object != null && object instanceof TalkClientContact) {
-                    /*
+                    TalkClientContact contact = (TalkClientContact)object;
                     if (checkedTextView.isChecked()) {
-                        TalkClientContact contact = (TalkClientContact)object;
                         mActivity.getXoClient().inviteClientToGroup(mGroup.getGroupId(), contact.getClientId());
                     } else {
-                        TalkClientContact contact = (TalkClientContact)object;
                         mActivity.getXoClient().kickClientFromGroup(mGroup.getGroupId(), contact.getClientId());
                     }
-                    */
                 }
             }
         });
