@@ -36,7 +36,12 @@
         <!-- Light.DarkActionBar specific -->
         <item name="android:actionBarWidgetTheme">@style/Theme.AppBaseTheme.Widget</item>
 
+        <item name="android:checkboxStyle">@style/CheckBoxAppBaseTheme</item>
+
     </style>
 
+    <style name="CheckBoxAppBaseTheme" parent="android:Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/appbasetheme_btn_check_holo_light</item>
+    </style>
 
 </resources>

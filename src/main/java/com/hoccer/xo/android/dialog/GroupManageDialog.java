@@ -16,6 +16,9 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GroupManageDialog extends DialogFragment {
 
     private static final Logger LOG = Logger.getLogger(GroupManageDialog.class);
@@ -25,18 +28,22 @@ public class GroupManageDialog extends DialogFragment {
     TalkClientContact mGroup;
 
     ContactsAdapter mAdapter;
+    List<TalkClientContact> mContactsToInvite;
+    List<TalkClientContact> mContactsToKick;
 
     public GroupManageDialog(XoActivity activity, TalkClientContact group) {
         super();
         mActivity = activity;
         mGroup = group;
+        mContactsToInvite = new ArrayList();
+        mContactsToKick = new ArrayList();
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LOG.debug("onCreateDialog()");
         if(mAdapter == null) {
-            mAdapter = new GroupManagementContactsAdapter(mActivity);
+            mAdapter = new GroupManagementContactsAdapter(mActivity, mGroup);
             mAdapter.onCreate();
             mAdapter.onResume();
             mAdapter.setFilter(new ContactsAdapter.Filter() {
@@ -55,6 +62,7 @@ public class GroupManageDialog extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int index) {
                 LOG.debug("onClick(Ok)");
+                updateMemberships();
                 dialog.dismiss();
             }
         });
@@ -75,20 +83,43 @@ public class GroupManageDialog extends DialogFragment {
             public void onItemClick(AdapterView<?> parent, View view, int index, long id) {
                 RelativeLayout contactView = (RelativeLayout) view;
                 CheckedTextView checkedTextView = (CheckedTextView)contactView.findViewById(R.id.contact_name);
+                checkedTextView.setChecked(!checkedTextView.isChecked());
 
                 Object object = mAdapter.getItem(index);
                 if (object != null && object instanceof TalkClientContact) {
                     TalkClientContact contact = (TalkClientContact)object;
                     if (checkedTextView.isChecked()) {
-                        mActivity.getXoClient().inviteClientToGroup(mGroup.getGroupId(), contact.getClientId());
+
+                        mContactsToInvite.add(contact);
+
+                        if (mContactsToKick.contains(contact)) {
+                            mContactsToKick.remove(contact);
+                        }
+
                     } else {
-                        mActivity.getXoClient().kickClientFromGroup(mGroup.getGroupId(), contact.getClientId());
+
+                        mContactsToKick.add(contact);
+
+                        if (mContactsToInvite.contains(contact)) {
+                            mContactsToInvite.remove(contact);
+                        }
                     }
                 }
             }
         });
 
         return dialog;
+    }
+
+    private void updateMemberships() {
+        for (int i = 0; i < mContactsToInvite.size(); i++) {
+            TalkClientContact contact = mContactsToInvite.get(i);
+            mActivity.getXoClient().inviteClientToGroup(mGroup.getGroupId(), contact.getClientId());
+        }
+        for (int i = 0; i < mContactsToKick.size(); i++) {
+            TalkClientContact contact = mContactsToKick.get(i);
+            mActivity.getXoClient().kickClientFromGroup(mGroup.getGroupId(), contact.getClientId());
+        }
     }
 
     @Override
