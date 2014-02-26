@@ -90,12 +90,19 @@ public class GroupProfileFragment  extends XoFragment
             mGroupMemberAdapter = null;
         }
 
-        String newName = mGroupNameEdit.getText().toString();
-        if (newName.isEmpty()) {
-            newName = "";
+        String newGroupName = mGroupNameEdit.getText().toString();
+        if (newGroupName.isEmpty()) {
+            newGroupName = "";
         }
-        if (!newName.equals(mGroupName)) {
-            getXoClient().setGroupName(mContact, newName);
+
+        if (mMode == Mode.CREATE_GROUP) {
+            mContact.getGroupPresence().setGroupName(newGroupName);
+            getXoClient().createGroup(mContact);
+
+        } else if (mMode == Mode.EDIT_GROUP) {
+            if (!newGroupName.equals(mGroupName)) {
+                getXoClient().setGroupName(mContact, newGroupName);
+            }
         }
     }
 

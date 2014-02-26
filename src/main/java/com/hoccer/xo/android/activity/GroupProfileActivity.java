@@ -108,10 +108,10 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
         switch (item.getItemId()) {
             case R.id.menu_group_profile_delete:
-                // TODO: delete whatever...
+                deleteGroup();
                 break;
             case R.id.menu_group_profile_add_person:
-                manageContacts();
+                manageGroupMembers();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -165,10 +165,15 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         update(mGroupProfileFragment.getContact());
     }
 
-    private void manageContacts() {
-        LOG.debug("manageContacts()");
+    private void manageGroupMembers() {
+        LOG.debug("manageGroupMembers()");
         TalkClientContact contact = refreshContact(mContactId);
         XoDialogs.selectGroupManage(this, contact);
+    }
+
+    private void deleteGroup() {
+        TalkClientContact contact = refreshContact(mContactId);
+        getXoClient().deleteContact(contact);
     }
 
     @Override
