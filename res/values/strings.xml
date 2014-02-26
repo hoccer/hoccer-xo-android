@@ -14,9 +14,10 @@
     <!-- Menu entries -->
     <string name="menu_my_profile">My profile</string>
     <string name="menu_pair">Pair with someone</string>
+    <string name="menu_group_profile_add_person">Add person</string>
     <string name="menu_new_group">Create group</string>
-    <string name="menu_show_code">Show code</string>
     <string name="menu_scan_code">Scan code</string>
+    <string name="menu_show_code">Show code</string>
     <string name="menu_add_attachment">Add attachment</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_settings">Settings</string>
@@ -112,6 +113,9 @@
     <!-- Group invite selection dialog -->
     <string name="invite_title">Invite to group</string>
 
+    <!-- Group manage selection dialog -->
+    <string name="manage_title">Manage Members</string>
+
     <!-- Location selection activity -->
     <string name="selectlocation_title">Select location</string>
 
@@ -128,8 +132,8 @@
     <string name="open_file">open file</string>
     <string name="error_no_such_app">there is no App installed which could handle this File</string>
     <string name="error_no_videoplayer">can\'t handle video. Please install a proper videoplayer.</string>
-    <string name="menu_delete_profile">Delete Profile</string>
-    <string name="menu_edit_profile">Edit Profile</string>
+    <string name="menu_group_delete_profile">Delete Profile</string>
+    <string name="menu_group_edit_profile">Edit Profile</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>

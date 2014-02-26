@@ -35,6 +35,7 @@ public class AttachmentTransferControlView extends View {
     private int mWheelColor = 0;
 
     private float mStepIndegrees = 0.5f;
+    private boolean mGoneAfterFinished = false;
 
     private Handler spinHandler;
 
@@ -46,6 +47,8 @@ public class AttachmentTransferControlView extends View {
                 if (mShownProgress < mProgressCompleted && mPlay) {
                     mShownProgress += mStepIndegrees;
                     spinHandler.sendEmptyMessageDelayed(0, 1);
+                } else if (mGoneAfterFinished) {
+                    setVisibility(GONE);
                 }
             }
         };
@@ -168,15 +171,20 @@ public class AttachmentTransferControlView extends View {
     }
 
     public void clean() {
+        mGoneAfterFinished = false;
         mPlay = true;
+        mStepIndegrees = 0.5f;
         mProgressCompleted = 0;
         mShownProgress = 0;
         invalidate();
     }
 
-    public void setCompleteAndGone() {
-        mShownProgress = 359;
+    public boolean setCompletedAndGone() {
+        mProgressCompleted = 360;
+        mGoneAfterFinished = true;
+        mStepIndegrees = 1;
         spinHandler.sendEmptyMessage(0);
+        return false;
     }
 
     public void pause() {
