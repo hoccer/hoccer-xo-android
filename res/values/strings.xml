@@ -137,6 +137,8 @@
     <string name="location">Location</string>
     <string name="show_location_instruction">Use button to show on map</string>
     <string name="vcard_description">with all contact details</string>
+    <string name="profile_name_text">Name</string>
+    <string name="profile_key_text">Key</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>
