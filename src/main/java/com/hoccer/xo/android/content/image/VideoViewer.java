@@ -13,7 +13,6 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -41,7 +40,7 @@ public class VideoViewer extends ContentViewer<ImageView> {
     }
 
     @Override
-    protected void updateViewInternal(final ImageView view, final ContentView contentView, final IContentObject contentObject) {
+    protected void updateViewInternal(final ImageView view, final ContentView contentView, final IContentObject contentObject, boolean isLightTheme) {
         if(contentObject.isContentAvailable()) {
             view.setVisibility(View.VISIBLE);
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -88,7 +87,6 @@ public class VideoViewer extends ContentViewer<ImageView> {
             view.setVisibility(View.INVISIBLE);
         }
     }
-
 
     private Bitmap getFrames(Uri uri) {
         try {
