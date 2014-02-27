@@ -8,7 +8,8 @@
             android:id="@+id/image_button_done"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_leave"/>
+            android:background="@null"
+            android:src="@drawable/ic_light_navigation_accept"/>
 
     <TextView
             android:layout_width="wrap_content"

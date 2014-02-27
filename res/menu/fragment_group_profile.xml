@@ -20,7 +20,7 @@
     <item
             android:id="@+id/menu_group_profile_join"
             android:title="@string/menu_group_profile_join"
-            android:icon="@drawable/ic_contact_new"
+            android:icon="@drawable/ic_light_content_merge"
             android:visible="true"
             android:showAsAction="always"
             android:orderInCategory="220"/>
