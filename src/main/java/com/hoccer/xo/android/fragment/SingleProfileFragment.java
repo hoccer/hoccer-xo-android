@@ -3,6 +3,9 @@ package com.hoccer.xo.android.fragment;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -43,23 +46,18 @@ public class SingleProfileFragment extends XoFragment
         CONFIRM_SELF
     }
 
-    Mode mMode;
+    private Mode mMode;
 
-    LinearLayout mNameOverlay;
-    TextView  mNameText;
-    ImageView mNameEditButton;
+    private TextView  mNameText;
+    private TextView mKeyText;
+//    private ImageView mNameEditButton;
 
-    ImageView mAvatarImage;
-    IContentObject mAvatarToSet;
+    private ImageView mAvatarImage;
+    private IContentObject mAvatarToSet;
 
-    Button mSelfRegisterButton;
+//    private TextView mUserBlockStatus;
 
-    TextView mUserBlockStatus;
-    Button   mUserBlockButton;
-    Button   mUserDepairButton;
-    Button   mUserDeleteButton;
-
-    TalkClientContact mContact;
+    private TalkClientContact mContact;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,27 +78,47 @@ public class SingleProfileFragment extends XoFragment
         mAvatarImage.setOnClickListener(this);
 
         // name
-        mNameOverlay = (LinearLayout)v.findViewById(R.id.profile_name_overlay);
-        mNameOverlay.setOnClickListener(this);
-        mNameText = (TextView)v.findViewById(R.id.profile_group_name);
-        mNameText.setOnClickListener(this);
-        mNameEditButton = (ImageView)v.findViewById(R.id.profile_name_edit_button);
-        mNameEditButton.setOnClickListener(this);
+        mNameText = (TextView)v.findViewById(R.id.tv_profile_name);
+//        mNameText.setOnClickListener(this);
 
-        // self operations
-        mSelfRegisterButton = (Button)v.findViewById(R.id.profile_self_register_button);
-        mSelfRegisterButton.setOnClickListener(this);
+        mKeyText = (TextView) v.findViewById(R.id.tv_profile_key);
 
         // client operations
-        mUserBlockStatus = (TextView)v.findViewById(R.id.profile_user_block_status);
-        mUserBlockButton = (Button)v.findViewById(R.id.profile_user_block_button);
-        mUserBlockButton.setOnClickListener(this);
-        mUserDepairButton = (Button)v.findViewById(R.id.profile_user_depair_button);
-        mUserDepairButton.setOnClickListener(this);
-        mUserDeleteButton = (Button)v.findViewById(R.id.profile_user_delete_button);
-        mUserDeleteButton.setOnClickListener(this);
-
+//        mUserBlockStatus = (TextView)v.findViewById(R.id.profile_user_block_status);
         return v;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_single_profile, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if(mContact.isSelf()) {
+            MenuItem blockItem = menu.findItem(R.id.menu_profile_block);
+            MenuItem deleteItem = menu.findItem(R.id.menu_profile_delete);
+            blockItem.setVisible(false);
+            deleteItem.setVisible(false);
+            getActivity().invalidateOptionsMenu();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menu_profile_block:
+                doBlockAction();
+                break;
+            case R.id.menu_profile_delete:
+                if(mContact != null) {
+                    XoDialogs.confirmDeleteContact(getXoActivity(), mContact);
+                }
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -125,12 +143,12 @@ public class SingleProfileFragment extends XoFragment
 
     @Override
     public void onClick(View v) {
-        if(v == mAvatarImage) {
-            LOG.debug("onClick(avatarSetButton)");
+        if(v.getId() == R.id.profile_avatar_image) {
             if(mContact != null && mContact.isEditable()) {
                 getXoActivity().selectAvatar();
             }
         }
+        /*
         if(v == mNameOverlay || v == mNameText || v == mNameEditButton) {
             LOG.debug("onClick(nameOverlay|nameText|nameEditButton)");
             if(mContact != null && mContact.isEditable()) {
@@ -145,30 +163,18 @@ public class SingleProfileFragment extends XoFragment
                 SingleProfileActivity activity = (SingleProfileActivity) getXoActivity();
                 activity.confirmSelf();
             }
-        }
-        if(v == mUserBlockButton) {
-            LOG.debug("onClick(userBlockButton)");
-            if(mContact != null && mContact.isClient()) {
-                TalkRelationship relationship = mContact.getClientRelationship();
-                if(relationship != null) {
-                    if(relationship.isBlocked()) {
-                        unblockContact();
-                    } else {
-                        blockContact();
-                    }
+        }*/
+    }
+
+    private void doBlockAction() {
+        if(mContact != null && mContact.isClient()) {
+            TalkRelationship relationship = mContact.getClientRelationship();
+            if(relationship != null) {
+                if(relationship.isBlocked()) {
+                    unblockContact();
+                } else {
+                    blockContact();
                 }
-            }
-        }
-        if(v == mUserDepairButton) {
-            LOG.debug("onClick(userDepairButton)");
-            if(mContact != null) {
-                XoDialogs.confirmDepairContact(getXoActivity(), mContact);
-            }
-        }
-        if(v == mUserDeleteButton) {
-            LOG.debug("onClick(contactDeleteButton)");
-            if(mContact != null) {
-                XoDialogs.confirmDeleteContact(getXoActivity(), mContact);
             }
         }
     }
@@ -264,16 +270,10 @@ public class SingleProfileFragment extends XoFragment
         LOG.debug("avatar is " + avatarUrl);
         ImageLoader.getInstance().displayImage(avatarUrl, mAvatarImage);
 
-        // self operations
-        int selfRegistrationVisibility = contact.isSelf() && mMode == Mode.CREATE_SELF ? View.VISIBLE : View.GONE;
-        mSelfRegisterButton.setVisibility(selfRegistrationVisibility);
         // client operations
         int clientVisibility = contact.isClient() ? View.VISIBLE : View.GONE;
         int clientRelatedVisibility = contact.isClientRelated() ? View.VISIBLE : View.GONE;
-        mUserBlockStatus.setVisibility(clientRelatedVisibility);
-        mUserBlockButton.setVisibility(clientRelatedVisibility);
-        mUserDepairButton.setVisibility(clientRelatedVisibility);
-        mUserDeleteButton.setVisibility(clientVisibility);
+//        mUserBlockStatus.setVisibility(clientRelatedVisibility);
 
         // apply data from the contact that needs to recurse
         String name = null;
@@ -287,7 +287,7 @@ public class SingleProfileFragment extends XoFragment
                     name = presence.getClientName();
                 }
             }
-            if(contact.isClient()) {
+            /*if(contact.isClient()) {
                 TalkRelationship relationship = contact.getClientRelationship();
                 if(relationship != null) {
                     mUserBlockStatus.setVisibility(relationship.isBlocked() ? View.VISIBLE : View.GONE);
@@ -297,7 +297,7 @@ public class SingleProfileFragment extends XoFragment
                         mUserBlockButton.setText("Block this user");
                     }
                 }
-            }
+            }*/
         }
         if(name == null) {
             if(mMode == Mode.CREATE_SELF) {
@@ -310,11 +310,31 @@ public class SingleProfileFragment extends XoFragment
         LOG.debug("name is " + name);
         mNameText.setText(name);
 
-        if(contact.isEditable()) {
+        mKeyText.setText(getFingerprint());
+
+/*        if(contact.isEditable()) {
             mNameEditButton.setVisibility(View.VISIBLE);
         } else {
             mNameEditButton.setVisibility(View.GONE);
+        }*/
+    }
+
+    public String getFingerprint() {
+        String keyId = mContact.getPublicKey().getKeyId();
+        keyId = keyId.toUpperCase();
+
+        char[] chars = keyId.toCharArray();
+        int length = chars.length;
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < length; i++) {
+            builder.append(chars[i]);
+            if((i%2) == 1) {
+                builder.append(":");
+            }
+
         }
+        builder.deleteCharAt(builder.lastIndexOf(":"));
+        return builder.toString();
     }
 
     private void blockContact() {

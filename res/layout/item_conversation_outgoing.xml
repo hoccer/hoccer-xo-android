@@ -3,7 +3,8 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:custom="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingBottom="10dp">
 
     <TextView
             android:id="@+id/message_time"
@@ -22,7 +23,7 @@
             android:text="@string/message_text"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@id/message_avatar"
@@ -45,15 +46,18 @@
     <com.hoccer.xo.android.content.ContentView
             android:id="@+id/message_content"
             android:gravity="center"
-            custom:maxHeight="50dp"
+            custom:maxHeight="150dp"
             android:layout_width="match_parent"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:paddingLeft="2dp"
-            android:paddingRight="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_toLeftOf="@id/message_avatar"
             android:layout_below="@id/message_text"
             android:layout_height="wrap_content"
             style="@style/AppBaseTheme.Message.Outgoing"/>
+
+
+    <!--style="@style/AppBaseTheme.Message.Outgoing"-->
 
 </RelativeLayout>

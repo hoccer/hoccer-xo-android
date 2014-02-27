@@ -1,25 +1,32 @@
 package com.hoccer.xo.android.content.location;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
-import android.view.View;
-import android.widget.Button;
+import com.google.android.gms.maps.model.LatLng;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.android.gms.maps.model.LatLng;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewer;
 import com.hoccer.xo.android.content.SelectedContent;
+import com.hoccer.xo.release.R;
+
 import org.apache.log4j.Logger;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class LocationViewer extends ContentViewer<Button> {
+public class LocationViewer extends ContentViewer<View> {
 
     private static final Logger LOG = Logger.getLogger(LocationViewer.class);
 
@@ -35,30 +42,36 @@ public class LocationViewer extends ContentViewer<Button> {
     }
 
     @Override
-    protected Button makeView(Activity activity) {
-        Button view = new Button(activity);
-        view.setText("Show location");
+    protected View makeView(Activity activity) {
+        View view =  View.inflate(activity, R.layout.content_location, null);
         return view;
     }
 
     @Override
-    protected void updateViewInternal(final Button view, final ContentView contentView, final IContentObject contentObject) {
+    protected void updateViewInternal(final View view, final ContentView contentView,
+            final IContentObject contentObject, boolean isLightTheme) {
         final LatLng location = loadGeoJson(contentObject);
-        if(location == null) {
+        if (location == null) {
             view.setVisibility(View.INVISIBLE);
         } else {
             view.setVisibility(View.VISIBLE);
-            view.setOnClickListener(new View.OnClickListener() {
+
+            initTextViews(view, isLightTheme);
+            ImageButton openMapButton = (ImageButton) view.findViewById(R.id.ib_content_open);
+
+            openMapButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(contentObject.isContentAvailable()) {
+                    if (contentObject.isContentAvailable()) {
                         String url = contentObject.getContentUrl();
-                        if(url == null) {
+                        if (url == null) {
                             url = contentObject.getContentDataUrl();
                         }
-                        if(url != null) {
+                        if (url != null) {
                             String label = "Received Location";
-                            String uriString = "http://maps.google.com/maps?q=loc:" + location.latitude + "," + location.longitude + " (" + label + ")";
+                            String uriString = "http://maps.google.com/maps?q=loc:"
+                                    + location.latitude + "," + location.longitude + " (" + label
+                                    + ")";
                             Uri uri = Uri.parse(uriString);
                             Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
                             view.getContext().startActivity(intent);
@@ -69,43 +82,52 @@ public class LocationViewer extends ContentViewer<Button> {
         }
     }
 
+    private void initTextViews(View view, boolean isLightTheme) {
+        int textColor = isLightTheme ? Color.BLACK : Color.WHITE;
+        TextView title = (TextView) view.findViewById(R.id.tv_location_title);
+        TextView description = (TextView) view.findViewById(R.id.tv_location_description);
+
+        title.setTextColor(textColor);
+        description.setTextColor(textColor);
+    }
+
     @Override
-    protected void clearViewInternal(Button view) {
+    protected void clearViewInternal(View view) {
     }
 
     private LatLng loadGeoJson(IContentObject content) {
         LatLng result = null;
         try {
-            if(!content.isContentAvailable()) {
+            if (!content.isContentAvailable()) {
                 return null;
             }
 
             // XXX put this somewhere
             InputStream is = null;
-            if(content instanceof SelectedContent) {
-                SelectedContent selectedContent = ((SelectedContent)content);
-                if(selectedContent.getData() != null) {
+            if (content instanceof SelectedContent) {
+                SelectedContent selectedContent = ((SelectedContent) content);
+                if (selectedContent.getData() != null) {
                     is = new ByteArrayInputStream(selectedContent.getData());
                 }
             }
-            if(is == null && content.getContentDataUrl() != null) {
+            if (is == null && content.getContentDataUrl() != null) {
                 is = XoApplication.getXoClient().getHost().openInputStreamForUrl(
                         content.getContentDataUrl()
                 );
             }
-            if(is == null) {
+            if (is == null) {
                 return null;
             }
 
             JsonNode json = mJsonMapper.readTree(is);
-            if(json != null && json.isObject()) {
+            if (json != null && json.isObject()) {
                 LOG.info("parsing location: " + json.toString());
                 JsonNode location = json.get("location");
-                if(location != null && location.isObject()) {
+                if (location != null && location.isObject()) {
                     JsonNode type = location.get("type");
-                    if("point".equals(type.asText())) {
+                    if ("point".equals(type.asText())) {
                         JsonNode coordinates = location.get("coordinates");
-                        if(coordinates.isArray() && coordinates.size() == 2) {
+                        if (coordinates.isArray() && coordinates.size() == 2) {
                             JsonNode lat = coordinates.get(0);
                             JsonNode lon = coordinates.get(1);
                             result = new LatLng(lat.asDouble(), lon.asDouble());

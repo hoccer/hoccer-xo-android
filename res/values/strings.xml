@@ -10,6 +10,7 @@
     <string name="common_cancel">Cancel</string>
     <string name="common_yes">Yes</string>
     <string name="common_no">No</string>
+    <string name="common_done">Done</string>
 
     <!-- Menu entries -->
     <string name="menu_my_profile">My profile</string>
@@ -35,6 +36,7 @@
     <string name="contact_name_new_client">New Friend</string>
     <string name="contact_name_new_group">New Group</string>
     <string name="contact_status">Hello there!</string>
+    <string name="contact_role_owner">Owner</string>
 
     <!-- Composition fragment -->
     <string name="composition_text_hint">Type message</string>
@@ -113,6 +115,9 @@
     <!-- Group invite selection dialog -->
     <string name="invite_title">Invite to group</string>
 
+    <!-- Group manage selection dialog -->
+    <string name="manage_title">Manage Members</string>
+
     <!-- Location selection activity -->
     <string name="selectlocation_title">Select location</string>
 
@@ -131,6 +136,13 @@
     <string name="error_no_videoplayer">can\'t handle video. Please install a proper videoplayer.</string>
     <string name="menu_group_delete_profile">Delete Profile</string>
     <string name="menu_group_edit_profile">Edit Profile</string>
+    <string name="menu_group_profile_join">Join group</string>
+    <string name="menu_group_profile_leave">Leave group</string>
+    <string name="location">Location</string>
+    <string name="show_location_instruction">Use button to show on map</string>
+    <string name="vcard_description">with all contact details</string>
+    <string name="profile_name_text">Name</string>
+    <string name="profile_key_text">Key</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>

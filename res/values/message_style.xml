@@ -5,12 +5,12 @@
     </style>
 
     <style name="AppBaseTheme.Message.Incoming" parent="AppBaseTheme.Message">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:background">@drawable/incoming_message_shape</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:background">@drawable/bubble_grey</item>
     </style>
 
     <style name="AppBaseTheme.Message.Outgoing" parent="AppBaseTheme.Message">
-        <item name="android:textColor">@android:color/black</item>
-        <item name="android:background">@drawable/outgoing_message_shape</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@drawable/bubble_green</item>
     </style>
 </resources>

@@ -14,12 +14,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <com.hoccer.xo.android.view.AspectImageView
+        <ImageView
                 android:src="@drawable/ic_launcher"
                 android:scaleType="centerCrop"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                custom:cornerRadius="30.0"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
                 />
     </LinearLayout>
 

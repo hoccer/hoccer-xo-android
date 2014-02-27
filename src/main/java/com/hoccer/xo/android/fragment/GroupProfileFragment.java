@@ -10,7 +10,7 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.talk.model.TalkGroup;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
-import com.hoccer.xo.android.adapter.SimpleContactsAdapter;
+import com.hoccer.xo.android.adapter.GroupContactsAdapter;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -34,7 +34,8 @@ public class GroupProfileFragment  extends XoFragment
 
     private Mode mMode;
 
-    private TextView mGroupName;
+    private String mGroupName;
+    private TextView mGroupNameText;
     private EditText mGroupNameEdit;
     private TextView mGroupMembersTitle;
     private ListView mGroupMembersList;
@@ -56,7 +57,7 @@ public class GroupProfileFragment  extends XoFragment
 
         View v = inflater.inflate(R.layout.fragment_group_profile, container, false);
 
-        mGroupName = (TextView)v.findViewById(R.id.profile_group_name);
+        mGroupNameText = (TextView)v.findViewById(R.id.profile_group_name);
         mGroupNameEdit = (EditText)v.findViewById(R.id.profile_group_name_edit);
         mGroupMembersTitle = (TextView)v.findViewById(R.id.profile_group_name_title);
         mGroupMembersList = (ListView)v.findViewById(R.id.profile_group_members_list);
@@ -88,6 +89,21 @@ public class GroupProfileFragment  extends XoFragment
             mGroupMemberAdapter.onDestroy();
             mGroupMemberAdapter = null;
         }
+
+        String newGroupName = mGroupNameEdit.getText().toString();
+        if (newGroupName.isEmpty()) {
+            newGroupName = "";
+        }
+
+        if (mMode == Mode.CREATE_GROUP) {
+            mContact.getGroupPresence().setGroupName(newGroupName);
+            getXoClient().createGroup(mContact);
+
+        } else if (mMode == Mode.EDIT_GROUP) {
+            if (!newGroupName.equals(mGroupName)) {
+                getXoClient().setGroupName(mContact, newGroupName);
+            }
+        }
     }
 
     private void update(TalkClientContact contact) {
@@ -107,19 +123,20 @@ public class GroupProfileFragment  extends XoFragment
         if(name == null) {
             name = "";
         }
-        mGroupName.setText(name);
+        mGroupName = name;
+        mGroupNameText.setText(name);
         mGroupNameEdit.setText(name);
 
-        mGroupName.setVisibility(View.VISIBLE);
+        mGroupNameText.setVisibility(View.VISIBLE);
         mGroupNameEdit.setVisibility(View.GONE);
 
-        if (mMode == Mode.EDIT_GROUP) {
-            mGroupName.setVisibility(View.GONE);
+        if (mMode == Mode.EDIT_GROUP || mMode == Mode.CREATE_GROUP) {
+            mGroupNameText.setVisibility(View.GONE);
             mGroupNameEdit.setVisibility(View.VISIBLE);
         }
 
         if(mGroupMemberAdapter == null) {
-            mGroupMemberAdapter = new SimpleContactsAdapter(getXoActivity());
+            mGroupMemberAdapter = new GroupContactsAdapter(getXoActivity(), mContact);
             mGroupMemberAdapter.onCreate();
             mGroupMemberAdapter.onResume();
         }
@@ -154,8 +171,10 @@ public class GroupProfileFragment  extends XoFragment
         }
         refreshContact(contact);
 
-        if (contact.isEditable()) {
-           editGroup(true);
+        if (contact != null) {
+            if (contact.isEditable()) {
+                editGroup(true);
+            }
         }
     }
 
@@ -181,28 +200,6 @@ public class GroupProfileFragment  extends XoFragment
 
         refreshContact(mContact);
         update(mContact);
-    }
-
-    public void editGroupToggle() {
-        if (mMode == Mode.EDIT_GROUP) {
-            editGroup(false);
-        } else {
-            editGroup(true);
-        }
-    }
-
-    public void addContact() {
-        LOG.debug("addContact()");
-        if(mContact != null) {
-            //getXoClient().blockContact(mContact);
-        }
-    }
-
-    public void removeContact() {
-        LOG.debug("removeContact()");
-        if(mContact != null) {
-            //getXoClient().(mContact);
-        }
     }
 
     public TalkClientContact getContact() {

@@ -20,9 +20,9 @@ public class AudioPlayerView
 
     private final static Logger LOG = Logger.getLogger(AudioPlayerView.class);
 
-    MediaPlayer mPlayer;
+    private MediaPlayer mPlayer;
 
-    ImageButton mPlayPause;
+    private ImageButton mPlayPause;
 
     public AudioPlayerView(Context context) {
         super(context);

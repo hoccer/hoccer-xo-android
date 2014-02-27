@@ -42,12 +42,12 @@ public class ImageViewer extends ContentViewer<AspectImageView> implements Image
 
     @Override
     protected void updateViewInternal(AspectImageView view, ContentView contentView,
-            IContentObject contentObject) {
+            IContentObject contentObject, boolean isLightTheme) {
         int maxContentHeight = contentView.getMaxContentHeight();
         if (maxContentHeight != Integer.MAX_VALUE) {
             view.setMaxHeight(maxContentHeight);
         }
-        view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        view.setScaleType(ImageView.ScaleType.CENTER);
         view.setAspectRatio(contentObject.getContentAspectRatio());
         view.setAdjustViewBounds(true);
         view.setLayoutParams(new LinearLayout.LayoutParams(

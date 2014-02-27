@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.util.AttributeSet;
@@ -37,7 +38,6 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
     Activity mActivity;
 
     RelativeLayout mRoot;
-    ImageView mAvatarImage;
     TextView mNameText;
     ImageButton mShowButton;
     ImageButton mImportButton;
@@ -66,11 +66,10 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
         mRoot = (RelativeLayout)inflate(activity, R.layout.content_vcard, null);
         mRoot.setVisibility(INVISIBLE);
         addView(mRoot);
-        mAvatarImage = (ImageView)findViewById(R.id.vcard_avatar);
-        mNameText = (TextView)findViewById(R.id.vcard_name);
-        mShowButton = (ImageButton)findViewById(R.id.vcard_show_button);
+        mNameText = (TextView)findViewById(R.id.tv_vcard_name);
+        mShowButton = (ImageButton)findViewById(R.id.ib_vcard_show_button);
         mShowButton.setOnClickListener(this);
-        mImportButton = (ImageButton)findViewById(R.id.vcard_import_button);
+        mImportButton = (ImageButton)findViewById(R.id.ib_vcard_import_button);
         mImportButton.setOnClickListener(this);
         update();
     }
@@ -135,9 +134,11 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
         }
     }
 
-    public void showContent(final IContentObject contentObject) {
+    public void showContent(final IContentObject contentObject, boolean isLightTheme) {
         String contentUri = contentObject.getContentDataUrl();
         LOG.debug("showContent(" + contentUri + ")");
+
+        initTextViews(isLightTheme);
 
         // schedule new refresh if needed
         if(isContentChanged(contentObject)) {
@@ -160,6 +161,15 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
                 }
             }, 0, TimeUnit.MILLISECONDS);
         }
+    }
+
+    private void initTextViews(boolean isLightTheme) {
+        int textColor = isLightTheme ? Color.BLACK : Color.WHITE;
+
+        TextView name = (TextView) findViewById(R.id.tv_vcard_name);
+        TextView description = (TextView) findViewById(R.id.tv_vcard_description);
+        name.setTextColor(textColor);
+        description.setTextColor(textColor);
     }
 
     private void checkInterrupt() throws InterruptedException {
@@ -197,15 +207,6 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
             // get the name of the contact
             final String name = card.getFormattedName().getValue();
 
-            // get and load the first photo of the contact
-            final List<PhotoType> photos = card.getPhotos();
-            PhotoType photo = null;
-            if(!photos.isEmpty()) {
-                photo = photos.get(0);
-            }
-
-            final byte[] photoData = photo != null ? photo.getData() : null;
-
             checkInterrupt();
 
             // refresh ui
@@ -215,15 +216,6 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
                     LOG.debug("updating ui");
                     mRoot.setVisibility(VISIBLE);
                     mNameText.setText(name);
-                    Bitmap photoBitmap = null;
-                    if(photoData != null) {
-                        photoBitmap = BitmapFactory.decodeByteArray(photoData, 0, photoData.length);
-                    }
-                    if(photoBitmap != null) {
-                        mAvatarImage.setImageDrawable(new BitmapDrawable(photoBitmap));
-                    } else {
-                        mAvatarImage.setImageResource(R.drawable.avatar_default_contact);
-                    }
                     update();
                 }
             });

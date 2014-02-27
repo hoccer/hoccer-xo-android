@@ -4,17 +4,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <RelativeLayout
+    <RelativeLayout
             android:id="@+id/profile_avatar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
+        <ImageView
                 android:id="@+id/profile_avatar_image"
                 android:src="@drawable/avatar_default_contact_large"
                 android:scaleType="centerCrop"
@@ -22,76 +18,78 @@
                 android:layout_height="200dp"
                 android:layout_gravity="center_horizontal"/>
 
-            <LinearLayout
-                    android:id="@+id/profile_name_overlay"
-                    android:background="#9F000000"
-                    android:orientation="horizontal"
-                    android:gravity="center|right"
-                    android:clickable="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true">
-                <TextView
-                    android:id="@+id/profile_group_name"
-                    android:text="User Name"
-                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large.Inverse"
-                    android:gravity="right"
-                    android:clickable="true"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-                <ImageView
-                    android:id="@+id/profile_name_edit_button"
-                    android:src="@drawable/ic_dark_content_edit"
-                    android:scaleX="1.0"
-                    android:scaleY="1.0"
-                    android:clickable="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-             </LinearLayout>
-
-        </RelativeLayout>
-
-        <Button
-            android:id="@+id/profile_self_register_button"
-            android:text="@string/profile_self_register_button"
-            android:visibility="gone"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
         <TextView
-            android:id="@+id/profile_user_block_status"
-            android:text="@string/profile_user_block_status"
-            android:visibility="gone"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                android:id="@+id/tv_profile_name_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_avatar_image"
+                android:layout_marginTop="25dp"
+                android:text="@string/profile_name_text"
+                android:layout_marginLeft="45dp"
+                style="@style/AppBaseTheme.DescriptiveText"/>
 
-        <Button
-            android:id="@+id/profile_user_block_button"
-            android:text="@string/profile_user_block_button"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/tv_profile_name_text"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="5dp"
+                android:background="#ffcdcdcd"/>
 
-        <Button
-            android:id="@+id/profile_user_depair_button"
-            android:text="@string/profile_user_depair_button"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        <TextView
+                android:id="@+id/tv_profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_profile_name_text"
+                android:layout_marginTop="15dp"
+                android:layout_alignLeft="@+id/tv_profile_name_text"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                android:text="Arthur Dent"/>
 
-        <Button
-            android:id="@+id/profile_user_delete_button"
-            android:text="@string/profile_user_delete_button"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        <TextView
+                android:id="@+id/tv_profile_key_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_profile_name"
+                android:layout_marginTop="25dp"
+                android:text="@string/profile_key_text"
+                android:layout_marginLeft="45dp"
+                style="@style/AppBaseTheme.DescriptiveText"/>
 
-    </LinearLayout>
+        <View
+                android:id="@+id/v_profile_key_delimiter"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/tv_profile_key_text"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="5dp"
+                android:background="#ffcdcdcd"/>
+
+        <TextView
+                android:id="@+id/tv_profile_key"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_profile_key_text"
+                android:layout_marginTop="15dp"
+                android:layout_alignLeft="@+id/tv_profile_key_text"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                android:text="42:d4:8c:13:37:94:32:23"/>
+
+        <TextView
+                android:id="@+id/tv_profile_key_advice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_profile_key"
+                android:layout_alignLeft="@+id/tv_profile_key"
+                android:layout_alignRight="@+id/v_profile_key_delimiter"
+                android:textColor="#838383"
+                android:textSize="10dp"
+                android:text="For extra security compare this fingerprint with the fingerprint seen by your friends in your contact card."/>
+
+    </RelativeLayout>
+
 
 </ScrollView>
