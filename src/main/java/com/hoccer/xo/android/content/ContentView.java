@@ -1,12 +1,11 @@
 package com.hoccer.xo.android.content;
 
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.widget.*;
 import com.hoccer.talk.client.XoTransferAgent;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
-import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.ContentState;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
@@ -19,11 +18,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 
 /**
@@ -57,7 +51,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
 
     View mContentChild;
 
-    LinearLayout mContentFooter;
+    RelativeLayout mContentFooter;
 
     TextView mContentDescription;
 
@@ -78,15 +72,16 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
      */
     int mMaxContentHeight = Integer.MAX_VALUE;
 
-    private boolean mWaitUntilUploaded = false;
+    private boolean mWaitUntilOperationIsFinished = false;
     private  Handler mUploadHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            if (mTransferProgress.getVisibility() == VISIBLE) {
+            if (!mTransferProgress.isGoneAfterFinished()) {
                 mUploadHandler.sendEmptyMessageDelayed(0, 500);
             } else {
-                updateFooter(ContentState.UPLOAD_COMPLETE);
-                mWaitUntilUploaded = false;
+                updateFooter(ContentState.SELECTED);
+                mContentChild.setEnabled(true);
+                mWaitUntilOperationIsFinished = false;
             }
         }
     };
@@ -113,7 +108,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         if(!isInEditMode()) {
             mContentWrapper.removeAllViews();
         }
-        mContentFooter = (LinearLayout)findViewById(R.id.content_footer);
+        mContentFooter = (RelativeLayout)findViewById(R.id.content_footer);
         mContentDescription = (TextView)findViewById(R.id.content_description_text);
         mTransferProgress = (AttachmentTransferControlView)findViewById(R.id.content_progress);
         mTransferProgress.setOnClickListener(this);
@@ -218,8 +213,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         mContentDescription.setText(mRegistry.getContentDescription(content));
         doDownAndUploadActions(state);
         updateProgressBar(state, content);
-        boolean footerVisible = false;
-        if (mWaitUntilUploaded) {
+        boolean footerVisible = true;
+        if (mWaitUntilOperationIsFinished) {
             mUploadHandler.sendEmptyMessage(0);
         } else {
             footerVisible = updateFooter(state);
@@ -264,10 +259,16 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     }
 
     private void removeChildViewIfContentHasChanged(boolean contentChanged, boolean stateChanged) {
-        if(contentChanged || stateChanged) {
+        if(contentChanged) {
             if(mContentChild != null) {
                 mContentWrapper.removeView(mContentChild);
                 mContentChild = null;
+            }
+        }
+        if (stateChanged) {
+            if(mContentChild != null) {
+                mContentWrapper.requestLayout();
+                mContentWrapper.invalidate();
             }
         }
     }
@@ -320,46 +321,52 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             case DOWNLOAD_DETECTING:
                 break;
             case DOWNLOAD_NEW:
-                mTransferProgress.clean();
-                mTransferProgress.pause();
                 mTransferProgress.setVisibility(VISIBLE);
+                mTransferProgress.prepareToDownload();
+                mTransferProgress.pause();
                 break;
             case DOWNLOAD_PAUSED:
                 mTransferProgress.pause();
                 break;
             case DOWNLOAD_DOWNLOADING:
+                mTransferProgress.prepareToDownload();
                 length = object.getTransferLength();
                 progress = object.getTransferProgress();
-                mTransferProgress.play();
                 mTransferProgress.setMax(length);
                 mTransferProgress.setProgress(progress);
                 break;
             case DOWNLOAD_DECRYPTING:
                 length = object.getTransferLength();
                 mTransferProgress.setProgress(length);
+                mTransferProgress.spin();
+                mWaitUntilOperationIsFinished = true;
                 break;
+            case DOWNLOAD_COMPLETE:
+                mTransferProgress.finishSpinningAndProceed();
             case UPLOAD_REGISTERING:
                 break;
             case UPLOAD_NEW:
-                mTransferProgress.clean();
+                mTransferProgress.prepareToUpload();
+                mTransferProgress.setVisibility(VISIBLE);
                 break;
             case UPLOAD_ENCRYPTING:
+                mTransferProgress.prepareToUpload();
                 mTransferProgress.setVisibility(VISIBLE);
+                mTransferProgress.spin();
                 break;
             case UPLOAD_PAUSED:
                 mTransferProgress.pause();
                 break;
             case UPLOAD_UPLOADING:
-                mWaitUntilUploaded = true;
+                mTransferProgress.finishSpinningAndProceed();
+                mWaitUntilOperationIsFinished = true;
                 length = object.getTransferLength();
                 progress = object.getTransferProgress();
-                mTransferProgress.play();
-                mTransferProgress.setVisibility(VISIBLE);
                 mTransferProgress.setMax(length);
                 mTransferProgress.setProgress(progress);
                 break;
             case UPLOAD_COMPLETE:
-                mTransferProgress.setCompletedAndGone();
+                mTransferProgress.completeAndGone();
                 break;
             default:
                 mTransferProgress.setVisibility(GONE);
