@@ -7,7 +7,6 @@ import com.hoccer.xo.release.R;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
 import android.view.View;
@@ -30,31 +29,39 @@ public class ButtonAudioViewer extends ContentViewer<View> {
     }
 
     @Override
-    protected void updateViewInternal(final View view, final ContentView contentView,
-            final IContentObject contentObject, boolean isLightTheme) {
+    protected void updateViewInternal(View view, ContentView contentView,
+            IContentObject contentObject, boolean isLightTheme) {
         if (contentObject.isContentAvailable()) {
             view.setVisibility(View.VISIBLE);
             updateFilenameText(view, contentView, contentObject, isLightTheme);
-
-            ImageButton playButton = (ImageButton) view.findViewById(R.id.audio_play_pause);
-            playButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (contentObject.isContentAvailable()) {
-                        String url = contentObject.getContentUrl();
-                        if (url == null) {
-                            url = contentObject.getContentDataUrl();
-                        }
-                        if (url != null) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                            view.getContext().startActivity(intent);
-                        }
-                    }
-                }
-            });
+            updateImageButton(view, contentView, contentObject, isLightTheme);
         } else {
             view.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void updateImageButton(final View view, ContentView contentView,
+            final IContentObject contentObject,
+            boolean isLightTheme) {
+        ImageButton playButton = (ImageButton) view.findViewById(R.id.audio_play_pause);
+        int imageResource = isLightTheme ? R.drawable.ic_dark_music : R.drawable.ic_light_music;
+        playButton.setImageResource(imageResource);
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (contentObject.isContentAvailable()) {
+                    String url = contentObject.getContentUrl();
+                    if (url == null) {
+                        url = contentObject.getContentDataUrl();
+                    }
+                    if (url != null) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        view.getContext().startActivity(intent);
+                    }
+                }
+            }
+        });
+
     }
 
     private void updateFilenameText(View view, ContentView contentView,
@@ -65,7 +72,7 @@ public class ButtonAudioViewer extends ContentViewer<View> {
         String filename = dataUrl.substring(dataUrl.lastIndexOf(File.separator) + 1);
 
         filenameText.setText(filename);
-        if(isLightTheme) {
+        if (isLightTheme) {
             filenameText.setTextColor(Color.BLACK);
         } else {
             filenameText.setTextColor(Color.WHITE);

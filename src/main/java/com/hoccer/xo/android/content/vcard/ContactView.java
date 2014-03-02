@@ -1,35 +1,32 @@
 package com.hoccer.xo.android.content.vcard;
 
-import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
-import android.util.AttributeSet;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.release.R;
-import ezvcard.Ezvcard;
-import ezvcard.VCard;
-import ezvcard.types.PhotoType;
+
 import org.apache.log4j.Logger;
+
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
+import android.util.AttributeSet;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import ezvcard.Ezvcard;
+import ezvcard.VCard;
 
 public class ContactView extends RelativeLayout implements View.OnClickListener {
 
@@ -38,8 +35,11 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
     Activity mActivity;
 
     RelativeLayout mRoot;
+
     TextView mNameText;
+
     ImageButton mShowButton;
+
     ImageButton mImportButton;
 
     IContentObject mContent;
@@ -63,13 +63,13 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
 
     private void initialize(Activity activity) {
         mActivity = activity;
-        mRoot = (RelativeLayout)inflate(activity, R.layout.content_vcard, null);
+        mRoot = (RelativeLayout) inflate(activity, R.layout.content_vcard, null);
         mRoot.setVisibility(INVISIBLE);
         addView(mRoot);
-        mNameText = (TextView)findViewById(R.id.tv_vcard_name);
-        mShowButton = (ImageButton)findViewById(R.id.ib_vcard_show_button);
+        mNameText = (TextView) findViewById(R.id.tv_vcard_name);
+        mShowButton = (ImageButton) findViewById(R.id.ib_vcard_show_button);
         mShowButton.setOnClickListener(this);
-        mImportButton = (ImageButton)findViewById(R.id.ib_vcard_import_button);
+        mImportButton = (ImageButton) findViewById(R.id.ib_vcard_import_button);
         mImportButton.setOnClickListener(this);
         update();
     }
@@ -96,18 +96,18 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
     private boolean isContentChanged(IContentObject newContent) {
         return mContent == null
                 || (newContent.getContentDataUrl() != null
-                    && !newContent.getContentDataUrl().equals(mContent.getContentDataUrl()));
+                && !newContent.getContentDataUrl().equals(mContent.getContentDataUrl()));
     }
 
     private void update() {
         LOG.debug("update()");
-        if(mActivity != null) {
-            if(isContentImportable()) {
+        if (mActivity != null) {
+            if (isContentImportable()) {
                 mImportButton.setVisibility(VISIBLE);
             } else {
                 mImportButton.setVisibility(GONE);
             }
-            if(isContentShowable()) {
+            if (isContentShowable()) {
                 mShowButton.setVisibility(VISIBLE);
             } else {
                 mShowButton.setVisibility(GONE);
@@ -117,17 +117,18 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-        if(v == mImportButton) {
+        if (v == mImportButton) {
             LOG.debug("onClick(importButton)");
-            if(isContentImportable()) {
+            if (isContentImportable()) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.parse(mContent.getContentDataUrl()), mContent.getContentType());
+                intent.setDataAndType(Uri.parse(mContent.getContentDataUrl()),
+                        mContent.getContentType());
                 mActivity.startActivity(intent);
             }
         }
-        if(v == mShowButton) {
+        if (v == mShowButton) {
             LOG.debug("onClick(showButton)");
-            if(isContentShowable()) {
+            if (isContentShowable()) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mContent.getContentUrl()));
                 mActivity.startActivity(intent);
             }
@@ -139,11 +140,12 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
         LOG.debug("showContent(" + contentUri + ")");
 
         initTextViews(isLightTheme);
+        initImageButton(isLightTheme);
 
         // schedule new refresh if needed
-        if(isContentChanged(contentObject)) {
+        if (isContentChanged(contentObject)) {
             // cancel running refresh
-            if(mRefreshFuture != null) {
+            if (mRefreshFuture != null) {
                 mRefreshFuture.cancel(true);
                 mRefreshFuture = null;
             }
@@ -163,6 +165,15 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
         }
     }
 
+    private void initImageButton(boolean isLightTheme) {
+        int imageResource = isLightTheme ? R.drawable.ic_dark_contact : R.drawable.ic_light_contact;
+
+        ImageButton ib1 = (ImageButton) findViewById(R.id.ib_vcard_import_button);
+        ImageButton ib2= (ImageButton) findViewById(R.id.ib_vcard_show_button);
+        ib1.setImageResource(imageResource);
+        ib2.setImageResource(imageResource);
+    }
+
     private void initTextViews(boolean isLightTheme) {
         int textColor = isLightTheme ? Color.BLACK : Color.WHITE;
 
@@ -173,7 +184,7 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
     }
 
     private void checkInterrupt() throws InterruptedException {
-        if(Thread.interrupted()) {
+        if (Thread.interrupted()) {
             throw new InterruptedException();
         }
     }
@@ -183,7 +194,7 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
         try {
             // open input stream for given content
             InputStream is = openStreamForContent(contentUri);
-            if(is == null) {
+            if (is == null) {
                 LOG.error("could not open content");
                 return;
             }
@@ -237,7 +248,7 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
         } catch (FileNotFoundException e) {
             LOG.error("could not find vcard", e);
         }
-        if(is == null) {
+        if (is == null) {
             LOG.error("don't know how to open " + contentUri);
         }
         return is;

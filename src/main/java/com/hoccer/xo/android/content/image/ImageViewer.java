@@ -20,11 +20,10 @@ import android.graphics.Bitmap;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import java.util.WeakHashMap;
 
-public class ImageViewer extends ContentViewer<AspectImageView> implements ImageLoadingListener {
+public class ImageViewer extends ContentViewer<View> implements ImageLoadingListener {
 
     private static final Logger LOG = Logger.getLogger(ImageViewer.class);
 
@@ -36,37 +35,35 @@ public class ImageViewer extends ContentViewer<AspectImageView> implements Image
     }
 
     @Override
-    protected AspectImageView makeView(Activity activity) {
-        return new CancelingAspectImageView(activity);
+    protected View makeView(Activity activity) {
+        View view = View.inflate(activity, R.layout.content_image, null);
+        return view;
     }
 
     @Override
-    protected void updateViewInternal(AspectImageView view, ContentView contentView,
+    protected void updateViewInternal(View view, ContentView contentView,
             IContentObject contentObject, boolean isLightTheme) {
-        int maxContentHeight = contentView.getMaxContentHeight();
+        /*int maxContentHeight = contentView.getMaxContentHeight();
         if (maxContentHeight != Integer.MAX_VALUE) {
             view.setMaxHeight(maxContentHeight);
-        }
-        view.setScaleType(ImageView.ScaleType.CENTER);
-        view.setAspectRatio(contentObject.getContentAspectRatio());
-        view.setAdjustViewBounds(true);
-        view.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT));
+        }*/
+        AspectImageView imageView = (AspectImageView) view.findViewById(R.id.aiv_content_image);
+        imageView.setAspectRatio(contentObject.getContentAspectRatio());
 
         String contentUrl = contentObject.getContentDataUrl();
         if (contentObject.isContentAvailable() && contentUrl != null) {
-            loadImage(view, contentUrl);
+            loadImage(imageView, contentUrl);
         } else {
             clearViewInternal(view);
         }
     }
 
     @Override
-    protected void clearViewInternal(AspectImageView view) {
+    protected void clearViewInternal(View view) {
         LOG.trace("clearing");
-        ImageLoader.getInstance().cancelDisplayTask(view);
-        view.setImageDrawable(null);
+        AspectImageView imageView = (AspectImageView) view.findViewById(R.id.aiv_content_image);
+        ImageLoader.getInstance().cancelDisplayTask(imageView);
+        imageView.setImageDrawable(null);
     }
 
     private void loadImage(ImageView view, String contentUrl) {
