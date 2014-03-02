@@ -19,6 +19,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import java.util.WeakHashMap;
@@ -47,8 +48,9 @@ public class ImageViewer extends ContentViewer<View> implements ImageLoadingList
         if (maxContentHeight != Integer.MAX_VALUE) {
             view.setMaxHeight(maxContentHeight);
         }*/
-        AspectImageView imageView = (AspectImageView) view.findViewById(R.id.aiv_content_image);
-        imageView.setAspectRatio(contentObject.getContentAspectRatio());
+        /*AspectImageView imageView = (AspectImageView) view.findViewById(R.id.aiv_content_image);
+        imageView.setAspectRatio(contentObject.getContentAspectRatio());*/
+        ImageButton imageView = (ImageButton) view.findViewById(R.id.image_show_button);
 
         String contentUrl = contentObject.getContentDataUrl();
         if (contentObject.isContentAvailable() && contentUrl != null) {
@@ -61,7 +63,8 @@ public class ImageViewer extends ContentViewer<View> implements ImageLoadingList
     @Override
     protected void clearViewInternal(View view) {
         LOG.trace("clearing");
-        AspectImageView imageView = (AspectImageView) view.findViewById(R.id.aiv_content_image);
+        /*AspectImageView imageView = (AspectImageView) view.findViewById(R.id.aiv_content_image);*/
+        ImageButton imageView = (ImageButton) view.findViewById(R.id.image_show_button);
         ImageLoader.getInstance().cancelDisplayTask(imageView);
         imageView.setImageDrawable(null);
     }
