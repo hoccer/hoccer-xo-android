@@ -3,16 +3,15 @@
 
     <item
             android:id="@+id/menu_profile_block"
-            android:orderInCategory="100"
+            android:orderInCategory="1"
             android:showAsAction="ifRoom"
             android:icon="@drawable/ic_dark_content_remove"
             android:title="@string/profile_user_block_button"/>
 
     <item
             android:id="@+id/menu_profile_delete"
-            android:visible="true"
             android:icon="@drawable/ic_delete"
-            android:orderInCategory="100"
+            android:orderInCategory="2"
             android:showAsAction="ifRoom"
             android:title="@string/profile_user_delete_button"/>
 

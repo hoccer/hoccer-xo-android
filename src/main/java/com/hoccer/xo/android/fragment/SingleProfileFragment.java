@@ -2,6 +2,7 @@ package com.hoccer.xo.android.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,9 +38,11 @@ import java.sql.SQLException;
  *
  */
 public class SingleProfileFragment extends XoFragment
-        implements View.OnClickListener, IXoContactListener {
+        implements View.OnClickListener, IXoContactListener, ActionMode.Callback {
 
     private static final Logger LOG = Logger.getLogger(SingleProfileFragment.class);
+
+    private EditText mEditName;
 
     public enum Mode {
         PROFILE,
@@ -48,7 +52,7 @@ public class SingleProfileFragment extends XoFragment
 
     private Mode mMode;
 
-    private TextView  mNameText;
+    private TextView mNameText;
     private TextView mKeyText;
 //    private ImageView mNameEditButton;
 
@@ -83,6 +87,8 @@ public class SingleProfileFragment extends XoFragment
 
         mKeyText = (TextView) v.findViewById(R.id.tv_profile_key);
 
+        mEditName = (EditText) v.findViewById(R.id.et_profile_name);
+
         // client operations
 //        mUserBlockStatus = (TextView)v.findViewById(R.id.profile_user_block_status);
         return v;
@@ -90,19 +96,20 @@ public class SingleProfileFragment extends XoFragment
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_single_profile, menu);
+        if(!mContact.isSelf()) {
+            inflater.inflate(R.menu.fragment_single_profile, menu);
+        }
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        if(mContact.isSelf()) {
+        /*if(mContact.isSelf()) {
             MenuItem blockItem = menu.findItem(R.id.menu_profile_block);
             MenuItem deleteItem = menu.findItem(R.id.menu_profile_delete);
             blockItem.setVisible(false);
             deleteItem.setVisible(false);
-            getActivity().invalidateOptionsMenu();
-        }
+        }*/
     }
 
     @Override
@@ -126,6 +133,9 @@ public class SingleProfileFragment extends XoFragment
         LOG.debug("onResume()");
         super.onResume();
         getXoClient().registerContactListener(this);
+        if(mContact.isSelf()) {
+            this.getActivity().startActionMode(this);
+        }
     }
 
     @Override
@@ -412,6 +422,33 @@ public class SingleProfileFragment extends XoFragment
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
 
+    }
+
+
+    // Actionmode Callbacks
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        mEditName.setVisibility(View.VISIBLE);
+        mNameText.setVisibility(View.INVISIBLE);
+        mEditName.setText(mNameText.getText());
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        mNameText.setText(mEditName.getText().toString());
+        mEditName.setVisibility(View.GONE);
+        mNameText.setVisibility(View.VISIBLE);
     }
 
 }
