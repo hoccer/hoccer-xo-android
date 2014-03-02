@@ -102,8 +102,16 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
             } else {
                 menu.findItem(R.id.menu_group_profile_delete).setVisible(false);
                 menu.findItem(R.id.menu_group_profile_add_person).setVisible(false);
-                menu.findItem(R.id.menu_group_profile_join).setVisible(true);
-                menu.findItem(R.id.menu_group_profile_leave).setVisible(true);
+
+                // TODO check wether we are invited or joined
+                // reject button??
+                if (true) {
+                    menu.findItem(R.id.menu_group_profile_join).setVisible(true);
+                    menu.findItem(R.id.menu_group_profile_leave).setVisible(false);
+                } else {
+                    menu.findItem(R.id.menu_group_profile_join).setVisible(false);
+                    menu.findItem(R.id.menu_group_profile_leave).setVisible(true);
+                }
             }
         }
 
