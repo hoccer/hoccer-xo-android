@@ -12,7 +12,6 @@ import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.IXoStateListener;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.model.TalkGroup;
 import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.GroupProfileFragment;
