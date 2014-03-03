@@ -1,11 +1,5 @@
 package com.hoccer.xo.android.activity;
 
-import android.app.ActionBar;
-import android.app.FragmentManager;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.View;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.IXoStateListener;
 import com.hoccer.talk.client.XoClient;
@@ -15,23 +9,26 @@ import com.hoccer.xo.android.fragment.SingleProfileFragment;
 import com.hoccer.xo.android.fragment.StatusFragment;
 import com.hoccer.xo.release.R;
 
+import android.app.ActionBar;
+import android.app.FragmentManager;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.View;
+
 import java.sql.SQLException;
 
 /**
  * Activity wrapping a single profile fragment
  */
-public class SingleProfileActivity extends XoActivity implements IXoContactListener, IXoStateListener {
+public class SingleProfileActivity extends XoActivity
+        implements IXoContactListener, IXoStateListener {
 
-   /* use this extra to open in "client registration" mode */
-    public static final String EXTRA_CLIENT_CREATE_SELF  = "clientCreateSelf";
+    /* use this extra to open in "client registration" mode */
+    public static final String EXTRA_CLIENT_CREATE_SELF = "clientCreateSelf";
+
     /* use this extra to show the given contact */
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
-
-    public enum Mode {
-        PROFILE,
-        CREATE_SELF,
-        CONFIRM_SELF
-    }
 
     Mode mMode;
 
@@ -48,7 +45,7 @@ public class SingleProfileActivity extends XoActivity implements IXoContactListe
 
     @Override
     protected int getMenuResource() {
-        return R.menu.empty_menu; // will be set by the fragment
+        return R.menu.fragment_single_profile;
     }
 
     @Override
@@ -61,17 +58,19 @@ public class SingleProfileActivity extends XoActivity implements IXoContactListe
         mActionBar = getActionBar();
 
         FragmentManager fragmentManager = getFragmentManager();
-        mSingleProfileFragment = (SingleProfileFragment)fragmentManager.findFragmentById(R.id.activity_single_profile_fragment);
-        mStatusFragment = (StatusFragment)fragmentManager.findFragmentById(R.id.activity_profile_status_fragment);
+        mSingleProfileFragment = (SingleProfileFragment) fragmentManager
+                .findFragmentById(R.id.activity_single_profile_fragment);
+        mStatusFragment = (StatusFragment) fragmentManager
+                .findFragmentById(R.id.activity_profile_status_fragment);
 
         // handle intents
         Intent intent = getIntent();
-        if(intent != null) {
-            if(intent.hasExtra(EXTRA_CLIENT_CREATE_SELF)) {
+        if (intent != null) {
+            if (intent.hasExtra(EXTRA_CLIENT_CREATE_SELF)) {
                 createSelf();
-            } else if(intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
+            } else if (intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
                 int contactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
-                if(contactId == -1) {
+                if (contactId == -1) {
                     LOG.error("invalid contact id");
                 } else {
                     showProfile(refreshContact(contactId));
@@ -85,14 +84,21 @@ public class SingleProfileActivity extends XoActivity implements IXoContactListe
         LOG.debug("onCreateOptionsMenu()");
         boolean result = super.onCreateOptionsMenu(menu);
 
-        TalkClientContact contact = mSingleProfileFragment == null ? null : mSingleProfileFragment.getContact();
+        TalkClientContact contact = mSingleProfileFragment == null ? null
+                : mSingleProfileFragment.getContact();
 
         boolean isSelf = mMode == Mode.CREATE_SELF || (contact != null && contact.isSelf());
 
         menu.findItem(R.id.menu_my_profile).setVisible(!isSelf);
+        if(contact.isSelf()) {
+            menu.findItem(R.id.menu_profile_edit).setVisible(true);
+            menu.findItem(R.id.menu_profile_block).setVisible(false);
+            menu.findItem(R.id.menu_profile_delete).setVisible(false);
+        }
 
         return result;
     }
+
 
     @Override
     protected void onResume() {
@@ -102,7 +108,7 @@ public class SingleProfileActivity extends XoActivity implements IXoContactListe
         getXoClient().registerContactListener(this);
         getXoClient().registerStateListener(this);
 
-        if(mMode == Mode.CREATE_SELF) {
+        if (mMode == Mode.CREATE_SELF) {
             mStatusFragment.getView().setVisibility(View.GONE);
             getActionBar().setDisplayHomeAsUpEnabled(false);
         } else {
@@ -174,13 +180,13 @@ public class SingleProfileActivity extends XoActivity implements IXoContactListe
             @Override
             public void run() {
                 String title = contact.getName();
-                if(mMode == Mode.CREATE_SELF) {
+                if (mMode == Mode.CREATE_SELF) {
                     title = "Welcome to XO!";
                 } else {
-                    if(contact.isSelf()) {
+                    if (contact.isSelf()) {
                         title = "My profile";
                     }
-                    if(title == null) {
+                    if (title == null) {
                         title = "<unnamed>";
                     }
                 }
@@ -209,37 +215,43 @@ public class SingleProfileActivity extends XoActivity implements IXoContactListe
 
     @Override
     public void onContactRemoved(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             finish();
         }
     }
 
     @Override
     public void onClientPresenceChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             update(contact);
         }
     }
 
     @Override
     public void onClientRelationshipChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             update(contact);
         }
     }
 
     @Override
     public void onGroupPresenceChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             update(contact);
         }
     }
 
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             update(contact);
         }
+    }
+
+    public enum Mode {
+        PROFILE,
+        CREATE_SELF,
+        CONFIRM_SELF
     }
 
 }
