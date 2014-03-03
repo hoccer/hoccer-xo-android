@@ -114,11 +114,11 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
                 menu.findItem(R.id.menu_group_profile_add_person).setVisible(false);
 
                 // TODO check wether we are invited or joined
-                if (true) {
+                if (contact.isGroupInvited()) {
                     menu.findItem(R.id.menu_group_profile_reject_invitation).setVisible(true);
                     menu.findItem(R.id.menu_group_profile_join).setVisible(true);
                     menu.findItem(R.id.menu_group_profile_leave).setVisible(false);
-                } else {
+                } else if (contact.isGroupJoined()) {
                     menu.findItem(R.id.menu_group_profile_reject_invitation).setVisible(false);
                     menu.findItem(R.id.menu_group_profile_join).setVisible(false);
                     menu.findItem(R.id.menu_group_profile_leave).setVisible(true);
@@ -219,16 +219,19 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
     private void rejectInvitation() {
         leaveGroup();
+        finish();
     }
 
     private void joinGroup() {
         TalkClientContact contact = refreshContact(mContactId);
         getXoClient().joinGroup(contact.getGroupId());
+        finish();
     }
 
     private void leaveGroup() {
         TalkClientContact contact = refreshContact(mContactId);
         getXoClient().leaveGroup(contact.getGroupId());
+        finish();
     }
 
     @Override
@@ -299,11 +302,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
         if(isMyContact(contact)) {
-            if (contact.getGroupPresence().getState().equals(TalkGroup.STATE_EXISTS)) {
-                finish();
-            } else {
-                update(contact);
-            }
+            update(contact);
         }
     }
 
