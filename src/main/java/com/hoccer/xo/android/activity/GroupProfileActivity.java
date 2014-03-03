@@ -12,6 +12,7 @@ import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.IXoStateListener;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.model.TalkGroup;
 import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.GroupProfileFragment;
@@ -217,7 +218,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     }
 
     private void rejectInvitation() {
-        // TODO: reject invitation.
+        leaveGroup();
     }
 
     private void joinGroup() {
@@ -298,7 +299,11 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
         if(isMyContact(contact)) {
-            update(contact);
+            if (contact.getGroupPresence().getState().equals(TalkGroup.STATE_EXISTS)) {
+                finish();
+            } else {
+                update(contact);
+            }
         }
     }
 
