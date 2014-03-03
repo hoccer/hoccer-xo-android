@@ -1,9 +1,11 @@
 package com.hoccer.xo.android.view;
 
+import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -12,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 /**
  * A view holding an AspectImageView and a presence indicator.
@@ -20,12 +21,18 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 public class AvatarView extends LinearLayout {
 
     private Context mContext;
+
     private String mDefaultAvatarImageUrl;
+
     private DisplayImageOptions mDefaultOptions;
+
     private float mCornerRadius = 0.0f;
 
     private AspectImageView mAvatarImage;
+
     private View mPresenceIndicator;
+
+    private TalkPresence mPresence;
 
     public AvatarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -45,15 +52,19 @@ public class AvatarView extends LinearLayout {
         float scale = getResources().getDisplayMetrics().density;
         int pixel = (int) (mCornerRadius * scale + 0.5f);
         if (isInEditMode()) {
-            mDefaultOptions = new DisplayImageOptions.Builder().displayer(new RoundedBitmapDisplayer(pixel)).build();
+            mDefaultOptions = new DisplayImageOptions.Builder()
+                    .displayer(new RoundedBitmapDisplayer(pixel)).build();
         } else {
-            mDefaultOptions = new DisplayImageOptions.Builder().cloneFrom(XoApplication.getContentImageOptions()).displayer(new RoundedBitmapDisplayer(pixel)).build();
+            mDefaultOptions = new DisplayImageOptions.Builder()
+                    .cloneFrom(XoApplication.getContentImageOptions())
+                    .displayer(new RoundedBitmapDisplayer(pixel)).build();
         }
         setAvatarImage(mDefaultAvatarImageUrl);
     }
 
     private void applyAttributes(Context context, AttributeSet attributes) {
-        TypedArray a = context.getTheme().obtainStyledAttributes(attributes, R.styleable.AvatarView, 0, 0);
+        TypedArray a = context.getTheme()
+                .obtainStyledAttributes(attributes, R.styleable.AvatarView, 0, 0);
         try {
             mDefaultAvatarImageUrl = a.getString(R.styleable.AvatarView_defaultAvatarImageUrl);
             mCornerRadius = a.getFloat(R.styleable.AvatarView_cornerRadius, 0.0f);
@@ -63,7 +74,8 @@ public class AvatarView extends LinearLayout {
     }
 
     /**
-     * Sets the avatar image. Value can be null. Uses default avatar image url instead (if specified).
+     * Sets the avatar image. Value can be null. Uses default avatar image url instead (if
+     * specified).
      *
      * @param avatarImageUrl Url of the given image resource  to load.
      */
@@ -74,9 +86,11 @@ public class AvatarView extends LinearLayout {
         } else {
             mAvatarImage.setVisibility(View.VISIBLE);
             if (avatarImageUrl != null) {
-                ImageLoader.getInstance().displayImage(avatarImageUrl, mAvatarImage, mDefaultOptions, null);
+                ImageLoader.getInstance()
+                        .displayImage(avatarImageUrl, mAvatarImage, mDefaultOptions, null);
             } else if (mDefaultAvatarImageUrl != null) {
-                ImageLoader.getInstance().displayImage(mDefaultAvatarImageUrl, mAvatarImage, mDefaultOptions, null);
+                ImageLoader.getInstance()
+                        .displayImage(mDefaultAvatarImageUrl, mAvatarImage, mDefaultOptions, null);
             } else {
                 mAvatarImage.setVisibility(View.INVISIBLE);
             }
@@ -92,11 +106,11 @@ public class AvatarView extends LinearLayout {
         mDefaultAvatarImageUrl = defaultAvatarImageUrl;
     }
 
-    public void setPresence(boolean isPresent) {
-        if (isPresent) {
+    public void setPresence(TalkPresence presence) {
+        int visibility = View.INVISIBLE;
+        if (presence != null && presence.getClientStatus() != null && presence.getClientStatus()
+                .equals(TalkPresence.CONN_STATUS_ONLINE)) {
             mPresenceIndicator.setVisibility(View.VISIBLE);
-        } else {
-            mPresenceIndicator.setVisibility(View.INVISIBLE);
         }
     }
 

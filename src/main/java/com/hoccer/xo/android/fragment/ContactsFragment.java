@@ -1,18 +1,20 @@
 package com.hoccer.xo.android.fragment;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ListView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.release.R;
+
 import org.apache.log4j.Logger;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ListView;
 
 import java.sql.SQLException;
 
@@ -24,38 +26,36 @@ import java.sql.SQLException;
  */
 public class ContactsFragment extends XoListFragment implements View.OnClickListener {
 
-	private static final Logger LOG = Logger.getLogger(ContactsFragment.class);
+    private static final Logger LOG = Logger.getLogger(ContactsFragment.class);
 
-    ContactsAdapter mAdapter;
+    private ContactsAdapter mAdapter;
 
-    Button mAddUserButton;
+    private Button mAddUserButton;
 
-	ListView mContactList;
+    private ListView mContactList;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		LOG.debug("onCreateView()");
-		View v = inflater.inflate(R.layout.fragment_contacts, container, false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        LOG.debug("onCreateView()");
+        View view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
-        mAddUserButton = (Button)v.findViewById(R.id.contacts_pairing);
+        mAddUserButton = (Button) view.findViewById(R.id.contacts_pairing);
         mAddUserButton.setOnClickListener(this);
 
-		mContactList = (ListView)v.findViewById(android.R.id.list);
+        mContactList = (ListView) view.findViewById(android.R.id.list);
 
-		return v;
-	}
+        return view;
+    }
 
-	@Override
-	public void onResume() {
+    @Override
+    public void onResume() {
         LOG.debug("onResume()");
         super.onResume();
-
-        if(mAdapter == null) {
+        if (mAdapter == null) {
             // create list adapter
             mAdapter = getXoActivity().makeContactListAdapter();
             mAdapter.onCreate();
-
             // filter out never-related contacts (which we know only via groups)
             mAdapter.setFilter(new ContactsAdapter.Filter() {
                 @Override
@@ -67,12 +67,9 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
             });
 
             mAdapter.requestReload();
-
             mContactList.setAdapter(mAdapter);
         }
-
         mAdapter.requestReload(); // XXX fix contact adapter and only do this on new adapter
-
         mAdapter.onResume();
     }
 
@@ -80,7 +77,7 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
     public void onPause() {
         LOG.debug("onPause()");
         super.onPause();
-        if(mAdapter != null) {
+        if (mAdapter != null) {
             mAdapter.onPause();
             mAdapter.onDestroy();
             mAdapter = null;
@@ -92,7 +89,7 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
         LOG.debug("onGroupCreationSucceeded(" + contactId + ")");
         try {
             TalkClientContact contact = getXoDatabase().findClientContactById(contactId);
-            if(contact != null) {
+            if (contact != null) {
                 getXoActivity().showContactProfile(contact);
             }
         } catch (SQLException e) {
@@ -102,7 +99,7 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        if(v == mAddUserButton) {
+        if (v == mAddUserButton) {
             LOG.debug("onClick(addUserButton)");
             getXoActivity().showPairing();
         }
@@ -111,13 +108,13 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        if(l == mContactList) {
+        if (l == mContactList) {
             LOG.debug("onListItemClick(contactList," + position + ")");
             Object item = mContactList.getItemAtPosition(position);
-            if(item instanceof TalkClientContact) {
-                TalkClientContact contact = (TalkClientContact)item;
+            if (item instanceof TalkClientContact) {
+                TalkClientContact contact = (TalkClientContact) item;
                 // this is a bit of a hack
-                if(contact.isGroup() && contact.isGroupInvited() && !contact.isEverRelated()) {
+                if (contact.isGroup() && contact.isGroupInvited() && !contact.isEverRelated()) {
                     // if a group was never related we can safely go to the profile
                     // view without preventing the user from accessing messages.
                     // this improves the invite workflow, but it isn't a good solution overall.
@@ -126,8 +123,8 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
                     getXoActivity().showContactConversation(contact);
                 }
             }
-            if(item instanceof TalkClientSmsToken) {
-                TalkClientSmsToken token = (TalkClientSmsToken)item;
+            if (item instanceof TalkClientSmsToken) {
+                TalkClientSmsToken token = (TalkClientSmsToken) item;
                 XoDialogs.showTokenDialog(getXoActivity(), token);
             }
         }

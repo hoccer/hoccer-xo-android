@@ -409,16 +409,7 @@ public class ConversationAdapter extends XoAdapter
         }
 
         loadAvatar(avatarView, avatarUri);
-        setPresence(avatarView, sendingContact);
-    }
-
-    private void setPresence(AvatarView avatarView, final TalkClientContact sendingContact) {
-        avatarView.setPresence(false);
-
-        String status = sendingContact.getClientPresence().getConnectionStatus();
-        if (status != null && status.equalsIgnoreCase(TalkPresence.CONN_STATUS_ONLINE)) {
-            avatarView.setPresence(true);
-        }
+        avatarView.setPresence(sendingContact.getClientPresence());
     }
 
     private void setMessageText(View view, TalkClientMessage message) {

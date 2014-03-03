@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="AppBaseTheme.Message">
-        <item name="android:padding">@dimen/xo_message_corner_radius</item>
     </style>
 
     <style name="AppBaseTheme.Message.Incoming" parent="AppBaseTheme.Message">
