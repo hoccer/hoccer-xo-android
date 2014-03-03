@@ -82,7 +82,9 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 mUploadHandler.sendEmptyMessageDelayed(0, 500);
             } else {
                 updateFooter(ContentState.SELECTED);
+                mContentWrapper.setVisibility(View.VISIBLE);
                 mContentChild.setEnabled(true);
+                mContentChild.invalidate();
                 mWaitUntilOperationIsFinished = false;
             }
         }
@@ -170,6 +172,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 }
             }
         }
+        mTransferProgress.invalidate();
     }
 
     private ContentState getTrueContentState(IContentObject object) {
@@ -252,6 +255,9 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         // disable content child when we are showing the footer
         if(mContentChild != null) {
             mContentChild.setEnabled(!footerVisible);
+            if (!footerVisible) {
+                mContentWrapper.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -272,6 +278,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                     new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
                             LinearLayout.LayoutParams.WRAP_CONTENT));
+            mContentWrapper.setVisibility(View.INVISIBLE);
         }
     }
 
