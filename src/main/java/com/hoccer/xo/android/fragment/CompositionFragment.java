@@ -132,6 +132,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
     private void showAttachment(IContentObject contentObject) {
         mAddAttachmentButton.setOnClickListener(new AttachmentOnClickListener());
+        mAttachment = contentObject;
         String mediaType = contentObject.getContentMediaType();
 
         int imageResource = -1;
