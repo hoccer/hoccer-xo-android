@@ -22,11 +22,12 @@
 
         <ImageButton
                 android:id="@+id/audio_play_pause"
-                android:src="@drawable/ic_light_av_play"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:src="@drawable/ic_dark_music"
+                android:layout_width="@dimen/default_attachment_icon_dim"
+                android:layout_height="@dimen/default_attachment_icon_dim"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:scaleType="fitXY"
                 android:background="@android:color/transparent"
                 />
     </RelativeLayout>

@@ -32,10 +32,11 @@
 
     <ImageButton
             android:id="@+id/ib_content_open"
-            android:src="@drawable/ic_light_location_map"
+            android:src="@drawable/ic_dark_location"
             android:layout_alignParentRight="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:layout_width="@dimen/default_attachment_icon_dim"
+            android:layout_height="@dimen/default_attachment_icon_dim"
             android:layout_centerVertical="true"
             android:background="@android:color/transparent"/>
 

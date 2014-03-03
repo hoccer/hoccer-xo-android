@@ -18,7 +18,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -43,7 +42,7 @@ public class LocationViewer extends ContentViewer<View> {
 
     @Override
     protected View makeView(Activity activity) {
-        View view =  View.inflate(activity, R.layout.content_location, null);
+        View view = View.inflate(activity, R.layout.content_location, null);
         return view;
     }
 
@@ -57,29 +56,37 @@ public class LocationViewer extends ContentViewer<View> {
             view.setVisibility(View.VISIBLE);
 
             initTextViews(view, isLightTheme);
-            ImageButton openMapButton = (ImageButton) view.findViewById(R.id.ib_content_open);
+            initImageButton(view, contentObject, isLightTheme, location);
+        }
+    }
 
-            openMapButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (contentObject.isContentAvailable()) {
-                        String url = contentObject.getContentUrl();
-                        if (url == null) {
-                            url = contentObject.getContentDataUrl();
-                        }
-                        if (url != null) {
-                            String label = "Received Location";
-                            String uriString = "http://maps.google.com/maps?q=loc:"
-                                    + location.latitude + "," + location.longitude + " (" + label
-                                    + ")";
-                            Uri uri = Uri.parse(uriString);
-                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
-                            view.getContext().startActivity(intent);
-                        }
+    private void initImageButton(final View view, final IContentObject contentObject,
+            boolean isLightTheme, final LatLng location) {
+        ImageButton openMapButton = (ImageButton) view.findViewById(R.id.ib_content_open);
+        int imageResource = isLightTheme ? R.drawable.ic_dark_location
+                : R.drawable.ic_light_location;
+        openMapButton.setImageResource(imageResource);
+
+        openMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (contentObject.isContentAvailable()) {
+                    String url = contentObject.getContentUrl();
+                    if (url == null) {
+                        url = contentObject.getContentDataUrl();
+                    }
+                    if (url != null) {
+                        String label = "Received Location";
+                        String uriString = "http://maps.google.com/maps?q=loc:"
+                                + location.latitude + "," + location.longitude + " (" + label
+                                + ")";
+                        Uri uri = Uri.parse(uriString);
+                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
+                        view.getContext().startActivity(intent);
                     }
                 }
-            });
-        }
+            }
+        });
     }
 
     private void initTextViews(View view, boolean isLightTheme) {

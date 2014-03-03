@@ -95,7 +95,7 @@ public class ContentRegistry {
         initializeSelector(new MusicSelector());
         initializeSelector(new ContactSelector());
         initializeSelector(new MapsLocationSelector());
-        initializeSelector(new DataSelector());
+//        initializeSelector(new DataSelector());
 
         mAttachmentViewers.add(new ImageViewer());
         mAttachmentViewers.add(new VideoViewer());

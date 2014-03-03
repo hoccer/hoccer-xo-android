@@ -5,7 +5,6 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.base.XoFragment;
-import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
 
@@ -36,11 +35,11 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
     private IContentObject mAttachment;
 
-    private ContentView mAttachmentView;
-
     private TalkClientContact mContact;
 
     private String mLastMessage = null;
+
+    private ImageButton mAddAttachmentButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,14 +72,9 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             mSendButton.setLongClickable(true);
         }
 
-        ImageButton addAttachmentButton = (ImageButton) v
+        mAddAttachmentButton = (ImageButton) v
                 .findViewById(R.id.btn_messaging_composer_add_attachment);
-        addAttachmentButton.setOnClickListener(this);
-
-        mAttachmentView = (ContentView) v.findViewById(R.id.messaging_composer_attachment);
-        int displayHeight = getResources().getDisplayMetrics().heightPixels;
-        mAttachmentView.setMaxContentHeight(Math.round(displayHeight * 0.3f)); // XXX better place
-        mAttachmentView.setVisibility(View.GONE);
+        mAddAttachmentButton.setOnClickListener(new AddAttachmentOnClickListener());
 
         return v;
     }
@@ -127,20 +121,38 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()) {
-            case R.id.btn_messaging_composer_send:
-                sendComposedMessage();
-                break;
-            case R.id.btn_messaging_composer_add_attachment:
-                getXoActivity().selectAttachment();
-                break;
-        }
+        sendComposedMessage();
     }
 
     @Override
     public void onAttachmentSelected(IContentObject contentObject) {
         LOG.debug("onAttachmentSelected(" + contentObject.getContentDataUrl() + ")");
         showAttachment(contentObject);
+    }
+
+    private void showAttachment(IContentObject contentObject) {
+        mAddAttachmentButton.setOnClickListener(new AttachmentOnClickListener());
+        String mediaType = contentObject.getContentMediaType();
+
+        int imageResource = -1;
+        if(mediaType != null) {
+            if(mediaType.equals("image")) {
+                imageResource = R.drawable.ic_dark_image;
+            } else if(mediaType.equals("video")) {
+                imageResource = R.drawable.ic_dark_video;
+            } else if(mediaType.equals("vcard")) {
+                imageResource = R.drawable.ic_dark_contact;
+            } else if(mediaType.equals("geolocation")) {
+                imageResource = R.drawable.ic_dark_location;
+            } else if(mediaType.equals("data")) {
+                imageResource = R.drawable.ic_dark_data;
+            } else if(mediaType.equals("audio")) {
+                imageResource = R.drawable.ic_dark_music;
+            }
+        } else {
+            imageResource = android.R.drawable.stat_notify_error;
+        }
+        mAddAttachmentButton.setImageResource(imageResource);
     }
 
     public void converseWithContact(TalkClientContact contact) {
@@ -158,19 +170,9 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         clearAttachment();
     }
 
-    private void showAttachment(IContentObject contentObject) {
-        LOG.debug("showAttachment(" + contentObject.getContentDataUrl() + ")");
-        mAttachment = contentObject;
-        mAttachmentView.displayContent(getXoActivity(), contentObject, null);
-        mAttachmentView.setVisibility(View.VISIBLE);
-        mSendButton.setEnabled(isComposed() || XoConfiguration.DEVELOPMENT_MODE_ENABLED);
-//        mMenu.findItem(R.id.menu_attachment).setVisible(false);
-    }
-
     private void clearAttachment() {
-        mAttachmentView.clear();
-        mAttachmentView.setVisibility(View.GONE);
-//        mMenu.findItem(R.id.menu_attachment).setVisible(true);
+        mAddAttachmentButton.setOnClickListener(new AddAttachmentOnClickListener());
+        mAddAttachmentButton.setImageResource(R.drawable.ic_light_content_attachment);
         mAttachment = null;
     }
 
@@ -206,5 +208,21 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             clearComposedMessage();
         }
         return longpressHandled;
+    }
+
+    private class AddAttachmentOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            getXoActivity().selectAttachment();
+        }
+    }
+
+    private class AttachmentOnClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            clearAttachment();
+        }
     }
 }

@@ -2,17 +2,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+            android:id="@+id/menu_profile_edit"
+            android:orderInCategory="101"
+            android:showAsAction="always"
+            android:icon="@drawable/ic_edit"
+            android:visible="false"
+            android:title="@string/menu_group_edit_profile"/>
+
+    <item
             android:id="@+id/menu_profile_block"
-            android:orderInCategory="100"
+            android:orderInCategory="102"
             android:showAsAction="ifRoom"
             android:icon="@drawable/ic_dark_content_remove"
             android:title="@string/profile_user_block_button"/>
 
     <item
             android:id="@+id/menu_profile_delete"
-            android:visible="true"
             android:icon="@drawable/ic_delete"
-            android:orderInCategory="100"
+            android:orderInCategory="103"
             android:showAsAction="ifRoom"
             android:title="@string/profile_user_delete_button"/>
 

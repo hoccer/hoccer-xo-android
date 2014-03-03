@@ -30,6 +30,7 @@
                 style="@style/AppBaseTheme.DescriptiveText"/>
 
         <View
+                android:id="@+id/v_profile_name_delimiter"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_below="@+id/tv_profile_name_text"
@@ -37,6 +38,18 @@
                 android:layout_marginRight="30dp"
                 android:layout_marginTop="5dp"
                 android:background="#ffcdcdcd"/>
+
+        <EditText
+                android:id="@+id/et_profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_profile_name_text"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_alignLeft="@+id/tv_profile_name_text"
+                android:layout_alignRight="@+id/v_profile_name_delimiter"
+                android:visibility="gone"
+                />
 
         <TextView
                 android:id="@+id/tv_profile_name"

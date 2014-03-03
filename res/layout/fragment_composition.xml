@@ -25,7 +25,11 @@
                 android:src="@drawable/ic_light_content_attachment"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:maxHeight="50dp"
+                android:maxWidth="50dp"
+                android:scaleType="centerInside"
+                android:padding="5dp"/>
 
         <EditText
                 android:id="@+id/messaging_composer_text"
@@ -36,6 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_gravity="center_vertical"
                 />
 
         <ImageButton
@@ -43,17 +48,9 @@
                 android:src="@drawable/ic_light_social_send_now"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"/>
 
     </LinearLayout>
-
-    <com.hoccer.xo.android.content.ContentView
-            android:id="@+id/messaging_composer_attachment"
-            custom:maxHeight="150dp"
-            android:gravity="center"
-            android:layout_weight="1"
-            android:layout_gravity="center_horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
 </LinearLayout>
