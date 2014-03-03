@@ -30,7 +30,6 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     /* use this extra to show the given contact */
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 
-    private ActionBar mActionBar;
     private GroupProfileFragment mGroupProfileFragment;
     private StatusFragment mStatusFragment;
 
@@ -52,33 +51,32 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         super.onCreate(savedInstanceState);
 
         enableUpNavigation();
-        mActionBar = getActionBar();
+        ActionBar mActionBar = getActionBar();
 
         // add the custom view to the action bar
         mActionBar.setCustomView(R.layout.view_actionbar_group_profile);
         mActionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        ImageButton doneButton = (ImageButton)mActionBar.getCustomView().findViewById(R.id.image_button_done);
+        ImageButton doneButton = (ImageButton) mActionBar.getCustomView().findViewById(R.id.image_button_done);
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // save name and leave
                 saveGroup();
                 finish();
             }
         });
 
         FragmentManager fragmentManager = getFragmentManager();
-        mGroupProfileFragment = (GroupProfileFragment)fragmentManager.findFragmentById(R.id.activity_group_profile_fragment);
-        mStatusFragment = (StatusFragment)fragmentManager.findFragmentById(R.id.activity_profile_status_fragment);
+        mGroupProfileFragment = (GroupProfileFragment) fragmentManager.findFragmentById(R.id.activity_group_profile_fragment);
+        mStatusFragment = (StatusFragment) fragmentManager.findFragmentById(R.id.activity_profile_status_fragment);
 
         // handle intents
         Intent intent = getIntent();
-        if(intent != null) {
-            if(intent.hasExtra(EXTRA_CLIENT_CREATE_GROUP)) {
+        if (intent != null) {
+            if (intent.hasExtra(EXTRA_CLIENT_CREATE_GROUP)) {
                 createGroup();
-            } else if(intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
+            } else if (intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
                 mContactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
-                if(mContactId == -1) {
+                if (mContactId == -1) {
                     LOG.error("invalid contact id");
                 } else {
                     showProfile(refreshContact(mContactId));
@@ -91,36 +89,41 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     public boolean onCreateOptionsMenu(Menu menu) {
         LOG.debug("onCreateOptionsMenu()");
         boolean result = super.onCreateOptionsMenu(menu);
-        menu.findItem(R.id.menu_my_profile).setVisible(true);
 
-        menu.findItem(R.id.menu_group_profile_add_person).setVisible(false);
-        menu.findItem(R.id.menu_group_profile_delete).setVisible(false);
-        menu.findItem(R.id.menu_group_profile_reject_invitation).setVisible(false);
-        menu.findItem(R.id.menu_group_profile_join).setVisible(false);
-        menu.findItem(R.id.menu_group_profile_leave).setVisible(false);
-        menu.findItem(R.id.menu_group_profile_add_person).setVisible(false);
+        MenuItem myProfile = menu.findItem(R.id.menu_my_profile);
+        MenuItem addPerson = menu.findItem(R.id.menu_group_profile_add_person);
+        MenuItem deleteGroup = menu.findItem(R.id.menu_group_profile_delete);
+        MenuItem rejectInvitation = menu.findItem(R.id.menu_group_profile_reject_invitation);
+        MenuItem joinGroup = menu.findItem(R.id.menu_group_profile_join);
+        MenuItem leaveGroup = menu.findItem(R.id.menu_group_profile_leave);
+
+        myProfile.setVisible(true);
+        addPerson.setVisible(false);
+        deleteGroup.setVisible(false);
+        rejectInvitation.setVisible(false);
+        joinGroup.setVisible(false);
+        leaveGroup.setVisible(false);
 
         TalkClientContact contact = refreshContact(mContactId);
         if (contact != null) {
             if (contact.isEditable()) {
-                menu.findItem(R.id.menu_group_profile_delete).setVisible(true);
-                menu.findItem(R.id.menu_group_profile_add_person).setVisible(true);
-                menu.findItem(R.id.menu_group_profile_join).setVisible(false);
-                menu.findItem(R.id.menu_group_profile_leave).setVisible(false);
-                menu.findItem(R.id.menu_group_profile_reject_invitation).setVisible(false);
+                deleteGroup.setVisible(true);
+                addPerson.setVisible(true);
+                joinGroup.setVisible(false);
+                leaveGroup.setVisible(false);
+                rejectInvitation.setVisible(false);
             } else {
-                menu.findItem(R.id.menu_group_profile_delete).setVisible(false);
-                menu.findItem(R.id.menu_group_profile_add_person).setVisible(false);
+                deleteGroup.setVisible(false);
+                addPerson.setVisible(false);
 
-                // TODO check wether we are invited or joined
                 if (contact.isGroupInvited()) {
-                    menu.findItem(R.id.menu_group_profile_reject_invitation).setVisible(true);
-                    menu.findItem(R.id.menu_group_profile_join).setVisible(true);
-                    menu.findItem(R.id.menu_group_profile_leave).setVisible(false);
+                    rejectInvitation.setVisible(true);
+                    joinGroup.setVisible(true);
+                    leaveGroup.setVisible(false);
                 } else if (contact.isGroupJoined()) {
-                    menu.findItem(R.id.menu_group_profile_reject_invitation).setVisible(false);
-                    menu.findItem(R.id.menu_group_profile_join).setVisible(false);
-                    menu.findItem(R.id.menu_group_profile_leave).setVisible(true);
+                    rejectInvitation.setVisible(false);
+                    joinGroup.setVisible(false);
+                    leaveGroup.setVisible(true);
                 }
             }
         }
@@ -161,7 +164,8 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         getXoClient().registerContactListener(this);
         getXoClient().registerStateListener(this);
 
-        mStatusFragment.getView().setVisibility(View.VISIBLE);
+        View statusView = mStatusFragment.getView();
+        statusView.setVisibility(View.VISIBLE);
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -174,7 +178,6 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         getXoClient().unregisterContactListener(this);
     }
 
-    
     private TalkClientContact refreshContact(int contactId) {
         LOG.debug("refreshContact(" + contactId + ")");
         try {
@@ -260,47 +263,45 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
     @Override
     public void onClientStateChange(XoClient client, int state) {
-        // we don't care
         LOG.debug("onClientStateChange()");
     }
 
     @Override
     public void onContactAdded(TalkClientContact contact) {
-        // we don't care
         LOG.debug("onContactAdded()");
     }
 
     @Override
     public void onContactRemoved(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             finish();
         }
     }
 
     @Override
     public void onClientPresenceChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             update(contact);
         }
     }
 
     @Override
     public void onClientRelationshipChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             update(contact);
         }
     }
 
     @Override
     public void onGroupPresenceChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             update(contact);
         }
     }
 
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             update(contact);
         }
     }
