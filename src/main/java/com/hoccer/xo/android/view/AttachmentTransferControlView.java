@@ -108,6 +108,7 @@ public class AttachmentTransferControlView extends View {
                 if (mStopSpinning && mSpinningProgress == 0) {
                     clean();
                     mGone = true;
+                    mIsInited = false;
                     return;
                 }
                 progressHandler.sendEmptyMessageDelayed(0, 1);
@@ -249,6 +250,7 @@ public class AttachmentTransferControlView extends View {
 
     public void finishSpinningAndProceed() {
         mStopSpinning = true;
+        mIsInited = false;
     }
 
     private void prepareToEncrypt() {
