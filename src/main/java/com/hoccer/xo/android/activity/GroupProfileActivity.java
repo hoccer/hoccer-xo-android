@@ -62,6 +62,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
             @Override
             public void onClick(View view) {
                 // save name and leave
+                saveGroup();
                 finish();
             }
         });
@@ -92,6 +93,13 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         boolean result = super.onCreateOptionsMenu(menu);
         menu.findItem(R.id.menu_my_profile).setVisible(true);
 
+        menu.findItem(R.id.menu_group_profile_add_person).setVisible(false);
+        menu.findItem(R.id.menu_group_profile_delete).setVisible(false);
+        menu.findItem(R.id.menu_group_profile_reject_invitation).setVisible(false);
+        menu.findItem(R.id.menu_group_profile_join).setVisible(false);
+        menu.findItem(R.id.menu_group_profile_leave).setVisible(false);
+        menu.findItem(R.id.menu_group_profile_add_person).setVisible(false);
+
         TalkClientContact contact = refreshContact(mContactId);
         if (contact != null) {
             if (contact.isEditable()) {
@@ -99,16 +107,18 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
                 menu.findItem(R.id.menu_group_profile_add_person).setVisible(true);
                 menu.findItem(R.id.menu_group_profile_join).setVisible(false);
                 menu.findItem(R.id.menu_group_profile_leave).setVisible(false);
+                menu.findItem(R.id.menu_group_profile_reject_invitation).setVisible(false);
             } else {
                 menu.findItem(R.id.menu_group_profile_delete).setVisible(false);
                 menu.findItem(R.id.menu_group_profile_add_person).setVisible(false);
 
                 // TODO check wether we are invited or joined
-                // reject button??
                 if (true) {
+                    menu.findItem(R.id.menu_group_profile_reject_invitation).setVisible(true);
                     menu.findItem(R.id.menu_group_profile_join).setVisible(true);
                     menu.findItem(R.id.menu_group_profile_leave).setVisible(false);
                 } else {
+                    menu.findItem(R.id.menu_group_profile_reject_invitation).setVisible(false);
                     menu.findItem(R.id.menu_group_profile_join).setVisible(false);
                     menu.findItem(R.id.menu_group_profile_leave).setVisible(true);
                 }
@@ -127,6 +137,9 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
                 break;
             case R.id.menu_group_profile_add_person:
                 manageGroupMembers();
+                break;
+            case R.id.menu_group_profile_reject_invitation:
+                rejectInvitation();
                 break;
             case R.id.menu_group_profile_join:
                 joinGroup();
@@ -186,6 +199,12 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         update(mGroupProfileFragment.getContact());
     }
 
+    public void saveGroup() {
+        LOG.debug("saveGroup()");
+
+        mGroupProfileFragment.saveGroup();
+    }
+
     private void manageGroupMembers() {
         LOG.debug("manageGroupMembers()");
         TalkClientContact contact = refreshContact(mContactId);
@@ -195,6 +214,10 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     private void deleteGroup() {
         TalkClientContact contact = refreshContact(mContactId);
         getXoClient().deleteContact(contact);
+    }
+
+    private void rejectInvitation() {
+        // TODO: reject invitation.
     }
 
     private void joinGroup() {
@@ -235,11 +258,13 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     @Override
     public void onClientStateChange(XoClient client, int state) {
         // we don't care
+        LOG.debug("onClientStateChange()");
     }
 
     @Override
     public void onContactAdded(TalkClientContact contact) {
         // we don't care
+        LOG.debug("onContactAdded()");
     }
 
     @Override

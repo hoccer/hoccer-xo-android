@@ -60,9 +60,23 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
             mAdapter.setFilter(new ContactsAdapter.Filter() {
                 @Override
                 public boolean shouldShow(TalkClientContact contact) {
-                    return (contact.isGroup() && contact.isGroupInvolved())
-                            || (contact.isClient() && contact.isClientRelated())
-                            || contact.isEverRelated();
+                    if (contact.isGroup()) {
+                        if (contact.isGroupInvolved() && contact.isGroupExisting()) {
+                            return true;
+                        }
+                        return false;
+
+                    } else if (contact.isClient()) {
+                        if (contact.isClientRelated()) {
+                            return true;
+                        }
+                        return false;
+
+                    } else if (contact.isEverRelated()) {
+
+                        return true;
+                    }
+                    return false;
                 }
             });
 

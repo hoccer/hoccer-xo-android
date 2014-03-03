@@ -59,7 +59,7 @@ public class GroupProfileFragment  extends XoFragment
 
         mGroupNameText = (TextView)v.findViewById(R.id.profile_group_name);
         mGroupNameEdit = (EditText)v.findViewById(R.id.profile_group_name_edit);
-        mGroupMembersTitle = (TextView)v.findViewById(R.id.profile_group_name_title);
+        mGroupMembersTitle = (TextView)v.findViewById(R.id.profile_group_members_title);
         mGroupMembersList = (ListView)v.findViewById(R.id.profile_group_members_list);
 
         return v;
@@ -89,7 +89,9 @@ public class GroupProfileFragment  extends XoFragment
             mGroupMemberAdapter.onDestroy();
             mGroupMemberAdapter = null;
         }
+    }
 
+    public void saveGroup() {
         String newGroupName = mGroupNameEdit.getText().toString();
         if (newGroupName.isEmpty()) {
             newGroupName = "";
@@ -143,7 +145,7 @@ public class GroupProfileFragment  extends XoFragment
         mGroupMemberAdapter.setFilter(new ContactsAdapter.Filter() {
             @Override
             public boolean shouldShow(TalkClientContact contact) {
-                return contact.isClientGroupJoined(mContact);
+                return contact.isClientGroupInvited(mContact) || contact.isClientGroupJoined(mContact);
             }
         });
         mGroupMemberAdapter.requestReload();
@@ -212,12 +214,12 @@ public class GroupProfileFragment  extends XoFragment
 
     @Override
     public void onContactAdded(TalkClientContact contact) {
-
+        LOG.debug("onContactAdded");
     }
 
     @Override
     public void onContactRemoved(TalkClientContact contact) {
-
+        LOG.debug("onContactRemoved");
     }
 
     @Override
