@@ -122,6 +122,10 @@
     <string name="selectlocation_title">Select location</string>
 
     <!-- Group leave dialog -->
+    <string name="delete_group_title">Delete group</string>
+    <string name="delete_group_question">Are you sure you want to delete this group?</string>
+    <string name="reject_invitation_title">Reject invitation</string>
+    <string name="reject_invitation_question">Are you sure you want to reject this invitation? You will have to be re-invited to participate again.</string>
     <string name="leave_title">Leave group</string>
     <string name="leave_question">Are you sure you want to leave this group? You will have to be re-invited to participate again.</string>
     <string name="common_group">Group</string>
