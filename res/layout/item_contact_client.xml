@@ -44,12 +44,21 @@
             style="@style/AppBaseTheme.Contact.LastMessage"/>
 
     <TextView
-            android:id="@id/contact_type"
+            android:id="@+id/contact_type"
             android:text="@string/common_friend"
             android:layout_alignParentRight="true"
             android:layout_alignTop="@id/contact_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="invisible"
             style="@style/AppBaseTheme.Contact.CommonGroup"/>
 
+    <TextView
+            android:id="@+id/contact_time"
+            android:text="2pm"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/contact_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/AppBaseTheme.Contact.CommonGroup"/>
 </RelativeLayout>
