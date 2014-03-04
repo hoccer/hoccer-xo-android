@@ -72,14 +72,6 @@ public class GroupContactsAdapter extends ContactsAdapter {
         if (contact.isClient()) {
             TextView roleView = (TextView)view.findViewById(R.id.contact_role);
 
-            /*
-            if (contact.getGroupMember().getRole() == TalkGroupMember.ROLE_ADMIN) {
-                roleView.setVisibility(View.VISIBLE);
-            } else {
-                roleView.setVisibility(View.GONE);
-            }
-            */
-
             if (contact.isGroupAdmin()) {
                 roleView.setVisibility(View.VISIBLE);
             } else {

@@ -4,21 +4,38 @@
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:layout_marginBottom">10dp</item>
     </style>
-
     <style name="AppBaseTheme.Contact.Presence" parent="AppBaseTheme.Contact">
         <item name="android:background">@drawable/presence_indicator_shape</item>
     </style>
     <style name="AppBaseTheme.Contact.Avatar" parent="AppBaseTheme.Contact">
         <item name="android:layout_marginLeft">10dp</item>
         <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+        <item name="android:layout_centerVertical">true</item>
     </style>
     <style name="AppBaseTheme.Contact.Name" parent="AppBaseTheme.Contact">
-        <item name="android:layout_margin">10dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
     </style>
     <style name="AppBaseTheme.Contact.UnreadMessages" parent="AppBaseTheme.Contact">
+        <item name="android:text">55</item>
+        <item name="android:textColor">@android:color/secondary_text_dark</item>
+        <item name="android:layout_width">15dp</item>
+        <item name="android:layout_height">15dp</item>
+        <item name="android:textSize">10dp</item>
+        <item name="android:gravity">center</item>
     </style>
     <style name="AppBaseTheme.Contact.LastMessage" parent="AppBaseTheme.Contact">
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@android:color/secondary_text_dark</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:layout_margin">2dp</item>
     </style>
     <style name="AppBaseTheme.Contact.CommonGroup" parent="AppBaseTheme.Contact">
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:textColor">@android:color/secondary_text_dark</item>
     </style>
 </resources>
