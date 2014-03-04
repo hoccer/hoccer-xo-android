@@ -26,11 +26,8 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     /* use this extra to show the given contact */
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 
-    private ActionBar mActionBar;
     private GroupProfileFragment mGroupProfileFragment;
     private StatusFragment mStatusFragment;
-
-    private int mContactId;
 
     @Override
     protected int getLayoutResource() {
@@ -48,7 +45,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         super.onCreate(savedInstanceState);
 
         enableUpNavigation();
-        mActionBar = getActionBar();
+        getActionBar();
 
         FragmentManager fragmentManager = getFragmentManager();
         mGroupProfileFragment = (GroupProfileFragment) fragmentManager.findFragmentById(R.id.activity_group_profile_fragment);
@@ -60,11 +57,11 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
             if (intent.hasExtra(EXTRA_CLIENT_CREATE_GROUP)) {
                 createGroup();
             } else if (intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
-                mContactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
-                if (mContactId == -1) {
+                int contactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
+                if (contactId == -1) {
                     LOG.error("invalid contact id");
                 } else {
-                    showProfile(refreshContact(mContactId));
+                    showProfile(refreshContact(contactId));
                 }
             }
         }
@@ -123,40 +120,44 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         LOG.debug("showProfile(" + contact.getClientContactId() + ")");
 
         mGroupProfileFragment.showProfile(contact);
-        update(contact);
+        //update(contact);
     }
 
     public void createGroup() {
         LOG.debug("createGroup()");
 
         mGroupProfileFragment.createGroup();
-        update(mGroupProfileFragment.getContact());
+        //update(mGroupProfileFragment.getContact());
     }
 
     @Override
     public void hackReturnedFromDialog() {
         LOG.debug("hackReturnedFromDialog()");
         super.hackReturnedFromDialog();
-        update(mGroupProfileFragment.getContact());
+        //update(mGroupProfileFragment.getContact());
         mGroupProfileFragment.refreshContact(mGroupProfileFragment.getContact());
     }
 
+    /*
     private void update(final TalkClientContact contact) {
         LOG.debug("update(" + contact.getClientContactId() + ")");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //if (contact.isDeleted()) {
-                //    finish();
-                //}
+                if (contact.isDeleted()) {
+                    finish();
+                }
             }
         });
     }
+    */
 
+    /*
     private boolean isMyContact(TalkClientContact contact) {
         TalkClientContact myContact = mGroupProfileFragment.getContact();
         return myContact != null && myContact.getClientContactId() == contact.getClientContactId();
     }
+    */
 
     @Override
     public void onClientStateChange(XoClient client, int state) {

@@ -20,9 +20,8 @@ import java.util.UUID;
 
 /**
  * Fragment for display and editing of group profiles.
- *
  */
-public class GroupProfileFragment  extends XoFragment
+public class GroupProfileFragment extends XoFragment
         implements View.OnClickListener, IXoContactListener, ActionMode.Callback {
 
     private static final Logger LOG = Logger.getLogger(SingleProfileFragment.class);
@@ -58,10 +57,10 @@ public class GroupProfileFragment  extends XoFragment
 
         View v = inflater.inflate(R.layout.fragment_group_profile, container, false);
 
-        mGroupNameText = (TextView)v.findViewById(R.id.profile_group_name);
-        mGroupNameEdit = (EditText)v.findViewById(R.id.profile_group_name_edit);
-        mGroupMembersTitle = (TextView)v.findViewById(R.id.profile_group_members_title);
-        mGroupMembersList = (ListView)v.findViewById(R.id.profile_group_members_list);
+        mGroupNameText = (TextView) v.findViewById(R.id.profile_group_name);
+        mGroupNameEdit = (EditText) v.findViewById(R.id.profile_group_name_edit);
+        mGroupMembersTitle = (TextView) v.findViewById(R.id.profile_group_members_title);
+        mGroupMembersList = (ListView) v.findViewById(R.id.profile_group_members_list);
 
         return v;
     }
@@ -86,7 +85,7 @@ public class GroupProfileFragment  extends XoFragment
     public void onDestroy() {
         LOG.debug("onDestroy()");
         super.onDestroy();
-        if(mGroupMemberAdapter != null) {
+        if (mGroupMemberAdapter != null) {
             mGroupMemberAdapter.onPause();
             mGroupMemberAdapter.onDestroy();
             mGroupMemberAdapter = null;
@@ -100,9 +99,11 @@ public class GroupProfileFragment  extends XoFragment
         }
 
         if (mMode == Mode.CREATE_GROUP) {
-            mContact.getGroupPresence().setGroupName(newGroupName);
-            getXoClient().createGroup(mContact);
-
+            if (mContact != null && !mContact.isGroupRegistered()) {
+                mContact.getGroupPresence().setGroupName(newGroupName);
+                getXoClient().createGroup(mContact);
+                mMode = Mode.PROFILE;
+            }
         } else if (mMode == Mode.EDIT_GROUP) {
             if (!newGroupName.equals(mGroupName)) {
                 getXoClient().setGroupName(mContact, newGroupName);
@@ -120,11 +121,11 @@ public class GroupProfileFragment  extends XoFragment
         String name = null;
 
         TalkGroup groupPresence = contact.getGroupPresence();
-        if(groupPresence != null) {
+        if (groupPresence != null) {
             name = groupPresence.getGroupName();
         }
 
-        if(name == null) {
+        if (name == null) {
             name = "";
         }
         mGroupName = name;
@@ -139,7 +140,7 @@ public class GroupProfileFragment  extends XoFragment
             mGroupNameEdit.setVisibility(View.VISIBLE);
         }
 
-        if(mGroupMemberAdapter == null) {
+        if (mGroupMemberAdapter == null) {
             mGroupMemberAdapter = new GroupContactsAdapter(getXoActivity(), mContact);
             mGroupMemberAdapter.onCreate();
             mGroupMemberAdapter.onResume();
@@ -174,7 +175,7 @@ public class GroupProfileFragment  extends XoFragment
 
     public void showProfile(TalkClientContact contact) {
         mMode = Mode.PROFILE;
-        if(contact != null) {
+        if (contact != null) {
             LOG.debug("showProfile(" + contact.getClientContactId() + ")");
         }
         refreshContact(contact);
@@ -257,28 +258,28 @@ public class GroupProfileFragment  extends XoFragment
 
     @Override
     public void onClientPresenceChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             refreshContact(contact);
         }
     }
 
     @Override
     public void onClientRelationshipChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             refreshContact(contact);
         }
     }
 
     @Override
     public void onGroupPresenceChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             refreshContact(contact);
         }
     }
 
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             refreshContact(contact);
         }
     }
@@ -397,6 +398,7 @@ public class GroupProfileFragment  extends XoFragment
         final AlertDialog dialog = builder.create();
         dialog.show();
     }
+
     private void checkRejectInviation() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
         builder.setTitle(R.string.reject_invitation_title);
