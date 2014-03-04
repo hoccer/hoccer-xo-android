@@ -34,14 +34,17 @@
             android:layout_centerInParent="true">
 
             <com.hoccer.xo.android.view.AttachmentTransferControlView
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
+                    android:layout_width="170dp"
+                    android:layout_height="170dp"
                     android:layout_gravity="center"
                     android:id="@+id/content_progress"
                     TransferWheel:outerWheelSize="2dp"
                     TransferWheel:innerWheelSize="8dp"
                     TransferWheel:wheelDiameter="120dp"
-                    TransferWheel:wheelColor="#339BB9"/>
+                    TransferWheel:wheelColor="#339BB9"
+                    TransferWheel:text="Uploading..."
+                    TransferWheel:textMargin="20dp"
+                    TransferWheel:textSize="30"/>
 
             <TextView
                     android:id="@+id/content_description_text"

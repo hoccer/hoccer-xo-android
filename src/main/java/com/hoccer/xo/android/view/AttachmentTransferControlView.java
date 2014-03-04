@@ -14,12 +14,14 @@ import com.hoccer.xo.release.R;
 public class AttachmentTransferControlView extends View {
     private final float SPINNER_LENGTH = 50;
     private final float SPINNER_STEP = 1.5f;
+    private final float INITIAL_DOWNLOAD_STATE = 5f; //1,8% from 360
 
     private RectF mInnerWheel = new RectF();
     private RectF mOuterWheel = new RectF();
 
     private Paint mInnerWheelPaint = new Paint();
     private Paint mOuterWheelPaint = new Paint();
+    private Paint mTextPaint = new Paint();
 
     private float mProgressCompleted = 360;
     private float mSpinnerLength = 0;
@@ -117,6 +119,10 @@ public class AttachmentTransferControlView extends View {
         };
     }
 
+    private int mTextMargin;
+    private int mTextSize;
+    private String mText;
+
     public AttachmentTransferControlView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         parseAttributes(context.obtainStyledAttributes(attrs,
@@ -134,14 +140,13 @@ public class AttachmentTransferControlView extends View {
     }
 
     private void parseAttributes(TypedArray a) {
-        mOuterWheelSize = (int) a.getDimension(R.styleable.TransferWheel_outerWheelSize,
-                mOuterWheelSize);
-        mInnerWheelSize = (int) a.getDimension(R.styleable.TransferWheel_innerWheelSize,
-                mInnerWheelSize);
-        mWheelDiameter = (int) a.getDimension(R.styleable.TransferWheel_wheelDiameter,
-                mWheelDiameter);
-        mWheelColor = a.getColor(R.styleable.TransferWheel_wheelColor,
-                mWheelColor);
+        mOuterWheelSize = (int) a.getDimension(R.styleable.TransferWheel_outerWheelSize, mOuterWheelSize);
+        mInnerWheelSize = (int) a.getDimension(R.styleable.TransferWheel_innerWheelSize, mInnerWheelSize);
+        mWheelDiameter = (int) a.getDimension(R.styleable.TransferWheel_wheelDiameter, mWheelDiameter);
+        mTextMargin = (int) a.getDimension(R.styleable.TransferWheel_textMargin, mTextMargin);
+        mTextSize = a.getInt(R.styleable.TransferWheel_textSize, mTextSize);
+        mText = a.getString(R.styleable.TransferWheel_text);
+        mWheelColor = a.getColor(R.styleable.TransferWheel_wheelColor, mWheelColor);
         a.recycle();
     }
 
@@ -150,10 +155,17 @@ public class AttachmentTransferControlView extends View {
         mInnerWheelPaint.setStyle(Paint.Style.STROKE);
         mInnerWheelPaint.setStrokeWidth(mInnerWheelSize);
         mInnerWheelPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+
         mOuterWheelPaint.setColor(mWheelColor);
         mOuterWheelPaint.setStyle(Paint.Style.STROKE);
         mOuterWheelPaint.setStrokeWidth(mOuterWheelSize);
         mOuterWheelPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+
+        mTextPaint.setColor(mWheelColor);
+        mTextPaint.setStyle(Paint.Style.FILL);
+        mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+        mTextPaint.setTextSize(mTextSize);
+        mTextPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     private void setupWheels() {
@@ -199,6 +211,7 @@ public class AttachmentTransferControlView extends View {
         } else {
             canvas.drawLines(mArrowUpload, mOuterWheelPaint);
         }
+        canvas.drawText(mText, mLayoutWidth/2, mLayoutHeight/2 + mWheelDiameter/2.0f + mTextMargin, mTextPaint);
     }
 
     public void setMax(int length) {
@@ -227,6 +240,7 @@ public class AttachmentTransferControlView extends View {
             mIsDownloadingProcess = true;
             prepareToDecrypt();
             clean();
+            mShownProgress = INITIAL_DOWNLOAD_STATE;
         }
     }
 
@@ -335,5 +349,9 @@ public class AttachmentTransferControlView extends View {
         mArrowPause[5] = centerY - innerRadius + offsetFromWheelEdges;
         mArrowPause[6] = centerX + pauseOffset;
         mArrowPause[7] = centerY + innerRadius - offsetFromWheelEdges;
+    }
+
+    public void setText(String text) {
+        mText = text;
     }
 }
