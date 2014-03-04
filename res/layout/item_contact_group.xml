@@ -8,16 +8,16 @@
     <com.hoccer.xo.android.view.AvatarView
         android:id="@+id/contact_icon"
         android:clickable="true"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        custom:cornerRadius="45"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        custom:cornerRadius="65"
         custom:defaultAvatarImageUrl="@drawable/avatar_default_contact"
         style="@style/AppBaseTheme.Contact.Avatar"/>
     
     <TextView
         android:id="@+id/contact_name"
         android:text="@string/contact_name_new_group"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/contact_icon"
@@ -25,19 +25,14 @@
 
     <TextView
         android:id="@+id/contact_unseen_messages"
-        android:text="1"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-        android:textColor="@android:color/secondary_text_dark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/contact_name"
+        android:layout_alignRight="@+id/contact_icon"
+        android:layout_alignTop="@id/contact_icon"
         style="@style/AppBaseTheme.Contact.UnreadMessages"/>
 
     <TextView
         android:id="@+id/contact_last_message"
         android:text="Lorem ipsum dolor..."
         android:textColor="@android:color/secondary_text_dark"
-        android:lines="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/contact_icon"

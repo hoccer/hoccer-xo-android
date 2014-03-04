@@ -18,6 +18,10 @@ import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Contacts adapter for the main contact list
@@ -39,7 +43,7 @@ public class RichContactsAdapter extends ContactsAdapter {
 
     @Override
     protected int getGroupLayout() {
-        return R.layout.item_contact_group;
+        return R.layout.item_contact_client;
     }
 
     @Override
@@ -59,7 +63,7 @@ public class RichContactsAdapter extends ContactsAdapter {
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(token.getSender()));
 
         String name = token.getSender();
-        String photo = "content://" + R.drawable.avatar_default_contact;
+        String photo = "drawable://" + R.drawable.avatar_default_contact;
 
         Cursor cursor = resolver.query(uri,
                 new String[] {
@@ -98,11 +102,27 @@ public class RichContactsAdapter extends ContactsAdapter {
         }
         if(contact.isGroup()) {
             if(contact.isGroupInvited()) {
-                typeView.setText("Group Invite"); // XXX i18n
+                typeView.setText(R.string.common_group_invite);
             } else {
                 typeView.setText(R.string.common_group);
             }
         }
+        String lastMessageTime = "";
+        try {
+            TalkClientMessage message = mDatabase.findLatestMessageByContactId(contact.getClientContactId());
+            if(message != null) {
+                Date now = new Date(System.currentTimeMillis());
+                Date messageTime = message.getTimestamp();
+
+                SimpleDateFormat sdf = new SimpleDateFormat("EEE. HH:mm");
+                lastMessageTime = sdf.format(messageTime);
+            }
+        } catch (SQLException e) {
+            LOG.error("sql error", e);
+        }
+
+        TextView lastMessageTimeView = (TextView) view.findViewById(R.id.contact_last_message);
+        lastMessageTimeView.setText(lastMessageTime);
 
         long unseenMessages = 0;
         try {
@@ -147,9 +167,9 @@ public class RichContactsAdapter extends ContactsAdapter {
         String avatarUri = contact.getAvatarContentUrl();
         if(avatarUri == null) {
             if(contact.isGroup()) {
-                avatarUri = "content://" + R.drawable.avatar_default_group;
+                avatarUri = "drawable://" + R.drawable.avatar_default_group;
             } else {
-                avatarUri = "content://" + R.drawable.avatar_default_contact;
+                avatarUri = "drawable://" + R.drawable.avatar_default_contact;
             }
         }
         avatarView.setAvatarImage(avatarUri);

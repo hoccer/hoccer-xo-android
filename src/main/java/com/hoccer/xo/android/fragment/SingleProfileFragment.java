@@ -207,9 +207,9 @@ public class SingleProfileFragment extends XoFragment
 
         String avatarUrl = null;
         if (contact.isGroup()) {
-            avatarUrl = "content://" + R.drawable.avatar_default_group_large;
+            avatarUrl = "drawable://" + R.drawable.avatar_default_group_large;
         } else {
-            avatarUrl = "content://" + R.drawable.avatar_default_contact_large;
+            avatarUrl = "drawable://" + R.drawable.avatar_default_contact_large;
         }
         TalkClientUpload avatarUpload = null;
         TalkClientDownload avatarDownload = null;

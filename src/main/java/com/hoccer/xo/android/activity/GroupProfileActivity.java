@@ -1,13 +1,12 @@
 package com.hoccer.xo.android.activity;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageButton;
+import android.view.*;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.IXoStateListener;
 import com.hoccer.talk.client.XoClient;
@@ -23,7 +22,7 @@ import java.sql.SQLException;
 /**
  * Activity wrapping a group profile fragment
  */
-public class GroupProfileActivity extends XoActivity implements IXoContactListener, IXoStateListener {
+public class GroupProfileActivity extends XoActivity implements IXoContactListener, IXoStateListener, ActionMode.Callback {
 
     /* use this extra to open in "group creation" mode */
     public static final String EXTRA_CLIENT_CREATE_GROUP = "clientCreateGroup";
@@ -54,30 +53,18 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         enableUpNavigation();
         mActionBar = getActionBar();
 
-        // add the custom view to the action bar
-        mActionBar.setCustomView(R.layout.view_actionbar_group_profile);
-        mActionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        ImageButton doneButton = (ImageButton)mActionBar.getCustomView().findViewById(R.id.image_button_done);
-        doneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // save name and leave
-                finish();
-            }
-        });
-
         FragmentManager fragmentManager = getFragmentManager();
-        mGroupProfileFragment = (GroupProfileFragment)fragmentManager.findFragmentById(R.id.activity_group_profile_fragment);
-        mStatusFragment = (StatusFragment)fragmentManager.findFragmentById(R.id.activity_profile_status_fragment);
+        mGroupProfileFragment = (GroupProfileFragment) fragmentManager.findFragmentById(R.id.activity_group_profile_fragment);
+        mStatusFragment = (StatusFragment) fragmentManager.findFragmentById(R.id.activity_profile_status_fragment);
 
         // handle intents
         Intent intent = getIntent();
-        if(intent != null) {
-            if(intent.hasExtra(EXTRA_CLIENT_CREATE_GROUP)) {
+        if (intent != null) {
+            if (intent.hasExtra(EXTRA_CLIENT_CREATE_GROUP)) {
                 createGroup();
-            } else if(intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
+            } else if (intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
                 mContactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
-                if(mContactId == -1) {
+                if (mContactId == -1) {
                     LOG.error("invalid contact id");
                 } else {
                     showProfile(refreshContact(mContactId));
@@ -90,30 +77,11 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     public boolean onCreateOptionsMenu(Menu menu) {
         LOG.debug("onCreateOptionsMenu()");
         boolean result = super.onCreateOptionsMenu(menu);
-        menu.findItem(R.id.menu_my_profile).setVisible(true);
 
-        TalkClientContact contact = refreshContact(mContactId);
-        if (contact != null) {
-            if (contact.isEditable()) {
-                menu.findItem(R.id.menu_group_profile_delete).setVisible(true);
-                menu.findItem(R.id.menu_group_profile_add_person).setVisible(true);
-                menu.findItem(R.id.menu_group_profile_join).setVisible(false);
-                menu.findItem(R.id.menu_group_profile_leave).setVisible(false);
-            } else {
-                menu.findItem(R.id.menu_group_profile_delete).setVisible(false);
-                menu.findItem(R.id.menu_group_profile_add_person).setVisible(false);
+        MenuItem myProfile = menu.findItem(R.id.menu_my_profile);
+        myProfile.setVisible(true);
 
-                // TODO check wether we are invited or joined
-                // reject button??
-                if (true) {
-                    menu.findItem(R.id.menu_group_profile_join).setVisible(true);
-                    menu.findItem(R.id.menu_group_profile_leave).setVisible(false);
-                } else {
-                    menu.findItem(R.id.menu_group_profile_join).setVisible(false);
-                    menu.findItem(R.id.menu_group_profile_leave).setVisible(true);
-                }
-            }
-        }
+        configureMenuItems(menu);
 
         return result;
     }
@@ -121,23 +89,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
-        switch (item.getItemId()) {
-            case R.id.menu_group_profile_delete:
-                deleteGroup();
-                break;
-            case R.id.menu_group_profile_add_person:
-                manageGroupMembers();
-                break;
-            case R.id.menu_group_profile_join:
-                joinGroup();
-                break;
-            case R.id.menu_group_profile_leave:
-                leaveGroup();
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -145,10 +97,13 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         LOG.debug("onResume()");
         super.onResume();
 
+        startActionMode(this);
+
         getXoClient().registerContactListener(this);
         getXoClient().registerStateListener(this);
 
-        mStatusFragment.getView().setVisibility(View.VISIBLE);
+        View statusView = mStatusFragment.getView();
+        statusView.setVisibility(View.VISIBLE);
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -161,7 +116,6 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         getXoClient().unregisterContactListener(this);
     }
 
-    
     private TalkClientContact refreshContact(int contactId) {
         LOG.debug("refreshContact(" + contactId + ")");
         try {
@@ -170,6 +124,45 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
             LOG.error("sql error", e);
         }
         return null;
+    }
+
+    private void configureMenuItems(Menu menu) {
+
+        MenuItem addPerson = menu.findItem(R.id.menu_group_profile_add_person);
+        MenuItem deleteGroup = menu.findItem(R.id.menu_group_profile_delete);
+        MenuItem rejectInvitation = menu.findItem(R.id.menu_group_profile_reject_invitation);
+        MenuItem joinGroup = menu.findItem(R.id.menu_group_profile_join);
+        MenuItem leaveGroup = menu.findItem(R.id.menu_group_profile_leave);
+
+        addPerson.setVisible(false);
+        deleteGroup.setVisible(false);
+        rejectInvitation.setVisible(false);
+        joinGroup.setVisible(false);
+        leaveGroup.setVisible(false);
+
+        TalkClientContact contact = refreshContact(mContactId);
+        if (contact != null) {
+            if (contact.isEditable()) {
+                deleteGroup.setVisible(true);
+                addPerson.setVisible(true);
+                joinGroup.setVisible(false);
+                leaveGroup.setVisible(false);
+                rejectInvitation.setVisible(false);
+            } else {
+                deleteGroup.setVisible(false);
+                addPerson.setVisible(false);
+
+                if (contact.isGroupInvited()) {
+                    rejectInvitation.setVisible(true);
+                    joinGroup.setVisible(true);
+                    leaveGroup.setVisible(false);
+                } else if (contact.isGroupJoined()) {
+                    rejectInvitation.setVisible(false);
+                    joinGroup.setVisible(false);
+                    leaveGroup.setVisible(true);
+                }
+            }
+        }
     }
 
     public void showProfile(TalkClientContact contact) {
@@ -186,6 +179,12 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         update(mGroupProfileFragment.getContact());
     }
 
+    public void saveGroup() {
+        LOG.debug("saveGroup()");
+
+        mGroupProfileFragment.saveGroup();
+    }
+
     private void manageGroupMembers() {
         LOG.debug("manageGroupMembers()");
         TalkClientContact contact = refreshContact(mContactId);
@@ -197,14 +196,21 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         getXoClient().deleteContact(contact);
     }
 
+    private void rejectInvitation() {
+        leaveGroup();
+        finish();
+    }
+
     private void joinGroup() {
         TalkClientContact contact = refreshContact(mContactId);
         getXoClient().joinGroup(contact.getGroupId());
+        finish();
     }
 
     private void leaveGroup() {
         TalkClientContact contact = refreshContact(mContactId);
         getXoClient().leaveGroup(contact.getGroupId());
+        finish();
     }
 
     @Override
@@ -234,47 +240,158 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
     @Override
     public void onClientStateChange(XoClient client, int state) {
-        // we don't care
+        LOG.debug("onClientStateChange()");
     }
 
     @Override
     public void onContactAdded(TalkClientContact contact) {
-        // we don't care
+        LOG.debug("onContactAdded()");
     }
 
     @Override
     public void onContactRemoved(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             finish();
         }
     }
 
     @Override
     public void onClientPresenceChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             update(contact);
         }
     }
 
     @Override
     public void onClientRelationshipChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             update(contact);
         }
     }
 
     @Override
     public void onGroupPresenceChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             update(contact);
         }
     }
 
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
-        if(isMyContact(contact)) {
+        if (isMyContact(contact)) {
             update(contact);
         }
     }
 
+    @Override
+    public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+        actionMode.getMenuInflater().inflate(R.menu.fragment_group_profile, menu);
+        configureMenuItems(menu);
+        return true;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+        LOG.debug("onOptionsItemSelected(" + menuItem.toString() + ")");
+        switch (menuItem.getItemId()) {
+            case R.id.menu_group_profile_delete:
+                checkDeleteGroup();
+                break;
+            case R.id.menu_group_profile_add_person:
+                manageGroupMembers();
+                break;
+            case R.id.menu_group_profile_reject_invitation:
+                checkRejectInviation();
+                break;
+            case R.id.menu_group_profile_join:
+                joinGroup();
+                break;
+            case R.id.menu_group_profile_leave:
+                checkLeaveGroup();
+                break;
+        }
+        return true;
+    }
+
+    private void checkDeleteGroup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.delete_group_title);
+        builder.setMessage(R.string.delete_group_question);
+        builder.setCancelable(true);
+        builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                LOG.debug("onClick(Cancel)");
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                LOG.debug("onClick(Ok)");
+                deleteGroup();
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    private void checkRejectInviation() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.reject_invitation_title);
+        builder.setMessage(R.string.reject_invitation_question);
+        builder.setCancelable(true);
+        builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                LOG.debug("onClick(Cancel)");
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                LOG.debug("onClick(Ok)");
+                rejectInvitation();
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void checkLeaveGroup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.leave_title);
+        builder.setMessage(R.string.leave_question);
+        builder.setCancelable(true);
+        builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                LOG.debug("onClick(Cancel)");
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                LOG.debug("onClick(Ok)");
+                leaveGroup();
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode actionMode) {
+        saveGroup();
+        finish();
+    }
 }

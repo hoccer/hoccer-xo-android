@@ -86,11 +86,9 @@ public class AvatarView extends LinearLayout {
         } else {
             mAvatarImage.setVisibility(View.VISIBLE);
             if (avatarImageUrl != null) {
-                ImageLoader.getInstance()
-                        .displayImage(avatarImageUrl, mAvatarImage, mDefaultOptions, null);
+                ImageLoader.getInstance().displayImage(avatarImageUrl, mAvatarImage, mDefaultOptions, null);
             } else if (mDefaultAvatarImageUrl != null) {
-                ImageLoader.getInstance()
-                        .displayImage(mDefaultAvatarImageUrl, mAvatarImage, mDefaultOptions, null);
+                ImageLoader.getInstance().displayImage(mDefaultAvatarImageUrl, mAvatarImage, mDefaultOptions, null);
             } else {
                 mAvatarImage.setVisibility(View.INVISIBLE);
             }
