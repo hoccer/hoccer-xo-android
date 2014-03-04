@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.talk.model.TalkGroupMember;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
@@ -33,7 +34,7 @@ public class GroupContactsAdapter extends ContactsAdapter {
 
     @Override
     protected int getGroupLayout() {
-        return R.layout.item_contact_group;
+        return R.layout.item_contact_group_member;
     }
 
     @Override
@@ -70,6 +71,15 @@ public class GroupContactsAdapter extends ContactsAdapter {
 
         if (contact.isClient()) {
             TextView roleView = (TextView)view.findViewById(R.id.contact_role);
+
+            /*
+            if (contact.getGroupMember().getRole() == TalkGroupMember.ROLE_ADMIN) {
+                roleView.setVisibility(View.VISIBLE);
+            } else {
+                roleView.setVisibility(View.GONE);
+            }
+            */
+
             if (contact.isGroupAdmin()) {
                 roleView.setVisibility(View.VISIBLE);
             } else {
