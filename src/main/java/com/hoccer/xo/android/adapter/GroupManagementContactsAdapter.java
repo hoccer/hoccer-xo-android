@@ -61,7 +61,7 @@ public class GroupManagementContactsAdapter extends ContactsAdapter {
         AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
         String avatarUri = contact.getAvatarContentUrl();
         if(avatarUri == null) {
-            avatarUri = "content://" + R.drawable.avatar_default_contact;
+            avatarUri = "drawable://" + R.drawable.avatar_default_contact;
         }
         avatarView.setAvatarImage(avatarUri);
 

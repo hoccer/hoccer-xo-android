@@ -40,7 +40,7 @@ public class TokenDialog extends DialogFragment implements DialogInterface.OnCli
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(mToken.getSender()));
 
         String name = mToken.getSender();
-        String photo = "content://" + R.drawable.avatar_default_contact;
+        String photo = "drawable://" + R.drawable.avatar_default_contact;
 
         Cursor cursor = resolver.query(uri,
                 new String[] {

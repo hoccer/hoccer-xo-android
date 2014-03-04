@@ -62,9 +62,9 @@ public class GroupContactsAdapter extends ContactsAdapter {
         String avatarUri = contact.getAvatarContentUrl();
         if(avatarUri == null) {
             if(contact.isGroup()) {
-                avatarUri = "content://" + R.drawable.avatar_default_group;
+                avatarUri = "drawable://" + R.drawable.avatar_default_group;
             } else {
-                avatarUri = "content://" + R.drawable.avatar_default_contact;
+                avatarUri = "drawable://" + R.drawable.avatar_default_contact;
             }
         }
         avatarView.setAvatarImage(avatarUri);

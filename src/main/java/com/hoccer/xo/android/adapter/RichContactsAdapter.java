@@ -59,7 +59,7 @@ public class RichContactsAdapter extends ContactsAdapter {
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(token.getSender()));
 
         String name = token.getSender();
-        String photo = "content://" + R.drawable.avatar_default_contact;
+        String photo = "drawable://" + R.drawable.avatar_default_contact;
 
         Cursor cursor = resolver.query(uri,
                 new String[] {
@@ -147,9 +147,9 @@ public class RichContactsAdapter extends ContactsAdapter {
         String avatarUri = contact.getAvatarContentUrl();
         if(avatarUri == null) {
             if(contact.isGroup()) {
-                avatarUri = "content://" + R.drawable.avatar_default_group;
+                avatarUri = "drawable://" + R.drawable.avatar_default_group; //"content://" + R.drawable.avatar_default_group;
             } else {
-                avatarUri = "content://" + R.drawable.avatar_default_contact;
+                avatarUri = "drawable://" + R.drawable.avatar_default_contact; //"content://" + R.drawable.avatar_default_contact;
             }
         }
         avatarView.setAvatarImage(avatarUri);
