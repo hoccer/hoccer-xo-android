@@ -3,8 +3,11 @@
     <declare-styleable name="TransferWheel">
         <attr name="outerWheelSize" format="dimension"/>
         <attr name="innerWheelSize" format="dimension"/>
-        <attr name="wheelColor" format="color"/>
         <attr name="wheelDiameter" format="dimension"/>
+        <attr name="wheelColor" format="color"/>
+        <attr name="textMargin" format="dimension"/>
+        <attr name="textSize" format="integer"/>
+        <attr name="text" format="string"/>
     </declare-styleable>
     <declare-styleable name="AspectView">
        <attr name="aspectRatio" format="float"/>

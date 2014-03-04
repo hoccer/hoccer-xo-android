@@ -18,6 +18,10 @@ import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Contacts adapter for the main contact list
@@ -103,6 +107,22 @@ public class RichContactsAdapter extends ContactsAdapter {
                 typeView.setText(R.string.common_group);
             }
         }
+        String lastMessageTime = "";
+        try {
+            TalkClientMessage message = mDatabase.findLatestMessageByContactId(contact.getClientContactId());
+            if(message != null) {
+                Date now = new Date(System.currentTimeMillis());
+                Date messageTime = message.getTimestamp();
+
+                SimpleDateFormat sdf = new SimpleDateFormat("EEE. HH:mm");
+                lastMessageTime = sdf.format(messageTime);
+            }
+        } catch (SQLException e) {
+            LOG.error("sql error", e);
+        }
+
+        TextView lastMessageTimeView = (TextView) view.findViewById(R.id.contact_last_message);
+        lastMessageTimeView.setText(lastMessageTime);
 
         long unseenMessages = 0;
         try {

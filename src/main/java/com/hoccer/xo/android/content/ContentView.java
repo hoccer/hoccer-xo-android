@@ -347,6 +347,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             case DOWNLOAD_NEW:
                 mTransferProgress.setVisibility(VISIBLE);
                 mTransferProgress.prepareToDownload();
+                mTransferProgress.setText("Downloading...");
                 mTransferProgress.pause();
                 break;
             case DOWNLOAD_PAUSED:
@@ -354,6 +355,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 break;
             case DOWNLOAD_DOWNLOADING:
                 mTransferProgress.prepareToDownload();
+                mTransferProgress.setText("Downloading...");
                 length = object.getTransferLength();
                 progress = object.getTransferProgress();
                 mTransferProgress.setMax(length);
@@ -361,6 +363,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 break;
             case DOWNLOAD_DECRYPTING:
                 length = object.getTransferLength();
+                mTransferProgress.setText("Decrypting...");
                 mTransferProgress.setProgress(length);
                 mTransferProgress.spin();
                 mWaitUntilOperationIsFinished = true;
@@ -371,10 +374,12 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 break;
             case UPLOAD_NEW:
                 mTransferProgress.prepareToUpload();
+                mTransferProgress.setText("Encrypting...");
                 mTransferProgress.setVisibility(VISIBLE);
                 break;
             case UPLOAD_ENCRYPTING:
                 mTransferProgress.prepareToUpload();
+                mTransferProgress.setText("Encrypting...");
                 mTransferProgress.setVisibility(VISIBLE);
                 mTransferProgress.spin();
                 break;
@@ -383,6 +388,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 break;
             case UPLOAD_UPLOADING:
                 mTransferProgress.finishSpinningAndProceed();
+                mTransferProgress.setText("Uploading...");
                 mWaitUntilOperationIsFinished = true;
                 length = object.getTransferLength();
                 progress = object.getTransferProgress();
