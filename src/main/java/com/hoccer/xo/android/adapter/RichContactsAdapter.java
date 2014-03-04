@@ -102,7 +102,7 @@ public class RichContactsAdapter extends ContactsAdapter {
         }
         if(contact.isGroup()) {
             if(contact.isGroupInvited()) {
-                typeView.setText("Group Invite"); // XXX i18n
+                typeView.setText(R.string.common_group_invite);
             } else {
                 typeView.setText(R.string.common_group);
             }
@@ -167,9 +167,9 @@ public class RichContactsAdapter extends ContactsAdapter {
         String avatarUri = contact.getAvatarContentUrl();
         if(avatarUri == null) {
             if(contact.isGroup()) {
-                avatarUri = "drawable://" + R.drawable.avatar_default_group; //"content://" + R.drawable.avatar_default_group;
+                avatarUri = "drawable://" + R.drawable.avatar_default_group;
             } else {
-                avatarUri = "drawable://" + R.drawable.avatar_default_contact; //"content://" + R.drawable.avatar_default_contact;
+                avatarUri = "drawable://" + R.drawable.avatar_default_contact;
             }
         }
         avatarView.setAvatarImage(avatarUri);

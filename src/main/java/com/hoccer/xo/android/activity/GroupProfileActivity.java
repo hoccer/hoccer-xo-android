@@ -1,7 +1,9 @@
 package com.hoccer.xo.android.activity;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.*;
@@ -87,26 +89,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
-        switch (item.getItemId()) {
-            case R.id.menu_group_profile_delete:
-                deleteGroup();
-                break;
-            case R.id.menu_group_profile_add_person:
-                manageGroupMembers();
-                break;
-            case R.id.menu_group_profile_reject_invitation:
-                rejectInvitation();
-                break;
-            case R.id.menu_group_profile_join:
-                joinGroup();
-                break;
-            case R.id.menu_group_profile_leave:
-                leaveGroup();
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -150,7 +133,6 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         MenuItem rejectInvitation = menu.findItem(R.id.menu_group_profile_reject_invitation);
         MenuItem joinGroup = menu.findItem(R.id.menu_group_profile_join);
         MenuItem leaveGroup = menu.findItem(R.id.menu_group_profile_leave);
-
 
         addPerson.setVisible(false);
         deleteGroup.setVisible(false);
@@ -315,7 +297,96 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
     @Override
     public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+        LOG.debug("onOptionsItemSelected(" + menuItem.toString() + ")");
+        switch (menuItem.getItemId()) {
+            case R.id.menu_group_profile_delete:
+                checkDeleteGroup();
+                break;
+            case R.id.menu_group_profile_add_person:
+                manageGroupMembers();
+                break;
+            case R.id.menu_group_profile_reject_invitation:
+                checkRejectInviation();
+                break;
+            case R.id.menu_group_profile_join:
+                joinGroup();
+                break;
+            case R.id.menu_group_profile_leave:
+                checkLeaveGroup();
+                break;
+        }
         return true;
+    }
+
+    private void checkDeleteGroup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.delete_group_title);
+        builder.setMessage(R.string.delete_group_question);
+        builder.setCancelable(true);
+        builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                LOG.debug("onClick(Cancel)");
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                LOG.debug("onClick(Ok)");
+                deleteGroup();
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    private void checkRejectInviation() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.reject_invitation_title);
+        builder.setMessage(R.string.reject_invitation_question);
+        builder.setCancelable(true);
+        builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                LOG.debug("onClick(Cancel)");
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                LOG.debug("onClick(Ok)");
+                rejectInvitation();
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void checkLeaveGroup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.leave_title);
+        builder.setMessage(R.string.leave_question);
+        builder.setCancelable(true);
+        builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                LOG.debug("onClick(Cancel)");
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                LOG.debug("onClick(Ok)");
+                leaveGroup();
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override
