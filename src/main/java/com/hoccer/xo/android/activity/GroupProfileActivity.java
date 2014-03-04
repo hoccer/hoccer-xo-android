@@ -87,26 +87,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
-        switch (item.getItemId()) {
-            case R.id.menu_group_profile_delete:
-                deleteGroup();
-                break;
-            case R.id.menu_group_profile_add_person:
-                manageGroupMembers();
-                break;
-            case R.id.menu_group_profile_reject_invitation:
-                rejectInvitation();
-                break;
-            case R.id.menu_group_profile_join:
-                joinGroup();
-                break;
-            case R.id.menu_group_profile_leave:
-                leaveGroup();
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -315,6 +296,24 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
     @Override
     public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+        LOG.debug("onOptionsItemSelected(" + menuItem.toString() + ")");
+        switch (menuItem.getItemId()) {
+            case R.id.menu_group_profile_delete:
+                deleteGroup();
+                break;
+            case R.id.menu_group_profile_add_person:
+                manageGroupMembers();
+                break;
+            case R.id.menu_group_profile_reject_invitation:
+                rejectInvitation();
+                break;
+            case R.id.menu_group_profile_join:
+                joinGroup();
+                break;
+            case R.id.menu_group_profile_leave:
+                leaveGroup();
+                break;
+        }
         return true;
     }
 
