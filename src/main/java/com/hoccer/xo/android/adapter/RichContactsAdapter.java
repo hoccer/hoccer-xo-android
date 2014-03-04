@@ -39,7 +39,7 @@ public class RichContactsAdapter extends ContactsAdapter {
 
     @Override
     protected int getGroupLayout() {
-        return R.layout.item_contact_group;
+        return R.layout.item_contact_client;
     }
 
     @Override
