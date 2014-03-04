@@ -4,10 +4,7 @@ import android.app.ActionBar;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageButton;
+import android.view.*;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.IXoStateListener;
 import com.hoccer.talk.client.XoClient;
@@ -23,13 +20,14 @@ import java.sql.SQLException;
 /**
  * Activity wrapping a group profile fragment
  */
-public class GroupProfileActivity extends XoActivity implements IXoContactListener, IXoStateListener {
+public class GroupProfileActivity extends XoActivity implements IXoContactListener, IXoStateListener, ActionMode.Callback {
 
     /* use this extra to open in "group creation" mode */
     public static final String EXTRA_CLIENT_CREATE_GROUP = "clientCreateGroup";
     /* use this extra to show the given contact */
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 
+    private ActionBar mActionBar;
     private GroupProfileFragment mGroupProfileFragment;
     private StatusFragment mStatusFragment;
 
@@ -51,19 +49,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         super.onCreate(savedInstanceState);
 
         enableUpNavigation();
-        ActionBar mActionBar = getActionBar();
-
-        // add the custom view to the action bar
-        mActionBar.setCustomView(R.layout.view_actionbar_group_profile);
-        mActionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        ImageButton doneButton = (ImageButton) mActionBar.getCustomView().findViewById(R.id.image_button_done);
-        doneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveGroup();
-                finish();
-            }
-        });
+        mActionBar = getActionBar();
 
         FragmentManager fragmentManager = getFragmentManager();
         mGroupProfileFragment = (GroupProfileFragment) fragmentManager.findFragmentById(R.id.activity_group_profile_fragment);
@@ -91,42 +77,9 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         boolean result = super.onCreateOptionsMenu(menu);
 
         MenuItem myProfile = menu.findItem(R.id.menu_my_profile);
-        MenuItem addPerson = menu.findItem(R.id.menu_group_profile_add_person);
-        MenuItem deleteGroup = menu.findItem(R.id.menu_group_profile_delete);
-        MenuItem rejectInvitation = menu.findItem(R.id.menu_group_profile_reject_invitation);
-        MenuItem joinGroup = menu.findItem(R.id.menu_group_profile_join);
-        MenuItem leaveGroup = menu.findItem(R.id.menu_group_profile_leave);
-
         myProfile.setVisible(true);
-        addPerson.setVisible(false);
-        deleteGroup.setVisible(false);
-        rejectInvitation.setVisible(false);
-        joinGroup.setVisible(false);
-        leaveGroup.setVisible(false);
 
-        TalkClientContact contact = refreshContact(mContactId);
-        if (contact != null) {
-            if (contact.isEditable()) {
-                deleteGroup.setVisible(true);
-                addPerson.setVisible(true);
-                joinGroup.setVisible(false);
-                leaveGroup.setVisible(false);
-                rejectInvitation.setVisible(false);
-            } else {
-                deleteGroup.setVisible(false);
-                addPerson.setVisible(false);
-
-                if (contact.isGroupInvited()) {
-                    rejectInvitation.setVisible(true);
-                    joinGroup.setVisible(true);
-                    leaveGroup.setVisible(false);
-                } else if (contact.isGroupJoined()) {
-                    rejectInvitation.setVisible(false);
-                    joinGroup.setVisible(false);
-                    leaveGroup.setVisible(true);
-                }
-            }
-        }
+        configureMenuItems(menu);
 
         return result;
     }
@@ -161,6 +114,8 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         LOG.debug("onResume()");
         super.onResume();
 
+        startActionMode(this);
+
         getXoClient().registerContactListener(this);
         getXoClient().registerStateListener(this);
 
@@ -186,6 +141,46 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
             LOG.error("sql error", e);
         }
         return null;
+    }
+
+    private void configureMenuItems(Menu menu) {
+
+        MenuItem addPerson = menu.findItem(R.id.menu_group_profile_add_person);
+        MenuItem deleteGroup = menu.findItem(R.id.menu_group_profile_delete);
+        MenuItem rejectInvitation = menu.findItem(R.id.menu_group_profile_reject_invitation);
+        MenuItem joinGroup = menu.findItem(R.id.menu_group_profile_join);
+        MenuItem leaveGroup = menu.findItem(R.id.menu_group_profile_leave);
+
+
+        addPerson.setVisible(false);
+        deleteGroup.setVisible(false);
+        rejectInvitation.setVisible(false);
+        joinGroup.setVisible(false);
+        leaveGroup.setVisible(false);
+
+        TalkClientContact contact = refreshContact(mContactId);
+        if (contact != null) {
+            if (contact.isEditable()) {
+                deleteGroup.setVisible(true);
+                addPerson.setVisible(true);
+                joinGroup.setVisible(false);
+                leaveGroup.setVisible(false);
+                rejectInvitation.setVisible(false);
+            } else {
+                deleteGroup.setVisible(false);
+                addPerson.setVisible(false);
+
+                if (contact.isGroupInvited()) {
+                    rejectInvitation.setVisible(true);
+                    joinGroup.setVisible(true);
+                    leaveGroup.setVisible(false);
+                } else if (contact.isGroupJoined()) {
+                    rejectInvitation.setVisible(false);
+                    joinGroup.setVisible(false);
+                    leaveGroup.setVisible(true);
+                }
+            }
+        }
     }
 
     public void showProfile(TalkClientContact contact) {
@@ -306,4 +301,26 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         }
     }
 
+    @Override
+    public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+        actionMode.getMenuInflater().inflate(R.menu.fragment_group_profile, menu);
+        configureMenuItems(menu);
+        return true;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+        return true;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode actionMode) {
+        saveGroup();
+        finish();
+    }
 }
