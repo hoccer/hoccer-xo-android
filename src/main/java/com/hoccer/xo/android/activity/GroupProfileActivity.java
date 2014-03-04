@@ -132,7 +132,6 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         MenuItem joinGroup = menu.findItem(R.id.menu_group_profile_join);
         MenuItem leaveGroup = menu.findItem(R.id.menu_group_profile_leave);
 
-
         addPerson.setVisible(false);
         deleteGroup.setVisible(false);
         rejectInvitation.setVisible(false);

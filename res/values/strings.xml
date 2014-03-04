@@ -125,6 +125,7 @@
     <string name="leave_title">Leave group</string>
     <string name="leave_question">Are you sure you want to leave this group? You will have to be re-invited to participate again.</string>
     <string name="common_group">Group</string>
+    <string name="common_group_invite">Invited</string>
     <string name="common_friend">Friend</string>
     <string name="menu_licenses">Licenses</string>
     <string name="pairing_token_generating">Generating...</string>
