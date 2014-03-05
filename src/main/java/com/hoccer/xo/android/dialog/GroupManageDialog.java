@@ -81,7 +81,7 @@ public class GroupManageDialog extends DialogFragment {
         dialog.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int index, long id) {
-                RelativeLayout contactView = (RelativeLayout) view;
+                LinearLayout contactView = (LinearLayout) view;
                 CheckedTextView checkedTextView = (CheckedTextView)contactView.findViewById(R.id.contact_name);
                 checkedTextView.setChecked(!checkedTextView.isChecked());
 

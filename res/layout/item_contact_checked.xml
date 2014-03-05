@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:custom="http://schemas.android.com/apk/res-auto"
         android:gravity="center|left"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
     <com.hoccer.xo.android.view.AvatarView
@@ -13,7 +13,7 @@
             android:layout_height="45dp"
             custom:cornerRadius="45"
             custom:defaultAvatarImageUrl="@drawable/avatar_default_contact"
-            style="@style/AppBaseTheme.Contact.Avatar"/>
+            style="@style/AppBaseTheme.Group.Members.MemberAvatar"/>
 
     <CheckedTextView
             android:id="@+id/contact_name"
@@ -21,10 +21,8 @@
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/contact_icon"
-            android:layout_alignParentRight="true"
             android:checkMark="@drawable/appbasetheme_btn_check_holo_light"
             android:checked="false"
-            style="@style/AppBaseTheme.Contact.Name"/>
+            style="@style/AppBaseTheme.Group.Members.MemberName"/>
 
-</RelativeLayout>
+</LinearLayout>
