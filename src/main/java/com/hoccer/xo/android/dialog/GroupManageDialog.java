@@ -23,17 +23,22 @@ public class GroupManageDialog extends DialogFragment {
 
     private static final Logger LOG = Logger.getLogger(GroupManageDialog.class);
 
-    XoActivity mActivity;
-
     TalkClientContact mGroup;
 
     ContactsAdapter mAdapter;
     List<TalkClientContact> mContactsToInvite;
     List<TalkClientContact> mContactsToKick;
 
-    public GroupManageDialog(XoActivity activity, TalkClientContact group) {
+    public GroupManageDialog() {
         super();
-        mActivity = activity;
+
+        mContactsToInvite = new ArrayList();
+        mContactsToKick = new ArrayList();
+    }
+
+    public GroupManageDialog(TalkClientContact group) {
+        super();
+
         mGroup = group;
         mContactsToInvite = new ArrayList();
         mContactsToKick = new ArrayList();
@@ -43,7 +48,7 @@ public class GroupManageDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LOG.debug("onCreateDialog()");
         if(mAdapter == null) {
-            mAdapter = new GroupManagementContactsAdapter(mActivity, mGroup);
+            mAdapter = new GroupManagementContactsAdapter((XoActivity)getActivity(), mGroup);
             mAdapter.onCreate();
             mAdapter.onResume();
             mAdapter.setFilter(new ContactsAdapter.Filter() {
@@ -55,7 +60,7 @@ public class GroupManageDialog extends DialogFragment {
         }
         mAdapter.requestReload();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.manage_title);
         builder.setCancelable(true);
         builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
@@ -114,11 +119,11 @@ public class GroupManageDialog extends DialogFragment {
     private void updateMemberships() {
         for (int i = 0; i < mContactsToInvite.size(); i++) {
             TalkClientContact contact = mContactsToInvite.get(i);
-            mActivity.getXoClient().inviteClientToGroup(mGroup.getGroupId(), contact.getClientId());
+            ((XoActivity)getActivity()).getXoClient().inviteClientToGroup(mGroup.getGroupId(), contact.getClientId());
         }
         for (int i = 0; i < mContactsToKick.size(); i++) {
             TalkClientContact contact = mContactsToKick.get(i);
-            mActivity.getXoClient().kickClientFromGroup(mGroup.getGroupId(), contact.getClientId());
+            ((XoActivity)getActivity()).getXoClient().kickClientFromGroup(mGroup.getGroupId(), contact.getClientId());
         }
     }
 
