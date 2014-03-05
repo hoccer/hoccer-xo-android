@@ -2,6 +2,7 @@ package com.hoccer.xo.android.view;
 
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.content.IContentObject;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.release.R;
@@ -85,9 +86,8 @@ public class AvatarView extends LinearLayout implements IXoContactListener {
     }
 
     private void updateAvatar() {
-        String avatarUri = mContact.getAvatarContentUrl();
-        Log.d("zalem", avatarUri);
-        Log.d("zalem", "isGroup: " + mContact.isGroup());
+        IContentObject avatar = mContact.getAvatar();
+        String avatarUri = avatar == null ? null : avatar.getContentDataUrl();
 
         if (avatarUri == null) {
             if (mContact.isGroup()) {

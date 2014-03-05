@@ -96,10 +96,7 @@ public class RichContactsAdapter extends ContactsAdapter {
         nameView.setText(contact.getName());
         TextView typeView = (TextView) view.findViewById(R.id.contact_type);
 
-        if(contact.isClient()) {
-            TalkPresence presence = contact.getClientPresence();
-            avatarView.setContact(contact);
-        }
+        avatarView.setContact(contact);
         if(contact.isGroup()) {
             if(contact.isGroupInvited()) {
                 typeView.setText(R.string.common_group_invite);
