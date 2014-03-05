@@ -28,7 +28,9 @@
     <TextView
             android:id="@+id/contact_unseen_messages"
             android:layout_alignRight="@+id/contact_icon"
-            android:layout_alignTop="@id/contact_icon"
+            android:layout_alignBottom="@id/contact_icon"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/unread_messages"
             style="@style/AppBaseTheme.Contact.UnreadMessages"/>
 

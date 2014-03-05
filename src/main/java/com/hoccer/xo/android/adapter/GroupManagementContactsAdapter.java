@@ -65,11 +65,7 @@ public class GroupManagementContactsAdapter extends ContactsAdapter {
         nameView.setText(contact.getName());
 
         AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
-        String avatarUri = contact.getAvatarContentUrl();
-        if(avatarUri == null) {
-            avatarUri = "drawable://" + R.drawable.avatar_default_contact;
-        }
-        avatarView.setAvatarImage(avatarUri);
+        avatarView.setContact(contact);
 
         CheckedTextView checkedTextView = (CheckedTextView)view.findViewById(R.id.contact_name);
         if (contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup)) {

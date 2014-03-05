@@ -3,31 +3,35 @@
 
     <style name="AppBaseTheme.Group"/>
 
-    <style name="AppBaseTheme.Group.Layout" parent="AppBaseTheme.Group">
-        <item name="android:paddingTop">20dp</item>
-        <item name="android:paddingBottom">20dp</item>
-        <item name="android:paddingLeft">20dp</item>
-        <item name="android:paddingRight">20dp</item>
-    </style>
-
     <style name="AppBaseTheme.Group.ProfilePicture" parent="AppBaseTheme.Group">
-
     </style>
-    <style name="AppBaseTheme.Group.Title" parent="AppBaseTheme.Content.ContentDescription">
-        <item name="android:layout_marginLeft">5dp</item>
+    <style name="AppBaseTheme.Group.Title" parent="AppBaseTheme.DescriptiveText">
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginLeft">45dp</item>
     </style>
     <style name="AppBaseTheme.Group.Name" parent="AppBaseTheme.Group">
         <item name="android:textSize">24dp</item>
-        <item name="android:layout_marginLeft">5dp</item>
+    </style>
+    <style name="AppBaseTheme.Group.HorizontalDivider" parent="AppBaseTheme.Group">
+        <item name="android:layout_marginLeft">30dp</item>
+        <item name="android:layout_marginRight">30dp</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/xo_content_horizontal_divider</item>
     </style>
 
-    <style name="AppBaseTheme.Group.Members.Title" parent="AppBaseTheme.Content.ContentDescription">
-        <item name="android:layout_marginTop">35dp</item>
-        <item name="android:layout_marginLeft">5dp</item>
+    <style name="AppBaseTheme.Group.Members.Title" parent="AppBaseTheme.DescriptiveText">
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:layout_marginLeft">45dp</item>
     </style>
-
     <style name="AppBaseTheme.Group.Members.Dialog" parent="AppBaseTheme.Group">
         <item name="android:background">@color/xo_app_main_color</item>
+    </style>
+
+    <style name="AppBaseTheme.Group.List" parent="AppBaseTheme.Group">
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:divider">@color/xo_content_horizontal_divider</item>
+        <item name="android:layout_marginLeft">30dp</item>
+        <item name="android:layout_marginRight">30dp</item>
     </style>
 
     <style name="AppBaseTheme.Group.Members.MemberAvatar" parent="AppBaseTheme.Group">

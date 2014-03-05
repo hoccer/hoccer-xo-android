@@ -127,11 +127,7 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
             Object item = mContactList.getItemAtPosition(position);
             if (item instanceof TalkClientContact) {
                 TalkClientContact contact = (TalkClientContact) item;
-                // this is a bit of a hack
-                if (contact.isGroup() && contact.isGroupInvited() && !contact.isEverRelated()) {
-                    // if a group was never related we can safely go to the profile
-                    // view without preventing the user from accessing messages.
-                    // this improves the invite workflow, but it isn't a good solution overall.
+                if (contact.isGroup() && contact.isGroupInvited()) {
                     getXoActivity().showContactProfile(contact);
                 } else {
                     getXoActivity().showContactConversation(contact);

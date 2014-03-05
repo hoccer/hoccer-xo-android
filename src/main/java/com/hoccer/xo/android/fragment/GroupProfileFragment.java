@@ -2,20 +2,29 @@ package com.hoccer.xo.android.fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.*;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.talk.model.TalkGroup;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.GroupContactsAdapter;
 import com.hoccer.xo.android.base.XoFragment;
+import com.hoccer.xo.android.content.SelectedContent;
+import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
 
+import java.io.File;
+import java.sql.SQLException;
 import java.util.UUID;
 
 /**
@@ -40,8 +49,10 @@ public class GroupProfileFragment extends XoFragment
     private TextView mGroupMembersTitle;
     private ListView mGroupMembersList;
 
-    ContactsAdapter mGroupMemberAdapter;
-    TalkClientContact mGroup;
+    private ContactsAdapter mGroupMemberAdapter;
+    private TalkClientContact mGroup;
+    private IContentObject mAvatarToSet;
+    private ImageView mAvatarImage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +72,7 @@ public class GroupProfileFragment extends XoFragment
         mGroupNameEdit = (EditText) v.findViewById(R.id.profile_group_name_edit);
         mGroupMembersTitle = (TextView) v.findViewById(R.id.profile_group_members_title);
         mGroupMembersList = (ListView) v.findViewById(R.id.profile_group_members_list);
-
+        mAvatarImage = (ImageView) v.findViewById(R.id.profile_group_profile_image);
         return v;
     }
 
@@ -111,13 +122,42 @@ public class GroupProfileFragment extends XoFragment
         }
     }
 
+    private void updateAvatar(TalkClientContact contact) {
+
+        String avatarUrl = "drawable://" + R.drawable.avatar_default_group_large;
+
+        TalkClientUpload avatarUpload = null;
+        TalkClientDownload avatarDownload = null;
+
+        avatarUpload = contact.getAvatarUpload();
+        if (avatarUpload != null) {
+            if (avatarUpload.isContentAvailable()) {
+                avatarUrl = avatarUpload.getDataFile();
+            }
+        }
+
+        if (avatarUpload == null) {
+            avatarDownload = contact.getAvatarDownload();
+            if (avatarDownload != null) {
+                if (avatarDownload.isContentAvailable()) {
+                    avatarUrl = avatarDownload.getDataFile();
+                    Uri uri = Uri.fromFile(new File(avatarUrl));
+                    avatarUrl = uri.toString();
+                }
+            }
+        }
+        LOG.debug("avatar is " + avatarUrl);
+        ImageLoader.getInstance().displayImage(avatarUrl, mAvatarImage);
+    }
+
     private void update(TalkClientContact contact) {
         LOG.debug("update(" + contact.getClientContactId() + ")");
+
+        updateAvatar(contact);
 
         mGroupMembersTitle.setVisibility(contact.isGroupRegistered() ? View.VISIBLE : View.GONE);
         mGroupMembersList.setVisibility(contact.isGroupRegistered() ? View.VISIBLE : View.GONE);
 
-        // apply data from the contact that needs to recurse
         String name = null;
 
         TalkGroup groupPresence = contact.getGroupPresence();
@@ -160,6 +200,19 @@ public class GroupProfileFragment extends XoFragment
 
         mGroup = newContact;
 
+        if (mMode == Mode.PROFILE) {
+            try {
+                getXoDatabase().refreshClientContact(mGroup);
+                if (mGroup.getAvatarDownload() != null) {
+                    getXoDatabase().refreshClientDownload(mGroup.getAvatarDownload());
+                }
+                if (mGroup.getAvatarUpload() != null) {
+                    getXoDatabase().refreshClientUpload(mGroup.getAvatarUpload());
+                }
+            } catch (SQLException e) {
+                LOG.error("SQL error", e);
+            }
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -286,14 +339,45 @@ public class GroupProfileFragment extends XoFragment
 
     @Override
     public void onClick(View v) {
+        if (v.getId() == R.id.profile_group_profile_image) {
+            if (mGroup != null && mGroup.isEditable()) {
+                getXoActivity().selectAvatar();
+            }
+        }
     }
 
     @Override
     public void onAvatarSelected(IContentObject contentObject) {
+        LOG.debug("onAvatarSelected(" + contentObject.getContentDataUrl() + ")");
+        mAvatarToSet = contentObject;
     }
 
     @Override
     public void onServiceConnected() {
+        LOG.debug("onServiceConnected()");
+
+        final IContentObject newAvatar = mAvatarToSet;
+        mAvatarToSet = null;
+        if (newAvatar != null) {
+            XoApplication.getExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    LOG.debug("creating avatar upload");
+                    TalkClientUpload upload = SelectedContent.createAvatarUpload(newAvatar);
+                    try {
+                        getXoDatabase().saveClientUpload(upload);
+                        if (mGroup.isSelf()) {
+                            getXoClient().setClientAvatar(upload);
+                        }
+                        if (mGroup.isGroup()) {
+                            getXoClient().setGroupAvatar(mGroup, upload);
+                        }
+                    } catch (SQLException e) {
+                        LOG.error("sql error", e);
+                    }
+                }
+            });
+        }
     }
 
 
@@ -314,6 +398,7 @@ public class GroupProfileFragment extends XoFragment
         if (mGroup != null) {
             if (mGroup.isEditable()) {
                 if (mMode == Mode.EDIT_GROUP) {
+                    mAvatarImage.setOnClickListener(this);
                     deleteGroup.setVisible(true);
                     addPerson.setVisible(true);
                 }
@@ -365,6 +450,7 @@ public class GroupProfileFragment extends XoFragment
 
     @Override
     public void onDestroyActionMode(ActionMode actionMode) {
+        mAvatarImage.setOnClickListener(null);
         String newGroupName = mGroupNameEdit.getText().toString();
         if (!newGroupName.isEmpty()) {
             saveGroup();

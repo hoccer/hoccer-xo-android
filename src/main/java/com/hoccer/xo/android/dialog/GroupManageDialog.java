@@ -16,19 +16,17 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class GroupManageDialog extends DialogFragment {
 
     private static final Logger LOG = Logger.getLogger(GroupManageDialog.class);
 
-    TalkClientContact mGroup;
+    private TalkClientContact mGroup;
 
-    ContactsAdapter mAdapter;
-    ArrayList<TalkClientContact> mContactsToInvite;
-    ArrayList<TalkClientContact> mContactsToKick;
+    private ContactsAdapter mAdapter;
+    private ArrayList<TalkClientContact> mContactsToInvite;
+    private ArrayList<TalkClientContact> mContactsToKick;
 
     public GroupManageDialog() {
         super();

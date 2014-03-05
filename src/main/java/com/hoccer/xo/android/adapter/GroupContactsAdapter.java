@@ -59,16 +59,7 @@ public class GroupContactsAdapter extends ContactsAdapter {
         nameView.setText(contact.getName());
 
         AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
-        String avatarUri = contact.getAvatarContentUrl();
-        if(avatarUri == null) {
-            if(contact.isGroup()) {
-                avatarUri = "drawable://" + R.drawable.avatar_default_group;
-            } else {
-                avatarUri = "drawable://" + R.drawable.avatar_default_contact;
-            }
-        }
-        avatarView.setAvatarImage(avatarUri);
-
+        avatarView.setContact(contact);
         if (contact.isClient()) {
             TextView roleView = (TextView)view.findViewById(R.id.contact_role);
 
