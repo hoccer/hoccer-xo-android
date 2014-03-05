@@ -6,7 +6,7 @@
                 android:paddingRight="6dp">
 
     <TextView
-            android:id="@+id/tv_location_title"
+            android:id="@+id/tv_video_title"
             android:text="@string/video"
             android:textAppearance="@android:style/TextAppearance.Medium"
             android:textColor="@android:color/primary_text_light"
@@ -14,14 +14,14 @@
             android:layout_width="wrap_content"/>
 
     <TextView
-            android:id="@+id/tv_location_description"
+            android:id="@+id/tv_video_description"
             android:text="@string/play_video_instruction"
             android:textAppearance="@android:style/TextAppearance.Small"
             android:textColor="@android:color/secondary_text_light"
-            android:layout_below="@id/tv_location_title"
+            android:layout_below="@id/tv_video_title"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_alignLeft="@+id/tv_location_title"/>
+            android:layout_alignLeft="@+id/tv_video_title"/>
 
     <ImageButton
             android:id="@+id/ib_content_open"

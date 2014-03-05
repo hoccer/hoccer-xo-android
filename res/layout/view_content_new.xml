@@ -41,7 +41,7 @@
                     TransferWheel:outerWheelSize="2dp"
                     TransferWheel:innerWheelSize="8dp"
                     TransferWheel:wheelDiameter="120dp"
-                    TransferWheel:wheelColor="#339BB9"
+                    TransferWheel:wheelColor="#004ce5"
                     TransferWheel:text="Uploading..."
                     TransferWheel:textMargin="20dp"
                     TransferWheel:textSize="30"/>
@@ -49,7 +49,7 @@
             <TextView
                     android:id="@+id/content_description_text"
                     android:text="Image (2 MB)"
-                    android:textColor="#339BB9"
+                    android:textColor="#004ce5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"/>
