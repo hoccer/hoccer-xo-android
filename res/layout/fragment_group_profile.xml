@@ -4,8 +4,17 @@
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            style="@style/AppBaseTheme.Group.Layout">
+            android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/profile_group_profile_image"
+            android:src="@drawable/avatar_default_group_large"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal"
+            style="@style/AppBaseTheme.Group.ProfilePicture"/>
 
         <TextView
                 android:id="@+id/profile_group_name_title"
@@ -16,15 +25,17 @@
                 style="@style/AppBaseTheme.Group.Title"/>
         <View
                 android:layout_width="fill_parent"
-                style="@style/AppBaseTheme.Content.HorizontalDivider"/>
+                style="@style/AppBaseTheme.Group.HorizontalDivider"/>
 
         <TextView
                 android:id="@+id/profile_group_name"
                 android:text="@string/profile_name_title"
-                android:gravity="left"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="45dp"
+                android:layout_marginTop="5dp"
                 android:visibility="visible"
                 style="@style/AppBaseTheme.Group.Name"/>
 
@@ -34,6 +45,8 @@
                 android:gravity="left"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="35dp"
+                android:layout_marginRight="35dp"
                 android:visibility="gone"
                 style="@style/AppBaseTheme.Group.Name"/>
 
@@ -47,12 +60,12 @@
 
         <View
             android:layout_width="fill_parent"
-            style="@style/AppBaseTheme.Content.HorizontalDivider"/>
+            style="@style/AppBaseTheme.Group.HorizontalDivider"/>
 
         <ListView
                 android:id="@+id/profile_group_members_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/AppBaseTheme.Content.ListItem"/>
+                style="@style/AppBaseTheme.Group.List"/>
 
     </LinearLayout>
