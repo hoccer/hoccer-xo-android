@@ -27,6 +27,9 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
     private GroupProfileFragment mGroupProfileFragment;
     private StatusFragment mStatusFragment;
+    private int mContactId;
+
+    private Mode mMode;
 
     @Override
     protected int getLayoutResource() {
@@ -56,11 +59,11 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
             if (intent.hasExtra(EXTRA_CLIENT_CREATE_GROUP)) {
                 createGroup();
             } else if (intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
-                int contactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
-                if (contactId == -1) {
+                mContactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
+                if (mContactId == -1) {
                     LOG.error("invalid contact id");
                 } else {
-                    showProfile(refreshContact(contactId));
+                    showProfile(refreshContact(mContactId));
                 }
             }
         }
@@ -74,6 +77,28 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         MenuItem myProfile = menu.findItem(R.id.menu_my_profile);
         myProfile.setVisible(true);
 
+        MenuItem editGroup = menu.findItem(R.id.menu_group_profile_edit);
+        MenuItem rejectInvitation = menu.findItem(R.id.menu_group_profile_reject_invitation);
+        MenuItem joinGroup = menu.findItem(R.id.menu_group_profile_join);
+        MenuItem leaveGroup = menu.findItem(R.id.menu_group_profile_leave);
+        editGroup.setVisible(false);
+        rejectInvitation.setVisible(false);
+        joinGroup.setVisible(false);
+        leaveGroup.setVisible(false);
+
+        TalkClientContact contact = mGroupProfileFragment.getContact();
+        if (contact.isEditable()) {
+            if (mMode == Mode.PROFILE) {
+                editGroup.setVisible(true);
+            }
+        } else {
+            if (contact.isGroupInvited()) {
+                rejectInvitation.setVisible(true);
+                joinGroup.setVisible(true);
+            } else if (contact.isGroupJoined()) {
+                leaveGroup.setVisible(true);
+            }
+        }
         return result;
     }
 
@@ -117,13 +142,13 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
     public void showProfile(TalkClientContact contact) {
         LOG.debug("showProfile(" + contact.getClientContactId() + ")");
-
+        mMode = Mode.PROFILE;
         mGroupProfileFragment.showProfile(contact);
     }
 
     public void createGroup() {
         LOG.debug("createGroup()");
-
+        mMode = Mode.CREATE_SELF;
         mGroupProfileFragment.createGroup();
     }
 
@@ -167,6 +192,11 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
 
+    }
+
+    public enum Mode {
+        PROFILE,
+        CREATE_SELF
     }
 
 }

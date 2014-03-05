@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
             android:id="@+id/menu_group_profile_delete"
             android:title="@string/menu_group_delete_profile"
             android:icon="@drawable/ic_delete"
-            android:visible="true"
+            android:visible="false"
             android:showAsAction="always"
             android:orderInCategory="200"/>
 
@@ -13,7 +12,7 @@
             android:id="@+id/menu_group_profile_add_person"
             android:title="@string/menu_group_profile_add_person"
             android:icon="@drawable/ic_contact_new"
-            android:visible="true"
+            android:visible="false"
             android:showAsAction="always"
             android:orderInCategory="210"/>
 
@@ -21,7 +20,7 @@
             android:id="@+id/menu_group_profile_join"
             android:title="@string/menu_group_profile_join"
             android:icon="@drawable/ic_enter"
-            android:visible="true"
+            android:visible="false"
             android:showAsAction="always"
             android:orderInCategory="220"/>
 
@@ -29,7 +28,7 @@
             android:id="@+id/menu_group_profile_reject_invitation"
             android:title="@string/menu_group_profile_reject_invitation"
             android:icon="@drawable/ic_block"
-            android:visible="true"
+            android:visible="false"
             android:showAsAction="always"
             android:orderInCategory="230"/>
 
@@ -37,8 +36,16 @@
             android:id="@+id/menu_group_profile_leave"
             android:title="@string/menu_group_profile_leave"
             android:icon="@drawable/ic_leave"
-            android:visible="true"
+            android:visible="false"
             android:showAsAction="always"
             android:orderInCategory="240"/>
+
+    <item
+            android:id="@+id/menu_group_profile_edit"
+            android:title="@string/menu_group_edit_profile"
+            android:icon="@drawable/ic_edit"
+            android:visible="true"
+            android:showAsAction="always"
+            android:orderInCategory="250"/>
 
 </menu>
