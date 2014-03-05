@@ -16,6 +16,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +27,8 @@ public class GroupManageDialog extends DialogFragment {
     TalkClientContact mGroup;
 
     ContactsAdapter mAdapter;
-    List<TalkClientContact> mContactsToInvite;
-    List<TalkClientContact> mContactsToKick;
+    ArrayList<TalkClientContact> mContactsToInvite;
+    ArrayList<TalkClientContact> mContactsToKick;
 
     public GroupManageDialog() {
         super();
@@ -44,11 +45,20 @@ public class GroupManageDialog extends DialogFragment {
         mContactsToKick = new ArrayList();
     }
 
+    private void restoreDialog(Bundle savedInstanceState) {
+        mGroup = (TalkClientContact)savedInstanceState.getSerializable("groupContact");
+        mContactsToInvite = (ArrayList<TalkClientContact>)savedInstanceState.getSerializable("contactsToInvite");
+        mContactsToKick = (ArrayList<TalkClientContact>)savedInstanceState.getSerializable("contactsToKick");
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LOG.debug("onCreateDialog()");
+        if (savedInstanceState != null) {
+            restoreDialog(savedInstanceState);
+        }
         if(mAdapter == null) {
-            mAdapter = new GroupManagementContactsAdapter((XoActivity)getActivity(), mGroup);
+            mAdapter = new GroupManagementContactsAdapter((XoActivity)getActivity(), mGroup, mContactsToInvite, mContactsToKick);
             mAdapter.onCreate();
             mAdapter.onResume();
             mAdapter.setFilter(new ContactsAdapter.Filter() {
@@ -134,5 +144,14 @@ public class GroupManageDialog extends DialogFragment {
             mAdapter.onPause();
             mAdapter.onDestroy();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable("groupContact", mGroup);
+        outState.putSerializable("contactsToInvite", mContactsToInvite);
+        outState.putSerializable("contactsToKick", mContactsToKick);
     }
 }
