@@ -119,44 +119,20 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         LOG.debug("showProfile(" + contact.getClientContactId() + ")");
 
         mGroupProfileFragment.showProfile(contact);
-        //update(contact);
     }
 
     public void createGroup() {
         LOG.debug("createGroup()");
 
         mGroupProfileFragment.createGroup();
-        //update(mGroupProfileFragment.getContact());
     }
 
     @Override
     public void hackReturnedFromDialog() {
         LOG.debug("hackReturnedFromDialog()");
         super.hackReturnedFromDialog();
-        //update(mGroupProfileFragment.getContact());
         mGroupProfileFragment.refreshContact(mGroupProfileFragment.getContact());
     }
-
-    /*
-    private void update(final TalkClientContact contact) {
-        LOG.debug("update(" + contact.getClientContactId() + ")");
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (contact.isDeleted()) {
-                    finish();
-                }
-            }
-        });
-    }
-    */
-
-    /*
-    private boolean isMyContact(TalkClientContact contact) {
-        TalkClientContact myContact = mGroupProfileFragment.getContact();
-        return myContact != null && myContact.getClientContactId() == contact.getClientContactId();
-    }
-    */
 
     @Override
     public void onClientStateChange(XoClient client, int state) {
