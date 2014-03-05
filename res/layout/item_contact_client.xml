@@ -4,8 +4,8 @@
         xmlns:custom="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp">
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp">
 
     <com.hoccer.xo.android.view.AvatarView
             android:id="@+id/contact_icon"
@@ -29,6 +29,7 @@
             android:id="@+id/contact_unseen_messages"
             android:layout_alignRight="@+id/contact_icon"
             android:layout_alignTop="@id/contact_icon"
+            android:layout_marginRight="-3dp"
             android:background="@drawable/unread_messages"
             style="@style/AppBaseTheme.Contact.UnreadMessages"/>
 

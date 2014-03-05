@@ -17,33 +17,46 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class GroupManageDialog extends DialogFragment {
 
     private static final Logger LOG = Logger.getLogger(GroupManageDialog.class);
 
-    XoActivity mActivity;
+    private TalkClientContact mGroup;
 
-    TalkClientContact mGroup;
+    private ContactsAdapter mAdapter;
+    private ArrayList<TalkClientContact> mContactsToInvite;
+    private ArrayList<TalkClientContact> mContactsToKick;
 
-    ContactsAdapter mAdapter;
-    List<TalkClientContact> mContactsToInvite;
-    List<TalkClientContact> mContactsToKick;
-
-    public GroupManageDialog(XoActivity activity, TalkClientContact group) {
+    public GroupManageDialog() {
         super();
-        mActivity = activity;
+
+        mContactsToInvite = new ArrayList();
+        mContactsToKick = new ArrayList();
+    }
+
+    public GroupManageDialog(TalkClientContact group) {
+        super();
+
         mGroup = group;
         mContactsToInvite = new ArrayList();
         mContactsToKick = new ArrayList();
     }
 
+    private void restoreDialog(Bundle savedInstanceState) {
+        mGroup = (TalkClientContact)savedInstanceState.getSerializable("groupContact");
+        mContactsToInvite = (ArrayList<TalkClientContact>)savedInstanceState.getSerializable("contactsToInvite");
+        mContactsToKick = (ArrayList<TalkClientContact>)savedInstanceState.getSerializable("contactsToKick");
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LOG.debug("onCreateDialog()");
+        if (savedInstanceState != null) {
+            restoreDialog(savedInstanceState);
+        }
         if(mAdapter == null) {
-            mAdapter = new GroupManagementContactsAdapter(mActivity, mGroup);
+            mAdapter = new GroupManagementContactsAdapter((XoActivity)getActivity(), mGroup, mContactsToInvite, mContactsToKick);
             mAdapter.onCreate();
             mAdapter.onResume();
             mAdapter.setFilter(new ContactsAdapter.Filter() {
@@ -55,7 +68,7 @@ public class GroupManageDialog extends DialogFragment {
         }
         mAdapter.requestReload();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.manage_title);
         builder.setCancelable(true);
         builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
@@ -81,7 +94,7 @@ public class GroupManageDialog extends DialogFragment {
         dialog.getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int index, long id) {
-                RelativeLayout contactView = (RelativeLayout) view;
+                LinearLayout contactView = (LinearLayout) view;
                 CheckedTextView checkedTextView = (CheckedTextView)contactView.findViewById(R.id.contact_name);
                 checkedTextView.setChecked(!checkedTextView.isChecked());
 
@@ -114,11 +127,11 @@ public class GroupManageDialog extends DialogFragment {
     private void updateMemberships() {
         for (int i = 0; i < mContactsToInvite.size(); i++) {
             TalkClientContact contact = mContactsToInvite.get(i);
-            mActivity.getXoClient().inviteClientToGroup(mGroup.getGroupId(), contact.getClientId());
+            ((XoActivity)getActivity()).getXoClient().inviteClientToGroup(mGroup.getGroupId(), contact.getClientId());
         }
         for (int i = 0; i < mContactsToKick.size(); i++) {
             TalkClientContact contact = mContactsToKick.get(i);
-            mActivity.getXoClient().kickClientFromGroup(mGroup.getGroupId(), contact.getClientId());
+            ((XoActivity)getActivity()).getXoClient().kickClientFromGroup(mGroup.getGroupId(), contact.getClientId());
         }
     }
 
@@ -129,5 +142,14 @@ public class GroupManageDialog extends DialogFragment {
             mAdapter.onPause();
             mAdapter.onDestroy();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putSerializable("groupContact", mGroup);
+        outState.putSerializable("contactsToInvite", mContactsToInvite);
+        outState.putSerializable("contactsToKick", mContactsToKick);
     }
 }

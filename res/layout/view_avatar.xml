@@ -14,12 +14,11 @@
 
     <View
             android:id="@+id/presence_indicator_view"
-            android:layout_width="6dp"
-            android:layout_height="6dp"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
             android:visibility="invisible"
-            android:layout_toRightOf="@+id/avatar_image"
-            android:layout_marginTop="0dp"
-            android:layout_marginLeft="-6dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             style="@style/AppBaseTheme.Contact.Presence"/>
 
 </RelativeLayout>

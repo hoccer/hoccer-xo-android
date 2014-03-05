@@ -92,14 +92,11 @@ public class RichContactsAdapter extends ContactsAdapter {
     protected void updateContact(final View view, final TalkClientContact contact) {
         LOG.debug("updateContact(" + contact.getClientContactId() + ")");
         TextView nameView = (TextView) view.findViewById(R.id.contact_name);
+        AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
         nameView.setText(contact.getName());
         TextView typeView = (TextView) view.findViewById(R.id.contact_type);
 
-        if(contact.isClient()) {
-            TalkPresence presence = contact.getClientPresence();
-            AvatarView avatar = (AvatarView) view.findViewById(R.id.contact_icon);
-            avatar.setPresence(presence);
-        }
+        avatarView.setContact(contact);
         if(contact.isGroup()) {
             if(contact.isGroupInvited()) {
                 typeView.setText(R.string.common_group_invite);
@@ -111,17 +108,15 @@ public class RichContactsAdapter extends ContactsAdapter {
         try {
             TalkClientMessage message = mDatabase.findLatestMessageByContactId(contact.getClientContactId());
             if(message != null) {
-                Date now = new Date(System.currentTimeMillis());
                 Date messageTime = message.getTimestamp();
-
-                SimpleDateFormat sdf = new SimpleDateFormat("EEE. HH:mm");
+                SimpleDateFormat sdf = new SimpleDateFormat("EEE HH:mm");
                 lastMessageTime = sdf.format(messageTime);
             }
         } catch (SQLException e) {
             LOG.error("sql error", e);
         }
 
-        TextView lastMessageTimeView = (TextView) view.findViewById(R.id.contact_last_message);
+        TextView lastMessageTimeView = (TextView) view.findViewById(R.id.contact_time);
         lastMessageTimeView.setText(lastMessageTime);
 
         long unseenMessages = 0;
@@ -157,22 +152,12 @@ public class RichContactsAdapter extends ContactsAdapter {
             lastMessageText.setVisibility(View.GONE);
         }
 
-        AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
         avatarView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mActivity.showContactProfile(contact);
             }
         });
-        String avatarUri = contact.getAvatarContentUrl();
-        if(avatarUri == null) {
-            if(contact.isGroup()) {
-                avatarUri = "drawable://" + R.drawable.avatar_default_group;
-            } else {
-                avatarUri = "drawable://" + R.drawable.avatar_default_contact;
-            }
-        }
-        avatarView.setAvatarImage(avatarUri);
     }
 
     private String chooseAttachmentType(String attachmentType) {
