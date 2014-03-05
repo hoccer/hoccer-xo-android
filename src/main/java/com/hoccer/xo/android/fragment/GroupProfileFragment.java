@@ -40,8 +40,8 @@ public class GroupProfileFragment extends XoFragment
     private TextView mGroupMembersTitle;
     private ListView mGroupMembersList;
 
-    ContactsAdapter mGroupMemberAdapter;
-    TalkClientContact mGroup;
+    private ContactsAdapter mGroupMemberAdapter;
+    private TalkClientContact mGroup;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
