@@ -6,5 +6,6 @@
             android:topRightRadius="5dp"
             android:bottomRightRadius="5dp"
             android:bottomLeftRadius="5dp"/>
-    <solid android:color="@color/xo_presence"/>
+    <solid android:color="@android:color/holo_red_dark"/>
+    <stroke android:color="@android:color/white" android:width="1dp"/>
 </shape>
