@@ -9,6 +9,8 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
 
+import java.util.ArrayList;
+
 /**
  * Contacts adapter for group management lists
  *
@@ -20,11 +22,15 @@ import com.hoccer.xo.release.R;
 public class GroupManagementContactsAdapter extends ContactsAdapter {
 
     private TalkClientContact mGroup;
+    private ArrayList<TalkClientContact> mContactsToInvite;
+    private ArrayList<TalkClientContact> mContactsToKick;
 
-    public GroupManagementContactsAdapter(XoActivity activity, TalkClientContact group) {
+    public GroupManagementContactsAdapter(XoActivity activity, TalkClientContact group, ArrayList<TalkClientContact> contactsToInvite, ArrayList<TalkClientContact> contactsToKick) {
         super(activity);
 
         mGroup = group;
+        mContactsToInvite = contactsToInvite;
+        mContactsToKick = contactsToKick;
     }
 
     @Override
@@ -67,6 +73,13 @@ public class GroupManagementContactsAdapter extends ContactsAdapter {
         } else {
             checkedTextView.setChecked(false);
         }
+
+        if (mContactsToInvite.contains(contact)) {
+            checkedTextView.setChecked(true);
+        } else if (mContactsToKick.contains(contact)) {
+            checkedTextView.setChecked(false);
+        }
+
     }
 
 }

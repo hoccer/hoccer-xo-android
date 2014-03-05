@@ -28,7 +28,7 @@ public class XoDialogs {
     }
 
     public static void selectGroupManage(XoActivity activity, TalkClientContact group) {
-        new GroupManageDialog(activity, group)
+        new GroupManageDialog(group)
                 .show(activity.getFragmentManager(), DIALOG_GROUP_MANAGE);
     }
 

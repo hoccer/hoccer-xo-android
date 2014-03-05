@@ -41,7 +41,7 @@ public class GroupProfileFragment extends XoFragment
     private ListView mGroupMembersList;
 
     ContactsAdapter mGroupMemberAdapter;
-    TalkClientContact mContact;
+    TalkClientContact mGroup;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,14 +99,14 @@ public class GroupProfileFragment extends XoFragment
         }
 
         if (mMode == Mode.CREATE_GROUP) {
-            if (mContact != null && !mContact.isGroupRegistered()) {
-                mContact.getGroupPresence().setGroupName(newGroupName);
-                getXoClient().createGroup(mContact);
+            if (mGroup != null && !mGroup.isGroupRegistered()) {
+                mGroup.getGroupPresence().setGroupName(newGroupName);
+                getXoClient().createGroup(mGroup);
                 mMode = Mode.PROFILE;
             }
         } else if (mMode == Mode.EDIT_GROUP) {
             if (!newGroupName.equals(mGroupName)) {
-                getXoClient().setGroupName(mContact, newGroupName);
+                getXoClient().setGroupName(mGroup, newGroupName);
             }
         }
     }
@@ -141,14 +141,14 @@ public class GroupProfileFragment extends XoFragment
         }
 
         if (mGroupMemberAdapter == null) {
-            mGroupMemberAdapter = new GroupContactsAdapter(getXoActivity(), mContact);
+            mGroupMemberAdapter = new GroupContactsAdapter(getXoActivity(), mGroup);
             mGroupMemberAdapter.onCreate();
             mGroupMemberAdapter.onResume();
         }
         mGroupMemberAdapter.setFilter(new ContactsAdapter.Filter() {
             @Override
             public boolean shouldShow(TalkClientContact contact) {
-                return contact.isClientGroupInvited(mContact) || contact.isClientGroupJoined(mContact);
+                return contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup); // || contact.isClientGroupInvolved(mGroup);
             }
         });
         mGroupMemberAdapter.requestReload();
@@ -158,16 +158,16 @@ public class GroupProfileFragment extends XoFragment
     public void refreshContact(TalkClientContact newContact) {
         LOG.debug("refreshContact()");
 
-        mContact = newContact;
+        mGroup = newContact;
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 LOG.debug("updating ui");
-                if (mContact.isDeleted()) {
+                if (mGroup.isDeleted()) {
                     getXoActivity().finish();
                 } else {
-                    update(mContact);
+                    update(mGroup);
                 }
             }
         });
@@ -192,12 +192,12 @@ public class GroupProfileFragment extends XoFragment
         LOG.debug("createGroup()");
 
         String groupTag = UUID.randomUUID().toString();
-        mContact = new TalkClientContact(TalkClientContact.TYPE_GROUP);
-        mContact.updateGroupTag(groupTag);
+        mGroup = new TalkClientContact(TalkClientContact.TYPE_GROUP);
+        mGroup.updateGroupTag(groupTag);
         TalkGroup groupPresence = new TalkGroup();
         groupPresence.setGroupTag(groupTag);
-        mContact.updateGroupPresence(groupPresence);
-        update(mContact);
+        mGroup.updateGroupPresence(groupPresence);
+        update(mGroup);
     }
 
     public void editGroup(boolean isEditing) {
@@ -207,17 +207,17 @@ public class GroupProfileFragment extends XoFragment
             mMode = Mode.PROFILE;
         }
 
-        refreshContact(mContact);
-        update(mContact);
+        refreshContact(mGroup);
+        update(mGroup);
     }
 
     private void manageGroupMembers() {
         LOG.debug("manageGroupMembers()");
-        XoDialogs.selectGroupManage(getXoActivity(), mContact);
+        XoDialogs.selectGroupManage(getXoActivity(), mGroup);
     }
 
     private void deleteGroup() {
-        getXoClient().deleteContact(mContact);
+        getXoClient().deleteContact(mGroup);
     }
 
     private void rejectInvitation() {
@@ -226,21 +226,21 @@ public class GroupProfileFragment extends XoFragment
     }
 
     private void joinGroup() {
-        getXoClient().joinGroup(mContact.getGroupId());
+        getXoClient().joinGroup(mGroup.getGroupId());
         getXoActivity().finish();
     }
 
     private void leaveGroup() {
-        getXoClient().leaveGroup(mContact.getGroupId());
+        getXoClient().leaveGroup(mGroup.getGroupId());
         getXoActivity().finish();
     }
 
     public TalkClientContact getContact() {
-        return mContact;
+        return mGroup;
     }
 
     private boolean isMyContact(TalkClientContact contact) {
-        return mContact != null && mContact == contact || mContact.getClientContactId() == contact.getClientContactId();
+        return mGroup != null && mGroup == contact || mGroup.getClientContactId() == contact.getClientContactId();
     }
 
     @Override
@@ -311,24 +311,22 @@ public class GroupProfileFragment extends XoFragment
         joinGroup.setVisible(false);
         leaveGroup.setVisible(false);
 
-        TalkClientContact contact = mContact;
-        if (contact != null) {
-            if (contact.isEditable()) {
+        if (mGroup != null) {
+            if (mGroup.isEditable()) {
                 if (mMode == Mode.EDIT_GROUP) {
                     deleteGroup.setVisible(true);
                     addPerson.setVisible(true);
                 }
             } else {
-                if (contact.isGroupInvited()) {
+                if (mGroup.isGroupInvited()) {
                     rejectInvitation.setVisible(true);
                     joinGroup.setVisible(true);
-                } else if (contact.isGroupJoined()) {
+                } else if (mGroup.isGroupJoined()) {
                     leaveGroup.setVisible(true);
                 }
             }
         }
     }
-
 
     @Override
     public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
@@ -353,7 +351,7 @@ public class GroupProfileFragment extends XoFragment
                 manageGroupMembers();
                 break;
             case R.id.menu_group_profile_reject_invitation:
-                checkRejectInviation();
+                checkRejectInvitation();
                 break;
             case R.id.menu_group_profile_join:
                 joinGroup();
@@ -373,7 +371,6 @@ public class GroupProfileFragment extends XoFragment
         }
         getXoActivity().finish();
     }
-
 
     private void checkDeleteGroup() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
@@ -399,7 +396,7 @@ public class GroupProfileFragment extends XoFragment
         dialog.show();
     }
 
-    private void checkRejectInviation() {
+    private void checkRejectInvitation() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
         builder.setTitle(R.string.reject_invitation_title);
         builder.setMessage(R.string.reject_invitation_question);
