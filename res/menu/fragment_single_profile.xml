@@ -13,7 +13,7 @@
             android:id="@+id/menu_profile_block"
             android:orderInCategory="102"
             android:showAsAction="ifRoom"
-            android:icon="@drawable/ic_dark_content_remove"
+            android:icon="@drawable/ic_block"
             android:title="@string/profile_user_block_button"/>
 
     <item
