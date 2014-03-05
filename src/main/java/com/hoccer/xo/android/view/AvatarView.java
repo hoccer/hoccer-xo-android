@@ -1,5 +1,7 @@
 package com.hoccer.xo.android.view;
 
+import com.hoccer.talk.client.IXoContactListener;
+import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.release.R;
@@ -10,6 +12,7 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,7 +21,7 @@ import android.widget.LinearLayout;
 /**
  * A view holding an AspectImageView and a presence indicator.
  */
-public class AvatarView extends LinearLayout {
+public class AvatarView extends LinearLayout implements IXoContactListener {
 
     private Context mContext;
 
@@ -32,7 +35,7 @@ public class AvatarView extends LinearLayout {
 
     private View mPresenceIndicator;
 
-    private TalkPresence mPresence;
+    private TalkClientContact mContact;
 
     public AvatarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -73,26 +76,57 @@ public class AvatarView extends LinearLayout {
         }
     }
 
+
+    public void setContact(TalkClientContact contact) {
+        mContact = contact;
+        updateAvatar();
+        updatePresence();
+        XoApplication.getXoClient().registerContactListener(this);
+    }
+
+    private void updateAvatar() {
+        String avatarUri = mContact.getAvatarContentUrl();
+        Log.d("zalem", avatarUri);
+        Log.d("zalem", "isGroup: " + mContact.isGroup());
+
+        if (avatarUri == null) {
+            if (mContact.isGroup()) {
+                avatarUri = "drawable://" + R.drawable.avatar_default_group;
+            } else {
+                avatarUri = "drawable://" + R.drawable.avatar_default_contact;
+            }
+        }
+        setAvatarImage(avatarUri);
+    }
+
     /**
      * Sets the avatar image. Value can be null. Uses default avatar image url instead (if
      * specified).
      *
      * @param avatarImageUrl Url of the given image resource  to load.
      */
-    public void setAvatarImage(String avatarImageUrl) {
-        if (isInEditMode()) {
-            ImageView avatar = (ImageView) this.findViewById(R.id.avatar_image);
-            avatar.setImageResource(R.drawable.avatar_default_contact);
-        } else {
-            mAvatarImage.setVisibility(View.VISIBLE);
-            if (avatarImageUrl != null) {
-                ImageLoader.getInstance().displayImage(avatarImageUrl, mAvatarImage, mDefaultOptions, null);
-            } else if (mDefaultAvatarImageUrl != null) {
-                ImageLoader.getInstance().displayImage(mDefaultAvatarImageUrl, mAvatarImage, mDefaultOptions, null);
-            } else {
-                mAvatarImage.setVisibility(View.INVISIBLE);
+    private void setAvatarImage(final String avatarImageUrl) {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                if (isInEditMode()) {
+                    ImageView avatar = (ImageView) findViewById(R.id.avatar_image);
+                    avatar.setImageResource(R.drawable.avatar_default_contact);
+                } else {
+                    mAvatarImage.setVisibility(View.VISIBLE);
+                    if (avatarImageUrl != null) {
+                        ImageLoader.getInstance()
+                                .displayImage(avatarImageUrl, mAvatarImage, mDefaultOptions, null);
+                    } else if (mDefaultAvatarImageUrl != null) {
+                        ImageLoader.getInstance()
+                                .displayImage(mDefaultAvatarImageUrl, mAvatarImage, mDefaultOptions,
+                                        null);
+                    } else {
+                        mAvatarImage.setVisibility(View.INVISIBLE);
+                    }
+                }
             }
-        }
+        });
     }
 
     /**
@@ -100,16 +134,60 @@ public class AvatarView extends LinearLayout {
      *
      * @param defaultAvatarImageUrl Url of the given image resource  to load.
      */
-    public void setDefaultAvatarImageUrl(String defaultAvatarImageUrl) {
+    private void setDefaultAvatarImageUrl(String defaultAvatarImageUrl) {
         mDefaultAvatarImageUrl = defaultAvatarImageUrl;
     }
 
-    public void setPresence(TalkPresence presence) {
-        int visibility = View.INVISIBLE;
-        if (presence != null && presence.getClientStatus() != null && presence.getClientStatus()
-                .equals(TalkPresence.CONN_STATUS_ONLINE)) {
-            mPresenceIndicator.setVisibility(View.VISIBLE);
-        }
+    private void updatePresence() {
+        post(new Runnable() {
+            @Override
+            public void run() {
+                if (mContact == null) {
+                    return;
+                }
+                TalkPresence presence = null;
+                if (mContact.isClient()) {
+                    presence = mContact.getClientPresence();
+                } else {
+                    mPresenceIndicator.setVisibility(View.INVISIBLE);
+                    return;
+                }
+                if (presence != null) {
+                    if (presence.getConnectionStatus() != null) {
+                        if (presence.getConnectionStatus()
+                                .equals(TalkPresence.CONN_STATUS_ONLINE)) {
+                            mPresenceIndicator.setVisibility(View.VISIBLE);
+                        } else {
+                            mPresenceIndicator.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                }
+            }
+        });
     }
 
+    @Override
+    public void onContactAdded(TalkClientContact contact) {
+    }
+
+    @Override
+    public void onContactRemoved(TalkClientContact contact) {
+    }
+
+    @Override
+    public void onClientPresenceChanged(TalkClientContact contact) {
+        updatePresence();
+    }
+
+    @Override
+    public void onClientRelationshipChanged(TalkClientContact contact) {
+    }
+
+    @Override
+    public void onGroupPresenceChanged(TalkClientContact contact) {
+    }
+
+    @Override
+    public void onGroupMembershipChanged(TalkClientContact contact) {
+    }
 }

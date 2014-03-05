@@ -392,6 +392,7 @@ public class ConversationAdapter extends XoAdapter
     // TODO: dont reload the avatar for each list item! Cache them!!
     private void setAvatar(View view, final TalkClientContact sendingContact) {
         final AvatarView avatarView = (AvatarView) view.findViewById(R.id.message_avatar);
+        avatarView.setContact(sendingContact);
         String avatarUri = null;
         if (sendingContact != null) {
             avatarView.setOnClickListener(new View.OnClickListener() {
@@ -404,12 +405,7 @@ public class ConversationAdapter extends XoAdapter
                     }
                 }
             });
-
-            avatarUri = sendingContact.getAvatarContentUrl();
         }
-
-        loadAvatar(avatarView, avatarUri);
-        avatarView.setPresence(sendingContact.getClientPresence());
     }
 
     private void setMessageText(View view, TalkClientMessage message) {
@@ -442,10 +438,6 @@ public class ConversationAdapter extends XoAdapter
         } else {
             timestamp.setVisibility(View.GONE);
         }
-    }
-
-    private void loadAvatar(AvatarView avatarView, String url) {
-        avatarView.setAvatarImage(url);
     }
 
     private void markMessageAsSeen(final TalkClientMessage message) {
