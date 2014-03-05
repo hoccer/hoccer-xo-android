@@ -17,19 +17,18 @@
             android:showAsAction="always"
             android:orderInCategory="210"/>
 
-
     <item
-            android:id="@+id/menu_group_profile_reject_invitation"
-            android:title="@string/menu_group_profile_reject_invitation"
-            android:icon="@drawable/ic_light_content_remove"
+            android:id="@+id/menu_group_profile_join"
+            android:title="@string/menu_group_profile_join"
+            android:icon="@drawable/ic_enter"
             android:visible="true"
             android:showAsAction="always"
             android:orderInCategory="220"/>
 
     <item
-            android:id="@+id/menu_group_profile_join"
-            android:title="@string/menu_group_profile_join"
-            android:icon="@drawable/ic_light_content_merge"
+            android:id="@+id/menu_group_profile_reject_invitation"
+            android:title="@string/menu_group_profile_reject_invitation"
+            android:icon="@drawable/ic_block"
             android:visible="true"
             android:showAsAction="always"
             android:orderInCategory="230"/>
