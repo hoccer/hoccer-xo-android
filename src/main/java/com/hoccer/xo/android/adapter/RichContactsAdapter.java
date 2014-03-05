@@ -111,17 +111,15 @@ public class RichContactsAdapter extends ContactsAdapter {
         try {
             TalkClientMessage message = mDatabase.findLatestMessageByContactId(contact.getClientContactId());
             if(message != null) {
-                Date now = new Date(System.currentTimeMillis());
                 Date messageTime = message.getTimestamp();
-
-                SimpleDateFormat sdf = new SimpleDateFormat("EEE. HH:mm");
+                SimpleDateFormat sdf = new SimpleDateFormat("EEE HH:mm");
                 lastMessageTime = sdf.format(messageTime);
             }
         } catch (SQLException e) {
             LOG.error("sql error", e);
         }
 
-        TextView lastMessageTimeView = (TextView) view.findViewById(R.id.contact_last_message);
+        TextView lastMessageTimeView = (TextView) view.findViewById(R.id.contact_time);
         lastMessageTimeView.setText(lastMessageTime);
 
         long unseenMessages = 0;
