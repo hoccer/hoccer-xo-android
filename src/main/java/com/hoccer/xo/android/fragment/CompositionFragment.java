@@ -25,8 +25,6 @@ import android.widget.TextView;
 public class CompositionFragment extends XoFragment implements View.OnClickListener,
         View.OnLongClickListener {
 
-    private Menu mMenu;
-
     private EditText mTextEdit;
 
     private TextWatcher mTextWatcher;
@@ -83,14 +81,12 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_composition, menu);
-        mMenu = menu;
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        // watch message editor
         mTextWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -112,7 +108,6 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     @Override
     public void onPause() {
         super.onPause();
-        // unregister text watcher
         if (mTextWatcher != null) {
             mTextEdit.removeTextChangedListener(mTextWatcher);
             mTextWatcher = null;
