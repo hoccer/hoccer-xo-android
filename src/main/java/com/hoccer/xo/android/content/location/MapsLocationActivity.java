@@ -15,13 +15,11 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
-import org.apache.commons.codec.binary.Base64OutputStream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

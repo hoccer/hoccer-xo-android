@@ -13,7 +13,6 @@ import android.widget.SimpleAdapter;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.audio.ButtonAudioViewer;
 import com.hoccer.xo.android.content.audio.MusicSelector;
-import com.hoccer.xo.android.content.data.DataSelector;
 import com.hoccer.xo.android.content.data.DataViewer;
 import com.hoccer.xo.android.content.image.ImageSelector;
 import com.hoccer.xo.android.content.image.ImageViewer;

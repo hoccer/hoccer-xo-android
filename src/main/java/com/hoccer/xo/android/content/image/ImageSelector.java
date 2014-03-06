@@ -1,6 +1,5 @@
 package com.hoccer.xo.android.content.image;
 
-import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.IContentSelector;
 import com.hoccer.xo.android.content.SelectedContent;
 
@@ -11,7 +10,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 
-import java.io.File;
 import java.io.IOException;
 
 public class ImageSelector implements IContentSelector {

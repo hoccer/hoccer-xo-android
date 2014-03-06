@@ -2,14 +2,10 @@ package com.hoccer.xo.android.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Path;
-import android.graphics.RectF;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import com.hoccer.xo.release.R;
-import org.apache.log4j.Logger;
 
 /**
  * Image view that can enforce an aspect ratio and a maximum height
