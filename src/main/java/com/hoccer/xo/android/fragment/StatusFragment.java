@@ -115,10 +115,7 @@ public class StatusFragment extends XoFragment implements IXoStateListener {
         }
         mStatusText.setText(statusText);
 
-        final FragmentTransaction tr =
-                getActivity()
-                        .getFragmentManager()
-                        .beginTransaction();
+        final FragmentTransaction tr = getActivity().getFragmentManager().beginTransaction();
         if (state == XoClient.STATE_ACTIVE
                 || state == XoClient.STATE_IDLE) {
             tr.hide(StatusFragment.this);
