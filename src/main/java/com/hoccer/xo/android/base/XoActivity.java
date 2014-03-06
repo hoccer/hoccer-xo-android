@@ -383,7 +383,7 @@ public abstract class XoActivity extends Activity {
                 onBackPressed();
             }
         } else {
-            navigateUp();
+            onBackPressed();
         }
     }
 
