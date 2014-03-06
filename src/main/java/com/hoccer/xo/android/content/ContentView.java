@@ -354,10 +354,14 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 mTransferProgress.pause();
                 break;
             case DOWNLOAD_DOWNLOADING:
-                mTransferProgress.prepareToDownload();
-                mTransferProgress.setText("Downloading...");
                 length = object.getTransferLength();
                 progress = object.getTransferProgress();
+                if (length == 0 || progress == 0) {
+                    length = 360;
+                    progress = 18;
+                }
+                mTransferProgress.prepareToDownload();
+                mTransferProgress.setText("Downloading...");
                 mTransferProgress.setMax(length);
                 mTransferProgress.setProgress(progress);
                 break;

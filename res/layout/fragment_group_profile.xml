@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
 
-        <ImageView
+    <ImageView
             android:id="@+id/profile_group_profile_image"
             android:src="@drawable/avatar_default_group_large"
             android:scaleType="centerCrop"
@@ -16,39 +16,54 @@
             android:layout_gravity="center_horizontal"
             style="@style/AppBaseTheme.Group.ProfilePicture"/>
 
-        <TextView
-                android:id="@+id/profile_group_name_title"
-                android:text="@string/profile_name_title"
-                android:gravity="left"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/AppBaseTheme.Group.Title"/>
-        <View
-                android:layout_width="fill_parent"
-                style="@style/AppBaseTheme.Group.HorizontalDivider"/>
+    <TextView
+            android:id="@+id/profile_group_name_title"
+            android:text="@string/profile_name_title"
+            android:gravity="left"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/AppBaseTheme.Group.Title"/>
 
-        <TextView
-                android:id="@+id/profile_group_name"
-                android:text="@string/profile_name_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="45dp"
-                android:layout_marginTop="5dp"
-                android:visibility="visible"
-                style="@style/AppBaseTheme.Group.Name"/>
+    <View
+            android:layout_width="fill_parent"
+            style="@style/AppBaseTheme.Group.HorizontalDivider"/>
 
-        <EditText
-                android:id="@+id/profile_group_name_edit"
-                android:text="@string/profile_name_title"
-                android:gravity="left"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="35dp"
-                android:layout_marginRight="35dp"
-                android:visibility="gone"
-                style="@style/AppBaseTheme.Group.Name"/>
+    <TextView
+            android:id="@+id/profile_group_name"
+            android:text="@string/profile_name_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="45dp"
+            android:layout_marginTop="5dp"
+            android:visibility="visible"
+            style="@style/AppBaseTheme.Group.Name"/>
+
+    <EditText
+            android:id="@+id/profile_group_name_edit"
+            android:text="@string/profile_name_title"
+            android:gravity="left"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="35dp"
+            android:visibility="gone"
+            style="@style/AppBaseTheme.Group.Name"/>
+
+    <Button
+            android:id="@+id/profile_group_button_create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:text="@string/profile_group_create_button"/>
+
+    <LinearLayout
+            android:id="@+id/profile_group_members_container"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <TextView
                 android:id="@+id/profile_group_members_title"
@@ -59,8 +74,8 @@
                 style="@style/AppBaseTheme.Group.Members.Title"/>
 
         <View
-            android:layout_width="fill_parent"
-            style="@style/AppBaseTheme.Group.HorizontalDivider"/>
+                android:layout_width="fill_parent"
+                style="@style/AppBaseTheme.Group.HorizontalDivider"/>
 
         <ListView
                 android:id="@+id/profile_group_members_list"
@@ -69,3 +84,5 @@
                 style="@style/AppBaseTheme.Group.List"/>
 
     </LinearLayout>
+
+</LinearLayout>

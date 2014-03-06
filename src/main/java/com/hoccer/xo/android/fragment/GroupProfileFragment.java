@@ -18,7 +18,6 @@ import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.GroupContactsAdapter;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.SelectedContent;
-import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
@@ -46,6 +45,8 @@ public class GroupProfileFragment extends XoFragment
     private String mGroupName;
     private TextView mGroupNameText;
     private EditText mGroupNameEdit;
+    private Button mGroupCreateButton;
+    private LinearLayout mGroupMembersContainer;
     private TextView mGroupMembersTitle;
     private ListView mGroupMembersList;
 
@@ -68,11 +69,20 @@ public class GroupProfileFragment extends XoFragment
 
         View v = inflater.inflate(R.layout.fragment_group_profile, container, false);
 
+        mAvatarImage = (ImageView) v.findViewById(R.id.profile_group_profile_image);
         mGroupNameText = (TextView) v.findViewById(R.id.profile_group_name);
         mGroupNameEdit = (EditText) v.findViewById(R.id.profile_group_name_edit);
-        mGroupMembersTitle = (TextView) v.findViewById(R.id.profile_group_members_title);
-        mGroupMembersList = (ListView) v.findViewById(R.id.profile_group_members_list);
-        mAvatarImage = (ImageView) v.findViewById(R.id.profile_group_profile_image);
+        mGroupCreateButton = (Button) v.findViewById(R.id.profile_group_button_create);
+        mGroupCreateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveGroup();
+                getXoActivity().finish();
+            }
+        });
+        mGroupMembersContainer = (LinearLayout) v.findViewById(R.id.profile_group_members_container);
+        mGroupMembersTitle = (TextView) mGroupMembersContainer.findViewById(R.id.profile_group_members_title);
+        mGroupMembersList = (ListView) mGroupMembersContainer.findViewById(R.id.profile_group_members_list);
         return v;
     }
 
@@ -82,7 +92,6 @@ public class GroupProfileFragment extends XoFragment
         LOG.debug("onResume()");
         super.onResume();
         getXoClient().registerContactListener(this);
-        getXoActivity().startActionMode(this);
     }
 
     @Override
@@ -101,6 +110,25 @@ public class GroupProfileFragment extends XoFragment
             mGroupMemberAdapter.onDestroy();
             mGroupMemberAdapter = null;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_group_profile_edit:
+                getActivity().startActionMode(this);
+                break;
+            case R.id.menu_group_profile_reject_invitation:
+                checkRejectInvitation();
+                break;
+            case R.id.menu_group_profile_join:
+                joinGroup();
+                break;
+            case R.id.menu_group_profile_leave:
+                checkLeaveGroup();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void saveGroup() {
@@ -126,8 +154,8 @@ public class GroupProfileFragment extends XoFragment
 
         String avatarUrl = "drawable://" + R.drawable.avatar_default_group_large;
 
-        TalkClientUpload avatarUpload = null;
-        TalkClientDownload avatarDownload = null;
+        TalkClientUpload avatarUpload;
+        TalkClientDownload avatarDownload;
 
         avatarUpload = contact.getAvatarUpload();
         if (avatarUpload != null) {
@@ -172,12 +200,28 @@ public class GroupProfileFragment extends XoFragment
         mGroupNameText.setText(name);
         mGroupNameEdit.setText(name);
 
-        mGroupNameText.setVisibility(View.VISIBLE);
-        mGroupNameEdit.setVisibility(View.GONE);
-
-        if (mMode == Mode.EDIT_GROUP || mMode == Mode.CREATE_GROUP) {
-            mGroupNameText.setVisibility(View.GONE);
-            mGroupNameEdit.setVisibility(View.VISIBLE);
+        switch(mMode) {
+            case PROFILE:
+                mGroupNameText.setVisibility(View.VISIBLE);
+                mGroupNameEdit.setVisibility(View.GONE);
+                mGroupCreateButton.setVisibility(View.GONE);
+                mGroupMembersContainer.setVisibility(View.VISIBLE);
+                break;
+            case CREATE_GROUP:
+                mGroupNameText.setVisibility(View.GONE);
+                mGroupNameEdit.setVisibility(View.VISIBLE);
+                mGroupCreateButton.setVisibility(View.VISIBLE);
+                mGroupMembersContainer.setVisibility(View.GONE);
+                break;
+            case EDIT_GROUP:
+                mGroupNameText.setVisibility(View.GONE);
+                mGroupNameEdit.setVisibility(View.VISIBLE);
+                mGroupCreateButton.setVisibility(View.VISIBLE);
+                mGroupCreateButton.setVisibility(View.GONE);
+                mGroupMembersContainer.setVisibility(View.VISIBLE);
+                break;
+            default:
+                break;
         }
 
         if (mGroupMemberAdapter == null) {
@@ -188,7 +232,7 @@ public class GroupProfileFragment extends XoFragment
         mGroupMemberAdapter.setFilter(new ContactsAdapter.Filter() {
             @Override
             public boolean shouldShow(TalkClientContact contact) {
-                return contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup); // || contact.isClientGroupInvolved(mGroup);
+                return contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup);
             }
         });
         mGroupMemberAdapter.requestReload();
@@ -232,12 +276,6 @@ public class GroupProfileFragment extends XoFragment
             LOG.debug("showProfile(" + contact.getClientContactId() + ")");
         }
         refreshContact(contact);
-
-        if (contact != null) {
-            if (contact.isEditable()) {
-                editGroup(true);
-            }
-        }
     }
 
     public void createGroup() {
@@ -250,17 +288,6 @@ public class GroupProfileFragment extends XoFragment
         TalkGroup groupPresence = new TalkGroup();
         groupPresence.setGroupTag(groupTag);
         mGroup.updateGroupPresence(groupPresence);
-        update(mGroup);
-    }
-
-    public void editGroup(boolean isEditing) {
-        if (isEditing) {
-            mMode = Mode.EDIT_GROUP;
-        } else {
-            mMode = Mode.PROFILE;
-        }
-
-        refreshContact(mGroup);
         update(mGroup);
     }
 
@@ -380,36 +407,22 @@ public class GroupProfileFragment extends XoFragment
         }
     }
 
-
     private void configureMenuItems(Menu menu) {
 
+        MenuItem editGroup = menu.findItem(R.id.menu_group_profile_edit);
         MenuItem addPerson = menu.findItem(R.id.menu_group_profile_add_person);
         MenuItem deleteGroup = menu.findItem(R.id.menu_group_profile_delete);
-        MenuItem rejectInvitation = menu.findItem(R.id.menu_group_profile_reject_invitation);
-        MenuItem joinGroup = menu.findItem(R.id.menu_group_profile_join);
-        MenuItem leaveGroup = menu.findItem(R.id.menu_group_profile_leave);
 
+        editGroup.setVisible(true);
         addPerson.setVisible(false);
         deleteGroup.setVisible(false);
-        rejectInvitation.setVisible(false);
-        joinGroup.setVisible(false);
-        leaveGroup.setVisible(false);
+        mAvatarImage.setOnClickListener(null);
 
-        if (mGroup != null) {
-            if (mGroup.isEditable()) {
-                if (mMode == Mode.EDIT_GROUP) {
-                    mAvatarImage.setOnClickListener(this);
-                    deleteGroup.setVisible(true);
-                    addPerson.setVisible(true);
-                }
-            } else {
-                if (mGroup.isGroupInvited()) {
-                    rejectInvitation.setVisible(true);
-                    joinGroup.setVisible(true);
-                } else if (mGroup.isGroupJoined()) {
-                    leaveGroup.setVisible(true);
-                }
-            }
+        if (mMode == Mode.EDIT_GROUP) {
+            editGroup.setVisible(false);
+            mAvatarImage.setOnClickListener(this);
+            deleteGroup.setVisible(true);
+            addPerson.setVisible(true);
         }
     }
 
@@ -421,7 +434,10 @@ public class GroupProfileFragment extends XoFragment
     @Override
     public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
         actionMode.getMenuInflater().inflate(R.menu.fragment_group_profile, menu);
+
+        mMode = Mode.EDIT_GROUP;
         configureMenuItems(menu);
+        update(mGroup);
         return true;
     }
 
@@ -435,15 +451,6 @@ public class GroupProfileFragment extends XoFragment
             case R.id.menu_group_profile_add_person:
                 manageGroupMembers();
                 break;
-            case R.id.menu_group_profile_reject_invitation:
-                checkRejectInvitation();
-                break;
-            case R.id.menu_group_profile_join:
-                joinGroup();
-                break;
-            case R.id.menu_group_profile_leave:
-                checkLeaveGroup();
-                break;
         }
         return true;
     }
@@ -455,7 +462,8 @@ public class GroupProfileFragment extends XoFragment
         if (!newGroupName.isEmpty()) {
             saveGroup();
         }
-        getXoActivity().finish();
+        mMode = Mode.PROFILE;
+        update(mGroup);
     }
 
     private void checkDeleteGroup() {

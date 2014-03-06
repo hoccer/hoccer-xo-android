@@ -16,10 +16,7 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.*;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewer;
@@ -46,13 +43,14 @@ public class VideoViewer extends ContentViewer<View> {
                                       final IContentObject contentObject, boolean isLightTheme) {
         if(contentObject.isContentAvailable()) {
             initImageButton(view, contentObject, isLightTheme);
+            initTextViews(view, isLightTheme);
         }
     }
 
     private void initImageButton(final View view, final IContentObject contentObject, boolean isLightTheme) {
         ImageButton openMapButton = (ImageButton) view.findViewById(R.id.ib_content_open);
         int imageResource = isLightTheme ? R.drawable.ic_dark_video
-                : R.drawable.ic_dark_video;//TODO: light video icon
+                : R.drawable.ic_light_video;
         openMapButton.setImageResource(imageResource);
 
         openMapButton.setOnClickListener(new View.OnClickListener() {
@@ -79,12 +77,21 @@ public class VideoViewer extends ContentViewer<View> {
         });
     }
 
+    private void initTextViews(View view, boolean isLightTheme) {
+        int textColor = isLightTheme ? Color.BLACK : Color.WHITE;
+        TextView title = (TextView) view.findViewById(R.id.tv_video_title);
+        TextView description = (TextView) view.findViewById(R.id.tv_video_description);
+
+        title.setTextColor(textColor);
+        description.setTextColor(textColor);
+    }
+
 //    private Bitmap getFrames(Uri uri) {
 //        try {
 //            ArrayList<Bitmap> bArray = new ArrayList<Bitmap>();
 //            bArray.clear();
 //            MediaMetadataRetriever mRetriever = new MediaMetadataRetriever();
-//            mRetriever.setDataSource(mContext, uri);
+//            mRetriever.setDataSource(mContext, uri); //need context
 //            mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
 //            return mRetriever.getFrameAtTime(1000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
 //        } catch (Exception e) { return null; }

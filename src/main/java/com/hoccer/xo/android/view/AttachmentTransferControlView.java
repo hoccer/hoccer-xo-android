@@ -14,7 +14,6 @@ import com.hoccer.xo.release.R;
 public class AttachmentTransferControlView extends View {
     private final float SPINNER_LENGTH = 50;
     private final float SPINNER_STEP = 1.5f;
-    private final float INITIAL_DOWNLOAD_STATE = 5f; //1,8% from 360
 
     private RectF mInnerWheel = new RectF();
     private RectF mOuterWheel = new RectF();
@@ -239,8 +238,7 @@ public class AttachmentTransferControlView extends View {
             mIsInited = true;
             mIsDownloadingProcess = true;
             prepareToDecrypt();
-            clean();
-            mShownProgress = INITIAL_DOWNLOAD_STATE;
+//            clean();
         }
     }
 
