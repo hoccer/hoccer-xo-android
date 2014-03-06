@@ -18,6 +18,10 @@
         <item name="android:layout_height">1dp</item>
         <item name="android:background">@color/xo_content_horizontal_divider</item>
     </style>
+    <style name="AppBaseTheme.Group.CreateButton" parent="AppBaseTheme.Group">
+        <item name="android:layout_marginLeft">30dp</item>
+        <item name="android:layout_marginRight">30dp</item>
+    </style>
 
     <style name="AppBaseTheme.Group.Members.Title" parent="AppBaseTheme.DescriptiveText">
         <item name="android:layout_marginTop">20dp</item>

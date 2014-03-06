@@ -53,11 +53,12 @@
 
     <Button
             android:id="@+id/profile_group_button_create"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="gone"
-            android:text="@string/profile_group_create_button"/>
+            android:text="@string/profile_group_create_button"
+            style="@style/AppBaseTheme.Group.CreateButton"/>
 
     <LinearLayout
             android:id="@+id/profile_group_members_container"
