@@ -125,13 +125,11 @@ public class GroupManageDialog extends DialogFragment {
     }
 
     private void updateMemberships() {
-        for (int i = 0; i < mContactsToInvite.size(); i++) {
-            TalkClientContact contact = mContactsToInvite.get(i);
-            ((XoActivity)getActivity()).getXoClient().inviteClientToGroup(mGroup.getGroupId(), contact.getClientId());
+        for (TalkClientContact contact : mContactsToInvite) {
+            ((XoActivity) getActivity()).getXoClient().inviteClientToGroup(mGroup.getGroupId(), contact.getClientId());
         }
-        for (int i = 0; i < mContactsToKick.size(); i++) {
-            TalkClientContact contact = mContactsToKick.get(i);
-            ((XoActivity)getActivity()).getXoClient().kickClientFromGroup(mGroup.getGroupId(), contact.getClientId());
+        for (TalkClientContact contact : mContactsToKick) {
+            ((XoActivity) getActivity()).getXoClient().kickClientFromGroup(mGroup.getGroupId(), contact.getClientId());
         }
     }
 
