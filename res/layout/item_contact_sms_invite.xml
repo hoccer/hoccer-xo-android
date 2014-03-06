@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:custom="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+    <com.hoccer.xo.android.view.AvatarView
+            android:id="@+id/sms_invite_icon"
+            android:clickable="true"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            custom:cornerRadius="65"
+            custom:defaultAvatarImageUrl="@drawable/avatar_default_contact"
+            style="@style/AppBaseTheme.Contact.Avatar"/>
+
+    <TextView
+            android:id="@+id/sms_invite_name"
+            android:text="@string/contact_name_new_client"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/sms_invite_icon"
+            style="@style/AppBaseTheme.Contact.Name"/>
+
+    <TextView
+            android:id="@+id/sms_invite_type"
+            android:text="@string/contacts_sms_invitation"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/sms_invite_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            style="@style/AppBaseTheme.Contact.CommonGroup"/>
+
+</RelativeLayout>

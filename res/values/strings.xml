@@ -11,6 +11,8 @@
     <string name="common_yes">Yes</string>
     <string name="common_no">No</string>
     <string name="common_done">Done</string>
+    <string name="common_decline">Decline</string>
+    <string name="common_accept">Accept</string>
 
     <!-- Menu entries -->
     <string name="menu_my_profile">My profile</string>
@@ -31,6 +33,9 @@
     <string name="contacts_category_groups">Groups</string>
     <string name="contacts_empty_info">You have no contacts.</string>
     <string name="contacts_empty_pairing">Add a contact</string>
+    <string name="contacts_sms_invitation">Invitation</string>
+    <string name="contacts_sms_invitation_description">has sent you an invitation via SMS.
+Do you wish to accept?</string>
 
     <!-- Contact list items -->
     <string name="contact_name_new_client">New Friend</string>
@@ -151,6 +156,12 @@
     <string name="vcard_description">with all contact details</string>
     <string name="profile_name_text">Name</string>
     <string name="profile_key_text">Key</string>
+
+    <string name="transfer_state_encrypting">Encrypting...</string>
+    <string name="transfer_state_decrypting">Decrypting...</string>
+    <string name="transfer_state_downloading">Downloading...</string>
+    <string name="transfer_state_uploading">Uploading...</string>
+    <string name="transfer_state_pause">Pause</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>

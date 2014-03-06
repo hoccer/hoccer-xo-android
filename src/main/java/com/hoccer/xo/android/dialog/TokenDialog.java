@@ -40,7 +40,6 @@ public class TokenDialog extends DialogFragment implements DialogInterface.OnCli
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(mToken.getSender()));
 
         String name = mToken.getSender();
-        String photo = "drawable://" + R.drawable.avatar_default_contact;
 
         Cursor cursor = resolver.query(uri,
                 new String[] {
@@ -54,25 +53,23 @@ public class TokenDialog extends DialogFragment implements DialogInterface.OnCli
             name = cursor.getString(nameIndex);
         }
 
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        // XXX i18n mess
-        builder.setTitle("Invitation");
+        builder.setTitle(R.string.contacts_sms_invitation);
         builder.setCancelable(true);
-        builder.setNegativeButton("Decline", this);
-        builder.setPositiveButton("Accept", this);
-        builder.setNeutralButton("Cancel", this);
+        builder.setNegativeButton(R.string.common_decline, this);
+        builder.setPositiveButton(R.string.common_accept, this);
+        builder.setNeutralButton(R.string.common_cancel, this);
 
-        builder.setMessage(name + " has sent you an invitation via SMS.\nDo you wish to accept?");
+        String description = getResources().getString(R.string.contacts_sms_invitation_description);
+        builder.setMessage(name + " " + description);
 
+        TextView bodyTextView = (TextView) mActivity.getLayoutInflater().inflate(R.layout.view_sms_invite_dialog, null);
         String body = mToken.getBody();
-        TextView bodyText = new TextView(getActivity());
         if(body != null) {
-            bodyText.setText(body);
-            builder.setView(bodyText);
+            bodyTextView.setText(body);
+            builder.setView(bodyTextView);
         }
-
         return builder.create();
     }
 
