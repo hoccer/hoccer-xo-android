@@ -138,7 +138,7 @@ Do you wish to accept?</string>
     <string name="common_friend">Friend</string>
     <string name="menu_licenses">Licenses</string>
     <string name="pairing_token_generating">Generating...</string>
-    <string name="pairing_token_sendsms">Send via SMS</string>
+    <string name="pairing_token_send_sms">Send via SMS</string>
     <string name="feature_not_available">feature not available yet</string>
     <string name="file_chooser_string">choose a file to attach</string>
     <string name="open_file">open file</string>

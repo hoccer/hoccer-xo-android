@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:gravity="center"
+        android:paddingTop="20dp"
         android:text="@string/pairing_token_info"
         android:textAlignment="center"/>
 
@@ -28,6 +29,7 @@
         android:layout_width="match_parent"
         style="@android:style/TextAppearance.DeviceDefault.Medium"
         android:gravity="center"
+        android:text="token_value"
         android:textColor="@android:color/primary_text_light"
         android:textStyle="bold"
         android:textIsSelectable="true"
@@ -37,12 +39,13 @@
         android:id="@+id/pairing_token_sms"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="@string/pairing_token_sendsms"/>
+        android:text="@string/pairing_token_send_sms"/>
 
     <TextView
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:gravity="center"
+        android:paddingTop="20dp"
         android:text="@string/pairing_code_info"/>
 
     <EditText
@@ -64,6 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:gravity="center"
+        android:paddingTop="20dp"
         android:text="@string/pairing_qr_info"/>
 
     <Button
