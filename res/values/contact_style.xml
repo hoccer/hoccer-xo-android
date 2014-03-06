@@ -35,7 +35,8 @@
         <item name="android:layout_margin">2dp</item>
     </style>
     <style name="AppBaseTheme.Contact.CommonGroup" parent="AppBaseTheme.Contact">
-        <item name="android:layout_margin">2dp</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginRight">10dp</item>
         <item name="android:textColor">@android:color/secondary_text_dark</item>
     </style>
 </resources>

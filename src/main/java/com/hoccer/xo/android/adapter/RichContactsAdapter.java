@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
@@ -14,7 +13,6 @@ import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -50,7 +48,7 @@ public class RichContactsAdapter extends ContactsAdapter {
 
     @Override
     protected int getTokenLayout() {
-        return R.layout.item_contact_smsinvite;
+        return R.layout.item_contact_sms_invite;
     }
 
     @Override
@@ -80,10 +78,10 @@ public class RichContactsAdapter extends ContactsAdapter {
             }
         }
 
-        TextView nameText = (TextView)view.findViewById(R.id.smsinvite_name);
+        TextView nameText = (TextView)view.findViewById(R.id.sms_invite_name);
         nameText.setText(name);
-        ImageView photoImage = (ImageView)view.findViewById(R.id.smsinvite_icon);
-        ImageLoader.getInstance().displayImage(photo, photoImage);
+        AvatarView avatarView = (AvatarView)view.findViewById(R.id.sms_invite_icon);
+        avatarView.setAvatarImage(photo);
     }
 
     protected void updateContact(final View view, final TalkClientContact contact) {

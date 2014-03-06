@@ -104,7 +104,7 @@ public class AvatarView extends LinearLayout implements IXoContactListener {
      *
      * @param avatarImageUrl Url of the given image resource  to load.
      */
-    private void setAvatarImage(final String avatarImageUrl) {
+    public void setAvatarImage(final String avatarImageUrl) {
         post(new Runnable() {
             @Override
             public void run() {
