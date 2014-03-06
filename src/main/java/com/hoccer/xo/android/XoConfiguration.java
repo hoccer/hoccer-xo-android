@@ -28,7 +28,7 @@ public class XoConfiguration {
     public static final String INTERNAL_GENERATED = "generated";
 
     /* Enable or disable development settings in preferences */
-    public static final boolean DEVELOPMENT_MODE_ENABLED = true;
+    public static final boolean DEVELOPMENT_MODE_ENABLED = false;
 
     /**
      * Background executor thread count

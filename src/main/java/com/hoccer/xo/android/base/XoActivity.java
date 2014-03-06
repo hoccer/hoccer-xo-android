@@ -23,6 +23,7 @@ import com.hoccer.xo.android.content.ContentSelection;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.IXoClientService;
 import com.hoccer.xo.android.service.XoClientService;
+import com.hoccer.xo.release.BuildConfig;
 import com.hoccer.xo.release.R;
 
 import org.apache.log4j.Logger;
@@ -236,12 +237,6 @@ public abstract class XoActivity extends Activity {
                 break;
             case R.id.menu_settings:
                 showPreferences();
-                break;
-            case R.id.menu_about:
-                showAbout();
-                break;
-            case R.id.menu_licenses:
-                showLicenses();
                 break;
             case R.id.menu_reconnect:
                 try {

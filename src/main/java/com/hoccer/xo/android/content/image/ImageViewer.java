@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.TypedValue;
 import android.view.View;
@@ -44,17 +45,18 @@ public class ImageViewer extends ContentViewer<View> implements ImageLoadingList
     @Override
     protected void updateViewInternal(View view, ContentView contentView,
             IContentObject contentObject, boolean isLightTheme) {
-        /*int maxContentHeight = contentView.getMaxContentHeight();
-        if (maxContentHeight != Integer.MAX_VALUE) {
-            view.setMaxHeight(maxContentHeight);
-        }*/
-        /*AspectImageView imageView = (AspectImageView) view.findViewById(R.id.aiv_content_image);
-        imageView.setAspectRatio(contentObject.getContentAspectRatio());*/
-        ImageButton imageView = (ImageButton) view.findViewById(R.id.image_show_button);
+        ImageButton imageButton = (ImageButton) view.findViewById(R.id.image_show_button);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+
+            }
+        });
 
         String contentUrl = contentObject.getContentDataUrl();
         if (contentObject.isContentAvailable() && contentUrl != null) {
-            loadImage(imageView, contentUrl);
+            loadImage(imageButton, contentUrl);
         } else {
             clearViewInternal(view);
         }
@@ -63,7 +65,6 @@ public class ImageViewer extends ContentViewer<View> implements ImageLoadingList
     @Override
     protected void clearViewInternal(View view) {
         LOG.trace("clearing");
-        /*AspectImageView imageView = (AspectImageView) view.findViewById(R.id.aiv_content_image);*/
         ImageButton imageView = (ImageButton) view.findViewById(R.id.image_show_button);
         ImageLoader.getInstance().cancelDisplayTask(imageView);
         imageView.setImageDrawable(null);
