@@ -28,6 +28,7 @@ import com.hoccer.xo.release.R;
 
 import org.apache.log4j.Logger;
 
+import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.TaskStackBuilder;
@@ -40,6 +41,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -358,9 +360,10 @@ public abstract class XoActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void navigateUp() {
         LOG.debug("navigateUp()");
-        if(mUpEnabled) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && mUpEnabled) {
             Intent upIntent = getParentActivityIntent();
             if(upIntent != null) {
                 // we have a parent, navigate up
@@ -379,6 +382,8 @@ public abstract class XoActivity extends Activity {
                 // we don't have a parent, navigate back instead
                 onBackPressed();
             }
+        } else {
+            navigateUp();
         }
     }
 
