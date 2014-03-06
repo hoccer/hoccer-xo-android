@@ -17,9 +17,16 @@
             android:title="@string/profile_user_block_button"/>
 
     <item
+            android:id="@+id/menu_profile_unblock"
+            android:orderInCategory="103"
+            android:showAsAction="ifRoom"
+            android:icon="@drawable/ic_dark_social_add_person"
+            android:title="@string/profile_user_unblock_button"/>
+
+    <item
             android:id="@+id/menu_profile_delete"
             android:icon="@drawable/ic_delete"
-            android:orderInCategory="103"
+            android:orderInCategory="104"
             android:showAsAction="ifRoom"
             android:title="@string/profile_user_delete_button"/>
 

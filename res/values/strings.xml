@@ -76,6 +76,7 @@ Do you wish to accept?</string>
     <string name="profile_self_register_button">Register</string>
     <string name="profile_user_block_status">This user is blocked. Unblock to receive messages.</string>
     <string name="profile_user_block_button">Block this user</string>
+    <string name="profile_user_unblock_button">Unblock this user</string>
     <string name="profile_user_depair_button">Depair this user</string>
     <string name="profile_user_delete_button">Delete this user</string>
     <string name="profile_group_members_title">Members</string>

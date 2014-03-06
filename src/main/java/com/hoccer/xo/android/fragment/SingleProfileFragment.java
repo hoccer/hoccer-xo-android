@@ -80,7 +80,10 @@ public class SingleProfileFragment extends XoFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_profile_block:
-                doBlockAction();
+                doBlockUnblockAction();
+                break;
+            case R.id.menu_profile_unblock:
+                doBlockUnblockAction();
                 break;
             case R.id.menu_profile_delete:
                 if (mContact != null) {
@@ -124,7 +127,7 @@ public class SingleProfileFragment extends XoFragment
         }
     }
 
-    private void doBlockAction() {
+    private void doBlockUnblockAction() {
         if (mContact != null && mContact.isClient()) {
             TalkRelationship relationship = mContact.getClientRelationship();
             if (relationship != null) {
@@ -287,6 +290,7 @@ public class SingleProfileFragment extends XoFragment
         LOG.debug("blockContact()");
         if (mContact != null) {
             getXoClient().blockContact(mContact);
+            getXoActivity().finish();
         }
     }
 
@@ -294,6 +298,7 @@ public class SingleProfileFragment extends XoFragment
         LOG.debug("unblockContact()");
         if (mContact != null) {
             getXoClient().unblockContact(mContact);
+            getXoActivity().finish();
         }
     }
 

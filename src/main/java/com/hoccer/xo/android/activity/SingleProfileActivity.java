@@ -4,6 +4,7 @@ import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.IXoStateListener;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.model.TalkRelationship;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.SingleProfileFragment;
 import com.hoccer.xo.android.fragment.StatusFragment;
@@ -94,7 +95,17 @@ public class SingleProfileActivity extends XoActivity
         if(contact.isSelf()) {
             menu.findItem(R.id.menu_profile_edit).setVisible(true);
             menu.findItem(R.id.menu_profile_block).setVisible(false);
+            menu.findItem(R.id.menu_profile_unblock).setVisible(false);
             menu.findItem(R.id.menu_profile_delete).setVisible(false);
+        } else {
+            TalkRelationship relationship = contact.getClientRelationship();
+            if (relationship.isBlocked()) {
+                menu.findItem(R.id.menu_profile_block).setVisible(false);
+                menu.findItem(R.id.menu_profile_unblock).setVisible(true);
+            } else {
+                menu.findItem(R.id.menu_profile_block).setVisible(true);
+                menu.findItem(R.id.menu_profile_unblock).setVisible(false);
+            }
         }
 
         return result;
