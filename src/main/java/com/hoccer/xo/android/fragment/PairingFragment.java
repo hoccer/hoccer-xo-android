@@ -172,7 +172,6 @@ public class PairingFragment extends XoFragment implements View.OnClickListener,
         mTokenText.setVisibility(View.GONE);
         mTokenMessage.setVisibility(View.VISIBLE);
         mTokenSendSms.setEnabled(false);
-        // request a new token and show it
         XoApplication.getExecutor().schedule(new Runnable() {
             @Override
             public void run() {
