@@ -48,6 +48,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="35dp"
             android:layout_marginRight="35dp"
+            android:lines="1"
+            android:inputType="text|textNoSuggestions"
             android:visibility="gone"
             style="@style/AppBaseTheme.Group.Name"/>
 
