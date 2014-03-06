@@ -27,6 +27,7 @@
             android:layout_marginRight="10dp"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@id/message_avatar"
+            android:autoLink="all"
             android:minHeight="50dp"
             android:gravity="center_vertical"
             style="@style/AppBaseTheme.Message.Outgoing"/>

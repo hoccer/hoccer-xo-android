@@ -41,6 +41,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="25dp"
             style="@style/AppBaseTheme.Message.Incoming"
+            android:autoLink="all"
             android:layout_toRightOf="@id/message_avatar"
             android:layout_alignParentRight="true"
             android:text="@string/message_text"

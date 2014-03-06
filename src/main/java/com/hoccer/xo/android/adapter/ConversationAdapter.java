@@ -15,6 +15,7 @@ import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
 
 import android.text.format.DateUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -409,6 +410,7 @@ public class ConversationAdapter extends XoAdapter
 
     private void setMessageText(View view, TalkClientMessage message) {
         TextView text = (TextView) view.findViewById(R.id.message_text);
+//        text.setMovementMethod(LinkMovementMethod.getInstance());
         String textString = message.getText();
         if (textString == null) {
             text.setText(""); // XXX
