@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.content.image;
 
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.IContentSelector;
 import com.hoccer.xo.android.content.SelectedContent;
 
@@ -10,6 +11,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 
+import java.io.File;
 import java.io.IOException;
 
 public class ImageSelector implements IContentSelector {
@@ -21,16 +23,18 @@ public class ImageSelector implements IContentSelector {
 
     @Override
     public Intent createSelectionIntent(Context context) {
-//        Intent intent = new Intent(Intent.ACTION_PICK,
-//                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//        intent.setType("image/*");
-//        intent.putExtra("crop", "true");
-//        File tmpFile = new File(XoApplication.getGeneratedDirectory(), "tmp_image.jpg");
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tmpFile));
-//        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
+        intent.putExtra("crop", "true");
+        File tmpFile = new File(XoApplication.getGeneratedDirectory(), "tmp_image.jpg");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tmpFile));
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("return-data", true);
+
+//        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        intent.setType("image/*");
         return intent;
     }
 

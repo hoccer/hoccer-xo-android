@@ -14,8 +14,8 @@ import com.hoccer.xo.android.activity.GroupProfileActivity;
 import com.hoccer.xo.android.activity.LicensesActivity;
 import com.hoccer.xo.android.activity.MessagingActivity;
 import com.hoccer.xo.android.activity.PairingActivity;
-import com.hoccer.xo.android.activity.XoPreferenceActivity;
 import com.hoccer.xo.android.activity.SingleProfileActivity;
+import com.hoccer.xo.android.activity.XoPreferenceActivity;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
 import com.hoccer.xo.android.content.ContentRegistry;
@@ -38,7 +38,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -50,8 +49,10 @@ import android.view.MenuItem;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -64,12 +65,13 @@ import java.util.concurrent.TimeUnit;
  *
  * These activites continually keep the background service which
  * we use for connection retention alive by calling it via RPC.
- *
  */
 public abstract class XoActivity extends Activity {
 
     public final static int REQUEST_SELECT_AVATAR = 23;
+
     public final static int REQUEST_SELECT_ATTACHMENT = 42;
+
     public final static int REQUEST_SCAN_BARCODE = IntentIntegrator.REQUEST_CODE; // XXX dirty
 
     protected Logger LOG = null;
@@ -141,7 +143,8 @@ public abstract class XoActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         // set up database connection
-        mDatabase = new XoClientDatabase(AndroidTalkDatabase.getInstance(this.getApplicationContext()));
+        mDatabase = new XoClientDatabase(
+                AndroidTalkDatabase.getInstance(this.getApplicationContext()));
         try {
             mDatabase.initialize();
         } catch (SQLException e) {
@@ -183,11 +186,11 @@ public abstract class XoActivity extends Activity {
         shutdownKeepAlive();
 
         // drop reference to service binder
-        if(mService != null) {
+        if (mService != null) {
             mService = null;
         }
         // unbind service connection
-        if(mServiceConnection != null) {
+        if (mServiceConnection != null) {
             unbindService(mServiceConnection);
             mServiceConnection = null;
         }
@@ -204,7 +207,7 @@ public abstract class XoActivity extends Activity {
         LOG.debug("onCreateOptionsMenu()");
         getMenuInflater().inflate(R.menu.common, menu);
         int activityMenu = getMenuResource();
-        if(activityMenu >= 0) {
+        if (activityMenu >= 0) {
             getMenuInflater().inflate(activityMenu, menu);
         }
         return true;
@@ -253,30 +256,20 @@ public abstract class XoActivity extends Activity {
     }
 
     private Intent selectedAvatarPreprocessing(Intent data) {
-        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-        Uri selectedContent = data.getData();
-        Cursor cursor = getBaseContext().getContentResolver().query(
-                selectedContent, filePathColumn, null, null, null);
-        cursor.moveToFirst();
-        int dataIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String filePath = cursor.getString(dataIndex);
-        cursor.close();
-
-        File source = new File(filePath);
-        File destination = new File(XoApplication.getAttachmentDirectory().getPath() + File.separator + source.getName());
-
-        BitmapFactory.Options opt = new BitmapFactory.Options();
-        opt.inSampleSize = 4;
-        Bitmap bmp = BitmapFactory.decodeFile(filePath, opt);
         try {
+            File destination = new File(
+                    XoApplication.getAttachmentDirectory().getPath() + File.separator + UUID
+                            .randomUUID().toString() + ".png");
+
+            Bitmap image = data.getExtras().getParcelable("data");
             FileOutputStream out = new FileOutputStream(destination);
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            image.compress(Bitmap.CompressFormat.PNG, 90, out);
+
+            Uri uri = getImageContentUri(getBaseContext(), destination);
+            data.setData(uri);
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
-        Uri uri = getImageContentUri(getBaseContext(), destination);
-        data.setData(uri);
         return data;
     }
 
@@ -285,9 +278,9 @@ public abstract class XoActivity extends Activity {
         String filePath = imageFile.getAbsolutePath();
         Cursor cursor = context.getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                new String[] { MediaStore.Images.Media._ID },
+                new String[]{MediaStore.Images.Media._ID},
                 MediaStore.Images.Media.DATA + "=? ",
-                new String[] { filePath }, null);
+                new String[]{filePath}, null);
         if (cursor != null && cursor.moveToFirst()) {
             int id = cursor.getInt(cursor
                     .getColumnIndex(MediaStore.MediaColumns._ID));
@@ -310,17 +303,18 @@ public abstract class XoActivity extends Activity {
         LOG.debug("onActivityResult(" + requestCode + "," + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(data == null) {
+        if (data == null) {
             return;
         }
 
-        if(requestCode == REQUEST_SELECT_AVATAR) {
-            if(mAvatarSelection != null) {
+        if (requestCode == REQUEST_SELECT_AVATAR) {
+            if (mAvatarSelection != null) {
                 data = selectedAvatarPreprocessing(data);
-                IContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection, data);
-                if(co != null) {
+                IContentObject co = ContentRegistry.get(this)
+                        .createSelectedAvatar(mAvatarSelection, data);
+                if (co != null) {
                     LOG.debug("selected avatar " + co.getContentDataUrl());
-                    for(IXoFragment fragment: mTalkFragments) {
+                    for (IXoFragment fragment : mTalkFragments) {
                         fragment.onAvatarSelected(co);
                     }
                 }
@@ -328,23 +322,25 @@ public abstract class XoActivity extends Activity {
             return;
         }
 
-        if(requestCode == REQUEST_SELECT_ATTACHMENT) {
-            IContentObject co = ContentRegistry.get(this).createSelectedAttachment(mAttachmentSelection, data);
-            if(co != null) {
+        if (requestCode == REQUEST_SELECT_ATTACHMENT) {
+            IContentObject co = ContentRegistry.get(this)
+                    .createSelectedAttachment(mAttachmentSelection, data);
+            if (co != null) {
                 LOG.debug("selected attachment " + co.getContentDataUrl());
-                for(IXoFragment fragment: mTalkFragments) {
+                for (IXoFragment fragment : mTalkFragments) {
                     fragment.onAttachmentSelected(co);
                 }
             }
             return;
         }
 
-        if(requestCode == REQUEST_SCAN_BARCODE) {
-            IntentResult barcode = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-            if(barcode != null) {
+        if (requestCode == REQUEST_SCAN_BARCODE) {
+            IntentResult barcode = IntentIntegrator
+                    .parseActivityResult(requestCode, resultCode, data);
+            if (barcode != null) {
                 LOG.debug("scanned barcode: " + barcode.getContents());
                 String code = barcode.getContents();
-                if(code.startsWith("hxo://")) {
+                if (code.startsWith("hxo://")) {
                     mBarcodeToken = code.replace("hxo://", "");
                 }
             }
@@ -362,9 +358,9 @@ public abstract class XoActivity extends Activity {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void navigateUp() {
         LOG.debug("navigateUp()");
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && mUpEnabled) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && mUpEnabled) {
             Intent upIntent = getParentActivityIntent();
-            if(upIntent != null) {
+            if (upIntent != null) {
                 // we have a parent, navigate up
                 if (shouldUpRecreateTask(upIntent)) {
                     // we are not on our own task stack, so create one
@@ -394,7 +390,7 @@ public abstract class XoActivity extends Activity {
         mKeepAliveTimer = mBackgroundExecutor.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                if(mService != null) {
+                if (mService != null) {
                     try {
                         mService.keepAlive();
                     } catch (RemoteException e) {
@@ -412,7 +408,7 @@ public abstract class XoActivity extends Activity {
      * Stop sending keep-alive calls to the service
      */
     private void shutdownKeepAlive() {
-        if(mKeepAliveTimer != null) {
+        if (mKeepAliveTimer != null) {
             mKeepAliveTimer.cancel(false);
             mKeepAliveTimer = null;
         }
@@ -435,7 +431,7 @@ public abstract class XoActivity extends Activity {
 //    }
 
     public void wakeClient() {
-        if(mService != null) {
+        if (mService != null) {
             try {
                 mService.wake();
             } catch (RemoteException e) {
@@ -449,10 +445,12 @@ public abstract class XoActivity extends Activity {
         Intent intent;
         if (contact.isGroup()) {
             intent = new Intent(this, GroupProfileActivity.class);
-            intent.putExtra(GroupProfileActivity.EXTRA_CLIENT_CONTACT_ID, contact.getClientContactId());
+            intent.putExtra(GroupProfileActivity.EXTRA_CLIENT_CONTACT_ID,
+                    contact.getClientContactId());
         } else {
             intent = new Intent(this, SingleProfileActivity.class);
-            intent.putExtra(SingleProfileActivity.EXTRA_CLIENT_CONTACT_ID, contact.getClientContactId());
+            intent.putExtra(SingleProfileActivity.EXTRA_CLIENT_CONTACT_ID,
+                    contact.getClientContactId());
         }
         startActivity(intent);
     }
@@ -468,7 +466,7 @@ public abstract class XoActivity extends Activity {
         LOG.debug("showContactConversation(" + contact.getClientContactId() + ")");
         Intent intent = new Intent(this, MessagingActivity.class);
         intent.putExtra(MessagingActivity.EXTRA_CLIENT_CONTACT_ID,
-                        contact.getClientContactId());
+                contact.getClientContactId());
         startActivity(intent);
     }
 
@@ -499,7 +497,8 @@ public abstract class XoActivity extends Activity {
 
     public void selectAttachment() {
         LOG.debug("selectAttachment()");
-        mAttachmentSelection = ContentRegistry.get(this).selectAttachment(this, REQUEST_SELECT_ATTACHMENT);
+        mAttachmentSelection = ContentRegistry.get(this)
+                .selectAttachment(this, REQUEST_SELECT_ATTACHMENT);
     }
 
     public void scanBarcode() {
@@ -532,8 +531,8 @@ public abstract class XoActivity extends Activity {
 
             String message =
                     "Hey! I'm now using the free app Hoccer XO for secure chatting. " +
-                    "Download it now: http://hoccer.com/ Then add me as a contact: " +
-                    "hxo://" + token + "\nxo " + self.getName();
+                            "Download it now: http://hoccer.com/ Then add me as a contact: " +
+                            "hxo://" + token + "\nxo " + self.getName();
 
             Intent intent = new Intent(Intent.ACTION_SENDTO);
             intent.setData(Uri.parse("smsto:"));
@@ -552,31 +551,33 @@ public abstract class XoActivity extends Activity {
      * Connection to our backend service
      */
     public class MainServiceConnection implements ServiceConnection {
+
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             LOG.debug("onServiceConnected()");
-            mService = (IXoClientService)service;
+            mService = (IXoClientService) service;
             scheduleKeepAlive();
             try {
                 mService.wake();
             } catch (RemoteException e) {
                 LOG.error("remote error", e);
             }
-            for(IXoFragment fragment: mTalkFragments) {
+            for (IXoFragment fragment : mTalkFragments) {
                 fragment.onServiceConnected();
             }
-            if(mBarcodeToken != null) {
+            if (mBarcodeToken != null) {
                 // XXX perform token pairing with callback
                 getXoClient().performTokenPairing(mBarcodeToken);
                 mBarcodeToken = null;
             }
         }
+
         @Override
         public void onServiceDisconnected(ComponentName name) {
             LOG.debug("onServiceDisconnected()");
             shutdownKeepAlive();
             mService = null;
-            for(IXoFragment fragment: mTalkFragments) {
+            for (IXoFragment fragment : mTalkFragments) {
                 fragment.onServiceDisconnected();
             }
         }
