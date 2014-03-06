@@ -38,6 +38,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -52,7 +53,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -258,7 +258,8 @@ public abstract class XoActivity extends Activity {
     private Intent selectedAvatarPreprocessing(Intent data) {
         try {
             File destination = new File(
-                    XoApplication.getAttachmentDirectory().getPath() + File.separator + "my_avatar.jpg");
+                    XoApplication.getAttachmentDirectory().getPath() + File.separator
+                            + "my_avatar.jpg");
 
             Bitmap image = data.getExtras().getParcelable("data");
             FileOutputStream out = new FileOutputStream(destination);
@@ -266,12 +267,12 @@ public abstract class XoActivity extends Activity {
 
             Uri uri = getImageContentUri(getBaseContext(), destination);
             data.setData(uri);
+            return data;
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        return data;
+        return null;
     }
-
 
     private Uri getImageContentUri(Context context, File imageFile) {
         String filePath = imageFile.getAbsolutePath();
@@ -321,7 +322,7 @@ public abstract class XoActivity extends Activity {
                 } else {
                     Intent intent = new Intent("com.android.camera.action.CROP",
                             android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    intent.setDataAndType(data.getData(),"image/*");
+                    intent.setDataAndType(data.getData(), "image/*");
                     intent.putExtra("crop", "true");
                     intent.putExtra("aspectX", 1);
                     intent.putExtra("aspectY", 1);
