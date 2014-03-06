@@ -1,5 +1,7 @@
 package com.hoccer.xo.android.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -13,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.hoccer.talk.client.IXoPairingListener;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.release.R;
@@ -20,12 +23,7 @@ import com.hoccer.xo.release.R;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Fragment for pairing
- *
- * This offers various ways of finding new friends.
- */
-public class PairingFragment extends XoFragment implements View.OnClickListener {
+public class PairingFragment extends XoFragment implements View.OnClickListener, IXoPairingListener {
 
     TextView mTokenMessage;
     TextView mTokenText;
@@ -57,23 +55,25 @@ public class PairingFragment extends XoFragment implements View.OnClickListener 
 
         View view = inflater.inflate(R.layout.fragment_pairing, container, false);
 
-        mTokenMessage = (TextView)view.findViewById(R.id.pairing_token_message);
-        mTokenText = (TextView)view.findViewById(R.id.pairing_token_text);
+        mTokenMessage = (TextView) view.findViewById(R.id.pairing_token_message);
+        mTokenText = (TextView) view.findViewById(R.id.pairing_token_text);
         mTokenText.setVisibility(View.GONE);
-        mTokenSendSms = (Button)view.findViewById(R.id.pairing_token_sms);
+        mTokenSendSms = (Button) view.findViewById(R.id.pairing_token_sms);
         mTokenSendSms.setEnabled(false);
         mTokenSendSms.setOnClickListener(this);
 
-        mTokenEdit = (EditText)view.findViewById(R.id.pairing_token_edit);
-        mTokenEdit.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        mTokenEdit = (EditText) view.findViewById(R.id.pairing_token_edit);
+        mTokenEdit.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
-        mTokenPairButton = (Button)view.findViewById(R.id.pairing_token_pair);
+        mTokenPairButton = (Button) view.findViewById(R.id.pairing_token_pair);
 
-        mQrScanButton = (Button)view.findViewById(R.id.pairing_scan_qr);
+        mQrScanButton = (Button) view.findViewById(R.id.pairing_scan_qr);
         mQrScanButton.setOnClickListener(this);
 
-        mQrShowButton = (Button)view.findViewById(R.id.pairing_show_qr);
+        mQrShowButton = (Button) view.findViewById(R.id.pairing_show_qr);
         mQrShowButton.setOnClickListener(this);
+
+        getXoClient().registerPairingListener(this);
 
         return view;
     }
@@ -100,7 +100,7 @@ public class PairingFragment extends XoFragment implements View.OnClickListener 
         mTokenEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_ACTION_DONE) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
                     performPairing(mTokenEdit.getText().toString());
                 }
                 return false;
@@ -112,13 +112,15 @@ public class PairingFragment extends XoFragment implements View.OnClickListener 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
+
             @Override
             public void afterTextChanged(Editable s) {
                 String token = s.toString();
-                if(token.length() > 0) {
+                if (token.length() > 0) {
                     mTokenPairButton.setEnabled(true);
                 } else {
                     mTokenPairButton.setEnabled(false);
@@ -132,28 +134,34 @@ public class PairingFragment extends XoFragment implements View.OnClickListener 
     public void onPause() {
         LOG.debug("onPause()");
         // remove the text watcher
-        if(mTextWatcher != null) {
+        if (mTextWatcher != null) {
             mTokenEdit.removeTextChangedListener(mTextWatcher);
             mTextWatcher = null;
         }
         // cancel token requests
-        if(mTokenFuture != null) {
+        if (mTokenFuture != null) {
             mTokenFuture.cancel(true);
         }
         super.onPause();
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getXoClient().unregisterPairingListener(this);
+    }
+
+    @Override
     public void onClick(View v) {
-        if(v == mQrShowButton) {
+        if (v == mQrShowButton) {
             LOG.debug("onClick(qrShow)");
             getXoActivity().showBarcode();
         }
-        if(v == mQrScanButton) {
+        if (v == mQrScanButton) {
             LOG.debug("onClick(qrScan)");
             getXoActivity().scanBarcode();
         }
-        if(v == mTokenSendSms) {
+        if (v == mTokenSendSms) {
             LOG.debug("onClick(smsSend)");
             getXoActivity().composeInviteSms(mTokenText.getText().toString());
         }
@@ -187,7 +195,7 @@ public class PairingFragment extends XoFragment implements View.OnClickListener 
         mTokenEdit.setText(token);
     }
 
-    private void performPairing(final String token) {
+    void performPairing(final String token) {
         LOG.debug("performPairing(" + token + ")");
         mActiveToken = token;
         mTokenEdit.setEnabled(false);
@@ -196,34 +204,31 @@ public class PairingFragment extends XoFragment implements View.OnClickListener 
             @Override
             public void run() {
                 getXoClient().performTokenPairing(token);
-                onTokenPairingSucceeded(token);
             }
         });
     }
 
-    public void onTokenPairingFailed(String token) {
-        LOG.debug("onTokenPairingFailed()");
-        if(token.equals(mActiveToken)) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(getXoActivity(), "Pairing failed", Toast.LENGTH_SHORT).show();
-                    mTokenEdit.setEnabled(true);
-                    mTokenEdit.setText("");
-                    mTokenPairButton.setEnabled(false);
-                }
-            });
-        }
-    }
-
-    // XXX @Override
+    @Override
     public void onTokenPairingSucceeded(String token) {
         LOG.debug("onTokenPairingSucceeded()");
-        if(token.equals(mActiveToken)) {
+        if (token.equals(mActiveToken)) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getXoActivity(), "Pairing succeeded", Toast.LENGTH_SHORT).show();
+                    getXoActivity().finish();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onTokenPairingFailed(String token) {
+        LOG.debug("onTokenPairingFailed()");
+        if (token.equals(mActiveToken)) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showPairingFailure();
                     mTokenEdit.setEnabled(true);
                     mTokenEdit.setText("");
                     mTokenPairButton.setEnabled(false);
@@ -232,4 +237,18 @@ public class PairingFragment extends XoFragment implements View.OnClickListener 
         }
     }
 
+    private void showPairingFailure() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
+        builder.setTitle(R.string.pairing_failure);
+        builder.setMessage(R.string.pairing_failure_description);
+
+        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                dialog.dismiss();
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 }

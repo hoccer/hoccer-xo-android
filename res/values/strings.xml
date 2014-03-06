@@ -59,6 +59,11 @@ Do you wish to accept?</string>
     <string name="pairing_qr_info">You can also pair using QR codes:</string>
     <string name="pairing_qr_show">Show QR code</string>
     <string name="pairing_qr_scan">Scan QR code</string>
+    <string name="pairing_token_generating">Generating...</string>
+    <string name="pairing_token_send_sms">Send via SMS</string>
+    <string name="pairing_success">Pairing succeeded</string>
+    <string name="pairing_failure">Pairing failed</string>
+    <string name="pairing_failure_description">The code you have entered is invalid.</string>
 
     <!-- Profile fragment -->
     <string name="profile_avatar_set_button">Change my image</string>
@@ -137,8 +142,6 @@ Do you wish to accept?</string>
     <string name="common_group_invite">Invited</string>
     <string name="common_friend">Friend</string>
     <string name="menu_licenses">Licenses</string>
-    <string name="pairing_token_generating">Generating...</string>
-    <string name="pairing_token_send_sms">Send via SMS</string>
     <string name="feature_not_available">feature not available yet</string>
     <string name="file_chooser_string">choose a file to attach</string>
     <string name="open_file">open file</string>
