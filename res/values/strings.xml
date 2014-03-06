@@ -157,6 +157,12 @@ Do you wish to accept?</string>
     <string name="profile_name_text">Name</string>
     <string name="profile_key_text">Key</string>
 
+    <string name="transfer_state_encrypting">Encrypting...</string>
+    <string name="transfer_state_decrypting">Decrypting...</string>
+    <string name="transfer_state_downloading">Downloading...</string>
+    <string name="transfer_state_uploading">Uploading...</string>
+    <string name="transfer_state_pause">Pause</string>
+
     <string-array name="preference_log_level_names">
         <item>Info</item>
         <item>Debug</item>

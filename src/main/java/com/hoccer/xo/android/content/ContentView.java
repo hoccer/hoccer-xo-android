@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.content;
 
+import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.*;
@@ -341,16 +342,18 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     private void updateProgressBar(ContentState state, IContentObject object) {
         int length = 0;
         int progress = 0;
+        Resources res = getResources();
         switch (state) {
             case DOWNLOAD_DETECTING:
                 break;
             case DOWNLOAD_NEW:
                 mTransferProgress.setVisibility(VISIBLE);
                 mTransferProgress.prepareToDownload();
-                mTransferProgress.setText("Downloading...");
+                mTransferProgress.setText(res.getString(R.string.transfer_state_downloading));
                 mTransferProgress.pause();
                 break;
             case DOWNLOAD_PAUSED:
+                mTransferProgress.setText(res.getString(R.string.transfer_state_pause));
                 mTransferProgress.pause();
                 break;
             case DOWNLOAD_DOWNLOADING:
@@ -361,13 +364,13 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                     progress = 18;
                 }
                 mTransferProgress.prepareToDownload();
-                mTransferProgress.setText("Downloading...");
+                mTransferProgress.setText(res.getString(R.string.transfer_state_downloading));
                 mTransferProgress.setMax(length);
                 mTransferProgress.setProgress(progress);
                 break;
             case DOWNLOAD_DECRYPTING:
                 length = object.getTransferLength();
-                mTransferProgress.setText("Decrypting...");
+                mTransferProgress.setText(res.getString(R.string.transfer_state_decrypting));
                 mTransferProgress.setProgress(length);
                 mTransferProgress.spin();
                 mWaitUntilOperationIsFinished = true;
@@ -378,21 +381,22 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 break;
             case UPLOAD_NEW:
                 mTransferProgress.prepareToUpload();
-                mTransferProgress.setText("Encrypting...");
+                mTransferProgress.setText(res.getString(R.string.transfer_state_encrypting));
                 mTransferProgress.setVisibility(VISIBLE);
                 break;
             case UPLOAD_ENCRYPTING:
                 mTransferProgress.prepareToUpload();
-                mTransferProgress.setText("Encrypting...");
+                mTransferProgress.setText(res.getString(R.string.transfer_state_encrypting));
                 mTransferProgress.setVisibility(VISIBLE);
                 mTransferProgress.spin();
                 break;
             case UPLOAD_PAUSED:
+                mTransferProgress.setText(res.getString(R.string.transfer_state_pause));
                 mTransferProgress.pause();
                 break;
             case UPLOAD_UPLOADING:
                 mTransferProgress.finishSpinningAndProceed();
-                mTransferProgress.setText("Uploading...");
+                mTransferProgress.setText(res.getString(R.string.transfer_state_uploading));
                 mWaitUntilOperationIsFinished = true;
                 length = object.getTransferLength();
                 progress = object.getTransferProgress();
