@@ -128,6 +128,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     public void onAttachmentSelected(IContentObject contentObject) {
         LOG.debug("onAttachmentSelected(" + contentObject.getContentDataUrl() + ")");
         showAttachment(contentObject);
+        mSendButton.setEnabled(isComposed());
     }
 
     private void showAttachment(IContentObject contentObject) {
