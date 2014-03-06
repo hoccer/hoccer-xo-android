@@ -258,11 +258,11 @@ public abstract class XoActivity extends Activity {
     private Intent selectedAvatarPreprocessing(Intent data) {
         try {
             File destination = new File(
-                    XoApplication.getAttachmentDirectory().getPath() + File.separator + "my_avatar.png");
+                    XoApplication.getAttachmentDirectory().getPath() + File.separator + "my_avatar.jpg");
 
             Bitmap image = data.getExtras().getParcelable("data");
             FileOutputStream out = new FileOutputStream(destination);
-            image.compress(Bitmap.CompressFormat.PNG, 90, out);
+            image.compress(Bitmap.CompressFormat.JPEG, 90, out);
 
             Uri uri = getImageContentUri(getBaseContext(), destination);
             data.setData(uri);
@@ -325,6 +325,8 @@ public abstract class XoActivity extends Activity {
                     intent.putExtra("crop", "true");
                     intent.putExtra("aspectX", 1);
                     intent.putExtra("aspectY", 1);
+                    intent.putExtra("outputX", 300);
+                    intent.putExtra("outputY", 300);
                     intent.putExtra("return-data", true);
                     startActivityForResult(intent, REQUEST_SELECT_AVATAR);
                 }
