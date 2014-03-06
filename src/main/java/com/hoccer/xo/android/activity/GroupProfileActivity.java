@@ -52,8 +52,8 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         FragmentManager fragmentManager = getFragmentManager();
         mGroupProfileFragment = (GroupProfileFragment) fragmentManager.findFragmentById(R.id.activity_group_profile_fragment);
         mStatusFragment = (StatusFragment) fragmentManager.findFragmentById(R.id.activity_profile_status_fragment);
+        mStatusFragment.getView().setVisibility(View.VISIBLE);
 
-        // handle intents
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra(EXTRA_CLIENT_CREATE_GROUP)) {
@@ -67,6 +67,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
                 }
             }
         }
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -119,9 +120,6 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         if (mMode == Mode.CREATE_SELF) {
             mStatusFragment.getView().setVisibility(View.GONE);
             getActionBar().setDisplayHomeAsUpEnabled(false);
-        } else {
-            mStatusFragment.getView().setVisibility(View.VISIBLE);
-            getActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 

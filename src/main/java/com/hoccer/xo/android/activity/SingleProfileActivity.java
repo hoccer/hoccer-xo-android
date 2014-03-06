@@ -62,8 +62,8 @@ public class SingleProfileActivity extends XoActivity
                 .findFragmentById(R.id.activity_single_profile_fragment);
         mStatusFragment = (StatusFragment) fragmentManager
                 .findFragmentById(R.id.activity_profile_status_fragment);
+        mStatusFragment.getView().setVisibility(View.VISIBLE);
 
-        // handle intents
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra(EXTRA_CLIENT_CREATE_SELF)) {
@@ -77,6 +77,7 @@ public class SingleProfileActivity extends XoActivity
                 }
             }
         }
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -111,9 +112,6 @@ public class SingleProfileActivity extends XoActivity
         if (mMode == Mode.CREATE_SELF) {
             mStatusFragment.getView().setVisibility(View.GONE);
             getActionBar().setDisplayHomeAsUpEnabled(false);
-        } else {
-            mStatusFragment.getView().setVisibility(View.VISIBLE);
-            getActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
