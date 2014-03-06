@@ -11,7 +11,6 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
@@ -19,9 +18,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Contacts adapter for the main contact list
