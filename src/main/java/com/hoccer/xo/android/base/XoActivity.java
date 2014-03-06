@@ -258,8 +258,7 @@ public abstract class XoActivity extends Activity {
     private Intent selectedAvatarPreprocessing(Intent data) {
         try {
             File destination = new File(
-                    XoApplication.getAttachmentDirectory().getPath() + File.separator + UUID
-                            .randomUUID().toString() + ".png");
+                    XoApplication.getAttachmentDirectory().getPath() + File.separator + "my_avatar.png");
 
             Bitmap image = data.getExtras().getParcelable("data");
             FileOutputStream out = new FileOutputStream(destination);
@@ -309,14 +308,25 @@ public abstract class XoActivity extends Activity {
 
         if (requestCode == REQUEST_SELECT_AVATAR) {
             if (mAvatarSelection != null) {
-                data = selectedAvatarPreprocessing(data);
-                IContentObject co = ContentRegistry.get(this)
-                        .createSelectedAvatar(mAvatarSelection, data);
-                if (co != null) {
-                    LOG.debug("selected avatar " + co.getContentDataUrl());
-                    for (IXoFragment fragment : mTalkFragments) {
-                        fragment.onAvatarSelected(co);
+                if (data.getExtras() != null) {
+                    data = selectedAvatarPreprocessing(data);
+                    IContentObject co = ContentRegistry.get(this)
+                            .createSelectedAvatar(mAvatarSelection, data);
+                    if (co != null) {
+                        LOG.debug("selected avatar " + co.getContentDataUrl());
+                        for (IXoFragment fragment : mTalkFragments) {
+                            fragment.onAvatarSelected(co);
+                        }
                     }
+                } else {
+                    Intent intent = new Intent("com.android.camera.action.CROP",
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    intent.setDataAndType(data.getData(),"image/*");
+                    intent.putExtra("crop", "true");
+                    intent.putExtra("aspectX", 1);
+                    intent.putExtra("aspectY", 1);
+                    intent.putExtra("return-data", true);
+                    startActivityForResult(intent, REQUEST_SELECT_AVATAR);
                 }
             }
             return;

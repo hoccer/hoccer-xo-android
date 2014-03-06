@@ -27,8 +27,8 @@ public class ImageSelector implements IContentSelector {
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         intent.putExtra("crop", "true");
-        File tmpFile = new File(XoApplication.getGeneratedDirectory(), "tmp_image.jpg");
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tmpFile));
+//        File tmpFile = new File(XoApplication.getGeneratedDirectory(), "tmp_image.jpg");
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tmpFile));
         intent.putExtra("aspectX", 1);
         intent.putExtra("aspectY", 1);
         intent.putExtra("return-data", true);
