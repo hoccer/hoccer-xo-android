@@ -2,51 +2,63 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <PreferenceCategory
-      android:title="Automatic downloads">
+    <PreferenceCategory
+            android:title="Automatic downloads">
 
-      <CheckBoxPreference
-          android:key="preference_download_auto_mobile"
-          android:title="On mobile networks"
-          android:defaultValue="false"/>
+        <CheckBoxPreference
+                android:key="preference_download_auto_mobile"
+                android:title="On mobile networks"
+                android:defaultValue="false"/>
 
-      <CheckBoxPreference
-          android:key="preference_download_auto_wifi"
-          android:title="On wireless networks"
-          android:defaultValue="true"/>
+        <CheckBoxPreference
+                android:key="preference_download_auto_wifi"
+                android:title="On wireless networks"
+                android:defaultValue="true"/>
 
-  </PreferenceCategory>
+    </PreferenceCategory>
 
-  <PreferenceCategory
-          android:title="Development">
+    <PreferenceCategory
+            android:title="Legal Information">
+        <Preference
+                android:title="@string/menu_about">
+            <intent android:action="com.hoccer.xo.ABOUT"/>
+        </Preference>
+        <Preference
+                android:title="@string/menu_licenses">
+            <intent android:action="com.hoccer.xo.LICENSES"/>
+        </Preference>
+    </PreferenceCategory>
 
-    <CheckBoxPreference
-            android:key="preference_log_logcat"
-            android:title="Log via logcat"
-            android:defaultValue="true"/>
+    <PreferenceCategory
+            android:title="Development">
 
-    <CheckBoxPreference
-            android:key="preference_log_sd"
-            android:title="Log to SD card"
-            android:defaultValue="false"/>
+        <CheckBoxPreference
+                android:key="preference_log_logcat"
+                android:title="Log via logcat"
+                android:defaultValue="true"/>
 
-    <ListPreference
-            android:key="preference_log_level"
-            android:title="Global log level"
-            android:entries="@array/preference_log_level_names"
-            android:entryValues="@array/preference_log_level_values"
-            android:defaultValue="INFO"/>
+        <CheckBoxPreference
+                android:key="preference_log_sd"
+                android:title="Log to SD card"
+                android:defaultValue="false"/>
 
-      <CheckBoxPreference
-          android:key="preference_enable_server_side_support_mode"
-          android:title="Enable support mode on server"
-          android:defaultValue="false"/>
+        <ListPreference
+                android:key="preference_log_level"
+                android:title="Global log level"
+                android:entries="@array/preference_log_level_names"
+                android:entryValues="@array/preference_log_level_values"
+                android:defaultValue="INFO"/>
 
-    <EditTextPreference
-            android:key="preference_server_uri"
-            android:title="Server URI"
-            />
+        <CheckBoxPreference
+                android:key="preference_enable_server_side_support_mode"
+                android:title="Enable support mode on server"
+                android:defaultValue="false"/>
 
-  </PreferenceCategory>
+        <EditTextPreference
+                android:key="preference_server_uri"
+                android:title="Server URI"
+                />
+
+    </PreferenceCategory>
 
 </PreferenceScreen>
