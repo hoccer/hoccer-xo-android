@@ -197,7 +197,7 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
                 .cacheInMemory(false)
                 .imageScaleType(ImageScaleType.IN_SAMPLE_INT)
                 .bitmapConfig(Bitmap.Config.RGB_565)
-                //.delayBeforeLoading(250)
+                .considerExifParams(true)
                 .build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
                 .threadPoolSize(2)
