@@ -102,7 +102,7 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
             clientItem.setVisible(mContact.isClient());
             MenuItem groupItem = menu.findItem(R.id.menu_single_profile);
             groupItem.setVisible(mContact.isGroup());
-            getActionBar().setIcon(android.R.color.transparent);
+//            getActionBar().setIcon(android.R.color.transparent);
         }
 
         return result;

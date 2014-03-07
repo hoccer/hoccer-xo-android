@@ -8,6 +8,9 @@ import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
 
+import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -215,11 +218,36 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         }
     }
 
-    private class AttachmentOnClickListener implements View.OnClickListener {
+    private class AttachmentOnClickListener implements View.OnClickListener, DialogInterface.OnClickListener {
 
         @Override
         public void onClick(View v) {
-            clearAttachment();
+            // start dialog
+            AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
+            builder.setTitle(R.string.dialog_attachment_title);
+            builder.setItems(R.array.dialog_attachment_choose, this);
+            builder.setCancelable(false);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch(which) {
+                case 0:
+                    mAttachment = null;
+                    getXoActivity().selectAttachment();
+                    break;
+                case 1:
+                    clearAttachment();
+                    break;
+            }
         }
     }
 }

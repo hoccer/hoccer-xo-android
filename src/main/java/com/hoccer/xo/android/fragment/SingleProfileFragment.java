@@ -18,6 +18,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.apache.log4j.Logger;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -288,10 +290,25 @@ public class SingleProfileFragment extends XoFragment
 
     private void blockContact() {
         LOG.debug("blockContact()");
-        if (mContact != null) {
-            getXoClient().blockContact(mContact);
-            getXoActivity().finish();
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
+        builder.setNegativeButton(R.string.common_no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (mContact != null) {
+                    getXoClient().blockContact(mContact);
+                    getXoActivity().finish();
+                }
+            }
+        });
+        builder.setTitle(R.string.dialog_block_user_title);
+        builder.setMessage(R.string.dialog_block_user_message);
+        builder.create().show();
     }
 
     private void unblockContact() {

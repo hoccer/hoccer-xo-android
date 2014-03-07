@@ -309,7 +309,7 @@ public abstract class XoActivity extends Activity {
 
         if (requestCode == REQUEST_SELECT_AVATAR) {
             if (mAvatarSelection != null) {
-                if (data.getExtras() != null) {
+                if (data.getExtras() != null && data.getExtras().getParcelable("data") != null) {
                     data = selectedAvatarPreprocessing(data);
                     IContentObject co = ContentRegistry.get(this)
                             .createSelectedAvatar(mAvatarSelection, data);
@@ -368,7 +368,6 @@ public abstract class XoActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void navigateUp() {
         LOG.debug("navigateUp()");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && mUpEnabled) {

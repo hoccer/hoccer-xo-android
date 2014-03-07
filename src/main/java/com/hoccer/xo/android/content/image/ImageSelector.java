@@ -26,15 +26,11 @@ public class ImageSelector implements IContentSelector {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        intent.putExtra("crop", "true");
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        intent.putExtra("outputX", 300);
-        intent.putExtra("outputY", 300);
         intent.putExtra("return-data", true);
-
         return intent;
     }
+
+
 
     @Override
     public SelectedContent createObjectFromSelectionResult(Context context, Intent intent) {
