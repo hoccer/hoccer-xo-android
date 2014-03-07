@@ -72,11 +72,13 @@ public class GroupProfileFragment extends XoFragment
         mGroupNameText = (TextView) v.findViewById(R.id.profile_group_name);
         mGroupNameEdit = (EditText) v.findViewById(R.id.profile_group_name_edit);
         mGroupCreateButton = (Button) v.findViewById(R.id.profile_group_button_create);
+
+        final GroupProfileFragment fragment = this;
         mGroupCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 saveGroup();
-                getXoActivity().finish();
+                getXoActivity().startActionMode(fragment);
             }
         });
         mGroupMembersContainer = (LinearLayout) v.findViewById(R.id.profile_group_members_container);
