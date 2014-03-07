@@ -18,6 +18,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageButton;
@@ -43,19 +44,25 @@ public class ImageViewer extends ContentViewer<View> implements ImageLoadingList
     }
 
     @Override
-    protected void updateViewInternal(View view, ContentView contentView,
-            IContentObject contentObject, boolean isLightTheme) {
+    protected void updateViewInternal(final View view, ContentView contentView,
+            final IContentObject contentObject, boolean isLightTheme) {
         ImageButton imageButton = (ImageButton) view.findViewById(R.id.image_show_button);
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        String contentUrl = contentObject.getContentDataUrl();
+
+        if (contentObject.isContentAvailable() && contentUrl != null) {
+            imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.parse(contentObject.getContentDataUrl()), "image/*");
+                try {
+                    Activity activity = (Activity) view.getContext();
+                    activity.startActivity(intent);
+                } catch(ClassCastException e) {
+                    e.printStackTrace();
+                }
             }
         });
-
-        String contentUrl = contentObject.getContentDataUrl();
-        if (contentObject.isContentAvailable() && contentUrl != null) {
             loadImage(imageButton, contentUrl);
         } else {
             clearViewInternal(view);
