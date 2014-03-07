@@ -203,7 +203,7 @@ public class AttachmentTransferControlView extends View {
         } else {
             canvas.drawArc(mInnerWheel, -90, mShownProgress, false, mInnerWheelPaint);
         }
-        if (mPause) {
+        if (!mPause) {
             canvas.drawLines(mArrowPause, mOuterWheelPaint);
         } else if (mIsDownloadingProcess) {
             canvas.drawLines(mArrowDownload, mOuterWheelPaint);
@@ -222,6 +222,12 @@ public class AttachmentTransferControlView extends View {
         float percentage = progress / (float)mFileSize;
         mProgressCompleted = 360 * percentage;
         progressHandler.sendEmptyMessage(0);
+    }
+
+    public void setProgressImmediately(int progress) {
+        float percentage = progress / (float)mFileSize;
+        mShownProgress = 360 * percentage;
+        invalidate();
     }
 
     public void prepareToUpload() {

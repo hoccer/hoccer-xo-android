@@ -165,7 +165,7 @@ Do you wish to accept?</string>
     <string name="transfer_state_decrypting">Decrypting...</string>
     <string name="transfer_state_downloading">Downloading...</string>
     <string name="transfer_state_uploading">Uploading...</string>
-    <string name="transfer_state_pause">Pause</string>
+    <string name="transfer_state_pause">Paused</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>

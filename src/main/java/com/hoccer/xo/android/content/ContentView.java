@@ -349,11 +349,16 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
             case DOWNLOAD_NEW:
                 mTransferProgress.setVisibility(VISIBLE);
                 mTransferProgress.prepareToDownload();
-                mTransferProgress.setText(res.getString(R.string.transfer_state_downloading));
+                mTransferProgress.setText(res.getString(R.string.transfer_state_pause));
                 mTransferProgress.pause();
                 break;
             case DOWNLOAD_PAUSED:
+                length = object.getTransferLength();
+                progress = object.getTransferProgress();
+                mTransferProgress.setMax(length);
+                mTransferProgress.setProgressImmediately(progress);
                 mTransferProgress.setText(res.getString(R.string.transfer_state_pause));
+                mTransferProgress.prepareToDownload();
                 mTransferProgress.pause();
                 break;
             case DOWNLOAD_DOWNLOADING:
@@ -391,6 +396,10 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 mTransferProgress.spin();
                 break;
             case UPLOAD_PAUSED:
+                length = object.getTransferLength();
+                progress = object.getTransferProgress();
+                mTransferProgress.setMax(length);
+                mTransferProgress.setProgressImmediately(progress);
                 mTransferProgress.setText(res.getString(R.string.transfer_state_pause));
                 mTransferProgress.pause();
                 break;
