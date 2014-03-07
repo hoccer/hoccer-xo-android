@@ -42,7 +42,6 @@ public class GroupProfileFragment extends XoFragment
 
     private Mode mMode;
 
-    private String mGroupName;
     private TextView mGroupNameText;
     private EditText mGroupNameEdit;
     private Button mGroupCreateButton;
@@ -92,6 +91,21 @@ public class GroupProfileFragment extends XoFragment
         LOG.debug("onResume()");
         super.onResume();
         getXoClient().registerContactListener(this);
+
+        if (mGroupMemberAdapter == null) {
+            mGroupMemberAdapter = new GroupContactsAdapter(getXoActivity(), mGroup);
+            mGroupMemberAdapter.onCreate();
+            mGroupMemberAdapter.onResume();
+
+            mGroupMemberAdapter.setFilter(new ContactsAdapter.Filter() {
+                @Override
+                public boolean shouldShow(TalkClientContact contact) {
+                    return contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup);
+                }
+            });
+            mGroupMembersList.setAdapter(mGroupMemberAdapter);
+        }
+        mGroupMemberAdapter.requestReload();
     }
 
     @Override
@@ -136,6 +150,7 @@ public class GroupProfileFragment extends XoFragment
         if (newGroupName.isEmpty()) {
             newGroupName = "";
         }
+        mGroupNameText.setText(newGroupName);
 
         if (mMode == Mode.CREATE_GROUP) {
             if (mGroup != null && !mGroup.isGroupRegistered()) {
@@ -144,9 +159,7 @@ public class GroupProfileFragment extends XoFragment
                 mMode = Mode.PROFILE;
             }
         } else if (mMode == Mode.EDIT_GROUP) {
-            if (!newGroupName.equals(mGroupName)) {
-                getXoClient().setGroupName(mGroup, newGroupName);
-            }
+            getXoClient().setGroupName(mGroup, newGroupName);
         }
     }
 
@@ -193,14 +206,18 @@ public class GroupProfileFragment extends XoFragment
             name = groupPresence.getGroupName();
         }
 
-        if (name == null) {
-            name = "";
+        if (mMode == Mode.PROFILE || mMode == Mode.CREATE_GROUP) {
+            if (name == null) {
+                name = "";
+            }
+        } else if (mMode == Mode.EDIT_GROUP) {
+            name = mGroupNameEdit.getText().toString();
         }
-        mGroupName = name;
+
         mGroupNameText.setText(name);
         mGroupNameEdit.setText(name);
 
-        switch(mMode) {
+        switch (mMode) {
             case PROFILE:
                 mGroupNameText.setVisibility(View.VISIBLE);
                 mGroupNameEdit.setVisibility(View.GONE);
@@ -223,20 +240,6 @@ public class GroupProfileFragment extends XoFragment
             default:
                 break;
         }
-
-        if (mGroupMemberAdapter == null) {
-            mGroupMemberAdapter = new GroupContactsAdapter(getXoActivity(), mGroup);
-            mGroupMemberAdapter.onCreate();
-            mGroupMemberAdapter.onResume();
-        }
-        mGroupMemberAdapter.setFilter(new ContactsAdapter.Filter() {
-            @Override
-            public boolean shouldShow(TalkClientContact contact) {
-                return contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup);
-            }
-        });
-        mGroupMemberAdapter.requestReload();
-        mGroupMembersList.setAdapter(mGroupMemberAdapter);
     }
 
     public void refreshContact(TalkClientContact newContact) {
