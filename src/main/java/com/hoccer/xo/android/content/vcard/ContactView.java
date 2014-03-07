@@ -216,7 +216,12 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
             checkInterrupt();
 
             // get the name of the contact
-            final String name = card.getFormattedName().getValue();
+            final String name;
+            if(card.getFormattedName() != null) {
+                name = card.getFormattedName().getValue();
+            } else {
+                name = "Contact";
+            }
 
             checkInterrupt();
 
