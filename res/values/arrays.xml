@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="dialog_attachment_choose">
+        <item>@string/dialog_attachment_choose_reselect_option</item>
+        <item>@string/dialog_attachment_choose_discard_option</item>
+    </string-array>
+</resources>
