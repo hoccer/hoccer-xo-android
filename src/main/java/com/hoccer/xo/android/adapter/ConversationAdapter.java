@@ -346,10 +346,20 @@ public class ConversationAdapter extends XoAdapter
     private void updateViewOutgoing(View view, TalkClientMessage message) {
         LOG.trace("updateViewOutgoing(" + message.getClientMessageId() + ")");
         updateViewCommon(view, message);
+        if(mContact.isGroup()) {
+            View avatar = view.findViewById(R.id.message_avatar);
+            avatar.setVisibility(View.GONE);
+        }
     }
 
     private void updateViewIncoming(View view, TalkClientMessage message) {
         LOG.trace("updateViewIncoming(" + message.getClientMessageId() + ")");
+        if(mContact.isGroup()) {
+            TextView contactName = (TextView) view.findViewById(R.id.tv_message_name);
+            String name = message.getSenderContact().getName();
+            contactName.setText(name);
+            contactName.setVisibility(View.VISIBLE);
+        }
         updateViewCommon(view, message);
     }
 
@@ -360,14 +370,18 @@ public class ConversationAdapter extends XoAdapter
         }
         setMessageText(view, message);
         setTimestamp(view, message);
-        setAvatar(view, sendingContact);
+        if(mContact.isGroup()) {
+            setAvatar(view, sendingContact);
+        } else {
+            View avatar = view.findViewById(R.id.message_avatar);
+            avatar.setVisibility(View.GONE);
+        }
         setAttachment(view, message);
     }
 
     private void setAttachment(View view, TalkClientMessage message) {
         ContentView contentView = (ContentView) view.findViewById(R.id.message_content);
         int displayHeight = mResources.getDisplayMetrics().heightPixels;
-        // XXX better place for this? also we might want to use the measured height of our list view
         contentView.setMaxContentHeight(Math.round(displayHeight * 0.8f));
 
         IContentObject contentObject = null;
@@ -389,11 +403,10 @@ public class ConversationAdapter extends XoAdapter
         }
     }
 
-    // TODO: dont reload the avatar for each list item! Cache them!!
     private void setAvatar(View view, final TalkClientContact sendingContact) {
         final AvatarView avatarView = (AvatarView) view.findViewById(R.id.message_avatar);
         avatarView.setContact(sendingContact);
-        String avatarUri = null;
+        avatarView.setVisibility(View.VISIBLE);
         if (sendingContact != null) {
             avatarView.setOnClickListener(new View.OnClickListener() {
                 final TalkClientContact contact = sendingContact;
@@ -410,7 +423,6 @@ public class ConversationAdapter extends XoAdapter
 
     private void setMessageText(View view, TalkClientMessage message) {
         TextView text = (TextView) view.findViewById(R.id.message_text);
-//        text.setMovementMethod(LinkMovementMethod.getInstance());
         String textString = message.getText();
         if (textString == null) {
             text.setText(""); // XXX

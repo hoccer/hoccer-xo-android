@@ -265,7 +265,7 @@ public abstract class XoActivity extends Activity {
             FileOutputStream out = new FileOutputStream(destination);
             image.compress(Bitmap.CompressFormat.JPEG, 90, out);
 
-            Uri uri = getImageContentUri(getBaseContext(), destination);
+            Uri uri = getImageContentUri(getBaseContext() , destination);
             data.setData(uri);
             return data;
         } catch (IOException ex) {
