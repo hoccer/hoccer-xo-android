@@ -20,7 +20,7 @@
             android:id="@+id/menu_profile_unblock"
             android:orderInCategory="103"
             android:showAsAction="ifRoom"
-            android:icon="@drawable/ic_dark_social_add_person"
+            android:icon="@drawable/ic_unblock"
             android:title="@string/profile_user_unblock_button"/>
 
     <item
