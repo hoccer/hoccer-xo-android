@@ -170,8 +170,8 @@ Do you wish to accept?</string>
     <string name="dialog_attachment_choose_discard_option">remove attachment</string>
     <string name="dialog_attachment_title">Edit Attachment</string>
     <string name="dialog_block_user_title">Block Contact</string>
-    <string name="dialog_block_user_message">Will you really block this contact? You will not
-        receive any messages from this contact anymore.
+    <string name="dialog_block_user_message">Do you really want to block this contact? You will not
+        receive any further messages from this contact.
     </string>
 
     <string-array name="preference_log_level_names">
