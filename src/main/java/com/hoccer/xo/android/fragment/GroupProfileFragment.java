@@ -135,13 +135,13 @@ public class GroupProfileFragment extends XoFragment
                 getActivity().startActionMode(this);
                 break;
             case R.id.menu_group_profile_reject_invitation:
-                checkRejectInvitation();
+                XoDialogs.confirmRejectInvitationGroup(getXoActivity(), mGroup);
                 break;
             case R.id.menu_group_profile_join:
                 joinGroup();
                 break;
             case R.id.menu_group_profile_leave:
-                checkLeaveGroup();
+                XoDialogs.confirmLeaveGroup(getXoActivity(), mGroup);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -301,22 +301,8 @@ public class GroupProfileFragment extends XoFragment
         XoDialogs.selectGroupManage(getXoActivity(), mGroup);
     }
 
-    private void deleteGroup() {
-        getXoClient().deleteContact(mGroup);
-    }
-
-    private void rejectInvitation() {
-        leaveGroup();
-        getXoActivity().finish();
-    }
-
     private void joinGroup() {
         getXoClient().joinGroup(mGroup.getGroupId());
-        getXoActivity().finish();
-    }
-
-    private void leaveGroup() {
-        getXoClient().leaveGroup(mGroup.getGroupId());
         getXoActivity().finish();
     }
 
@@ -451,7 +437,7 @@ public class GroupProfileFragment extends XoFragment
         LOG.debug("onOptionsItemSelected(" + menuItem.toString() + ")");
         switch (menuItem.getItemId()) {
             case R.id.menu_group_profile_delete:
-                checkDeleteGroup();
+                XoDialogs.confirmDeleteGroup(getXoActivity(), mGroup);
                 break;
             case R.id.menu_group_profile_add_person:
                 manageGroupMembers();
@@ -471,75 +457,4 @@ public class GroupProfileFragment extends XoFragment
         update(mGroup);
     }
 
-    private void checkDeleteGroup() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
-        builder.setTitle(R.string.delete_group_title);
-        builder.setMessage(R.string.delete_group_question);
-        builder.setCancelable(true);
-        builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int index) {
-                LOG.debug("onClick(Cancel)");
-                dialog.dismiss();
-            }
-        });
-        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int index) {
-                LOG.debug("onClick(Ok)");
-                deleteGroup();
-                dialog.dismiss();
-            }
-        });
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    private void checkRejectInvitation() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
-        builder.setTitle(R.string.reject_invitation_title);
-        builder.setMessage(R.string.reject_invitation_question);
-        builder.setCancelable(true);
-        builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int index) {
-                LOG.debug("onClick(Cancel)");
-                dialog.dismiss();
-            }
-        });
-        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int index) {
-                LOG.debug("onClick(Ok)");
-                rejectInvitation();
-                dialog.dismiss();
-            }
-        });
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    private void checkLeaveGroup() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
-        builder.setTitle(R.string.leave_title);
-        builder.setMessage(R.string.leave_question);
-        builder.setCancelable(true);
-        builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int index) {
-                LOG.debug("onClick(Cancel)");
-                dialog.dismiss();
-            }
-        });
-        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int index) {
-                LOG.debug("onClick(Ok)");
-                leaveGroup();
-                dialog.dismiss();
-            }
-        });
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-    }
 }
