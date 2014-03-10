@@ -208,13 +208,13 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
         LOG.info("setting up directory structure");
         ensureDirectory(getAttachmentDirectory());
         ensureDirectory(getAvatarDirectory());
-        ensureNomedia(getAvatarDirectory());
+        ensureNoMedia(getAvatarDirectory());
         ensureDirectory(getGeneratedDirectory());
-        ensureNomedia(getGeneratedDirectory());
+        ensureNoMedia(getGeneratedDirectory());
         ensureDirectory(getEncryptedUploadDirectory());
-        ensureNomedia(getEncryptedUploadDirectory());
+        ensureNoMedia(getEncryptedUploadDirectory());
         ensureDirectory(getEncryptedDownloadDirectory());
-        ensureNomedia(getEncryptedDownloadDirectory());
+        ensureNoMedia(getEncryptedDownloadDirectory());
 
         // create executor
         LOG.info("creating background executor");
@@ -279,19 +279,23 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
     public static void ensureDirectory(File directory) {
         if(!directory.exists()) {
             LOG.info("creating directory " + directory.toString());
-            directory.mkdirs();
+            if (!directory.mkdirs()) {
+                LOG.info("Error creating directory " + directory.toString());
+            }
         }
     }
 
-    public static void ensureNomedia(File directory) {
+    public static void ensureNoMedia(File directory) {
         if(directory.exists()) {
-            File nomedia = new File(directory, ".nomedia");
-            if(!nomedia.exists()) {
-                LOG.info("creating nomedia marker " + nomedia.toString());
+            File noMedia = new File(directory, ".nomedia");
+            if(!noMedia.exists()) {
+                LOG.info("creating noMedia marker " + noMedia.toString());
                 try {
-                    nomedia.createNewFile();
+                    if (!noMedia.createNewFile()) {
+                        LOG.info("Error creating directory " + noMedia.toString());
+                    }
                 } catch (IOException e) {
-                    LOG.error("error creating " + nomedia.toString(), e);
+                    LOG.error("error creating " + noMedia.toString(), e);
                 }
             }
         }
