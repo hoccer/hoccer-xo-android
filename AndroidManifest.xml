@@ -99,7 +99,6 @@
         <activity
                 android:name="com.hoccer.xo.android.activity.SingleProfileActivity"
                 android:label="@string/app_name"
-                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:screenOrientation="portrait"
                 android:windowSoftInputMode="stateHidden">
             <meta-data
@@ -111,7 +110,6 @@
         <activity
                 android:name="com.hoccer.xo.android.activity.GroupProfileActivity"
                 android:label="@string/app_name"
-                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:screenOrientation="portrait"
                 android:windowSoftInputMode="stateHidden">
             <meta-data
