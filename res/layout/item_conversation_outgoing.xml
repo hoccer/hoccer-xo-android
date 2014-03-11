@@ -28,6 +28,7 @@
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@id/message_avatar"
             android:layout_alignWithParentIfMissing="true"
+            android:textIsSelectable="true"
             android:autoLink="all"
             android:minHeight="50dp"
             android:gravity="center_vertical"
