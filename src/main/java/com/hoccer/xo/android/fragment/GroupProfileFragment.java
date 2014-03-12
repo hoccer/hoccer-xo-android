@@ -313,7 +313,14 @@ public class GroupProfileFragment extends XoFragment
     public void onContactAdded(TalkClientContact contact) {
         LOG.debug("onContactAdded");
         if (isMyContact(contact)) {
-            getXoActivity().startActionMode(this);
+
+            final GroupProfileFragment fragment = this;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getXoActivity().startActionMode(fragment);
+                }
+            });
         }
     }
 

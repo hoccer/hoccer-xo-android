@@ -163,9 +163,11 @@ public abstract class ContactsAdapter extends XoAdapter
             TalkClientContact contact = mDatabase.findClientContactById(c.getClientContactId());
             if(contact.isClient()) {
                 mClientContacts.add(contact);
+                requestReload();
             }
             if(contact.isGroup()) {
                 mGroupContacts.add(contact);
+                requestReload();
             }
         } catch (SQLException e) {
             e.printStackTrace();
