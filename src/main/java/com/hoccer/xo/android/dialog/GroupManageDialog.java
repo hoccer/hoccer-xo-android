@@ -62,7 +62,7 @@ public class GroupManageDialog extends DialogFragment {
             mAdapter.setFilter(new ContactsAdapter.Filter() {
                 @Override
                 public boolean shouldShow(TalkClientContact contact) {
-                    return (!contact.isGroup());
+                    return !(contact.isGroup() || contact.isSelf());
                 }
             });
         }

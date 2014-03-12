@@ -97,7 +97,7 @@ public class GroupProfileFragment extends XoFragment
             mGroupMemberAdapter.setFilter(new ContactsAdapter.Filter() {
                 @Override
                 public boolean shouldShow(TalkClientContact contact) {
-                    return contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup);
+                    return contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup) || contact.isSelf();
                 }
             });
             mGroupMembersList.setAdapter(mGroupMemberAdapter);
