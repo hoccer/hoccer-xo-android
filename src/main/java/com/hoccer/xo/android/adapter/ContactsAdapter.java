@@ -103,7 +103,10 @@ public abstract class ContactsAdapter extends XoAdapter
                     newTokens = new ArrayList<TalkClientSmsToken>();
                 }
 
+                TalkClientContact selfContact = mDatabase.findSelfContact(false);
                 List<TalkClientContact> newClients = mDatabase.findAllClientContacts();
+                newClients.add(selfContact);
+
                 List<TalkClientContact> newGroups = mDatabase.findAllGroupContacts();
 
                 LOG.debug("found " + newClients.size() + " friends " + newGroups.size() + " groups");
@@ -160,9 +163,11 @@ public abstract class ContactsAdapter extends XoAdapter
             TalkClientContact contact = mDatabase.findClientContactById(c.getClientContactId());
             if(contact.isClient()) {
                 mClientContacts.add(contact);
+                requestReload();
             }
             if(contact.isGroup()) {
                 mGroupContacts.add(contact);
+                requestReload();
             }
         } catch (SQLException e) {
             e.printStackTrace();

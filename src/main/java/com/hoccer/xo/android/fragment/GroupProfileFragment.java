@@ -1,7 +1,5 @@
 package com.hoccer.xo.android.fragment;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.*;
@@ -72,13 +70,10 @@ public class GroupProfileFragment extends XoFragment
         mGroupNameText = (TextView) v.findViewById(R.id.profile_group_name);
         mGroupNameEdit = (EditText) v.findViewById(R.id.profile_group_name_edit);
         mGroupCreateButton = (Button) v.findViewById(R.id.profile_group_button_create);
-
-        final GroupProfileFragment fragment = this;
         mGroupCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 saveGroup();
-                getXoActivity().startActionMode(fragment);
             }
         });
         mGroupMembersContainer = (LinearLayout) v.findViewById(R.id.profile_group_members_container);
@@ -102,7 +97,7 @@ public class GroupProfileFragment extends XoFragment
             mGroupMemberAdapter.setFilter(new ContactsAdapter.Filter() {
                 @Override
                 public boolean shouldShow(TalkClientContact contact) {
-                    return contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup);
+                    return contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup) || contact.isSelf();
                 }
             });
             mGroupMembersList.setAdapter(mGroupMemberAdapter);
@@ -317,6 +312,16 @@ public class GroupProfileFragment extends XoFragment
     @Override
     public void onContactAdded(TalkClientContact contact) {
         LOG.debug("onContactAdded");
+        if (isMyContact(contact)) {
+
+            final GroupProfileFragment fragment = this;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getXoActivity().startActionMode(fragment);
+                }
+            });
+        }
     }
 
     @Override
