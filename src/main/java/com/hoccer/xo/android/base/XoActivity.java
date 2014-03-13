@@ -27,7 +27,6 @@ import com.hoccer.xo.release.R;
 
 import org.apache.log4j.Logger;
 
-import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.TaskStackBuilder;
@@ -38,7 +37,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,10 +58,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Base class for our activities
- *
+ * <p/>
  * All our activities inherit from SherlockFragmentActivity
  * to maintain a common look and feel in the whole application.
- *
+ * <p/>
  * These activites continually keep the background service which
  * we use for connection retention alive by calling it via RPC.
  */
@@ -77,31 +75,49 @@ public abstract class XoActivity extends Activity {
 
     protected Logger LOG = null;
 
-    /** Executor for background tasks */
+    /**
+     * Executor for background tasks
+     */
     ScheduledExecutorService mBackgroundExecutor;
 
-    /** RPC interface to service (null when not connected) */
+    /**
+     * RPC interface to service (null when not connected)
+     */
     IXoClientService mService;
 
-    /** Service connection object managing mService */
+    /**
+     * Service connection object managing mService
+     */
     ServiceConnection mServiceConnection;
 
-    /** Timer for keepalive calls to the service */
+    /**
+     * Timer for keepalive calls to the service
+     */
     ScheduledFuture<?> mKeepAliveTimer;
 
-    /** Talk client database */
+    /**
+     * Talk client database
+     */
     XoClientDatabase mDatabase;
 
-    /** List of all talk fragments */
+    /**
+     * List of all talk fragments
+     */
     ArrayList<IXoFragment> mTalkFragments = new ArrayList<IXoFragment>();
 
-    /** Ongoing avatar selection */
+    /**
+     * Ongoing avatar selection
+     */
     ContentSelection mAvatarSelection = null;
 
-    /** Ongoing attachment selection */
+    /**
+     * Ongoing attachment selection
+     */
     ContentSelection mAttachmentSelection = null;
 
-    /** ZXing wrapper service */
+    /**
+     * ZXing wrapper service
+     */
     IntentIntegrator mBarcodeService = null;
 
     boolean mUpEnabled = false;
@@ -256,17 +272,17 @@ public abstract class XoActivity extends Activity {
         return true;
     }
 
-    private Intent selectedAvatarPreprocessing(Intent data) {
+    private Intent selectedAvatarPreProcessing(Intent data) {
         try {
             String uuid = UUID.randomUUID().toString();
-            String filePath = XoApplication.getAvatarDirectory().getPath() + File.separator + uuid +  ".jpg";
+            String filePath = XoApplication.getAvatarDirectory().getPath() + File.separator + uuid + ".jpg";
 
             File destination = new File(filePath);
             Bitmap image = data.getExtras().getParcelable("data");
             FileOutputStream out = new FileOutputStream(destination);
             image.compress(Bitmap.CompressFormat.JPEG, 90, out);
 
-            Uri uri = getImageContentUri(getBaseContext() , destination);
+            Uri uri = getImageContentUri(getBaseContext(), destination);
             data.setData(uri);
             return data;
         } catch (IOException ex) {
@@ -311,7 +327,7 @@ public abstract class XoActivity extends Activity {
         if (requestCode == REQUEST_SELECT_AVATAR) {
             if (mAvatarSelection != null) {
                 if (data.getExtras() != null && data.getExtras().getParcelable("data") != null) {
-                    data = selectedAvatarPreprocessing(data);
+                    data = selectedAvatarPreProcessing(data);
                     IContentObject co = ContentRegistry.get(this)
                             .createSelectedAvatar(mAvatarSelection, data);
                     if (co != null) {
