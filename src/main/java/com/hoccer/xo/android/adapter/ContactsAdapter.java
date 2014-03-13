@@ -159,19 +159,7 @@ public abstract class ContactsAdapter extends XoAdapter
 
     @Override
     public void onContactAdded(TalkClientContact c) {
-        try {
-            TalkClientContact contact = mDatabase.findClientContactById(c.getClientContactId());
-            if(contact.isClient()) {
-                mClientContacts.add(contact);
-                requestReload();
-            }
-            if(contact.isGroup()) {
-                mGroupContacts.add(contact);
-                requestReload();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        requestReload();
     }
 
     @Override
