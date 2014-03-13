@@ -53,6 +53,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -257,10 +258,10 @@ public abstract class XoActivity extends Activity {
 
     private Intent selectedAvatarPreprocessing(Intent data) {
         try {
-            File destination = new File(
-                    XoApplication.getAttachmentDirectory().getPath() + File.separator
-                            + "my_avatar.jpg");
+            String uuid = UUID.randomUUID().toString();
+            String filePath = XoApplication.getAvatarDirectory().getPath() + File.separator + uuid +  ".jpg";
 
+            File destination = new File(filePath);
             Bitmap image = data.getExtras().getParcelable("data");
             FileOutputStream out = new FileOutputStream(destination);
             image.compress(Bitmap.CompressFormat.JPEG, 90, out);

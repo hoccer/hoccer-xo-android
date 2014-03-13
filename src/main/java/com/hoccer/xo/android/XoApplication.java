@@ -97,14 +97,16 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
     }
 
     public static File getAvatarDirectory() {
-        return new File(INTERNAL_STORAGE, XoConfiguration.INTERNAL_AVATARS);
+        return new File(EXTERNAL_STORAGE, XoConfiguration.INTERNAL_AVATARS);
     }
 
     public static File getAvatarLocation(TalkClientDownload download) {
         if(download.getState() == TalkClientDownload.State.COMPLETE) {
+            File avatarDir = getAvatarDirectory();
+            ensureDirectory(avatarDir);
             String dataFile = download.getDataFile();
             if(dataFile != null) {
-                return new File(getAvatarDirectory(), dataFile);
+                return new File(avatarDir, dataFile);
             }
         }
         return null;
@@ -208,7 +210,6 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
         LOG.info("setting up directory structure");
         ensureDirectory(getAttachmentDirectory());
         ensureDirectory(getAvatarDirectory());
-        ensureNoMedia(getAvatarDirectory());
         ensureDirectory(getGeneratedDirectory());
         ensureNoMedia(getGeneratedDirectory());
         ensureDirectory(getEncryptedUploadDirectory());
