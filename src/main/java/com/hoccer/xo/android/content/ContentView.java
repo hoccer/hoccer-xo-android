@@ -256,7 +256,9 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         // disable content child when we are showing the footer
         if(mContentChild != null) {
             mContentChild.setEnabled(!footerVisible);
-            if (!footerVisible) {
+            if (footerVisible) {
+                mContentWrapper.setVisibility(View.INVISIBLE);
+            } else {
                 mContentWrapper.setVisibility(View.VISIBLE);
             }
         }
