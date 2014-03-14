@@ -174,6 +174,10 @@ Do you wish to accept?</string>
         receive any further messages from this contact.
     </string>
 
+    <!-- Preferences -->
+    <string name="preference_keysize_summary">Renew RSA key with selected size</string>
+    <string name="preference_keysize_title">RSA Key Size</string>
+
     <string-array name="preference_log_level_names">
         <item>Info</item>
         <item>Debug</item>

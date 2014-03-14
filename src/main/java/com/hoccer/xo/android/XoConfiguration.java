@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import org.apache.log4j.Layout;
 import org.apache.log4j.PatternLayout;
 
+import java.sql.SQLException;
 import java.util.Locale;
 
 /**
@@ -92,6 +93,12 @@ public class XoConfiguration {
                     XoApplication.getXoClient().hello();
                 } else if(key.equals("preference_server_uri")) {
                     XoApplication.reinitializeXoClient();
+                } else if(key.equals("preference_keysize")) {
+                    try {
+                        XoApplication.getXoClient().regenerateKeyPair();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         };

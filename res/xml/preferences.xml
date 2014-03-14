@@ -18,6 +18,19 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+            android:title="Encryption">
+
+        <ListPreference
+                android:key="preference_keysize"
+                android:entries="@array/keysizes"
+                android:summary="@string/preference_keysize_summary"
+                android:entryValues="@array/keysize_values"
+                android:title="@string/preference_keysize_title"
+                android:defaultValue="2048" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
             android:title="Legal Information">
         <Preference
                 android:title="@string/menu_about">
@@ -28,5 +41,7 @@
             <intent android:action="com.hoccer.xo.LICENSES"/>
         </Preference>
     </PreferenceCategory>
+
+
 
 </PreferenceScreen>
