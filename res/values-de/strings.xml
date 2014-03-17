@@ -51,6 +51,7 @@
     <string name="messaging_loading">Lädt...</string>
     <string name="messaging_no_messages"></string>
     <string name="messaging_invited_join">Gruppe beitreten</string>
+    <string name="menu_copy_attachment">Kopieren</string>
 
     <!-- Pairing fragment -->
     <string name="pairing_token_info">Gib diesen Code einem Freund</string>
