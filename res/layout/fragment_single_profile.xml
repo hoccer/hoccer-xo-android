@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
         android:layout_height="match_parent">
 
 
@@ -60,8 +60,7 @@
                 android:layout_below="@+id/tv_profile_name_text"
                 android:layout_marginTop="15dp"
                 android:layout_alignLeft="@+id/tv_profile_name_text"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:text="Arthur Dent"/>
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"/>
 
         <TextView
                 android:id="@+id/tv_profile_key_text"
@@ -90,8 +89,7 @@
                 android:layout_below="@+id/tv_profile_key_text"
                 android:layout_marginTop="15dp"
                 android:layout_alignLeft="@+id/tv_profile_key_text"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-                android:text="42:d4:8c:13:37:94:32:23"/>
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"/>
 
         <TextView
                 android:id="@+id/tv_profile_key_advice"
@@ -102,7 +100,8 @@
                 android:layout_alignRight="@+id/v_profile_key_delimiter"
                 android:textColor="#838383"
                 android:textSize="10dp"
-                android:text="For extra security compare this fingerprint with the fingerprint seen by your friends in your contact card."/>
+                android:text="For extra security compare this fingerprint with the fingerprint seen by your friends in your contact card."
+                tools:ignore="HardcodedText"/>
 
     </RelativeLayout>
 

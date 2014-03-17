@@ -6,7 +6,6 @@
               android:layout_height="match_parent">
 
     <TextView
-        android:text="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXxx"
         android:id="@+id/licenses_textview"
         android:textAppearance="@android:style/TextAppearance.Small"
         android:textSize="7dp"
