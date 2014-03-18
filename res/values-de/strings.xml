@@ -185,10 +185,10 @@
     <string name="preference_keysize_summary">RSA Schlüssel</string>
     <string name="preference_keysize_title">RSA Schlüssellänge</string>
     <string name="category">Kategorie</string>
-    <string name="pref_auto_downloads_mobile">On mobile networks</string>
-    <string name="pref_auto_download_wifi">On wireless networks</string>
-    <string name="pref_auto_download">Automatic downloads</string>
-    <string name="pref_legal_information">Legal Information</string>
+    <string name="pref_auto_downloads_mobile">Im mobilen Netz</string>
+    <string name="pref_auto_download_wifi">Im WLAN Netz</string>
+    <string name="pref_auto_download">Automatischer Download</string>
+    <string name="pref_legal_information">Rechtliches</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>
