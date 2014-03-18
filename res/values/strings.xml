@@ -35,7 +35,8 @@
     <string name="contacts_empty_pairing">Add a contact</string>
     <string name="contacts_sms_invitation">Invitation</string>
     <string name="contacts_sms_invitation_description">has sent you an invitation via SMS.
-Do you wish to accept?</string>
+        Do you wish to accept?
+    </string>
 
     <!-- Contact list items -->
     <string name="contact_name_new_client">New Friend</string>
@@ -50,6 +51,7 @@ Do you wish to accept?</string>
     <string name="messaging_loading">Loading...</string>
     <string name="messaging_no_messages"></string>
     <string name="messaging_invited_join">Join group</string>
+    <string name="menu_copy_attachment">Copy</string>
 
     <!-- Pairing fragment -->
     <string name="pairing_token_info">Give this token to someone:</string>
@@ -74,7 +76,8 @@ Do you wish to accept?</string>
     <string name="profile_status_edit">Hello there!</string>
     <string name="profile_status_set_button">Set new status</string>
     <string name="profile_self_register_button">Register</string>
-    <string name="profile_user_block_status">This user is blocked. Unblock to receive messages.</string>
+    <string name="profile_user_block_status">This user is blocked. Unblock to receive messages.
+    </string>
     <string name="profile_user_block_button">Block this user</string>
     <string name="profile_user_unblock_button">Unblock this user</string>
     <string name="profile_user_depair_button">Depair this user</string>
@@ -114,11 +117,15 @@ Do you wish to accept?</string>
 
     <!-- Contact deletion dialog -->
     <string name="deletecontact_title">Delete contact?</string>
-    <string name="deletecontact_question">Are you sure you want to delete this contact? All messages from and to it will be deleted.</string>
+    <string name="deletecontact_question">Are you sure you want to delete this contact? All messages
+        from and to it will be deleted.
+    </string>
 
     <!-- Depair dialog -->
     <string name="depaircontact_title">Depair contact?</string>
-    <string name="depaircontact_question">Are you sure you want to depair this contact? You will not be able to communicate unless you repair.</string>
+    <string name="depaircontact_question">Are you sure you want to depair this contact? You will not
+        be able to communicate unless you repair.
+    </string>
 
     <!-- Group kick selection dialog -->
     <string name="kick_title">Kick from group</string>
@@ -136,9 +143,13 @@ Do you wish to accept?</string>
     <string name="delete_group_title">Delete group</string>
     <string name="delete_group_question">Are you sure you want to delete this group?</string>
     <string name="reject_invitation_title">Reject invitation</string>
-    <string name="reject_invitation_question">Are you sure you want to reject this invitation? You will have to be re-invited to participate again.</string>
+    <string name="reject_invitation_question">Are you sure you want to reject this invitation? You
+        will have to be re-invited to participate again.
+    </string>
     <string name="leave_title">Leave group</string>
-    <string name="leave_question">Are you sure you want to leave this group? You will have to be re-invited to participate again.</string>
+    <string name="leave_question">Are you sure you want to leave this group? You will have to be
+        re-invited to participate again.
+    </string>
     <string name="common_group">Group</string>
     <string name="common_group_invite">Invited</string>
     <string name="common_friend">Friend</string>
@@ -147,7 +158,8 @@ Do you wish to accept?</string>
     <string name="file_chooser_string">choose a file to attach</string>
     <string name="open_file">open file</string>
     <string name="error_no_such_app">there is no App installed which could handle this File</string>
-    <string name="error_no_videoplayer">can\'t handle video. Please install a proper videoplayer.</string>
+    <string name="error_no_videoplayer">can\'t handle video. Please install a proper videoplayer.
+    </string>
     <string name="menu_group_delete_profile">Close group</string>
     <string name="menu_group_edit_profile">Edit group</string>
     <string name="menu_group_profile_reject_invitation">Reject invitation</string>
@@ -177,6 +189,11 @@ Do you wish to accept?</string>
     <!-- Preferences -->
     <string name="preference_keysize_summary">Renew RSA key with selected size</string>
     <string name="preference_keysize_title">RSA Key Size</string>
+    <string name="category">Category</string>
+    <string name="pref_auto_downloads_mobile">On mobile networks</string>
+    <string name="pref_auto_download_wifi">On wireless networks</string>
+    <string name="pref_auto_download">Automatic downloads</string>
+    <string name="pref_legal_information">Legal Information</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:gravity="center_horizontal"
+        xmlns:tools="http://schemas.android.com/tools" android:gravity="center_horizontal"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -33,7 +33,7 @@
         android:textColor="@android:color/primary_text_light"
         android:textStyle="bold"
         android:textIsSelectable="true"
-        android:typeface="serif"/>
+        android:typeface="serif" tools:ignore="HardcodedText"/>
 
     <Button
         android:id="@+id/pairing_token_sms"

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Hoccer XO</string>
+
+    <string name="demo_message">Lorem ipsum dolor...</string>
+
+    <!-- common strings -->
+    <string name="common_ok">Ok</string>
+    <string name="common_cancel">Abbrechen</string>
+    <string name="common_yes">Ja</string>
+    <string name="common_no">Nein</string>
+    <string name="common_done">Fertig</string>
+    <string name="common_decline">Ablehnen</string>
+    <string name="common_accept">Annehmen</string>
+
+    <!-- Menu entries -->
+    <string name="menu_my_profile">Mein Profil</string>
+    <string name="menu_pair">Kontakt hinzufügen</string>
+    <string name="menu_group_profile_add_person">Hinzufügen</string>
+    <string name="menu_new_group">Gruppe erstellen</string>
+    <string name="menu_scan_code">Code scannen</string>
+    <string name="menu_show_code">Code anzeigen</string>
+    <string name="menu_add_attachment">Anhang hinzufügen</string>
+    <string name="menu_profile">Profil</string>
+    <string name="menu_settings">Einstellungen</string>
+    <string name="menu_about">Über uns</string>
+    <string name="menu_reconnect">erneut verbinden</string>
+    <string name="menu_quit">schließen</string>
+
+    <!-- Contacts fragment -->
+    <string name="contacts_category_friends">Freunde</string>
+    <string name="contacts_category_groups">Gruppen</string>
+    <string name="contacts_empty_info">Du hast noch keine Kontakte hinzugefügt</string>
+    <string name="contacts_empty_pairing">Kontakt hinzufügen</string>
+    <string name="contacts_sms_invitation">Einladung</string>
+    <string name="contacts_sms_invitation_description">hat dir eine SMS-Einladung geschickt.
+        Möchtest du die Einladung annehmen?
+    </string>
+
+    <!-- Contact list items -->
+    <string name="contact_name_new_client">Neuer Kontakt</string>
+    <string name="contact_name_new_group">Neue Gruppe</string>
+    <string name="contact_status">Hallo!</string>
+    <string name="contact_role_owner">Besitzer</string>
+
+    <!-- Composition fragment -->
+    <string name="composition_text_hint">Nachricht eingeben</string>
+
+    <!-- Messaging fragment -->
+    <string name="messaging_loading">Lädt...</string>
+    <string name="messaging_no_messages"></string>
+    <string name="messaging_invited_join">Gruppe beitreten</string>
+    <string name="menu_copy_attachment">Kopieren</string>
+
+    <!-- Pairing fragment -->
+    <string name="pairing_token_info">Gib diesen Code einem Freund</string>
+    <string name="pairing_code_info">Gib einen Einladungscode hier ein:</string>
+    <string name="pairing_code_hint">Code eingeben</string>
+    <string name="pairing_token_pair">Kontakt über Code-Eingabe herstellen</string>
+    <string name="pairing_qr_info">Füge einen neuen Kontakt per QR Scan hinzu:</string>
+    <string name="pairing_qr_show">QR Code anzeigen</string>
+    <string name="pairing_qr_scan">QR Code scannen</string>
+    <string name="pairing_token_generating">Erzeugen...</string>
+    <string name="pairing_token_send_sms">Einladen via SMS</string>
+    <string name="pairing_success">Kontakt wurde erfolgreich hinzugefügt</string>
+    <string name="pairing_failure">Der Kontakt konnte nicht hinzugefügt werden</string>
+    <string name="pairing_failure_description">Der eingegebene Code ist ungültig.</string>
+
+    <!-- Profile fragment -->
+    <string name="profile_avatar_set_button">Mein Bild ändern</string>
+    <string name="profile_name_title">Name</string>
+    <string name="profile_status_text">Status</string>
+    <string name="profile_name_edit">Name ändern</string>
+    <string name="profile_name_set_button">Neuen Nutzernahmen wählen</string>
+    <string name="profile_status_edit">Hallo!</string>
+    <string name="profile_status_set_button">Neuen Status auswählen</string>
+    <string name="profile_self_register_button">Registrieren</string>
+    <string name="profile_user_block_status">Dieser User ist geblockt. Bitte entblockieren, um Nachrichten zu empfangen.
+    </string>
+    <string name="profile_user_block_button">User blockieren</string>
+    <string name="profile_user_unblock_button">User entblockieren</string>
+    <string name="profile_user_depair_button">Verbindung aufheben</string>
+    <string name="profile_user_delete_button">Kontakt löschen</string>
+    <string name="profile_group_members_title">Mitglieder</string>
+    <string name="profile_group_create_button">Gruppe erstellen</string>
+    <string name="profile_group_join_button">Gruppe beitreten</string>
+    <string name="profile_group_invite_button">Mitglieder einladen</string>
+    <string name="profile_group_leave_button">Gruppe verlassen</string>
+    <string name="profile_group_kick_button">User aus der Gruppe entfernen</string>
+    <string name="profile_group_disband_button">Gruppe auflösen</string>
+    <string name="profile_group_delete_button">Gruppe löschen</string>
+
+    <!-- Messages -->
+    <string name="message_text">Deine Nachricht</string>
+
+    <!-- Content -->
+    <string name="content_downloading">Downloading...</string>
+    <string name="content_uploading">Uploading...</string>
+
+    <!-- Client states (used in status fragment) -->
+    <string name="client_state_idle">Idle</string>
+    <string name="client_state_inactive">Inaktiv</string>
+    <string name="client_state_active">Fertig</string>
+    <string name="client_state_syncing">Synchronisieren</string>
+    <string name="client_state_reconnecting">Erneut verbinden</string>
+    <string name="client_state_registering">Registrierung</string>
+    <string name="client_state_login">Einloggen</string>
+    <string name="client_state_connecting">Verbinden</string>
+    <string name="client_state_unknown">unbekannt</string>
+
+    <!-- Attachment type selection dialog -->
+    <string name="selectattachment_title">Anhang auswählen</string>
+
+    <!-- Name setting dialog -->
+    <string name="setname_title">Benutzername ändern</string>
+
+    <!-- Contact deletion dialog -->
+    <string name="deletecontact_title">Kontakt wirklich löschen?</string>
+    <string name="deletecontact_question">Bist du sicher, dass du diesen Kontakt löschen möchtest? Alle Nachrichten werden dann unwiderruflich gelöscht. 
+    </string>
+
+    <!-- Depair dialog -->
+    <string name="depaircontact_title">Verbindung auflösen?</string>
+    <string name="depaircontact_question">Bist du sicher, dass du die Verbindung auflösen möchtest? Es können dann keine Nachrichten ausgetauscht werden, bis ihr euch erneut verbindet. 
+    </string>
+
+    <!-- Group kick selection dialog -->
+    <string name="kick_title">Aus der Gruppe werfen</string>
+
+    <!-- Group invite selection dialog -->
+    <string name="invite_title">In Gruppe einladen</string>
+
+    <!-- Group manage selection dialog -->
+    <string name="manage_title">Gruppenmitglieder verwalten</string>
+
+    <!-- Location selection activity -->
+    <string name="selectlocation_title">Standort auswählen</string>
+
+    <!-- Group leave dialog -->
+    <string name="delete_group_title">Gruppe löschen</string>
+    <string name="delete_group_question">Bist du dir sicher, dass du die Gruppe löschen möchtest?</string>
+    <string name="reject_invitation_title">Einladung ablehnen</string>
+    <string name="reject_invitation_question">Bist du dir sicher, dass du die Einladung ablehnen möchtest? Du musst erneut eingeladen werden, um wieder teilnehmen zu können. 
+    </string>
+    <string name="leave_title">Gruppe verlassen</string>
+    <string name="leave_question">Bist du dir sicher, dass du die Gruppe verlassen möchtest? Du musst erneut eingeladen werden, um wieder teilnehmen zu können. 
+    </string>
+    <string name="common_group">Gruppe</string>
+    <string name="common_group_invite">Eingeladen</string>
+    <string name="common_friend">Freund</string>
+    <string name="menu_licenses">Lizenzen</string>
+    <string name="feature_not_available">Dieses Feature ist noch nicht verfügbar</string>
+    <string name="file_chooser_string">Datei auswählen</string>
+    <string name="open_file">Datei öffnen</string>
+    <string name="error_no_such_app">keine installierte App kann diese Datei öffnen</string>
+    <string name="error_no_videoplayer">Video nicht abspielbar. Bitte anderen Videoplayer installieren. 
+    </string>
+    <string name="menu_group_delete_profile">Gruppe schließen</string>
+    <string name="menu_group_edit_profile">Gruppe bearbeiten</string>
+    <string name="menu_group_profile_reject_invitation">Einladung ablehnen</string>
+    <string name="menu_group_profile_join">Gruppe beitreten</string>
+    <string name="menu_group_profile_leave">Gruppe verlassen</string>
+    <string name="location">Standort</string>
+    <string name="video">Video</string>
+    <string name="show_location_instruction">Standort anzeigen</string>
+    <string name="play_video_instruction">Video abspielen</string>
+    <string name="vcard_description">Alle Kontaktdetails</string>
+    <string name="profile_name_text">Name</string>
+    <string name="profile_key_text">Schlüssel</string>
+
+    <string name="transfer_state_encrypting">Entschlüsseln...</string>
+    <string name="transfer_state_decrypting">Verschlüsseln...</string>
+    <string name="transfer_state_downloading">Downloading...</string>
+    <string name="transfer_state_uploading">Uploading...</string>
+    <string name="transfer_state_pause">Pause</string>
+    <string name="dialog_attachment_choose_reselect_option">anderen Anhang auswählen</string>
+    <string name="dialog_attachment_choose_discard_option">Anhang verwerfen</string>
+    <string name="dialog_attachment_title">Anhang bearbeiten</string>
+    <string name="dialog_block_user_title">Kontakt blockieren</string>
+    <string name="dialog_block_user_message">Bist du dir sicher, dass du diesen Kontakt blockieren möchtest? Du wirst keine weiteren Nachrichten von diesem Kontakt erhalten. 
+    </string>
+
+    <!-- Preferences -->
+    <string name="preference_keysize_summary">RSA Schlüssel</string>
+    <string name="preference_keysize_title">RSA Schlüssellänge</string>
+    <string name="category">Kategorie</string>
+    <string name="pref_auto_downloads_mobile">Im mobilen Netz</string>
+    <string name="pref_auto_download_wifi">Im WLAN Netz</string>
+    <string name="pref_auto_download">Automatischer Download</string>
+    <string name="pref_legal_information">Rechtliches</string>
+
+    <string-array name="preference_log_level_names">
+        <item>Info</item>
+        <item>Debug</item>
+        <item>Trace</item>
+    </string-array>
+
+    <string-array name="preference_log_level_values">
+        <item>INFO</item>
+        <item>DEBUG</item>
+        <item>TRACE</item>
+    </string-array>
+
+</resources>
