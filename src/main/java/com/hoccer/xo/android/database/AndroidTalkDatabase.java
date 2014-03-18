@@ -10,6 +10,7 @@ import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientSelf;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.talk.model.TalkAttachment;
 import com.hoccer.talk.model.TalkDelivery;
 import com.hoccer.talk.model.TalkGroup;
 import com.hoccer.talk.model.TalkGroupMember;
@@ -32,7 +33,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
 
     private static final String DATABASE_NAME    = "hoccer-talk.db";
 
-    private static final int    DATABASE_VERSION = 9;
+    private static final int    DATABASE_VERSION = 10;
 
     private static AndroidTalkDatabase INSTANCE = null;
 
@@ -127,6 +128,12 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
             if(oldVersion < 9) {
                 Dao<TalkClientMessage, Integer> messages = getDao(TalkClientMessage.class);
                 messages.executeRaw("ALTER TABLE `clientMessage` ADD COLUMN `inProgress` BOOLEAN;");
+            }
+            if(oldVersion < 10) {
+                Dao<TalkClientDownload, Integer> downloads = getDao(TalkClientDownload.class);
+                downloads.executeRaw("ALTER TABLE `clientDownload` ADD COLUMN `transferFailures` INTEGER;");
+                Dao<TalkAttachment, Integer> attachments = getDao(TalkAttachment.class);
+                attachments.executeRaw("ALTER TABLE `attachment` ADD COLUMN `hmac` VARCHAR;");
             }
         } catch (SQLException e) {
             LOG.error("sql error upgrading database", e);
