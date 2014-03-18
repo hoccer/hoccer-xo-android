@@ -3,22 +3,22 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-            android:title="Automatic downloads">
+            android:title="@string/pref_auto_download">
 
         <CheckBoxPreference
                 android:key="preference_download_auto_mobile"
-                android:title="On mobile networks"
+                android:title="@string/pref_auto_downloads_mobile"
                 android:defaultValue="false"/>
 
         <CheckBoxPreference
                 android:key="preference_download_auto_wifi"
-                android:title="On wireless networks"
+                android:title="@string/pref_auto_download_wifi"
                 android:defaultValue="true"/>
 
     </PreferenceCategory>
 
     <PreferenceCategory
-            android:title="Legal Information">
+            android:title="@string/pref_legal_information">
         <Preference
                 android:title="@string/menu_about">
             <intent android:action="com.hoccer.xo.ABOUT"/>
