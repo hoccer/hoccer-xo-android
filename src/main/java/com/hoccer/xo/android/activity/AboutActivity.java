@@ -21,7 +21,6 @@ public class AboutActivity extends XoActivity {
         LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
         enableUpNavigation();
-        this.
     }
 
 }
