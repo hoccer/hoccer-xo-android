@@ -88,12 +88,14 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
         leaveGroup.setVisible(false);
 
         TalkClientContact contact = mGroupProfileFragment.getContact();
-
-        if (contact.isGroupInvited()) {
-            rejectInvitation.setVisible(true);
-            joinGroup.setVisible(true);
-        } else if (contact.isGroupJoined()) {
-            leaveGroup.setVisible(true);
+        if (!contact.isEditable()) {
+            editGroup.setVisible(false);
+            if (contact.isGroupInvited()) {
+                rejectInvitation.setVisible(true);
+                joinGroup.setVisible(true);
+            } else if (contact.isGroupJoined()) {
+                leaveGroup.setVisible(true);
+            }
         }
 
         return result;
