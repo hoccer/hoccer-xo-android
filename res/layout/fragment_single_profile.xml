@@ -100,7 +100,7 @@
                 android:layout_alignRight="@+id/v_profile_key_delimiter"
                 android:textColor="#838383"
                 android:textSize="10dp"
-                android:text="For extra security compare this fingerprint with the fingerprint seen by your friends in your contact card."
+                android:text="@string/profile_compare_key_description"
                 tools:ignore="HardcodedText"/>
 
     </RelativeLayout>

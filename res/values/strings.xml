@@ -194,6 +194,11 @@
     <string name="pref_auto_download_wifi">On wireless networks</string>
     <string name="pref_auto_download">Automatic downloads</string>
     <string name="pref_legal_information">Legal Information</string>
+    <string name="profile_compare_key_description">For extra security compare this fingerprint with
+        the fingerprint seen by your friends in your contact card.
+    </string>
+    <string name="my_profile_title">My profile</string>
+    <string name="welcome_to_title">Welcome to XO!</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>
