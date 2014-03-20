@@ -78,6 +78,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
 
             TableUtils.createTable(cs, TalkClientDownload.class);
             TableUtils.createTable(cs, TalkClientUpload.class);
+            TableUtils.createTable(cs, TalkAttachment.class);
 
             TableUtils.createTable(cs, TalkClientSmsToken.class);
         } catch (SQLException e) {
