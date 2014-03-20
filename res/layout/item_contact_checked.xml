@@ -16,7 +16,7 @@
             style="@style/AppBaseTheme.Group.Members.MemberAvatar"/>
 
     <CheckedTextView
-            android:id="@+id/contact_name"
+            android:id="@+id/contact_name_checked"
             android:text="@string/contact_name_new_client"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
             android:layout_width="match_parent"

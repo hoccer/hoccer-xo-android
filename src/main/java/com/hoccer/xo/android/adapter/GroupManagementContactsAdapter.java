@@ -61,13 +61,12 @@ public class GroupManagementContactsAdapter extends ContactsAdapter {
     @Override
     protected void updateContact(final View view, final TalkClientContact contact) {
         LOG.debug("updateContact(" + contact.getClientContactId() + ")");
-        TextView nameView = (TextView) view.findViewById(R.id.contact_name);
-        nameView.setText(contact.getName());
+        CheckedTextView checkedTextView = (CheckedTextView) view.findViewById(R.id.contact_name_checked);
+        checkedTextView.setText(contact.getName());
 
         AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
         avatarView.setContact(contact);
 
-        CheckedTextView checkedTextView = (CheckedTextView)view.findViewById(R.id.contact_name);
         if (contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup)) {
             checkedTextView.setChecked(true);
         } else {
