@@ -134,8 +134,6 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
                 Dao<TalkClientDownload, Integer> downloads = getDao(TalkClientDownload.class);
                 downloads.executeRaw("ALTER TABLE `clientDownload` ADD COLUMN `transferFailures` INTEGER;");
                 TableUtils.createTableIfNotExists(cs, TalkAttachment.class);
-                Dao<TalkAttachment, Integer> attachments = getDao(TalkAttachment.class);
-                attachments.executeRaw("ALTER TABLE `attachment` ADD COLUMN `hmac` VARCHAR;");
             }
         } catch (SQLException e) {
             LOG.error("sql error upgrading database", e);
