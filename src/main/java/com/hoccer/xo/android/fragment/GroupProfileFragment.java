@@ -230,7 +230,6 @@ public class GroupProfileFragment extends XoFragment
             case EDIT_GROUP:
                 mGroupNameText.setVisibility(View.GONE);
                 mGroupNameEdit.setVisibility(View.VISIBLE);
-                mGroupCreateButton.setVisibility(View.VISIBLE);
                 mGroupCreateButton.setVisibility(View.GONE);
                 mGroupMembersContainer.setVisibility(View.VISIBLE);
                 break;
