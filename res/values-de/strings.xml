@@ -193,6 +193,7 @@
     </string>
     <string name="my_profile_title">Mein Profil</string>
     <string name="welcome_to_title">Willkommen bei XO!</string>
+    <string name="contact_item_receive_attachment">%1$s Datei erhalten</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>
