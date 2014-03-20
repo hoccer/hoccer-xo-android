@@ -93,12 +93,6 @@ public class XoConfiguration {
                     XoApplication.getXoClient().hello();
                 } else if(key.equals("preference_server_uri")) {
                     XoApplication.reinitializeXoClient();
-                } else if(key.equals("preference_keysize")) {
-                    try {
-                        XoApplication.getXoClient().regenerateKeyPair();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
                 }
             }
         };

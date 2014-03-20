@@ -19,7 +19,6 @@ import com.hoccer.talk.model.TalkMessage;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkPrivateKey;
 import com.hoccer.talk.model.TalkRelationship;
-import com.hoccer.xo.android.XoApplication;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
