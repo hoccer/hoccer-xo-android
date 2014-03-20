@@ -236,7 +236,7 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
         XoClient client = new XoAndroidClient(CLIENT_HOST);
         client.setAvatarDirectory(getAvatarDirectory().toString());
         client.setAttachmentDirectory(getAttachmentDirectory().toString());
-        client.setEncryptedUploadDirectory(getEncryptedUploadDirectory().toString());
+        client.setEncryptedUploadDirectory(getEncryptedUploadDirectory().toString()); //TODO: to be deleted encryption happens on the fly now
         client.setEncryptedDownloadDirectory(getEncryptedDownloadDirectory().toString());
         CLIENT = client;
     }
