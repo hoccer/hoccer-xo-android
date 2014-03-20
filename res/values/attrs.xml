@@ -8,6 +8,7 @@
         <attr name="textMargin" format="dimension"/>
         <attr name="textSize" format="integer"/>
         <attr name="text" format="string"/>
+        <attr name="enableStates" format="boolean"/>
     </declare-styleable>
     <declare-styleable name="AspectView">
        <attr name="aspectRatio" format="float"/>

@@ -19,6 +19,7 @@ import com.hoccer.talk.model.TalkMessage;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.talk.model.TalkPrivateKey;
 import com.hoccer.talk.model.TalkRelationship;
+import com.hoccer.xo.android.XoApplication;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
@@ -134,6 +135,12 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
                 downloads.executeRaw("ALTER TABLE `clientDownload` ADD COLUMN `transferFailures` INTEGER;");
                 Dao<TalkAttachment, Integer> attachments = getDao(TalkAttachment.class);
                 attachments.executeRaw("ALTER TABLE `attachment` ADD COLUMN `hmac` VARCHAR;");
+                try {
+                    LOG.debug("Try to regenerate fck keys");
+                    XoApplication.getXoClient().regenerateKeyPair();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (SQLException e) {
             LOG.error("sql error upgrading database", e);

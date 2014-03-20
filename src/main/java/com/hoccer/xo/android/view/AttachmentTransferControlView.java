@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import com.hoccer.xo.release.R;
 
@@ -47,7 +48,8 @@ public class AttachmentTransferControlView extends View {
     private float mStepInDegrees = 0.5f;
     private boolean mGoneAfterFinished = false;
     private boolean mIsSpinning = false;
-    private boolean mIsEncrypting;
+    private boolean mIsStatesEnable = true;
+    private boolean mIsEncrypting = true;
 
     private Handler progressHandler;
 
@@ -146,6 +148,7 @@ public class AttachmentTransferControlView extends View {
         mTextSize = a.getInt(R.styleable.TransferWheel_textSize, mTextSize);
         mText = a.getString(R.styleable.TransferWheel_text);
         mWheelColor = a.getColor(R.styleable.TransferWheel_wheelColor, mWheelColor);
+        mIsStatesEnable = a.getBoolean(R.styleable.TransferWheel_enableStates, mIsStatesEnable);
         a.recycle();
     }
 
@@ -203,12 +206,14 @@ public class AttachmentTransferControlView extends View {
         } else {
             canvas.drawArc(mInnerWheel, -90, mShownProgress, false, mInnerWheelPaint);
         }
-        if (!mPause) {
-            canvas.drawLines(mArrowPause, mOuterWheelPaint);
-        } else if (mIsDownloadingProcess) {
-            canvas.drawLines(mArrowDownload, mOuterWheelPaint);
-        } else {
-            canvas.drawLines(mArrowUpload, mOuterWheelPaint);
+        if (mIsStatesEnable) {
+            if (!mPause) {
+                canvas.drawLines(mArrowPause, mOuterWheelPaint);
+            } else if (mIsDownloadingProcess) {
+                canvas.drawLines(mArrowDownload, mOuterWheelPaint);
+            } else {
+                canvas.drawLines(mArrowUpload, mOuterWheelPaint);
+            }
         }
         canvas.drawText(mText, mLayoutWidth/2, mLayoutHeight/2 + mWheelDiameter/2.0f + mTextMargin, mTextPaint);
     }
@@ -263,6 +268,7 @@ public class AttachmentTransferControlView extends View {
         mGoneAfterFinished = true;
         mStepInDegrees = 1;
         progressHandler.sendEmptyMessage(0);
+        mIsInited = false;
         return false;
     }
 

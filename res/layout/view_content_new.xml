@@ -44,7 +44,8 @@
                     TransferWheel:wheelColor="#004ce5"
                     TransferWheel:text="Uploading..."
                     TransferWheel:textMargin="20dp"
-                    TransferWheel:textSize="30"/>
+                    TransferWheel:textSize="30"
+                    TransferWheel:enableStates="true"/>
 
             <TextView
                     android:id="@+id/content_description_text"
