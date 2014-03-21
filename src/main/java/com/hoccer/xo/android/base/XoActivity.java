@@ -1,5 +1,10 @@
 package com.hoccer.xo.android.base;
 
+import android.app.Dialog;
+import android.content.*;
+import android.graphics.drawable.ColorDrawable;
+import android.os.*;
+import android.view.*;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -23,6 +28,7 @@ import com.hoccer.xo.android.content.ContentSelection;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.IXoClientService;
 import com.hoccer.xo.android.service.XoClientService;
+import com.hoccer.xo.android.view.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
 
 import org.apache.log4j.Logger;
@@ -30,21 +36,10 @@ import org.apache.log4j.Logger;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.TaskStackBuilder;
-import android.content.ComponentName;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.provider.MediaStore;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -126,6 +121,9 @@ public abstract class XoActivity extends Activity {
 
     private String mBarcodeToken = null;
 
+    private AttachmentTransferControlView mSpinner;
+    private Handler mDialogDismisser;
+
     public XoActivity() {
         LOG = Logger.getLogger(getClass());
     }
@@ -192,6 +190,72 @@ public abstract class XoActivity extends Activity {
         startService(serviceIntent);
         mServiceConnection = new MainServiceConnection();
         bindService(serviceIntent, mServiceConnection, BIND_IMPORTANT);
+        checkKeys();
+    }
+
+    private void checkKeys() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        boolean needToRegenerate = true;
+        needToRegenerate = sharedPref.getBoolean("NEED_TO_REGENERATE_KEYS", needToRegenerate);
+        if (needToRegenerate) {
+            createDialog();
+            regenerateKeys();
+        }
+    }
+
+    private void regenerateKeys() {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    XoApplication.getXoClient().regenerateKeyPair();
+                    SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putBoolean("NEED_TO_REGENERATE_KEYS", false);
+                    editor.commit();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    mDialogDismisser.sendEmptyMessage(0);
+                }
+            }
+        });
+        t.start();
+    }
+
+    public void createDialog() {
+        LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.waiting_dialog, null);
+        mSpinner = (AttachmentTransferControlView) view.findViewById(R.id.content_progress);
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(view);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                return true;
+            }
+        });
+
+        Handler spinnerStarter = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                mSpinner.prepareToUpload();
+                mSpinner.spin();
+            }
+        };
+        mDialogDismisser = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                dialog.dismiss();
+                mSpinner.completeAndGone();
+            }
+        };
+        spinnerStarter.sendEmptyMessageDelayed(0, 500);
     }
 
     @Override
