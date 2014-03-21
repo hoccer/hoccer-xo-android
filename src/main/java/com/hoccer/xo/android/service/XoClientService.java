@@ -1,5 +1,11 @@
 package com.hoccer.xo.android.service;
 
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
+import android.os.Bundle;
 import com.google.android.gcm.GCMRegistrar;
 
 import com.hoccer.talk.android.push.TalkPushService;
@@ -15,6 +21,7 @@ import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.talk.model.TalkEnvironment;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.activity.ContactsActivity;
@@ -45,13 +52,10 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 
+import java.io.IOException;
 import java.net.URI;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -65,7 +69,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * It should be started with startService() and kept alive using keepAlive() RPC calls
  * for as long as it is needed. If not called regularly the service will stop itself.
  */
-public class XoClientService extends Service {
+
+
+public class XoClientService extends Service implements IEnvironmentListener {
 
     private static final Logger LOG = Logger.getLogger(XoClientService.class);
 
@@ -119,6 +125,8 @@ public class XoClientService extends Service {
 
     boolean mGcmSupported;
 
+    EnvironmentUpdater mEnvironmentUpdater;
+
     @Override
     public void onCreate() {
         LOG.debug("onCreate()");
@@ -138,6 +146,9 @@ public class XoClientService extends Service {
             mClient.registerTransferListener(mClientListener);
         }
 
+        //mEnvironmentUpdater = new EnvironmentUpdater(getApplicationContext(), this);
+        mEnvironmentUpdater = new EnvironmentUpdater(getBaseContext(), this);
+
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
@@ -148,6 +159,11 @@ public class XoClientService extends Service {
                 if (key.equals("preference_download_auto_mobile")
                         || key.equals("preference_download_auto_wifi")) {
                     configureAutoDownloads();
+                }
+                // TODO: just for testing, geolocation updater activation will be done later differently
+                if (key.equals("preference_environmentupdate")) {
+                    Boolean update = mPreferences.getBoolean("preference_environmentupdate", false);
+                    mEnvironmentUpdater.enable(update);
                 }
             }
         };
@@ -162,6 +178,7 @@ public class XoClientService extends Service {
         handleConnectivityChange(mConnectivityManager.getActiveNetworkInfo());
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
     }
 
     @Override
@@ -820,4 +837,139 @@ public class XoClientService extends Service {
         }
     }
 
+    public void onEnvironmentChanged(boolean enabled) {
+        if (enabled) {
+            mClient.setEnvironment(mEnvironmentUpdater.freshEnvironment());
+            mClient.sendEnvironmentUpdate();
+        }
+    }
+
+    public class EnvironmentUpdater implements LocationListener {
+
+        private final LocationManager mLocationManager;
+        private final WifiManager mWifiManager;
+
+        private final Context         mContext;
+
+        private final boolean mNetworkProviderAvailable;
+        private final boolean mGpsProviderAvailable;
+
+        private final IEnvironmentListener mEnvironmentListener;
+
+        private boolean mEnabled = false;
+
+        public EnvironmentUpdater(Context pContext,IEnvironmentListener environmentListener) {
+            mContext = pContext;
+
+            mLocationManager = (LocationManager) pContext.getSystemService(Context.LOCATION_SERVICE);
+            mWifiManager = (WifiManager) pContext.getSystemService(Context.WIFI_SERVICE);
+
+            mNetworkProviderAvailable = mLocationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER);
+            mGpsProviderAvailable = mLocationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER);
+
+            mEnvironmentListener = environmentListener;
+        }
+
+        public Context getContext() {
+            return mContext;
+        }
+
+        public void deactivate() {
+            mLocationManager.removeUpdates(this);
+        }
+
+        public void activate() {
+            final long MIN_UPDATE_TIME = 1000; // Update only after min. this amount of milliseconds elapsed
+            final long MIN_UPDATE_MOVED = 5; // Update only when moved at least this distance in meters
+            if(mGpsProviderAvailable) {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_UPDATE_TIME, MIN_UPDATE_MOVED, this);
+            }
+
+            if(mNetworkProviderAvailable) {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_UPDATE_TIME, MIN_UPDATE_MOVED, this);
+            }
+        }
+
+        public void enable(boolean enabled) {
+            if (enabled) {
+                if (!mEnabled) mEnvironmentUpdater.activate();
+            } else {
+                if (mEnabled) mEnvironmentUpdater.deactivate();
+            }
+            mEnabled = enabled;
+        }
+
+        public TalkEnvironment freshEnvironment()  {
+
+            TalkEnvironment theEnvironment = new TalkEnvironment();
+
+            Location networkLocation = null;
+            Location gpsLocation = null;
+            if (mNetworkProviderAvailable) {
+                networkLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            }
+            if(mGpsProviderAvailable) {
+                gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            }
+
+            Location location = null;
+            if (gpsLocation != null && networkLocation != null) {
+                // both available, select most precise
+                if (gpsLocation.getAccuracy() < networkLocation.getAccuracy()) {
+                    location = gpsLocation;
+                } else {
+                    location = networkLocation;
+                }
+            } else {
+                location = gpsLocation != null ? gpsLocation : networkLocation;
+            }
+            if (location != null) {
+                Double[] geoLocation = {location.getLongitude(), location.getLatitude()};
+                theEnvironment.setGeoLocation(geoLocation);
+                theEnvironment.setLocationType(location.getProvider());
+                if (location.hasAccuracy()) {
+                    theEnvironment.setAccuracy(location.getAccuracy());
+                } else {
+                    theEnvironment.setAccuracy(0.0f);
+                }
+            }
+
+            // wifi scan result
+            List<ScanResult> scanResults = mWifiManager.getScanResults();
+            if (scanResults != null) {
+                List<String> bssids = new ArrayList<String>();
+                for (ScanResult scan : scanResults) {
+                    bssids.add(scan.BSSID);
+                }
+                theEnvironment.setBssids(bssids.toArray(new String[0]));
+            }
+            theEnvironment.setTimestamp(new Date());
+            return theEnvironment;
+        }
+
+        @Override
+        public void onLocationChanged(Location location) {
+            LOG.debug("onLocationChanged" +location.toString());
+            mEnvironmentListener.onEnvironmentChanged(mEnabled);
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            LOG.debug("onProviderDisabled" +provider);
+            mEnvironmentListener.onEnvironmentChanged(false);
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            LOG.debug("onProviderEnabled"+ provider);
+            mEnvironmentListener.onEnvironmentChanged(true);
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            LOG.debug("onStatusChanged"+ provider);
+            mEnvironmentListener.onEnvironmentChanged(mEnabled);
+        }
+
+    }
 }

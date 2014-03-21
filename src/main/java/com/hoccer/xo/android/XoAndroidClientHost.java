@@ -156,14 +156,18 @@ public class XoAndroidClientHost implements IXoClientHost {
         String serverUri;
         if (XoConfiguration.DEVELOPMENT_MODE_ENABLED) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+
+            serverUri = preferences.getString("preference_server_uri", XoClientConfiguration.SERVER_URI);
+/*
             serverUri = preferences.getString("preference_server_uri", null);
-            if (serverUri == null || serverUri.equalsIgnoreCase("") || !serverUri
-                    .startsWith("wss://")) {
+            if (serverUri == null || serverUri.equalsIgnoreCase("") ||
+                    !(serverUri.startsWith("wss://") || serverUri.startsWith("ws://"))) {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("preference_server_uri", XoClientConfiguration.SERVER_URI);
                 editor.commit();
                 serverUri = XoClientConfiguration.SERVER_URI;
             }
+            */
         } else {
             serverUri = XoClientConfiguration.SERVER_URI;
         }
