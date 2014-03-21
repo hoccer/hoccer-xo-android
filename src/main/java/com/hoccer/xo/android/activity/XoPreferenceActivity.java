@@ -26,6 +26,7 @@ public class XoPreferenceActivity extends PreferenceActivity implements SharedPr
     private static final Logger LOG = Logger.getLogger(XoPreferenceActivity.class);
     private AttachmentTransferControlView mSpinner;
     private Handler mDialogDismisser;
+    private Dialog mWaitingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,13 +60,15 @@ public class XoPreferenceActivity extends PreferenceActivity implements SharedPr
         View view = inflater.inflate(R.layout.waiting_dialog, null);
         mSpinner = (AttachmentTransferControlView) view.findViewById(R.id.content_progress);
 
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(view);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
-        dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+        mWaitingDialog = new Dialog(this);
+        mWaitingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mWaitingDialog.setContentView(view);
+        mWaitingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        mWaitingDialog.setCanceledOnTouchOutside(false);
+        if (!isFinishing()) {
+            mWaitingDialog.show();
+        }
+        mWaitingDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                 return true;
@@ -82,7 +85,7 @@ public class XoPreferenceActivity extends PreferenceActivity implements SharedPr
         mDialogDismisser = new Handler() {
             @Override
             public void handleMessage(Message msg) {
-                dialog.dismiss();
+                mWaitingDialog.dismiss();
                 mSpinner.completeAndGone();
             }
         };
