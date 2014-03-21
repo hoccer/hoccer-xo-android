@@ -107,6 +107,16 @@ public class XoConfiguration {
         }
     }
 
+    public static boolean needToRegenerateKey() {
+        return sPreferences.getBoolean("NEED_TO_REGENERATE_KEYS", true);
+    }
+
+    public static void setRegenerationDone() {
+        SharedPreferences.Editor editor = sPreferences.edit();
+        editor.putBoolean("NEED_TO_REGENERATE_KEYS", false);
+        editor.commit();
+    }
+
     public static boolean isSupportModeEnabled() {
         return sIsSupportModeEnabled;
     }

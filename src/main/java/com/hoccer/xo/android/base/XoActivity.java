@@ -123,6 +123,7 @@ public abstract class XoActivity extends Activity {
 
     private AttachmentTransferControlView mSpinner;
     private Handler mDialogDismisser;
+    private Dialog mDialog;
 
     public XoActivity() {
         LOG = Logger.getLogger(getClass());
@@ -194,10 +195,7 @@ public abstract class XoActivity extends Activity {
     }
 
     private void checkKeys() {
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        boolean needToRegenerate = true;
-        needToRegenerate = sharedPref.getBoolean("NEED_TO_REGENERATE_KEYS", needToRegenerate);
-        if (needToRegenerate) {
+        if (XoConfiguration.needToRegenerateKey()) {
             createDialog();
             regenerateKeys();
         }
@@ -209,10 +207,7 @@ public abstract class XoActivity extends Activity {
             public void run() {
                 try {
                     XoApplication.getXoClient().regenerateKeyPair();
-                    SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putBoolean("NEED_TO_REGENERATE_KEYS", false);
-                    editor.commit();
+                    XoConfiguration.setRegenerationDone();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 } finally {
@@ -228,13 +223,13 @@ public abstract class XoActivity extends Activity {
         View view = inflater.inflate(R.layout.waiting_dialog, null);
         mSpinner = (AttachmentTransferControlView) view.findViewById(R.id.content_progress);
 
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(view);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
-        dialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+        mDialog = new Dialog(this);
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mDialog.setContentView(view);
+        mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
+        mDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
             @Override
             public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                 return true;
@@ -251,8 +246,13 @@ public abstract class XoActivity extends Activity {
         mDialogDismisser = new Handler() {
             @Override
             public void handleMessage(Message msg) {
-                dialog.dismiss();
-                mSpinner.completeAndGone();
+                try {
+                    mDialog.dismiss();
+                    mSpinner.completeAndGone();
+                } catch (IllegalArgumentException e) {
+                    LOG.error("Dialog is not attached to " + getCallingActivity().getPackageName() + ".");
+                    //TODO: Once upon a time we will redesign all this stuff... Maybe.
+                }
             }
         };
         spinnerStarter.sendEmptyMessageDelayed(0, 500);
