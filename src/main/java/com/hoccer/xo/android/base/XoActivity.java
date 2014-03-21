@@ -250,7 +250,8 @@ public abstract class XoActivity extends Activity {
                     mDialog.dismiss();
                     mSpinner.completeAndGone();
                 } catch (IllegalArgumentException e) {
-                    LOG.error("Dialog is not attached to " + getCallingActivity().getPackageName() + ".");
+                    LOG.error("Dialog is not attached to current activity.");
+                    e.printStackTrace();
                     //TODO: Once upon a time we will redesign all this stuff... Maybe.
                 }
             }
