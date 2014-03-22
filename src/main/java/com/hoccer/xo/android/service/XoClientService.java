@@ -841,6 +841,8 @@ public class XoClientService extends Service implements IEnvironmentListener {
         if (enabled) {
             mClient.setEnvironment(mEnvironmentUpdater.freshEnvironment());
             mClient.sendEnvironmentUpdate();
+        } else {
+            mClient.sendDestroyEnvironment();
         }
     }
 
@@ -895,6 +897,7 @@ public class XoClientService extends Service implements IEnvironmentListener {
                 if (!mEnabled) mEnvironmentUpdater.activate();
             } else {
                 if (mEnabled) mEnvironmentUpdater.deactivate();
+                mEnvironmentListener.onEnvironmentChanged(false);
             }
             mEnabled = enabled;
         }
