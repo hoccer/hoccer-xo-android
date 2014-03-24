@@ -43,6 +43,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.provider.MediaStore;
+import android.provider.Telephony;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -563,11 +564,25 @@ public abstract class XoActivity extends Activity {
                             "Download it now: http://hoccer.com/ Then add me as a contact: " +
                             "hxo://" + token + "\nxo " + self.getName();
 
-            Intent intent = new Intent(Intent.ACTION_SENDTO);
-            intent.setData(Uri.parse("smsto:"));
-            intent.putExtra("sms_body", message);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //At least KitKat
+                String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(this); //Need to change the build to API 19
 
-            startActivity(intent);
+                Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                sendIntent.setType("text/plain");
+                sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+
+                if (defaultSmsPackageName != null) {
+                    sendIntent.setPackage(defaultSmsPackageName);
+                }
+                startActivity(sendIntent);
+                return;
+            } else {
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("smsto:"));
+                intent.putExtra("sms_body", message);
+
+                startActivity(intent);
+            }
         } catch (SQLException e) {
             LOG.error("sql error", e);
         }
