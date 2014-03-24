@@ -169,8 +169,8 @@
     <string name="profile_name_text">Name</string>
     <string name="profile_key_text">Schlüssel</string>
 
-    <string name="transfer_state_encrypting">Entschlüsseln...</string>
-    <string name="transfer_state_decrypting">Verschlüsseln...</string>
+    <string name="transfer_state_encrypting">Verschlüsseln...</string>
+    <string name="transfer_state_decrypting">Entschlüsseln...</string>
     <string name="transfer_state_downloading">Downloading...</string>
     <string name="transfer_state_uploading">Uploading...</string>
     <string name="transfer_state_pause">Pause</string>
