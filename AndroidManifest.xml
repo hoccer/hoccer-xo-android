@@ -61,14 +61,14 @@
                 android:value="@integer/google_play_services_version"/>
 
          <!--API key for Google Maps Android API v2 for release certificate-->
-        <meta-data
-        android:name="com.google.android.maps.v2.API_KEY"
-        android:value="AIzaSyBDd2wBF1gH9UcU2KcAPXXKI9G6HQattkM"/>
+        <!--<meta-data-->
+        <!--android:name="com.google.android.maps.v2.API_KEY"-->
+        <!--android:value="AIzaSyBDd2wBF1gH9UcU2KcAPXXKI9G6HQattkM"/>-->
 
         <!-- API key for Google Maps Android API v2 based on debug certificate -->
-        <!--<meta-data-->
-                <!--android:name="com.google.android.maps.v2.API_KEY"-->
-                <!--android:value="AIzaSyC9hBvAarkQ9ktS0rWZ5Row-MXRatv8Dj0"/>-->
+        <meta-data
+                android:name="com.google.android.maps.v2.API_KEY"
+                android:value="AIzaSyC9hBvAarkQ9ktS0rWZ5Row-MXRatv8Dj0"/>
 
         <!-- Contact list - our main activity -->
         <activity
