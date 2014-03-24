@@ -18,10 +18,8 @@
             android:layout_width="12dp"
             android:layout_height="12dp"
             android:visibility="invisible"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="1dp"
+            android:layout_alignLeft="@+id/avatar_image"
             android:layout_alignBottom="@+id/avatar_image"
-            android:layout_marginBottom="4dp"
             style="@style/AppBaseTheme.Contact.Presence"/>
 
 </RelativeLayout>

@@ -188,18 +188,14 @@ public class SingleProfileActivity extends XoActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                String title = contact.getName();
+                mActionBar.setTitle(contact.getName());
                 if (mMode == Mode.CREATE_SELF) {
-                    title = "Welcome to XO!";
+                    mActionBar.setTitle(R.string.welcome_to_title);
                 } else {
                     if (contact.isSelf()) {
-                        title = "My profile";
-                    }
-                    if (title == null) {
-                        title = "<unnamed>";
+                        mActionBar.setTitle(R.string.my_profile_title);
                     }
                 }
-                mActionBar.setTitle(title);
                 if (contact.isDeleted()) {
                     finish();
                 }

@@ -57,7 +57,7 @@
     <string name="pairing_token_info">Gib diesen Code einem Freund</string>
     <string name="pairing_code_info">Gib einen Einladungscode hier ein:</string>
     <string name="pairing_code_hint">Code eingeben</string>
-    <string name="pairing_token_pair">Kontakt über Code-Eingabe herstellen</string>
+    <string name="pairing_token_pair">Code bestätigen</string>
     <string name="pairing_qr_info">Füge einen neuen Kontakt per QR Scan hinzu:</string>
     <string name="pairing_qr_show">QR Code anzeigen</string>
     <string name="pairing_qr_scan">QR Code scannen</string>
@@ -169,8 +169,8 @@
     <string name="profile_name_text">Name</string>
     <string name="profile_key_text">Schlüssel</string>
 
-    <string name="transfer_state_encrypting">Entschlüsseln...</string>
-    <string name="transfer_state_decrypting">Verschlüsseln...</string>
+    <string name="transfer_state_encrypting">Verschlüsseln...</string>
+    <string name="transfer_state_decrypting">Entschlüsseln...</string>
     <string name="transfer_state_downloading">Downloading...</string>
     <string name="transfer_state_uploading">Uploading...</string>
     <string name="transfer_state_pause">Pause</string>
@@ -189,6 +189,11 @@
     <string name="pref_auto_download_wifi">Im WLAN Netz</string>
     <string name="pref_auto_download">Automatischer Download</string>
     <string name="pref_legal_information">Rechtliches</string>
+    <string name="profile_compare_key_description">Für ein Extra an Sicherheit vergleiche diesen Fingerabdruck mit dem Fingerabdruck den Deine Freunde in deiner Kontaktkarte sehen
+    </string>
+    <string name="my_profile_title">Mein Profil</string>
+    <string name="welcome_to_title">Willkommen bei XO!</string>
+    <string name="contact_item_receive_attachment">%1$s Datei erhalten</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>
