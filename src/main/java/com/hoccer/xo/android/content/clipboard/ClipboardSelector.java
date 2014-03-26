@@ -34,7 +34,7 @@ public class ClipboardSelector implements IContentSelector {
 
     @Override
     public Intent createSelectionIntent(Context context) {
-        Intent intent = new Intent(context, CompositionFragment.class);
+        Intent intent = new Intent(context, ClipboardPreviewActivity.class);
         intent.putExtra(Clipboard.CLIPBOARD_CONTENT_OBJECT_ID, mClipboard.getClipBoardAttachmentId());
         intent.putExtra(Clipboard.CLIPBOARD_CONTENT_OBJECT_TYPE, mClipboard.getClipboardContentObjectType());
         return intent;
