@@ -8,6 +8,7 @@ import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.activity.ClipboardPreviewActivity;
+import com.hoccer.xo.android.activity.MessagingActivity;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.IContentSelector;
 import com.hoccer.xo.android.fragment.CompositionFragment;
@@ -34,23 +35,29 @@ public class ClipboardSelector implements IContentSelector {
 
     @Override
     public Intent createSelectionIntent(Context context) {
-        Intent intent = new Intent(context, ClipboardPreviewActivity.class);
+        Intent intent = new Intent(context, MessagingActivity.class);
         intent.putExtra(Clipboard.CLIPBOARD_CONTENT_OBJECT_ID, mClipboard.getClipBoardAttachmentId());
         intent.putExtra(Clipboard.CLIPBOARD_CONTENT_OBJECT_TYPE, mClipboard.getClipboardContentObjectType());
         return intent;
     }
 
-    private IContentObject createObjectFromClipboardData(Context context) throws SQLException {
+    public IContentObject createObjectFromClipboardData(Context context) {
         IContentObject contentObject = null;
-        XoActivity activity = (XoActivity)context;
+        XoActivity activity = (XoActivity) context;
         XoClientDatabase database = activity.getXoDatabase();
 
         String type = mClipboard.getClipboardContentObjectType();
-        if (type.equals(TalkClientUpload.class.getName())) {
-            contentObject = database.findClientUploadById(mClipboard.getClipBoardAttachmentId());
-        } else if (type.equals(TalkClientDownload.class.getName())) {
-            contentObject = database.findClientDownloadById(mClipboard.getClipBoardAttachmentId());
+
+        try {
+            if (type.equals(TalkClientUpload.class.getName())) {
+                contentObject = database.findClientUploadById(mClipboard.getClipBoardAttachmentId());
+            } else if (type.equals(TalkClientDownload.class.getName())) {
+                contentObject = database.findClientDownloadById(mClipboard.getClipBoardAttachmentId());
+            }
+        } catch (SQLException e) {
+            LOG.error("SQL Exception while retrieving clipboard object", e);
         }
+
         return contentObject;
     }
 
@@ -59,11 +66,7 @@ public class ClipboardSelector implements IContentSelector {
         IContentObject contentObject = null;
         if (intent != null) {
             if (intent.hasExtra(Clipboard.CLIPBOARD_CONTENT_OBJECT_ID)) {
-                try {
-                    contentObject = createObjectFromClipboardData(context);
-                } catch (SQLException e) {
-                    LOG.error("SQL Exception while retrieving clipboard object for selection intent", e);
-                }
+                contentObject = createObjectFromClipboardData(context);
             }
         }
         mClipboard.clearClipBoard();
