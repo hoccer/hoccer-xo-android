@@ -95,6 +95,17 @@
                     android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
         </activity>
 
+        <!-- Clipboard activity -->
+        <activity
+                android:name="com.hoccer.xo.android.activity.ClipboardPreviewActivity"
+                android:label="Hoccer XO"
+                android:parentActivityName="com.hoccer.xo.android.activity.MessagingActivity"
+                android:windowSoftInputMode="stateHidden">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.hoccer.xo.android.activity.MessagingActivity"/>
+        </activity>
+
         <!-- Single Profile activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.SingleProfileActivity"
