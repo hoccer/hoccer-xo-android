@@ -158,6 +158,11 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
         }
     }
 
+    @Override
+    public void clipBoardItemSelected(IContentObject contentObject) {
+        mCompositionFragment.onAttachmentSelected(contentObject);
+    }
+
     public void converseWithContact(TalkClientContact contact) {
         LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
         mContact = contact;

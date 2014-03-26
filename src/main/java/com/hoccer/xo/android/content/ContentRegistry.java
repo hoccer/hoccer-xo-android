@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.audio.ButtonAudioViewer;
 import com.hoccer.xo.android.content.audio.MusicSelector;
 import com.hoccer.xo.android.content.clipboard.ClipboardSelector;
@@ -260,7 +261,7 @@ public class ContentRegistry {
             }
         }
 
-        // Add clipboard selector when it has something to process
+        // Add ClipboardSelector when it has something to process
         if (mClipboardSelector.canProcessClipboard()) {
             Map<String, Object> fields = createDataObjectFromContentSelector(activity, mClipboardSelector);
             if (fields != null) {
@@ -300,8 +301,16 @@ public class ContentRegistry {
                 Map<String, Object> sel = options.get(which);
                 IContentSelector selector = (IContentSelector)sel.get(KEY_SELECTOR);
                 cs.setSelector(selector);
-                Intent intent = (Intent)sel.get(KEY_INTENT);
-                activity.startActivityForResult(intent, requestCode);
+
+                // handle ClipboardSelector differently
+                if (selector instanceof ClipboardSelector) {
+                    ClipboardSelector clipboardSelector = (ClipboardSelector)selector;
+                    XoActivity xoActivity = (XoActivity)activity;
+                    xoActivity.clipBoardItemSelected(clipboardSelector.createObjectFromClipboardData(xoActivity));
+                } else {
+                    Intent intent = (Intent) sel.get(KEY_INTENT);
+                    activity.startActivityForResult(intent, requestCode);
+                }
             }
         });
 

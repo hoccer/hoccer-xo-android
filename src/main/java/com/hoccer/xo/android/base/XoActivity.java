@@ -595,6 +595,9 @@ public abstract class XoActivity extends Activity {
     public void showPopup(View view) {
     }
 
+    public void clipBoardItemSelected(IContentObject contentObject) {
+    }
+
     /**
      * Connection to our backend service
      */
