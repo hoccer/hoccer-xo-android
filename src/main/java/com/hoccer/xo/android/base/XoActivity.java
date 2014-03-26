@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.base;
 
+import android.view.View;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -589,6 +590,9 @@ public abstract class XoActivity extends Activity {
     }
 
     public void hackReturnedFromDialog() {
+    }
+
+    public void showPopup(View view) {
     }
 
     /**

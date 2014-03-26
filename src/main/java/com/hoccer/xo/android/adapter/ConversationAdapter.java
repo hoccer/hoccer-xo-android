@@ -400,6 +400,13 @@ public class ConversationAdapter extends XoAdapter
         } else {
             contentView.setVisibility(View.VISIBLE);
             contentView.displayContent(mActivity, contentObject, message);
+            contentView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    mActivity.showPopup(view);
+                    return true;
+                }
+            });
         }
     }
 

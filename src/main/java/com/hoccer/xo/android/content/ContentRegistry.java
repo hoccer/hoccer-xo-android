@@ -13,6 +13,7 @@ import android.widget.SimpleAdapter;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.audio.ButtonAudioViewer;
 import com.hoccer.xo.android.content.audio.MusicSelector;
+import com.hoccer.xo.android.content.clipboard.ClipboardSelector;
 import com.hoccer.xo.android.content.data.DataViewer;
 import com.hoccer.xo.android.content.image.ImageSelector;
 import com.hoccer.xo.android.content.image.ImageViewer;
@@ -76,6 +77,8 @@ public class ContentRegistry {
     /** Active attachment viewers (only the supported ones) */
     List<ContentViewer> mAttachmentViewers = new ArrayList<ContentViewer>();
 
+    private ClipboardSelector mClipboardSelector;
+
     private ContentRegistry(Context context) {
         mContext = context;
         initialize();
@@ -95,6 +98,8 @@ public class ContentRegistry {
         initializeSelector(new ContactSelector());
         initializeSelector(new MapsLocationSelector());
 //        initializeSelector(new DataSelector());
+
+        mClipboardSelector = new ClipboardSelector(mContext);
 
         mAttachmentViewers.add(new ImageViewer());
         mAttachmentViewers.add(new VideoViewer());
@@ -251,6 +256,14 @@ public class ContentRegistry {
                 fields.put(KEY_SELECTOR, selector);
                 fields.put(KEY_ICON, IntentHelper.getIconForIntent(selectionIntent, activity));
                 fields.put(KEY_NAME, selector.getName());
+                options.add(fields);
+            }
+        }
+
+        // Add clipboard selector when it has something to process
+        if (mClipboardSelector.canProcessClipboard()) {
+            Map<String, Object> fields = createDataObjectFromContentSelector(activity, mClipboardSelector);
+            if (fields != null) {
                 options.add(fields);
             }
         }
