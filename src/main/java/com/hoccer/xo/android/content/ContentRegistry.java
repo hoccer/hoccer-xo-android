@@ -334,4 +334,27 @@ public class ContentRegistry {
         return null;
     }
 
+    /**
+     * Creates a dialog entry data object from a given IContentSelector.
+     *
+     * @param activity that is requesting the selection
+     * @param selector the given IContentSelector
+     * @return a Map containing all relevant intent information
+     */
+    private Map<String, Object> createDataObjectFromContentSelector(final Activity activity, final IContentSelector selector) {
+
+        Intent selectionIntent = selector.createSelectionIntent(activity);
+
+        if (IntentHelper.isIntentResolvable(selectionIntent, activity)) {
+            Map<String, Object> fields = new HashMap<String, Object>();
+            fields.put(KEY_INTENT, selectionIntent);
+            fields.put(KEY_SELECTOR, selector);
+            fields.put(KEY_ICON, IntentHelper.getIconForIntent(selectionIntent, activity));
+            fields.put(KEY_NAME, selector.getName());
+            return fields;
+        }
+
+        return null;
+    }
+
 }

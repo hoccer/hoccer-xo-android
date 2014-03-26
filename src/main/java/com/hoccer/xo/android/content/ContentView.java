@@ -108,6 +108,10 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         applyAttributes(context, attrs);
     }
 
+    public IContentObject getContent() {
+        return mContent;
+    }
+
     private void applyAttributes(Context context, AttributeSet attributes) {
         TypedArray a = context.getTheme().obtainStyledAttributes(attributes, R.styleable.AspectLimits, 0, 0);
         try {
