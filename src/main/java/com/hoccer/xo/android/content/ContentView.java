@@ -280,7 +280,11 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 oldViewer.returnView(activity, v);
             }
             // add new
-            mContentChild = mViewer.getViewForObject(activity, this, object, message.isIncoming());
+            boolean isIncomingMessage = false;
+            if (message != null) {
+                isIncomingMessage = message.isIncoming();
+            }
+            mContentChild = mViewer.getViewForObject(activity, this, object, isIncomingMessage);
             mContentWrapper.addView(mContentChild,
                     new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
