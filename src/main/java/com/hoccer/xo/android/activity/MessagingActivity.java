@@ -141,7 +141,7 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
             public boolean onMenuItemClick(MenuItem item) {
-                onPopupItemSelected(item);
+                popupItemSelected(item);
                 return true;
             }
         });
@@ -149,7 +149,7 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
         popup.show();
     }
 
-    public void onPopupItemSelected(MenuItem item) {
+    public void popupItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_copy_attachment:
                 Clipboard clipboard = Clipboard.get(this);
