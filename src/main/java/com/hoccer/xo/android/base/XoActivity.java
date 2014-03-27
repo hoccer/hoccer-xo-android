@@ -57,6 +57,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import net.hockeyapp.android.CrashManager;
+
 /**
  * Base class for our activities
  * <p/>
@@ -184,6 +186,7 @@ public abstract class XoActivity extends Activity {
     protected void onResume() {
         LOG.debug("onResume()");
         super.onResume();
+        checkForCrashesIfEnabled();
 
         // get the background executor
         mBackgroundExecutor = XoApplication.getExecutor();
@@ -193,6 +196,12 @@ public abstract class XoActivity extends Activity {
         startService(serviceIntent);
         mServiceConnection = new MainServiceConnection();
         bindService(serviceIntent, mServiceConnection, BIND_IMPORTANT);
+    }
+
+    private void checkForCrashesIfEnabled() {
+        if (XoConfiguration.reportingEnable()) {
+            CrashManager.register(this, XoConfiguration.HOCKEYAPP_ID);
+        }
     }
 
     @Override
