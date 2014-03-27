@@ -306,7 +306,7 @@ public class ContentRegistry {
                 if (selector instanceof ClipboardSelector) {
                     ClipboardSelector clipboardSelector = (ClipboardSelector)selector;
                     XoActivity xoActivity = (XoActivity)activity;
-                    xoActivity.clipBoardItemSelected(clipboardSelector.createObjectFromClipboardData(xoActivity));
+                    xoActivity.clipBoardItemSelected(clipboardSelector.selectObjectFromClipboard(xoActivity));
                 } else {
                     Intent intent = (Intent) sel.get(KEY_INTENT);
                     activity.startActivityForResult(intent, requestCode);

@@ -43,7 +43,7 @@ public class ClipboardSelector implements IContentSelector {
         return intent;
     }
 
-    public IContentObject createObjectFromClipboardData(Context context) {
+    private IContentObject createObjectFromClipboardData(Context context) {
         IContentObject contentObject = null;
         XoActivity activity = (XoActivity) context;
         XoClientDatabase database = activity.getXoDatabase();
@@ -63,6 +63,12 @@ public class ClipboardSelector implements IContentSelector {
         return contentObject;
     }
 
+    public IContentObject selectObjectFromClipboard(Context context) {
+        IContentObject contentObject = createObjectFromClipboardData(context);
+        mClipboard.clearClipBoard();
+        return contentObject;
+    }
+
     @Override
     public IContentObject createObjectFromSelectionResult(Context context, Intent intent) {
         IContentObject contentObject = null;
@@ -78,5 +84,4 @@ public class ClipboardSelector implements IContentSelector {
     public boolean canProcessClipboard() {
         return mClipboard.canProcessClipboard();
     }
-
 }
