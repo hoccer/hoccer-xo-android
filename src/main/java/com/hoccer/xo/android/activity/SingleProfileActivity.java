@@ -99,7 +99,7 @@ public class SingleProfileActivity extends XoActivity
             menu.findItem(R.id.menu_profile_delete).setVisible(false);
         } else {
             TalkRelationship relationship = contact.getClientRelationship();
-            if (relationship.isBlocked()) {
+            if (relationship == null || relationship.isBlocked()) {
                 menu.findItem(R.id.menu_profile_block).setVisible(false);
                 menu.findItem(R.id.menu_profile_unblock).setVisible(true);
             } else {

@@ -73,32 +73,7 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         LOG.debug("onCreateOptionsMenu()");
-        boolean result = super.onCreateOptionsMenu(menu);
-
-        MenuItem myProfile = menu.findItem(R.id.menu_my_profile);
-        myProfile.setVisible(true);
-
-        MenuItem editGroup = menu.findItem(R.id.menu_group_profile_edit);
-        MenuItem rejectInvitation = menu.findItem(R.id.menu_group_profile_reject_invitation);
-        MenuItem joinGroup = menu.findItem(R.id.menu_group_profile_join);
-        MenuItem leaveGroup = menu.findItem(R.id.menu_group_profile_leave);
-        editGroup.setVisible(true);
-        rejectInvitation.setVisible(false);
-        joinGroup.setVisible(false);
-        leaveGroup.setVisible(false);
-
-        TalkClientContact contact = mGroupProfileFragment.getContact();
-        if (!contact.isEditable()) {
-            editGroup.setVisible(false);
-            if (contact.isGroupInvited()) {
-                rejectInvitation.setVisible(true);
-                joinGroup.setVisible(true);
-            } else if (contact.isGroupJoined()) {
-                leaveGroup.setVisible(true);
-            }
-        }
-
-        return result;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

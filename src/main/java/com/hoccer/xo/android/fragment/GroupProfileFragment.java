@@ -52,6 +52,8 @@ public class GroupProfileFragment extends XoFragment
     private IContentObject mAvatarToSet;
     private ImageView mAvatarImage;
 
+    private Menu mOptionsMenu;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         LOG.debug("onCreate()");
@@ -120,6 +122,48 @@ public class GroupProfileFragment extends XoFragment
             mGroupMemberAdapter.onPause();
             mGroupMemberAdapter.onDestroy();
             mGroupMemberAdapter = null;
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        LOG.debug("onCreateOptionsMenu()");
+        super.onCreateOptionsMenu(menu, menuInflater);
+
+        mOptionsMenu = menu;
+        configureOptionsMenuItems(menu);
+    }
+
+    private void configureOptionsMenuItems(Menu menu) {
+        MenuItem myProfile = menu.findItem(R.id.menu_my_profile);
+        myProfile.setVisible(true);
+
+        MenuItem editGroup = menu.findItem(R.id.menu_group_profile_edit);
+        MenuItem rejectInvitation = menu.findItem(R.id.menu_group_profile_reject_invitation);
+        MenuItem joinGroup = menu.findItem(R.id.menu_group_profile_join);
+        MenuItem leaveGroup = menu.findItem(R.id.menu_group_profile_leave);
+
+        editGroup.setVisible(false);
+        rejectInvitation.setVisible(false);
+        joinGroup.setVisible(false);
+        leaveGroup.setVisible(false);
+
+        if (mMode == Mode.CREATE_GROUP) {
+            editGroup.setVisible(false);
+
+        } else {
+
+            if (mGroup.isEditable()) {
+                editGroup.setVisible(true);
+            } else {
+                editGroup.setVisible(false);
+                if (mGroup.isGroupInvited()) {
+                    rejectInvitation.setVisible(true);
+                    joinGroup.setVisible(true);
+                } else if (mGroup.isGroupJoined()) {
+                    leaveGroup.setVisible(true);
+                }
+            }
         }
     }
 
@@ -402,19 +446,16 @@ public class GroupProfileFragment extends XoFragment
         }
     }
 
-    private void configureMenuItems(Menu menu) {
+    private void configureActionMenuItems(Menu menu) {
 
-        MenuItem editGroup = menu.findItem(R.id.menu_group_profile_edit);
         MenuItem addPerson = menu.findItem(R.id.menu_group_profile_add_person);
         MenuItem deleteGroup = menu.findItem(R.id.menu_group_profile_delete);
 
-        editGroup.setVisible(true);
         addPerson.setVisible(false);
         deleteGroup.setVisible(false);
         mAvatarImage.setOnClickListener(null);
 
         if (mMode == Mode.EDIT_GROUP) {
-            editGroup.setVisible(false);
             mAvatarImage.setOnClickListener(this);
             deleteGroup.setVisible(true);
             addPerson.setVisible(true);
@@ -428,10 +469,10 @@ public class GroupProfileFragment extends XoFragment
 
     @Override
     public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-        actionMode.getMenuInflater().inflate(R.menu.fragment_group_profile, menu);
+        actionMode.getMenuInflater().inflate(R.menu.fragment_group_profile_edit, menu);
 
         mMode = Mode.EDIT_GROUP;
-        configureMenuItems(menu);
+        configureActionMenuItems(menu);
         update(mGroup);
         return true;
     }
@@ -459,6 +500,8 @@ public class GroupProfileFragment extends XoFragment
         }
         mMode = Mode.PROFILE;
         update(mGroup);
+
+        configureOptionsMenuItems(mOptionsMenu);
     }
 
 }

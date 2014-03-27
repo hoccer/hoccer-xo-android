@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import com.hoccer.talk.client.IXoClientDatabaseBackend;
+import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMembership;
@@ -63,27 +64,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
     public void onCreate(SQLiteDatabase db, ConnectionSource cs) {
         LOG.info("creating database at schema version " + DATABASE_VERSION);
         try {
-            TableUtils.createTable(cs, TalkClientContact.class);
-            TableUtils.createTable(cs, TalkClientSelf.class);
-            TableUtils.createTable(cs, TalkPresence.class);
-            TableUtils.createTable(cs, TalkRelationship.class);
-            TableUtils.createTable(cs, TalkGroup.class);
-            TableUtils.createTable(cs, TalkGroupMember.class);
-
-            TableUtils.createTable(cs, TalkClientMembership.class);
-
-            TableUtils.createTable(cs, TalkClientMessage.class);
-            TableUtils.createTable(cs, TalkMessage.class);
-            TableUtils.createTable(cs, TalkDelivery.class);
-
-            TableUtils.createTable(cs, TalkKey.class);
-            TableUtils.createTable(cs, TalkPrivateKey.class);
-
-            TableUtils.createTable(cs, TalkAttachment.class);
-            TableUtils.createTable(cs, TalkClientDownload.class);
-            TableUtils.createTable(cs, TalkClientUpload.class);
-
-            TableUtils.createTable(cs, TalkClientSmsToken.class);
+            XoClientDatabase.createTables(cs);
         } catch (SQLException e) {
             LOG.error("sql error creating database", e);
         }
