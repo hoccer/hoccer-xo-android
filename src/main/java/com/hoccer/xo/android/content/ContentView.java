@@ -31,7 +31,7 @@ import android.view.View;
  * It needs to handle content in all states, displayable or not.
  *
  */
-public class ContentView extends LinearLayout implements View.OnClickListener {
+public class ContentView extends LinearLayout implements View.OnClickListener, View.OnLongClickListener, IContentViewerListener {
 
     private static final Logger LOG = Logger.getLogger(ContentView.class);
 
@@ -61,6 +61,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     AttachmentTransferControlView mTransferProgress;
 
     TransferAction mTransferAction = TransferAction.NONE;
+
+    private IContentViewListener mContentViewListener;
 
     /**
      * Maximum height for content view in DP.
@@ -142,6 +144,22 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
 
     public void setMaxContentHeight(int maxContentHeight) {
         this.mMaxContentHeight = maxContentHeight;
+    }
+
+    public void setContentViewListener(IContentViewListener contentViewListener) {
+        mContentViewListener = contentViewListener;
+        this.setOnLongClickListener(this);
+    }
+
+    @Override
+    public void onContentViewerLongClick(ContentViewer contentViewer) {
+        mContentViewListener.onContentViewLongClick(this);
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+        mContentViewListener.onContentViewLongClick(this);
+        return true;
     }
 
     @Override
@@ -266,6 +284,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
                 mContentWrapper.setVisibility(View.VISIBLE);
             }
         }
+        mViewer.setContentViewerListener(this);
     }
 
     private void updateContentView(boolean viewerChanged, ContentViewer<?> oldViewer,
