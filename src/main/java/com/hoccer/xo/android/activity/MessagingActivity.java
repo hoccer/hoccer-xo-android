@@ -137,7 +137,7 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
         mClipboardAttachment = contentObject;
 
         PopupMenu popup = new PopupMenu(this, view);
-        popup.getMenuInflater().inflate(R.menu.context_menu_messaging, popup.getMenu());
+        popup.getMenuInflater().inflate(R.menu.popup_menu_messaging, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
             public boolean onMenuItemClick(MenuItem item) {

@@ -9,4 +9,5 @@
     <color name="xo_content_description_text">#7e8498</color>
     <color name="xo_content_text">#000000</color>
     <color name="xo_content_horizontal_divider">#d1d6e4</color>
+    <color name="xo_menu_text">#ffffff</color>
 </resources>

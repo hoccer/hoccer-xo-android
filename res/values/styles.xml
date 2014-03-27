@@ -1,20 +1,5 @@
 <resources>
 
-    <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    -->
-<!--    <style name="AppBaseTheme" parent="android:Theme.Holo.Light.DarkActionBar">-->
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
-<!--
-        <item name="android:actionBarStyle">@style/AppBaseTheme.Contact.Avata</item>
-    </style>
--->
-
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
@@ -44,13 +29,14 @@
     <style name="CheckBoxAppBaseTheme" parent="android:Widget.CompoundButton.CheckBox">
         <item name="android:button">@drawable/appbasetheme_btn_check_holo_light</item>
     </style>
-    
+
     <style name="ButtonAppBaseTheme" parent="android:Widget.Button">
         <item name="android:background">@drawable/appbasetheme_btn_default_holo_light</item>
         <item name="android:minHeight">48dip</item>
         <item name="android:minWidth">64dip</item>
         <item name="android:textColor">#ffffff</item>
     </style>
+
     <style name="ImageButtonAppBaseTheme" parent="android:Widget.ImageButton">
         <item name="android:background">@drawable/appbasetheme_btn_default_holo_light</item>
     </style>
