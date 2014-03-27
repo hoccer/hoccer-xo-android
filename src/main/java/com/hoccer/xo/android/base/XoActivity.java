@@ -21,6 +21,7 @@ import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
 import com.hoccer.xo.android.content.ContentRegistry;
 import com.hoccer.xo.android.content.ContentSelection;
+import com.hoccer.xo.android.content.image.ImageSelector;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.IXoClientService;
 import com.hoccer.xo.android.service.XoClientService;
@@ -28,6 +29,7 @@ import com.hoccer.xo.release.R;
 
 import org.apache.log4j.Logger;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.TaskStackBuilder;
@@ -38,6 +40,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -70,6 +73,8 @@ import java.util.concurrent.TimeUnit;
 public abstract class XoActivity extends Activity {
 
     public final static int REQUEST_SELECT_AVATAR = 23;
+
+    public final static int REQUEST_CROP_AVATAR = 24;
 
     public final static int REQUEST_SELECT_ATTACHMENT = 42;
 
@@ -275,20 +280,27 @@ public abstract class XoActivity extends Activity {
     }
 
     private Intent selectedAvatarPreProcessing(Intent data) {
+        String uuid = UUID.randomUUID().toString();
+        String filePath = XoApplication.getAvatarDirectory().getPath() + File.separator + uuid
+                + ".jpg";
+        String croppedImagePath = XoApplication.getAttachmentDirectory().getAbsolutePath()
+                + File.separator
+                + "tmp_crop";
         try {
-            String uuid = UUID.randomUUID().toString();
-            String filePath = XoApplication.getAvatarDirectory().getPath() + File.separator + uuid + ".jpg";
-
-            File destination = new File(filePath);
-            Bitmap image = data.getExtras().getParcelable("data");
-            FileOutputStream out = new FileOutputStream(destination);
-            image.compress(Bitmap.CompressFormat.JPEG, 90, out);
-
-            Uri uri = getImageContentUri(getBaseContext(), destination);
+            Bitmap bitmap = BitmapFactory.decodeFile(croppedImagePath);
+            File avatarFile = new File(filePath);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, new FileOutputStream(avatarFile));
+            Uri uri = getImageContentUri(getBaseContext(), avatarFile);
             data.setData(uri);
+
+            File tmpImage = new File(croppedImagePath);
+            if(tmpImage.exists()) {
+                tmpImage.delete();
+            }
+
             return data;
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -328,27 +340,21 @@ public abstract class XoActivity extends Activity {
 
         if (requestCode == REQUEST_SELECT_AVATAR) {
             if (mAvatarSelection != null) {
-                if (data.getExtras() != null && data.getExtras().getParcelable("data") != null) {
-                    data = selectedAvatarPreProcessing(data);
-                    IContentObject co = ContentRegistry.get(this)
-                            .createSelectedAvatar(mAvatarSelection, data);
-                    if (co != null) {
-                        LOG.debug("selected avatar " + co.getContentDataUrl());
-                        for (IXoFragment fragment : mTalkFragments) {
-                            fragment.onAvatarSelected(co);
-                        }
-                    }
-                } else {
-                    Intent intent = new Intent("com.android.camera.action.CROP",
-                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    intent.setDataAndType(data.getData(), "image/*");
-                    intent.putExtra("crop", "true");
-                    intent.putExtra("aspectX", 1);
-                    intent.putExtra("aspectY", 1);
-                    intent.putExtra("outputX", 300);
-                    intent.putExtra("outputY", 300);
-                    intent.putExtra("return-data", true);
-                    startActivityForResult(intent, REQUEST_SELECT_AVATAR);
+                ImageSelector selector = (ImageSelector) mAvatarSelection.getSelector();
+                startActivityForResult(selector.createCropIntent(this, data.getData()),
+                        REQUEST_CROP_AVATAR);
+            }
+            return;
+        }
+
+        if (requestCode == REQUEST_CROP_AVATAR) {
+            data = selectedAvatarPreProcessing(data);
+            IContentObject co = ContentRegistry.get(this)
+                    .createSelectedAvatar(mAvatarSelection, data);
+            if (co != null) {
+                LOG.debug("selected avatar " + co.getContentDataUrl());
+                for (IXoFragment fragment : mTalkFragments) {
+                    fragment.onAvatarSelected(co);
                 }
             }
             return;
@@ -387,6 +393,7 @@ public abstract class XoActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    @SuppressLint("NewApi")
     private void navigateUp() {
         LOG.debug("navigateUp()");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && mUpEnabled) {
@@ -566,7 +573,8 @@ public abstract class XoActivity extends Activity {
                             "hxo://" + token + "\nxo " + self.getName();
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //At least KitKat
-                String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(this); //Need to change the build to API 19
+                String defaultSmsPackageName = Telephony.Sms
+                        .getDefaultSmsPackage(this); //Need to change the build to API 19
 
                 Intent sendIntent = new Intent(Intent.ACTION_SEND);
                 sendIntent.setType("text/plain");
