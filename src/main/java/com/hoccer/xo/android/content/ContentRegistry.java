@@ -91,14 +91,14 @@ public class ContentRegistry {
      * This methods activates supported content selectors and viewers.
      */
     private void initialize() {
-        mAvatarSelector = new ImageSelector();
+        mAvatarSelector = new ImageSelector(mContext);
 
-        initializeSelector(new ImageSelector());
-        initializeSelector(new VideoSelector());
-        initializeSelector(new MusicSelector());
-        initializeSelector(new ContactSelector());
-        initializeSelector(new MapsLocationSelector());
-//        initializeSelector(new DataSelector());
+        initializeSelector(new ImageSelector(mContext));
+        initializeSelector(new VideoSelector(mContext));
+        initializeSelector(new MusicSelector(mContext));
+        initializeSelector(new ContactSelector(mContext));
+        initializeSelector(new MapsLocationSelector(mContext));
+//        initializeSelector(new DataSelector(mContext));
 
         mClipboardSelector = new ClipboardSelector(mContext);
 

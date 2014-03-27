@@ -7,12 +7,19 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
+import com.hoccer.xo.release.R;
 
 public class MusicSelector implements IContentSelector {
 
+    private String mName;
+
+    public MusicSelector(Context context) {
+        mName = context.getResources().getString(R.string.content_music);
+    }
+
     @Override
     public String getName() {
-        return "Music";
+        return mName;
     }
 
     @Override

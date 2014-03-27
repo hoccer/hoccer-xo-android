@@ -12,6 +12,7 @@ import com.hoccer.xo.android.activity.MessagingActivity;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.IContentSelector;
 import com.hoccer.xo.android.fragment.CompositionFragment;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
@@ -20,17 +21,18 @@ public class ClipboardSelector implements IContentSelector {
 
     Logger LOG = Logger.getLogger(ClipboardSelector.class);
 
-    Clipboard mClipboard;
+    private Clipboard mClipboard;
+
+    private String mName;
 
     public ClipboardSelector(Context context) {
-        super();
-
+        mName = context.getResources().getString(R.string.content_clipboard);
         mClipboard = Clipboard.get(context);
     }
 
     @Override
     public String getName() {
-        return "Clipboard";
+        return mName;
     }
 
     @Override

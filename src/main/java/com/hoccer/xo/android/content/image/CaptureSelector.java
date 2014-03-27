@@ -7,12 +7,19 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
+import com.hoccer.xo.release.R;
 
 public class CaptureSelector implements IContentSelector {
 
+    private String mName;
+
+    public CaptureSelector(Context context) {
+        mName = context.getResources().getString(R.string.content_capture);
+    }
+
     @Override
     public String getName() {
-        return "Take photo";
+        return mName;
     }
 
     @Override

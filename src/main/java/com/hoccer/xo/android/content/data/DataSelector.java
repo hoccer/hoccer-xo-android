@@ -8,10 +8,18 @@ import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
 
 public class DataSelector implements IContentSelector {
+
+    private String mName;
+
+    public DataSelector(Context context) {
+        mName = context.getResources().getString(R.string.content_data);
+    }
+
     @Override
     public String getName() {
-        return "Data";
+        return mName;
     }
+
 
     @Override
     public Intent createSelectionIntent(Context context) {

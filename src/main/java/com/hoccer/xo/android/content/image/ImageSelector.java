@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import com.hoccer.xo.release.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,9 +22,15 @@ import java.net.URL;
 
 public class ImageSelector implements IContentSelector {
 
+    private String mName;
+
+    public ImageSelector(Context context) {
+        mName = context.getResources().getString(R.string.content_images);
+    }
+
     @Override
     public String getName() {
-        return "Image";
+        return mName;
     }
 
     @Override

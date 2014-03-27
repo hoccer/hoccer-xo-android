@@ -98,6 +98,16 @@
     <string name="content_downloading">Downloading...</string>
     <string name="content_uploading">Uploading...</string>
 
+    <string name="content_images">Foto</string>
+    <string name="content_video">Video</string>
+    <string name="content_capture">Foto aufnehmen</string>
+    <string name="content_music">Musik</string>
+    <string name="content_ringtone">Klingelton</string>
+    <string name="content_contact">Kontakt</string>
+    <string name="content_location">Ort</string>
+    <string name="content_data">Dokument</string>
+    <string name="content_clipboard">Aus Zwischenablage</string>
+
     <!-- Client states (used in status fragment) -->
     <string name="client_state_idle">Idle</string>
     <string name="client_state_inactive">Inaktiv</string>
