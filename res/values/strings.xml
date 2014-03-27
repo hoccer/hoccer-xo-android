@@ -194,7 +194,7 @@
     <string name="pref_auto_download_wifi">On wireless networks</string>
     <string name="pref_auto_download">Automatic downloads</string>
     <string name="pref_legal_information">Legal Information</string>
-<string name="pref_please_wait">Please wait...</string>
+    <string name="pref_please_wait">Please wait...</string>
     <string name="profile_compare_key_description">For extra security compare this fingerprint with
         the fingerprint seen by your friends in your contact card.
     </string>
