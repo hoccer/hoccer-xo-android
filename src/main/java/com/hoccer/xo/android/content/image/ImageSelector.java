@@ -31,7 +31,24 @@ public class ImageSelector implements IContentSelector {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        intent.putExtra("return-data", true);
+        return intent;
+    }
+
+    public Intent createCropIntent(Context context, Uri data) {
+        Intent intent = new Intent("com.android.camera.action.CROP",
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setDataAndType(data, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("outputX", 300);
+        intent.putExtra("outputY", 300);
+        intent.putExtra("noFaceDetection", true);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("return-data", false);
+
+        File tmpFile = new File(XoApplication.getAttachmentDirectory(), "tmp_crop");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tmpFile));
         return intent;
     }
 
