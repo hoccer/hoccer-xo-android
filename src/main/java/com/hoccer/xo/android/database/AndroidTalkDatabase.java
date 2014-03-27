@@ -113,8 +113,12 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
             }
             if(oldVersion < 10) {
                 Dao<TalkClientDownload, Integer> downloads = getDao(TalkClientDownload.class);
-                downloads.executeRaw("ALTER TABLE `clientDownload` ADD COLUMN `contentHmac` VARCHAR;");
                 downloads.executeRaw("ALTER TABLE `clientDownload` ADD COLUMN `transferFailures` INTEGER;");
+                TableUtils.createTableIfNotExists(cs, TalkAttachment.class);
+            }
+            if(oldVersion < 11) {
+                Dao<TalkClientDownload, Integer> downloads = getDao(TalkClientDownload.class);
+                downloads.executeRaw("ALTER TABLE `clientDownload` ADD COLUMN `contentHmac` VARCHAR;");
                 Dao<TalkClientUpload, Integer> uploads = getDao(TalkClientUpload.class);
                 uploads.executeRaw("ALTER TABLE `clientUpload` ADD COLUMN `contentHmac` VARCHAR;");
                 uploads.executeRaw("ALTER TABLE `clientUpload` ADD COLUMN `transferFailures` INTEGER;");
