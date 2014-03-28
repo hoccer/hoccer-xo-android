@@ -76,14 +76,14 @@ public class ImageSelector implements IContentSelector {
             if (columnIndex != -1) {
                 try {
                     String displayName = cursor.getString(columnIndex);
-                    final Uri uriurl = selectedContent;
-                    Bitmap bmp = getBitmap(context, displayName, uriurl);
+                    final Uri contentUri = selectedContent;
+                    Bitmap bmp = getBitmap(context, displayName, contentUri);
                     File imageFile = new File(XoApplication.getAttachmentDirectory(), displayName);
 
                     bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(imageFile));
 
-                    SelectedContent contentObject = new SelectedContent(intent,
-                            "file://" + imageFile.getAbsolutePath());
+                    SelectedContent contentObject = new SelectedContent(intent, "file://" + imageFile.getAbsolutePath());
+                    contentObject.setContentType("image/jpeg");
                     contentObject.setContentMediaType("image");
                     contentObject.setContentLength((int) imageFile.length());
                     contentObject.setContentAspectRatio(
@@ -127,8 +127,8 @@ public class ImageSelector implements IContentSelector {
                 selectedContent, filePathColumn, null, null, null);
         cursor.moveToFirst();
 
-        int typeIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String fileType = cursor.getString(typeIndex);
+        int mimeTypeIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String mimeType = cursor.getString(mimeTypeIndex);
         int dataIndex = cursor.getColumnIndex(filePathColumn[1]);
         String filePath = cursor.getString(dataIndex);
         int sizeIndex = cursor.getColumnIndex(filePathColumn[2]);
@@ -145,6 +145,7 @@ public class ImageSelector implements IContentSelector {
         }
 
         SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);
+        contentObject.setContentType(mimeType);
         contentObject.setContentMediaType("image");
         contentObject.setContentLength(fileSize);
         if (fileWidth > 0 && fileHeight > 0) {
