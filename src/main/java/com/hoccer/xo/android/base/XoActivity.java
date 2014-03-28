@@ -21,6 +21,7 @@ import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
 import com.hoccer.xo.android.content.ContentRegistry;
 import com.hoccer.xo.android.content.ContentSelection;
+import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.image.ImageSelector;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.IXoClientService;
@@ -609,7 +610,7 @@ public abstract class XoActivity extends Activity {
     public void hackReturnedFromDialog() {
     }
 
-    public void showPopup(View view) {
+    public void showPopupForContentView(ContentView contentView) {
     }
 
     public void clipBoardItemSelected(IContentObject contentObject) {

@@ -407,7 +407,7 @@ public class ConversationAdapter extends XoAdapter
 
     @Override
     public void onContentViewLongClick(ContentView contentView) {
-        mActivity.showPopup(contentView);
+        mActivity.showPopupForContentView(contentView);
     }
 
     private void setAvatar(View view, final TalkClientContact sendingContact) {

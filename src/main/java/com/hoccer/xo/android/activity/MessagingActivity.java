@@ -131,22 +131,24 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
     }
 
     @Override
-    public void showPopup(View view) {
-        ContentView contentView = (ContentView) view;
+    public void showPopupForContentView(ContentView contentView) {
         IContentObject contentObject = contentView.getContent();
-        mClipboardAttachment = contentObject;
 
-        PopupMenu popup = new PopupMenu(this, view);
-        popup.getMenuInflater().inflate(R.menu.popup_menu_messaging, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+        if (contentObject.isContentAvailable()) {
+            mClipboardAttachment = contentObject;
 
-            public boolean onMenuItemClick(MenuItem item) {
-                popupItemSelected(item);
-                return true;
-            }
-        });
+            PopupMenu popup = new PopupMenu(this, contentView);
+            popup.getMenuInflater().inflate(R.menu.popup_menu_messaging, popup.getMenu());
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 
-        popup.show();
+                public boolean onMenuItemClick(MenuItem item) {
+                    popupItemSelected(item);
+                    return true;
+                }
+            });
+
+            popup.show();
+        }
     }
 
     public void popupItemSelected(MenuItem item) {
