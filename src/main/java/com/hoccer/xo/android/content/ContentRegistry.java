@@ -12,18 +12,17 @@ import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.content.audio.ButtonAudioViewer;
+import com.hoccer.xo.android.content.audio.ButtonAudioViewProvider;
 import com.hoccer.xo.android.content.audio.MusicSelector;
 import com.hoccer.xo.android.content.clipboard.ClipboardSelector;
-import com.hoccer.xo.android.content.data.DataViewer;
-import com.hoccer.xo.android.content.image.ImageSelector;
-import com.hoccer.xo.android.content.image.ImageViewer;
-import com.hoccer.xo.android.content.image.VideoSelector;
-import com.hoccer.xo.android.content.image.VideoViewer;
-import com.hoccer.xo.android.content.location.LocationViewer;
+import com.hoccer.xo.android.content.data.DataViewProvider;
+import com.hoccer.xo.android.content.image.*;
+import com.hoccer.xo.android.content.image.ImageViewProvider;
+import com.hoccer.xo.android.content.image.VideoViewProvider;
+import com.hoccer.xo.android.content.location.LocationViewProvider;
 import com.hoccer.xo.android.content.location.MapsLocationSelector;
 import com.hoccer.xo.android.content.vcard.ContactSelector;
-import com.hoccer.xo.android.content.vcard.ContactViewer;
+import com.hoccer.xo.android.content.vcard.ContactViewProvider;
 import com.hoccer.xo.android.util.IntentHelper;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -75,8 +74,8 @@ public class ContentRegistry {
     /** Active attachment selectors (only the supported ones)  */
     List<IContentSelector> mAttachmentSelectors = new ArrayList<IContentSelector>();
 
-    /** Active attachment viewers (only the supported ones) */
-    List<ContentViewer> mAttachmentViewers = new ArrayList<ContentViewer>();
+    /** Active attachment viewer providers (only the supported ones) */
+    List<ContentViewProvider> mAttachmentViewProviders = new ArrayList<ContentViewProvider>();
 
     private ClipboardSelector mClipboardSelector;
 
@@ -102,12 +101,12 @@ public class ContentRegistry {
 
         mClipboardSelector = new ClipboardSelector(mContext);
 
-        mAttachmentViewers.add(new ImageViewer());
-        mAttachmentViewers.add(new VideoViewer());
-        mAttachmentViewers.add(new ButtonAudioViewer());
-        mAttachmentViewers.add(new ContactViewer());
-        mAttachmentViewers.add(new LocationViewer());
-        mAttachmentViewers.add(new DataViewer());
+        mAttachmentViewProviders.add(new ImageViewProvider());
+        mAttachmentViewProviders.add(new VideoViewProvider());
+        mAttachmentViewProviders.add(new ButtonAudioViewProvider());
+        mAttachmentViewProviders.add(new ContactViewProvider());
+        mAttachmentViewProviders.add(new LocationViewProvider());
+        mAttachmentViewProviders.add(new DataViewProvider());
     }
 
     /**
@@ -173,9 +172,9 @@ public class ContentRegistry {
      * @return a View set up for the given content
      */
     public View createViewForContent(Activity activity, IContentObject contentObject, ContentView view, boolean isLightTheme) {
-        ContentViewer viewer = selectViewerForContent(contentObject);
-        if(viewer != null) {
-            return viewer.getViewForObject(activity, view, contentObject, isLightTheme);
+        ContentViewProvider contentViewProvider = selectViewProviderForContent(contentObject);
+        if(contentViewProvider != null) {
+            return contentViewProvider.getViewForObject(activity, view, contentObject, isLightTheme);
         }
         return null;
     }
@@ -188,10 +187,10 @@ public class ContentRegistry {
      * @param contentObject that needs a view constructed
      * @return a matching content viewer
      */
-    public ContentViewer selectViewerForContent(IContentObject contentObject) {
-        for(ContentViewer viewer: mAttachmentViewers) {
-            if(viewer.canViewObject(contentObject)) {
-                return viewer;
+    public ContentViewProvider selectViewProviderForContent(IContentObject contentObject) {
+        for(ContentViewProvider viewProvider: mAttachmentViewProviders) {
+            if(viewProvider.canViewObject(contentObject)) {
+                return viewProvider;
             }
         }
         return null;

@@ -2,11 +2,11 @@ package com.hoccer.xo.android.content.vcard;
 
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.ContentViewer;
+import com.hoccer.xo.android.content.ContentViewProvider;
 
 import android.app.Activity;
 
-public class ContactViewer extends ContentViewer<ContactView> {
+public class ContactViewProvider extends ContentViewProvider<ContactView> {
 
     @Override
     public boolean canViewObject(IContentObject object) {

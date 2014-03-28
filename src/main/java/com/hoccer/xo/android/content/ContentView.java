@@ -50,7 +50,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener, I
     ContentRegistry mRegistry;
 
     IContentObject mContent;
-    ContentViewer<?> mViewer;
+    ContentViewProvider<?> mViewProvider;
 
     ContentState mPreviousContentState;
 
@@ -247,18 +247,18 @@ public class ContentView extends LinearLayout implements View.OnClickListener, I
         }
 
         ContentState state = getTrueContentState(content);
-        ContentViewer<?> viewer = mRegistry.selectViewerForContent(content);
+        ContentViewProvider<?> contentViewProvider = mRegistry.selectViewProviderForContent(content);
 
         // determine if the content url has changed so
         // we know if we need to re-instantiate child views
         boolean contentChanged = hasContentChanged(content);
         boolean stateChanged = hasStateChanged(contentChanged, state);
-        boolean viewerChanged = hasViewerChanged(viewer);
-        ContentViewer<?> oldViewer = mViewer;
+        boolean providerChanged = hasViewProviderChanged(contentViewProvider);
+        ContentViewProvider<?> oldViewProvider = mViewProvider;
 
         // remember the new object
         mContent = content;
-        mViewer = viewer;
+        mViewProvider = contentViewProvider;
         mPreviousContentState = state;
 
         // description
@@ -274,14 +274,14 @@ public class ContentView extends LinearLayout implements View.OnClickListener, I
 
         removeChildViewIfContentHasChanged(contentChanged, stateChanged);
         try {
-            updateContentView(viewerChanged, oldViewer, activity, content, message);
+            updateContentView(providerChanged, oldViewProvider, activity, content, message);
         } catch (NullPointerException exception) {
             LOG.error("probably received an unkown media-type", exception);
             return;
         }
-        if(viewerChanged || contentChanged || stateChanged){
+        if(providerChanged || contentChanged || stateChanged){
             boolean isLightTheme = message != null ? message.isIncoming() : true;
-            mViewer.updateView(mContentChild, this, content, isLightTheme);
+            mViewProvider.updateView(mContentChild, this, content, isLightTheme);
         }
 //        int visibility = isInEditMode() ? GONE : VISIBLE;
 //        mContentWrapper.setVisibility(visibility);
@@ -297,23 +297,23 @@ public class ContentView extends LinearLayout implements View.OnClickListener, I
         }
     }
 
-    private void updateContentView(boolean viewerChanged, ContentViewer<?> oldViewer,
+    private void updateContentView(boolean viewProviderChanged, ContentViewProvider<?> oldViewProvider,
             Activity activity,
             IContentObject object, TalkClientMessage message) {
-        if(viewerChanged || mContentChild == null) {
+        if(viewProviderChanged || mContentChild == null) {
             // remove old
             if(mContentChild != null) {
                 View v = mContentChild;
                 mContentChild = null;
                 mContentWrapper.removeView(v);
-                oldViewer.returnView(activity, v);
+                oldViewProvider.returnView(activity, v);
             }
             // add new
             boolean isIncomingMessage = false;
             if (message != null) {
                 isIncomingMessage = message.isIncoming();
             }
-            mContentChild = mViewer.getViewForObject(activity, this, object, isIncomingMessage);
+            mContentChild = mViewProvider.getViewForObject(activity, this, object, isIncomingMessage);
             mContentWrapper.addView(mContentChild,
                     new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -337,8 +337,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener, I
         }
     }
 
-    private boolean hasViewerChanged(ContentViewer<?> viewer) {
-        if(mViewer != null && viewer != null && viewer == mViewer) {
+    private boolean hasViewProviderChanged(ContentViewProvider<?> contentViewProvider) {
+        if(mViewProvider != null && contentViewProvider != null && contentViewProvider == mViewProvider) {
             return false;
         }
         return true;

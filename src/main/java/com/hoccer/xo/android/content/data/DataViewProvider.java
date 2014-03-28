@@ -10,19 +10,19 @@ import android.widget.Toast;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.ContentViewer;
+import com.hoccer.xo.android.content.ContentViewProvider;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.net.URLConnection;
 
-public class DataViewer extends ContentViewer<Button> {
+public class DataViewProvider extends ContentViewProvider<Button> {
 
-    private static final Logger LOG = Logger.getLogger(DataViewer.class);
+    private static final Logger LOG = Logger.getLogger(DataViewProvider.class);
 
     ObjectMapper mJsonMapper;
 
-    public DataViewer() {
+    public DataViewProvider() {
         mJsonMapper = new ObjectMapper();
     }
 

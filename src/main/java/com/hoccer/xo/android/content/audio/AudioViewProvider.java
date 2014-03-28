@@ -2,12 +2,12 @@ package com.hoccer.xo.android.content.audio;
 
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.ContentViewer;
+import com.hoccer.xo.android.content.ContentViewProvider;
 import com.hoccer.xo.android.view.AudioPlayerView;
 
 import android.app.Activity;
 
-public class AudioViewer extends ContentViewer<AudioPlayerView> {
+public class AudioViewProvider extends ContentViewProvider<AudioPlayerView> {
 
     @Override
     public boolean canViewObject(IContentObject object) {
