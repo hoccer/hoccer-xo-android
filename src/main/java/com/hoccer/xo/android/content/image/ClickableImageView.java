@@ -26,13 +26,19 @@ public class ClickableImageView extends ImageView implements View.OnLongClickLis
     @Override
     public void onClick(View view) {
         LOG.debug("handling click.");
-        mClickListener.onImageViewClick(this);
+
+        if (mClickListener != null) {
+            mClickListener.onImageViewClick(this);
+        }
     }
 
     @Override
     public boolean onLongClick(View view) {
         LOG.debug("handling long click.");
-        mClickListener.onImageViewLongClick(this);
+
+        if (mClickListener != null) {
+            mClickListener.onImageViewLongClick(this);
+        }
         return true;
     }
 }

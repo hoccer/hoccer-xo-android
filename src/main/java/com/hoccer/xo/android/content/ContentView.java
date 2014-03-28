@@ -1,6 +1,8 @@
 package com.hoccer.xo.android.content;
 
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.*;
@@ -11,6 +13,8 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.ContentState;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.content.image.ClickableImageView;
+import com.hoccer.xo.android.content.image.IClickableImageViewListener;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
 
@@ -31,7 +35,7 @@ import android.view.View;
  * It needs to handle content in all states, displayable or not.
  *
  */
-public class ContentView extends LinearLayout implements View.OnClickListener, View.OnLongClickListener, IContentViewerListener {
+public class ContentView extends LinearLayout implements View.OnClickListener, IClickableImageViewListener {
 
     private static final Logger LOG = Logger.getLogger(ContentView.class);
 
@@ -148,18 +152,25 @@ public class ContentView extends LinearLayout implements View.OnClickListener, V
 
     public void setContentViewListener(IContentViewListener contentViewListener) {
         mContentViewListener = contentViewListener;
-        this.setOnLongClickListener(this);
     }
 
     @Override
-    public void onContentViewerLongClick(ContentViewer contentViewer) {
-        mContentViewListener.onContentViewLongClick(this);
+    public void onImageViewClick(ClickableImageView view) {
+        LOG.debug("handling click");
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse(mContent.getContentDataUrl()), "image/*");
+        try {
+            Activity activity = (Activity) view.getContext();
+            activity.startActivity(intent);
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public boolean onLongClick(View view) {
+    public void onImageViewLongClick(ClickableImageView view) {
         mContentViewListener.onContentViewLongClick(this);
-        return true;
     }
 
     @Override
@@ -284,7 +295,6 @@ public class ContentView extends LinearLayout implements View.OnClickListener, V
                 mContentWrapper.setVisibility(View.VISIBLE);
             }
         }
-        mViewer.setContentViewerListener(this);
     }
 
     private void updateContentView(boolean viewerChanged, ContentViewer<?> oldViewer,

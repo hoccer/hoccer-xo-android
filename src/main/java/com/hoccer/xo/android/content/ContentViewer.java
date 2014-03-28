@@ -20,8 +20,6 @@ public abstract class ContentViewer<V extends View> {
 
     WeakHashMap<Activity, List<V>> mViewCache = new WeakHashMap<Activity, List<V>>();
 
-    protected IContentViewerListener mContentViewerListener;
-
     protected ContentViewer() {
         LOG = Logger.getLogger(this.getClass());
     }
@@ -76,9 +74,4 @@ public abstract class ContentViewer<V extends View> {
         }
         return cache;
     }
-
-    public void setContentViewerListener(IContentViewerListener contentViewerListener) {
-        mContentViewerListener = contentViewerListener;
-    }
-
 }

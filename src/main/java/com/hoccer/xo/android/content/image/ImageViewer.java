@@ -4,7 +4,6 @@ import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewer;
-import com.hoccer.xo.android.content.IContentViewerListener;
 import com.hoccer.xo.android.view.AspectImageView;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -26,7 +25,7 @@ import android.widget.ImageView;
 
 import java.util.WeakHashMap;
 
-public class ImageViewer extends ContentViewer<View> implements ImageLoadingListener, IClickableImageViewListener {
+public class ImageViewer extends ContentViewer<View> implements ImageLoadingListener {
 
     private static final Logger LOG = Logger.getLogger(ImageViewer.class);
 
@@ -57,7 +56,7 @@ public class ImageViewer extends ContentViewer<View> implements ImageLoadingList
 
         if (contentObject.isContentAvailable() && contentUrl != null) {
 
-            mImageView.setClickableImageViewListener(this);
+            mImageView.setClickableImageViewListener(contentView);
             loadImage(mImageView, contentUrl);
 
         } else {
@@ -66,31 +65,11 @@ public class ImageViewer extends ContentViewer<View> implements ImageLoadingList
     }
 
     @Override
-    public void onImageViewClick(ClickableImageView view) {
-        LOG.debug("handling click");
-
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse(mContentObject.getContentDataUrl()), "image/*");
-        try {
-            Activity activity = (Activity) view.getContext();
-            activity.startActivity(intent);
-        } catch (ClassCastException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onImageViewLongClick(ClickableImageView view) {
-        LOG.debug("handling long click");
-
-        mContentViewerListener.onContentViewerLongClick(this);
-    }
-
-    @Override
     protected void clearViewInternal(View view) {
         LOG.trace("clearing");
         ImageLoader.getInstance().cancelDisplayTask(mImageView);
         mImageView.setImageDrawable(null);
+        mImageView.setClickableImageViewListener(null);
     }
 
     private void loadImage(ImageView view, String contentUrl) {
