@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.ContentViewProvider;
+import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
 
@@ -25,13 +25,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class LocationViewProvider extends ContentViewProvider<View> {
+public class LocationViewCache extends ContentViewCache<View> {
 
-    private static final Logger LOG = Logger.getLogger(LocationViewProvider.class);
+    private static final Logger LOG = Logger.getLogger(LocationViewCache.class);
 
     ObjectMapper mJsonMapper;
 
-    public LocationViewProvider() {
+    public LocationViewCache() {
         mJsonMapper = new ObjectMapper();
     }
 

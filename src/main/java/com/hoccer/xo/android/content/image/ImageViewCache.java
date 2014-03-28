@@ -3,7 +3,7 @@ package com.hoccer.xo.android.content.image;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.ContentViewProvider;
+import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.android.view.AspectImageView;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -23,9 +23,9 @@ import android.widget.ImageView;
 
 import java.util.WeakHashMap;
 
-public class ImageViewProvider extends ContentViewProvider<View> implements ImageLoadingListener {
+public class ImageViewCache extends ContentViewCache<View> implements ImageLoadingListener {
 
-    private static final Logger LOG = Logger.getLogger(ImageViewProvider.class);
+    private static final Logger LOG = Logger.getLogger(ImageViewCache.class);
 
     WeakHashMap<ImageView, String> mUpdateCache = new WeakHashMap<ImageView, String>();
 

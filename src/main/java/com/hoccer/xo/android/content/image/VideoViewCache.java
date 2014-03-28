@@ -9,10 +9,10 @@ import android.view.View;
 import android.widget.*;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.ContentViewProvider;
+import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.release.R;
 
-public class VideoViewProvider extends ContentViewProvider<View> {
+public class VideoViewCache extends ContentViewCache<View> {
 
     @Override
     public boolean canViewObject(IContentObject object) {

@@ -50,7 +50,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener, I
     ContentRegistry mRegistry;
 
     IContentObject mContent;
-    ContentViewProvider<?> mViewProvider;
+    ContentViewCache<?> mViewCache;
 
     ContentState mPreviousContentState;
 
@@ -247,18 +247,18 @@ public class ContentView extends LinearLayout implements View.OnClickListener, I
         }
 
         ContentState state = getTrueContentState(content);
-        ContentViewProvider<?> contentViewProvider = mRegistry.selectViewProviderForContent(content);
+        ContentViewCache<?> contentViewCache = mRegistry.selectViewCacheForContent(content);
 
         // determine if the content url has changed so
         // we know if we need to re-instantiate child views
         boolean contentChanged = hasContentChanged(content);
         boolean stateChanged = hasStateChanged(contentChanged, state);
-        boolean providerChanged = hasViewProviderChanged(contentViewProvider);
-        ContentViewProvider<?> oldViewProvider = mViewProvider;
+        boolean cacheChanged = hasViewCacheChanged(contentViewCache);
+        ContentViewCache<?> oldViewCache = mViewCache;
 
         // remember the new object
         mContent = content;
-        mViewProvider = contentViewProvider;
+        mViewCache = contentViewCache;
         mPreviousContentState = state;
 
         // description
@@ -274,14 +274,14 @@ public class ContentView extends LinearLayout implements View.OnClickListener, I
 
         removeChildViewIfContentHasChanged(contentChanged, stateChanged);
         try {
-            updateContentView(providerChanged, oldViewProvider, activity, content, message);
+            updateContentView(cacheChanged, oldViewCache, activity, content, message);
         } catch (NullPointerException exception) {
             LOG.error("probably received an unkown media-type", exception);
             return;
         }
-        if(providerChanged || contentChanged || stateChanged){
+        if(cacheChanged || contentChanged || stateChanged){
             boolean isLightTheme = message != null ? message.isIncoming() : true;
-            mViewProvider.updateView(mContentChild, this, content, isLightTheme);
+            mViewCache.updateView(mContentChild, this, content, isLightTheme);
         }
 //        int visibility = isInEditMode() ? GONE : VISIBLE;
 //        mContentWrapper.setVisibility(visibility);
@@ -297,23 +297,23 @@ public class ContentView extends LinearLayout implements View.OnClickListener, I
         }
     }
 
-    private void updateContentView(boolean viewProviderChanged, ContentViewProvider<?> oldViewProvider,
+    private void updateContentView(boolean viewCacheChanged, ContentViewCache<?> oldViewCache,
             Activity activity,
             IContentObject object, TalkClientMessage message) {
-        if(viewProviderChanged || mContentChild == null) {
+        if(viewCacheChanged || mContentChild == null) {
             // remove old
             if(mContentChild != null) {
                 View v = mContentChild;
                 mContentChild = null;
                 mContentWrapper.removeView(v);
-                oldViewProvider.returnView(activity, v);
+                oldViewCache.returnView(activity, v);
             }
             // add new
             boolean isIncomingMessage = false;
             if (message != null) {
                 isIncomingMessage = message.isIncoming();
             }
-            mContentChild = mViewProvider.getViewForObject(activity, this, object, isIncomingMessage);
+            mContentChild = mViewCache.getViewForObject(activity, this, object, isIncomingMessage);
             mContentWrapper.addView(mContentChild,
                     new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -337,8 +337,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener, I
         }
     }
 
-    private boolean hasViewProviderChanged(ContentViewProvider<?> contentViewProvider) {
-        if(mViewProvider != null && contentViewProvider != null && contentViewProvider == mViewProvider) {
+    private boolean hasViewCacheChanged(ContentViewCache<?> contentViewCache) {
+        if(mViewCache != null && contentViewCache != null && contentViewCache == mViewCache) {
             return false;
         }
         return true;

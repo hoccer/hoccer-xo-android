@@ -12,17 +12,17 @@ import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.content.audio.ButtonAudioViewProvider;
+import com.hoccer.xo.android.content.audio.ButtonAudioViewCache;
 import com.hoccer.xo.android.content.audio.MusicSelector;
 import com.hoccer.xo.android.content.clipboard.ClipboardSelector;
-import com.hoccer.xo.android.content.data.DataViewProvider;
+import com.hoccer.xo.android.content.data.DataViewCache;
 import com.hoccer.xo.android.content.image.*;
-import com.hoccer.xo.android.content.image.ImageViewProvider;
-import com.hoccer.xo.android.content.image.VideoViewProvider;
-import com.hoccer.xo.android.content.location.LocationViewProvider;
+import com.hoccer.xo.android.content.image.ImageViewCache;
+import com.hoccer.xo.android.content.image.VideoViewCache;
+import com.hoccer.xo.android.content.location.LocationViewCache;
 import com.hoccer.xo.android.content.location.MapsLocationSelector;
 import com.hoccer.xo.android.content.vcard.ContactSelector;
-import com.hoccer.xo.android.content.vcard.ContactViewProvider;
+import com.hoccer.xo.android.content.vcard.ContactViewCache;
 import com.hoccer.xo.android.util.IntentHelper;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -75,7 +75,7 @@ public class ContentRegistry {
     List<IContentSelector> mAttachmentSelectors = new ArrayList<IContentSelector>();
 
     /** Active attachment viewer providers (only the supported ones) */
-    List<ContentViewProvider> mAttachmentViewProviders = new ArrayList<ContentViewProvider>();
+    List<ContentViewCache> mAttachmentViewCaches = new ArrayList<ContentViewCache>();
 
     private ClipboardSelector mClipboardSelector;
 
@@ -101,12 +101,12 @@ public class ContentRegistry {
 
         mClipboardSelector = new ClipboardSelector(mContext);
 
-        mAttachmentViewProviders.add(new ImageViewProvider());
-        mAttachmentViewProviders.add(new VideoViewProvider());
-        mAttachmentViewProviders.add(new ButtonAudioViewProvider());
-        mAttachmentViewProviders.add(new ContactViewProvider());
-        mAttachmentViewProviders.add(new LocationViewProvider());
-        mAttachmentViewProviders.add(new DataViewProvider());
+        mAttachmentViewCaches.add(new ImageViewCache());
+        mAttachmentViewCaches.add(new VideoViewCache());
+        mAttachmentViewCaches.add(new ButtonAudioViewCache());
+        mAttachmentViewCaches.add(new ContactViewCache());
+        mAttachmentViewCaches.add(new LocationViewCache());
+        mAttachmentViewCaches.add(new DataViewCache());
     }
 
     /**
@@ -172,9 +172,9 @@ public class ContentRegistry {
      * @return a View set up for the given content
      */
     public View createViewForContent(Activity activity, IContentObject contentObject, ContentView view, boolean isLightTheme) {
-        ContentViewProvider contentViewProvider = selectViewProviderForContent(contentObject);
-        if(contentViewProvider != null) {
-            return contentViewProvider.getViewForObject(activity, view, contentObject, isLightTheme);
+        ContentViewCache contentViewCache = selectViewCacheForContent(contentObject);
+        if(contentViewCache != null) {
+            return contentViewCache.getViewForObject(activity, view, contentObject, isLightTheme);
         }
         return null;
     }
@@ -187,10 +187,10 @@ public class ContentRegistry {
      * @param contentObject that needs a view constructed
      * @return a matching content viewer
      */
-    public ContentViewProvider selectViewProviderForContent(IContentObject contentObject) {
-        for(ContentViewProvider viewProvider: mAttachmentViewProviders) {
-            if(viewProvider.canViewObject(contentObject)) {
-                return viewProvider;
+    public ContentViewCache selectViewCacheForContent(IContentObject contentObject) {
+        for(ContentViewCache viewCache: mAttachmentViewCaches) {
+            if(viewCache.canViewObject(contentObject)) {
+                return viewCache;
             }
         }
         return null;
