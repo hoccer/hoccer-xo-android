@@ -18,7 +18,7 @@ import java.util.Locale;
  */
 public class XoConfiguration {
 	
-    /* HockeyApp constant id */
+    /* HockeyApp constant id  */
     public static final String HOCKEYAPP_ID = "60f2a55705e94d33e62a7b1643671f46";
 
     /* Directories in external storage */
