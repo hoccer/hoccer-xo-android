@@ -29,4 +29,13 @@
         </Preference>
     </PreferenceCategory>
 
+    <PreferenceCategory
+            android:title="@string/pref_crash_report">
+
+        <CheckBoxPreference
+                android:key="preference_crash_report"
+                android:title="@string/pref_crash_report_switcher"
+                android:defaultValue="false"/>
+    </PreferenceCategory>
+
 </PreferenceScreen>

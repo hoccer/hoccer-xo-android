@@ -3,6 +3,7 @@ package com.hoccer.xo.android.activity;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.release.R;
 
+import net.hockeyapp.android.CrashManager;
 import org.apache.log4j.Logger;
 
 import android.os.Bundle;
@@ -26,6 +27,12 @@ public class XoPreferenceActivity extends PreferenceActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        checkForCrashesIfEnabled();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
         switch (item.getItemId()) {
@@ -36,6 +43,12 @@ public class XoPreferenceActivity extends PreferenceActivity {
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    private void checkForCrashesIfEnabled() {
+        if (XoConfiguration.reportingEnable()) {
+            CrashManager.register(this, XoConfiguration.HOCKEYAPP_ID);
+        }
     }
 
 }

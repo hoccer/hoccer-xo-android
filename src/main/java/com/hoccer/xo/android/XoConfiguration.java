@@ -17,6 +17,9 @@ import java.util.Locale;
  * This class collects various android-specific settings for the XO client.
  */
 public class XoConfiguration {
+	
+    /* HockeyApp constant id  */
+    public static final String HOCKEYAPP_ID = "60f2a55705e94d33e62a7b1643671f46";
 
     /* Directories in external storage */
     public static final String EXTERNAL_ATTACHMENTS = "Hoccer XO";
@@ -110,4 +113,7 @@ public class XoConfiguration {
         return sIsSupportModeEnabled;
     }
 
+    public static boolean reportingEnable() {
+        return DEVELOPMENT_MODE_ENABLED || sPreferences.getBoolean("preference_crash_report", false);
+    }
 }
