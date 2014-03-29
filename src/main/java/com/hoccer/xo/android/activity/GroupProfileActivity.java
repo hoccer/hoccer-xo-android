@@ -92,7 +92,6 @@ public class GroupProfileActivity extends XoActivity implements IXoContactListen
 
         if (mMode == Mode.CREATE_SELF) {
             mStatusFragment.getView().setVisibility(View.GONE);
-            getActionBar().setDisplayHomeAsUpEnabled(false);
         }
     }
 

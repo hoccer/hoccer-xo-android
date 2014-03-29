@@ -286,19 +286,19 @@ public class GroupProfileFragment extends XoFragment
         LOG.debug("refreshContact()");
 
         mGroup = newContact;
-
-        if (mMode == Mode.PROFILE) {
-            try {
-                getXoDatabase().refreshClientContact(mGroup);
+        
+        try {
+            getXoDatabase().refreshClientContact(mGroup);
+            if (mMode == Mode.PROFILE) {
                 if (mGroup.getAvatarDownload() != null) {
                     getXoDatabase().refreshClientDownload(mGroup.getAvatarDownload());
                 }
                 if (mGroup.getAvatarUpload() != null) {
                     getXoDatabase().refreshClientUpload(mGroup.getAvatarUpload());
                 }
-            } catch (SQLException e) {
-                LOG.error("SQL error", e);
             }
+        } catch (SQLException e) {
+            LOG.error("SQL error", e);
         }
         runOnUiThread(new Runnable() {
             @Override
