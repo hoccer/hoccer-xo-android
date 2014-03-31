@@ -201,6 +201,7 @@
     <string name="pref_legal_information">Rechtliches</string>
     <string name="profile_compare_key_description">Für ein Extra an Sicherheit vergleiche diesen Fingerabdruck mit dem Fingerabdruck den Deine Freunde in deiner Kontaktkarte sehen
     </string>
+    <string name="pref_please_wait">Bitte warten...</string>
     <string name="my_profile_title">Mein Profil</string>
     <string name="welcome_to_title">Willkommen bei XO!</string>
     <string name="contact_item_receive_attachment">%1$s Datei erhalten</string>
