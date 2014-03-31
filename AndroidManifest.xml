@@ -41,6 +41,8 @@
     <!-- GMaps / locations -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+
 
     <!-- Declare permission for controlling our own push package -->
     <permission

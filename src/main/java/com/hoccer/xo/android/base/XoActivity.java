@@ -1,5 +1,7 @@
 package com.hoccer.xo.android.base;
 
+import android.app.ActivityManager;
+import android.os.*;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -7,6 +9,7 @@ import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.activity.AboutActivity;
@@ -41,10 +44,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.provider.Telephony;
 import android.view.Menu;
@@ -55,6 +54,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -201,6 +202,7 @@ public abstract class XoActivity extends Activity {
         startService(serviceIntent);
         mServiceConnection = new MainServiceConnection();
         bindService(serviceIntent, mServiceConnection, BIND_IMPORTANT);
+        getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_ONLINE);
     }
 
     private void checkForCrashesIfEnabled() {
@@ -226,6 +228,27 @@ public abstract class XoActivity extends Activity {
             unbindService(mServiceConnection);
             mServiceConnection = null;
         }
+        checkIfAppInForeground();
+    }
+
+    public void checkIfAppInForeground() {
+        Handler checkState = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                ActivityManager activityManager = (ActivityManager) getApplicationContext().
+                        getSystemService(Context.ACTIVITY_SERVICE);
+                List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
+                boolean isActivityFound = false;
+                if (services.get(0).topActivity.getPackageName().toString()
+                        .equalsIgnoreCase(getApplicationContext().getPackageName().toString())) {
+                    isActivityFound = true;
+                } else {
+                    getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_OFFLINE);
+                }
+                LOG.debug("Our current state for foreground: " + isActivityFound);
+            }
+        };
+        checkState.sendEmptyMessageDelayed(0, 1000);
     }
 
     @Override
