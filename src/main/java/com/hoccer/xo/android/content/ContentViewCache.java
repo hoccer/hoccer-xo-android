@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 /**
- * Content viewers can create views for specific content objects
+ * Content view caches can create and manage views for specific content objects
  */
-public abstract class ContentViewer<V extends View> {
+public abstract class ContentViewCache<V extends View> {
 
     private static final int MAX_CACHED_VIEWS = 3;
 
@@ -20,7 +20,7 @@ public abstract class ContentViewer<V extends View> {
 
     WeakHashMap<Activity, List<V>> mViewCache = new WeakHashMap<Activity, List<V>>();
 
-    protected ContentViewer() {
+    protected ContentViewCache() {
         LOG = Logger.getLogger(this.getClass());
     }
 
@@ -74,5 +74,4 @@ public abstract class ContentViewer<V extends View> {
         }
         return cache;
     }
-
 }

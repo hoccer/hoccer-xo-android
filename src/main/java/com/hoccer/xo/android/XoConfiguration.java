@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import org.apache.log4j.Layout;
 import org.apache.log4j.PatternLayout;
 
+import java.sql.SQLException;
 import java.util.Locale;
 
 /**
@@ -18,7 +19,7 @@ import java.util.Locale;
  */
 public class XoConfiguration {
 	
-    /* HockeyApp constant id */
+    /* HockeyApp constant id  */
     public static final String HOCKEYAPP_ID = "60f2a55705e94d33e62a7b1643671f46";
 
     /* Directories in external storage */
@@ -107,6 +108,16 @@ public class XoConfiguration {
             sPreferences.unregisterOnSharedPreferenceChangeListener(sPreferencesListener);
             sPreferencesListener = null;
         }
+    }
+
+    public static boolean needToRegenerateKey() {
+        return sPreferences.getBoolean("NEED_TO_REGENERATE_KEYS", true);
+    }
+
+    public static void setRegenerationDone() {
+        SharedPreferences.Editor editor = sPreferences.edit();
+        editor.putBoolean("NEED_TO_REGENERATE_KEYS", false);
+        editor.commit();
     }
 
     public static boolean isSupportModeEnabled() {

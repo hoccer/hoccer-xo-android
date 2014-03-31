@@ -1,6 +1,8 @@
 package com.hoccer.xo.android.content;
 
+import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.*;
@@ -11,6 +13,8 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.ContentState;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.content.image.ClickableImageView;
+import com.hoccer.xo.android.content.image.IClickableImageViewListener;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
 
@@ -31,7 +35,7 @@ import android.view.View;
  * It needs to handle content in all states, displayable or not.
  *
  */
-public class ContentView extends LinearLayout implements View.OnClickListener {
+public class ContentView extends LinearLayout implements View.OnClickListener, IClickableImageViewListener {
 
     private static final Logger LOG = Logger.getLogger(ContentView.class);
 
@@ -46,7 +50,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     ContentRegistry mRegistry;
 
     IContentObject mContent;
-    ContentViewer<?> mViewer;
+    ContentViewCache<?> mViewCache;
 
     ContentState mPreviousContentState;
 
@@ -61,6 +65,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
     AttachmentTransferControlView mTransferProgress;
 
     TransferAction mTransferAction = TransferAction.NONE;
+
+    private IContentViewListener mContentViewListener;
 
     /**
      * Maximum height for content view in DP.
@@ -108,6 +114,10 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         applyAttributes(context, attrs);
     }
 
+    public IContentObject getContent() {
+        return mContent;
+    }
+
     private void applyAttributes(Context context, AttributeSet attributes) {
         TypedArray a = context.getTheme().obtainStyledAttributes(attributes, R.styleable.AspectLimits, 0, 0);
         try {
@@ -138,6 +148,29 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
 
     public void setMaxContentHeight(int maxContentHeight) {
         this.mMaxContentHeight = maxContentHeight;
+    }
+
+    public void setContentViewListener(IContentViewListener contentViewListener) {
+        mContentViewListener = contentViewListener;
+    }
+
+    @Override
+    public void onImageViewClick(ClickableImageView view) {
+        LOG.debug("handling click");
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse(mContent.getContentDataUrl()), "image/*");
+        try {
+            Activity activity = (Activity) view.getContext();
+            activity.startActivity(intent);
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onImageViewLongClick(ClickableImageView view) {
+        mContentViewListener.onContentViewLongClick(this);
     }
 
     @Override
@@ -214,18 +247,18 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         }
 
         ContentState state = getTrueContentState(content);
-        ContentViewer<?> viewer = mRegistry.selectViewerForContent(content);
+        ContentViewCache<?> contentViewCache = mRegistry.selectViewCacheForContent(content);
 
         // determine if the content url has changed so
         // we know if we need to re-instantiate child views
         boolean contentChanged = hasContentChanged(content);
         boolean stateChanged = hasStateChanged(contentChanged, state);
-        boolean viewerChanged = hasViewerChanged(viewer);
-        ContentViewer<?> oldViewer = mViewer;
+        boolean cacheChanged = hasViewCacheChanged(contentViewCache);
+        ContentViewCache<?> oldViewCache = mViewCache;
 
         // remember the new object
         mContent = content;
-        mViewer = viewer;
+        mViewCache = contentViewCache;
         mPreviousContentState = state;
 
         // description
@@ -241,14 +274,14 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
 
         removeChildViewIfContentHasChanged(contentChanged, stateChanged);
         try {
-            updateContentView(viewerChanged, oldViewer, activity, content, message);
+            updateContentView(cacheChanged, oldViewCache, activity, content, message);
         } catch (NullPointerException exception) {
             LOG.error("probably received an unkown media-type", exception);
             return;
         }
-        if(viewerChanged || contentChanged || stateChanged){
+        if(cacheChanged || contentChanged || stateChanged){
             boolean isLightTheme = message != null ? message.isIncoming() : true;
-            mViewer.updateView(mContentChild, this, content, isLightTheme);
+            mViewCache.updateView(mContentChild, this, content, isLightTheme);
         }
 //        int visibility = isInEditMode() ? GONE : VISIBLE;
 //        mContentWrapper.setVisibility(visibility);
@@ -264,19 +297,23 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         }
     }
 
-    private void updateContentView(boolean viewerChanged, ContentViewer<?> oldViewer,
+    private void updateContentView(boolean viewCacheChanged, ContentViewCache<?> oldViewCache,
             Activity activity,
             IContentObject object, TalkClientMessage message) {
-        if(viewerChanged || mContentChild == null) {
+        if(viewCacheChanged || mContentChild == null) {
             // remove old
             if(mContentChild != null) {
                 View v = mContentChild;
                 mContentChild = null;
                 mContentWrapper.removeView(v);
-                oldViewer.returnView(activity, v);
+                oldViewCache.returnView(activity, v);
             }
             // add new
-            mContentChild = mViewer.getViewForObject(activity, this, object, message.isIncoming());
+            boolean isIncomingMessage = false;
+            if (message != null) {
+                isIncomingMessage = message.isIncoming();
+            }
+            mContentChild = mViewCache.getViewForObject(activity, this, object, isIncomingMessage);
             mContentWrapper.addView(mContentChild,
                     new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -300,8 +337,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener {
         }
     }
 
-    private boolean hasViewerChanged(ContentViewer<?> viewer) {
-        if(mViewer != null && viewer != null && viewer == mViewer) {
+    private boolean hasViewCacheChanged(ContentViewCache<?> contentViewCache) {
+        if(mViewCache != null && contentViewCache != null && contentViewCache == mViewCache) {
             return false;
         }
         return true;

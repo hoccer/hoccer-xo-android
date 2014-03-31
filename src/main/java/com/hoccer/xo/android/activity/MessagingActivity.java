@@ -1,8 +1,13 @@
 package com.hoccer.xo.android.activity;
 
+import android.view.View;
+import android.widget.PopupMenu;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.content.ContentView;
+import com.hoccer.xo.android.content.clipboard.Clipboard;
 import com.hoccer.xo.android.fragment.CompositionFragment;
 import com.hoccer.xo.android.fragment.MessagingFragment;
 import com.hoccer.xo.release.R;
@@ -26,6 +31,7 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
     CompositionFragment mCompositionFragment;
 
     TalkClientContact mContact;
+    private IContentObject mClipboardAttachment;
 
     @Override
     protected int getLayoutResource() {
@@ -122,6 +128,41 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
                 return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    @Override
+    public void showPopupForContentView(ContentView contentView) {
+        IContentObject contentObject = contentView.getContent();
+
+        if (contentObject.isContentAvailable()) {
+            mClipboardAttachment = contentObject;
+
+            PopupMenu popup = new PopupMenu(this, contentView);
+            popup.getMenuInflater().inflate(R.menu.popup_menu_messaging, popup.getMenu());
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+
+                public boolean onMenuItemClick(MenuItem item) {
+                    popupItemSelected(item);
+                    return true;
+                }
+            });
+
+            popup.show();
+        }
+    }
+
+    public void popupItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_copy_attachment:
+                Clipboard clipboard = Clipboard.get(this);
+                clipboard.storeAttachment(mClipboardAttachment);
+                mClipboardAttachment = null;
+        }
+    }
+
+    @Override
+    public void clipBoardItemSelected(IContentObject contentObject) {
+        mCompositionFragment.onAttachmentSelected(contentObject);
     }
 
     public void converseWithContact(TalkClientContact contact) {

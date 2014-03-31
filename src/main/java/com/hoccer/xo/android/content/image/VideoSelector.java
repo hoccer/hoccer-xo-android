@@ -8,12 +8,19 @@ import android.provider.MediaStore;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.IContentSelector;
 import com.hoccer.xo.android.content.SelectedContent;
+import com.hoccer.xo.release.R;
 
 public class VideoSelector implements IContentSelector {
 
+    private String mName;
+
+    public VideoSelector(Context context) {
+        mName = context.getResources().getString(R.string.content_video);
+    }
+
     @Override
     public String getName() {
-        return "Video";
+        return mName;
     }
 
     @Override

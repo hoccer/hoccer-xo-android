@@ -75,7 +75,7 @@ public class GroupProfileFragment extends XoFragment
         mGroupCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveGroup();
+                saveCreatedGroup();
             }
         });
         mGroupMembersContainer = (LinearLayout) v.findViewById(R.id.profile_group_members_container);
@@ -186,22 +186,28 @@ public class GroupProfileFragment extends XoFragment
         return super.onOptionsItemSelected(item);
     }
 
-    public void saveGroup() {
+    public void saveCreatedGroup() {
         String newGroupName = mGroupNameEdit.getText().toString();
         if (newGroupName.isEmpty()) {
             newGroupName = "";
         }
         mGroupNameText.setText(newGroupName);
 
-        if (mMode == Mode.CREATE_GROUP) {
-            if (mGroup != null && !mGroup.isGroupRegistered()) {
-                mGroup.getGroupPresence().setGroupName(newGroupName);
-                getXoClient().createGroup(mGroup);
-                mMode = Mode.PROFILE;
-            }
-        } else if (mMode == Mode.EDIT_GROUP) {
-            getXoClient().setGroupName(mGroup, newGroupName);
+        if (mGroup != null && !mGroup.isGroupRegistered()) {
+            mGroup.getGroupPresence().setGroupName(newGroupName);
+            getXoClient().createGroup(mGroup);
+            mMode = Mode.EDIT_GROUP;
         }
+    }
+
+    public void saveEditedGroup() {
+        String newGroupName = mGroupNameEdit.getText().toString();
+        if (newGroupName.isEmpty()) {
+            newGroupName = "";
+        }
+        mGroupNameText.setText(newGroupName);
+
+        getXoClient().setGroupName(mGroup, newGroupName);
     }
 
     private void updateAvatar(TalkClientContact contact) {
@@ -286,19 +292,19 @@ public class GroupProfileFragment extends XoFragment
         LOG.debug("refreshContact()");
 
         mGroup = newContact;
-
-        if (mMode == Mode.PROFILE) {
-            try {
-                getXoDatabase().refreshClientContact(mGroup);
+        
+        try {
+            getXoDatabase().refreshClientContact(mGroup);
+            if (mMode == Mode.PROFILE) {
                 if (mGroup.getAvatarDownload() != null) {
                     getXoDatabase().refreshClientDownload(mGroup.getAvatarDownload());
                 }
                 if (mGroup.getAvatarUpload() != null) {
                     getXoDatabase().refreshClientUpload(mGroup.getAvatarUpload());
                 }
-            } catch (SQLException e) {
-                LOG.error("SQL error", e);
             }
+        } catch (SQLException e) {
+            LOG.error("SQL error", e);
         }
         runOnUiThread(new Runnable() {
             @Override
@@ -356,6 +362,8 @@ public class GroupProfileFragment extends XoFragment
     public void onContactAdded(TalkClientContact contact) {
         LOG.debug("onContactAdded");
         if (isMyContact(contact)) {
+
+            saveEditedGroup();
 
             final GroupProfileFragment fragment = this;
             runOnUiThread(new Runnable() {
@@ -496,7 +504,7 @@ public class GroupProfileFragment extends XoFragment
         mAvatarImage.setOnClickListener(null);
         String newGroupName = mGroupNameEdit.getText().toString();
         if (!newGroupName.isEmpty()) {
-            saveGroup();
+            saveEditedGroup();
         }
         mMode = Mode.PROFILE;
         update(mGroup);

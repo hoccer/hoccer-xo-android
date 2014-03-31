@@ -6,12 +6,17 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.ContentState;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.talk.crypto.CryptoUtils;
 import com.hoccer.xo.android.XoApplication;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
+import java.security.DigestInputStream;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 /**
@@ -36,6 +41,8 @@ public class SelectedContent implements IContentObject {
     String mContentType = null;
 
     String mContentMediaType = null;
+
+    String mContentHmac = null;
 
     int    mContentLength = -1;
 
@@ -130,6 +137,22 @@ public class SelectedContent implements IContentObject {
     }
 
     @Override
+    public String getContentHmac() {
+        if (mContentHmac == null) {
+            byte[] hmac = new byte[0];
+            try {
+                hmac = CryptoUtils.computeHmac(mContentDataUrl);
+                mContentHmac = new String(Base64.encodeBase64(hmac));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        LOG.info("mContentHmac="+mContentHmac);
+        return mContentHmac;
+    }
+
+    @Override
     public int getTransferLength() {
         return 0;
     }
@@ -153,13 +176,25 @@ public class SelectedContent implements IContentObject {
             File file = new File(dir, UUID.randomUUID().toString());
             try {
                 file.createNewFile();
-                FileOutputStream os = new FileOutputStream(file);
+                OutputStream os = null;
+                MessageDigest digest = null;
+                if (mContentHmac == null) {
+                    digest = MessageDigest.getInstance("SHA256");
+                    os = new DigestOutputStream(new FileOutputStream(file), digest);
+                }  else {
+                    os = new FileOutputStream(file);
+                }
                 os.write(mData);
                 os.flush();
                 os.close();
                 mContentDataUrl = "file://" + file.toString();
                 mData = null;
+                if (digest != null) {
+                    mContentHmac = new String(Base64.encodeBase64(digest.digest()));
+                }
             } catch (IOException e) {
+                LOG.error("error writing content to file", e);
+            } catch (NoSuchAlgorithmException e) {
                 LOG.error("error writing content to file", e);
             }
         }
@@ -189,7 +224,8 @@ public class SelectedContent implements IContentObject {
                 object.getContentType(),
                 object.getContentMediaType(),
                 object.getContentAspectRatio(),
-                object.getContentLength());
+                object.getContentLength(),
+                object.getContentHmac());
         return upload;
     }
 

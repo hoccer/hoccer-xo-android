@@ -8,15 +8,22 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 public class RingtoneSelector implements IContentSelector {
 
     private static final Logger LOG = Logger.getLogger(RingtoneSelector.class);
 
+    private String mName;
+
+    public RingtoneSelector(Context context) {
+        mName = context.getResources().getString(R.string.content_ringtone);
+    }
+
     @Override
     public String getName() {
-        return "Ringtone";
+        return mName;
     }
 
     @Override

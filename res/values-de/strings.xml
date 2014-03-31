@@ -98,6 +98,16 @@
     <string name="content_downloading">Downloading...</string>
     <string name="content_uploading">Uploading...</string>
 
+    <string name="content_images">Foto</string>
+    <string name="content_video">Video</string>
+    <string name="content_capture">Foto aufnehmen</string>
+    <string name="content_music">Musik</string>
+    <string name="content_ringtone">Klingelton</string>
+    <string name="content_contact">Kontakt</string>
+    <string name="content_location">Ort</string>
+    <string name="content_data">Dokument</string>
+    <string name="content_clipboard">Aus Zwischenablage</string>
+
     <!-- Client states (used in status fragment) -->
     <string name="client_state_idle">Idle</string>
     <string name="client_state_inactive">Inaktiv</string>
@@ -191,6 +201,7 @@
     <string name="pref_legal_information">Rechtliches</string>
     <string name="profile_compare_key_description">Für ein Extra an Sicherheit vergleiche diesen Fingerabdruck mit dem Fingerabdruck den Deine Freunde in deiner Kontaktkarte sehen
     </string>
+    <string name="pref_please_wait">Bitte warten...</string>
     <string name="my_profile_title">Mein Profil</string>
     <string name="welcome_to_title">Willkommen bei XO!</string>
     <string name="contact_item_receive_attachment">%1$s Datei erhalten</string>
