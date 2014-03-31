@@ -6,6 +6,7 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.ContentState;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.talk.crypto.CryptoUtils;
 import com.hoccer.xo.android.XoApplication;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
@@ -140,7 +141,7 @@ public class SelectedContent implements IContentObject {
         if (mContentHmac == null) {
             byte[] hmac = new byte[0];
             try {
-                hmac = computeHMac();
+                hmac = CryptoUtils.computeHmac(mContentDataUrl);
                 mContentHmac = new String(Base64.encodeBase64(hmac));
 
             } catch (Exception e) {
@@ -167,41 +168,6 @@ public class SelectedContent implements IContentObject {
 
     public void setData(byte[] data) {
         mData = data;
-    }
-
-    private byte[] computeHMac() throws Exception {
-
-        InputStream is = null;
-         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA256");
-            is = new URL(mContentDataUrl).openStream();
-
-            DigestInputStream digestInputStream = new DigestInputStream(is, digest);
-
-            byte[] buffer = new byte[8192];
-            int bytesRead = 1;
-            int totalBytesRead = 0;
-
-                while ((bytesRead = digestInputStream.read(buffer)) != -1) {
-                    totalBytesRead+=bytesRead;
-                }
-
-            LOG.info("digested "+totalBytesRead+" bytes");
-
-            return digest.digest();
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally{
-            try {
-                if (is != null) {
-                    is.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     private void writeDataToFile() {
