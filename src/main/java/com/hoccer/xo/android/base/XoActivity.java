@@ -208,7 +208,7 @@ public abstract class XoActivity extends Activity {
         mServiceConnection = new MainServiceConnection();
         bindService(serviceIntent, mServiceConnection, BIND_IMPORTANT);
         checkKeys();
-getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_ONLINE);
+        getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_ONLINE);
     }
 
     private void checkForCrashesIfEnabled() {
