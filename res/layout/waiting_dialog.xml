@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:TransferWheel="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/rl_root"
+                android:background="@android:color/transparent">
+
+    <com.hoccer.xo.android.view.AttachmentTransferControlView
+            android:layout_width="170dp"
+            android:layout_height="170dp"
+            android:layout_gravity="center"
+            android:id="@+id/content_progress"
+            android:layout_centerInParent="true"
+            android:background="@android:color/transparent"
+            TransferWheel:outerWheelSize="2dp"
+            TransferWheel:innerWheelSize="8dp"
+            TransferWheel:wheelDiameter="120dp"
+            TransferWheel:wheelColor="@android:color/white"
+            TransferWheel:text="@string/pref_please_wait"
+            TransferWheel:textMargin="20dp"
+            TransferWheel:textSize="30"
+            TransferWheel:enableStates="false"/>
+
+</RelativeLayout>

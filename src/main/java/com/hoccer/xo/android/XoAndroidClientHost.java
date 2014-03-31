@@ -170,4 +170,12 @@ public class XoAndroidClientHost implements IXoClientHost {
         return serverUri;
     }
 
+    @Override
+    public int getRSAKeysize() {
+        String keySizeString = PreferenceManager.getDefaultSharedPreferences(mContext).getString("preference_keysize", "2048");
+        Integer keySize = Integer.parseInt(keySizeString);
+        return keySize.intValue();
+    }
+
+
 }
