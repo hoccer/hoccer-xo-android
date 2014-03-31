@@ -36,8 +36,12 @@
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="45dp"
+            android:layout_marginRight="45dp"
             android:layout_marginTop="5dp"
             android:visibility="visible"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
             style="@style/AppBaseTheme.Group.Name"/>
 
     <EditText
