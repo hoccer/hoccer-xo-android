@@ -69,7 +69,8 @@
 
     <!-- Profile fragment -->
     <string name="profile_avatar_set_button">Change my image</string>
-    <string name="profile_name_title">New Group</string>
+    <string name="profile_name_title">Name</string>
+    <string name="profile_name_hint">Your name</string>
     <string name="profile_status_text">status</string>
     <string name="profile_name_edit">Change name</string>
     <string name="profile_name_set_button">Set new username</string>
@@ -82,6 +83,7 @@
     <string name="profile_user_unblock_button">Unblock this user</string>
     <string name="profile_user_depair_button">Depair this user</string>
     <string name="profile_user_delete_button">Delete this user</string>
+    <string name="group_name_hint">Group name</string>
     <string name="profile_group_members_title">Members</string>
     <string name="profile_group_create_button">Create group</string>
     <string name="profile_group_join_button">Join group</string>
