@@ -69,7 +69,7 @@
 
     <!-- Profile fragment -->
     <string name="profile_avatar_set_button">Mein Bild ändern</string>
-    <string name="profile_name_title">Name</string>
+    <string name="profile_name_title">Neue Gruppe</string>
     <string name="profile_status_text">Status</string>
     <string name="profile_name_edit">Name ändern</string>
     <string name="profile_name_set_button">Neuen Nutzernahmen wählen</string>

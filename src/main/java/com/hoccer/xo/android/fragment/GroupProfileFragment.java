@@ -2,6 +2,8 @@ package com.hoccer.xo.android.fragment;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.*;
 import android.widget.*;
 import com.hoccer.talk.client.IXoContactListener;
@@ -71,11 +73,33 @@ public class GroupProfileFragment extends XoFragment
         mAvatarImage = (ImageView) v.findViewById(R.id.profile_group_profile_image);
         mGroupNameText = (TextView) v.findViewById(R.id.profile_group_name);
         mGroupNameEdit = (EditText) v.findViewById(R.id.profile_group_name_edit);
+        mGroupNameEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                if (charSequence.length() == 0) {
+                    mGroupCreateButton.setEnabled(false);
+                } else {
+                    mGroupCreateButton.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
         mGroupCreateButton = (Button) v.findViewById(R.id.profile_group_button_create);
         mGroupCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 saveCreatedGroup();
+                mGroupCreateButton.setEnabled(false);
             }
         });
         mGroupMembersContainer = (LinearLayout) v.findViewById(R.id.profile_group_members_container);
@@ -253,7 +277,10 @@ public class GroupProfileFragment extends XoFragment
             name = groupPresence.getGroupName();
         }
 
-        if (mMode == Mode.PROFILE || mMode == Mode.CREATE_GROUP) {
+        if (mMode == Mode.CREATE_GROUP) {
+            name = mGroupNameEdit.getText().toString();
+
+        } else if (mMode == Mode.PROFILE) {
             if (name == null) {
                 name = "";
             }
