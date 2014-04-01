@@ -35,7 +35,7 @@ import android.view.View;
  * It needs to handle content in all states, displayable or not.
  *
  */
-public class ContentView extends LinearLayout implements View.OnClickListener, IClickableImageViewListener {
+public class ContentView extends LinearLayout implements View.OnClickListener, View.OnLongClickListener, IClickableImageViewListener {
 
     private static final Logger LOG = Logger.getLogger(ContentView.class);
 
@@ -174,7 +174,14 @@ public class ContentView extends LinearLayout implements View.OnClickListener, I
     }
 
     @Override
+    public boolean onLongClick(View view) {
+        mContentViewListener.onContentViewLongClick(this);
+        return true;
+    }
+
+    @Override
     public void onClick(View v) {
+
         if(v == mTransferProgress) {
             switch(mTransferAction) {
             case REQUEST_DOWNLOAD:
@@ -295,6 +302,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener, I
                 mContentWrapper.setVisibility(View.VISIBLE);
             }
         }
+
+        this.setOnLongClickListener(this);
     }
 
     private void updateContentView(boolean viewCacheChanged, ContentViewCache<?> oldViewCache,
@@ -510,6 +519,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener, I
     }
 
     public void clear() {
+        this.setOnLongClickListener(null);
         mContentWrapper.removeAllViews();
         mContentChild = null;
         mContent = null;
