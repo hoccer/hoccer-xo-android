@@ -70,6 +70,7 @@
     <!-- Profile fragment -->
     <string name="profile_avatar_set_button">Mein Bild ändern</string>
     <string name="profile_name_title">Name</string>
+    <string name="profile_name_hint">Dein Name</string>
     <string name="profile_status_text">Status</string>
     <string name="profile_name_edit">Name ändern</string>
     <string name="profile_name_set_button">Neuen Nutzernahmen wählen</string>
@@ -82,6 +83,7 @@
     <string name="profile_user_unblock_button">User entblockieren</string>
     <string name="profile_user_depair_button">Verbindung aufheben</string>
     <string name="profile_user_delete_button">Kontakt löschen</string>
+    <string name="group_name_hint">Group name</string>
     <string name="profile_group_members_title">Mitglieder</string>
     <string name="profile_group_create_button">Gruppe erstellen</string>
     <string name="profile_group_join_button">Gruppe beitreten</string>
