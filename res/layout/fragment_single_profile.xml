@@ -50,6 +50,7 @@
                 android:layout_alignRight="@+id/v_profile_name_delimiter"
                 android:lines="1"
                 android:inputType="text|textNoSuggestions"
+                android:maxLength="25"
                 android:visibility="gone"
                 />
 

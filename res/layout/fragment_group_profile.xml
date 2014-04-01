@@ -54,6 +54,7 @@
             android:layout_marginRight="35dp"
             android:lines="1"
             android:inputType="text|textNoSuggestions"
+            android:maxLength="25"
             android:visibility="gone"
             style="@style/AppBaseTheme.Group.Name"/>
 
