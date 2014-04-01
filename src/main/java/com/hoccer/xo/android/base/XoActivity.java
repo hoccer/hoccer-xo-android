@@ -139,6 +139,7 @@ public abstract class XoActivity extends Activity {
     private AttachmentTransferControlView mSpinner;
     private Handler mDialogDismisser;
     private Dialog mDialog;
+    private ScreenReceiver mScreenListener;
 
     public XoActivity() {
         LOG = Logger.getLogger(getClass());
@@ -191,6 +192,12 @@ public abstract class XoActivity extends Activity {
 
         // get the barcode scanning service
         mBarcodeService = new IntentIntegrator(this);
+
+        // screen state listener
+        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        mScreenListener = new ScreenReceiver();
+        registerReceiver(mScreenListener, filter);
     }
 
     @Override
@@ -309,14 +316,11 @@ public abstract class XoActivity extends Activity {
                 ActivityManager activityManager = (ActivityManager) getApplicationContext().
                         getSystemService(Context.ACTIVITY_SERVICE);
                 List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
-                boolean isActivityFound = false;
-                if (services.get(0).topActivity.getPackageName().toString()
-                        .equalsIgnoreCase(getApplicationContext().getPackageName().toString())) {
-                    isActivityFound = true;
-                } else {
+                String ourName = getApplicationContext().getPackageName().toString();
+                if (!services.get(0).topActivity.getPackageName().toString().equalsIgnoreCase(ourName)
+                        || !mScreenListener.isScreenOn()) {
                     getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_OFFLINE);
                 }
-                LOG.debug("Our current state for foreground: " + isActivityFound);
             }
         };
         checkState.sendEmptyMessageDelayed(0, 1000);
@@ -326,6 +330,25 @@ public abstract class XoActivity extends Activity {
     protected void onDestroy() {
         LOG.debug("onDestroy()");
         super.onDestroy();
+    }
+
+    private class ScreenReceiver extends BroadcastReceiver {
+
+        private boolean wasScreenOn = true;
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+                wasScreenOn = false;
+            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+                wasScreenOn = true;
+            }
+        }
+
+        public boolean isScreenOn() {
+            return  wasScreenOn;
+        }
+
     }
 
     @Override
