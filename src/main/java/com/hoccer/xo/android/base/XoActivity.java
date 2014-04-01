@@ -329,6 +329,7 @@ public abstract class XoActivity extends Activity {
     @Override
     protected void onDestroy() {
         LOG.debug("onDestroy()");
+        unregisterReceiver(mScreenListener);
         super.onDestroy();
     }
 
