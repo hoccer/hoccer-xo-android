@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.view.*;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;

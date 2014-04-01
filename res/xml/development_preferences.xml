@@ -18,6 +18,18 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+            android:title="Credentials">
+        <Preference
+                android:title="Export Credentials"
+                android:key="preference_export">
+        </Preference>
+        <Preference
+                android:title="Import Credentials"
+                android:key="preference_import">
+        </Preference>
+    </PreferenceCategory>
+
+    <PreferenceCategory
             android:title="Legal Information">
         <Preference
                 android:title="@string/menu_about">
