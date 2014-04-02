@@ -720,10 +720,8 @@ public abstract class XoActivity extends Activity {
         try {
             TalkClientContact self = mDatabase.findSelfContact(false);
 
-            String message =
-                    "Hey! I'm now using the free app Hoccer XO for secure chatting. " +
-                            "Download it now: http://hoccer.com/ Then add me as a contact: " +
-                            "hxo://" + token + "\nxo " + self.getName();
+            String message = String
+                    .format(getString(R.string.sms_invitation_text), token, self.getName());
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //At least KitKat
                 String defaultSmsPackageName = Telephony.Sms

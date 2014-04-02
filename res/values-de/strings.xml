@@ -209,6 +209,10 @@
     <string name="contact_item_receive_attachment">%1$s Datei erhalten</string>
     <string name="error_avatar_selection">Sie können dieses Bild nicht als Avatar setzen.
     </string>
+    <string name="sms_invitation_text">Hey! I\'m now using the free app Hoccer XO for secure
+        chatting. Download it now: http://hoccer.com/ Then add me as a contact: hxo://%1$s
+        \nxo %2$s
+    </string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>

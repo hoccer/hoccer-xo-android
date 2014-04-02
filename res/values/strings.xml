@@ -217,6 +217,10 @@
     <string name="contact_item_receive_attachment">Received %1$s attachment</string>
     <string name="error_avatar_selection">The image you\'ve selected is not suitable as Avatar.
     </string>
+    <string name="sms_invitation_text">Hey! I\'m now using the free app Hoccer XO for secure
+        chatting. Download it now: http://hoccer.com/ Then add me as a contact: hxo://%1$s
+        \nxo %1$1
+    </string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>
