@@ -101,6 +101,11 @@ public class XoConfiguration {
         };
         sPreferences.registerOnSharedPreferenceChangeListener(sPreferencesListener);
         sIsSupportModeEnabled = sPreferences.getBoolean("preference_enable_server_side_support_mode", false);
+        if (!sPreferences.contains("preference_keysize")) {
+            SharedPreferences.Editor editor = sPreferences.edit();
+            editor.putString("preference_keysize", "2048");
+            editor.commit();
+        }
     }
 
     public static final void shutdown() {
