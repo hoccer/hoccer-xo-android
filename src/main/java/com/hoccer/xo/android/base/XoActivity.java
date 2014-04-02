@@ -1,10 +1,5 @@
 package com.hoccer.xo.android.base;
 
-import android.app.Dialog;
-import android.content.*;
-import android.graphics.drawable.ColorDrawable;
-import android.os.*;
-import android.view.*;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -33,20 +28,41 @@ import com.hoccer.xo.android.service.XoClientService;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
 
+import net.hockeyapp.android.CrashManager;
+
 import org.apache.log4j.Logger;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.TaskStackBuilder;
+import android.content.ComponentName;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.provider.Telephony;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -57,8 +73,6 @@ import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import net.hockeyapp.android.CrashManager;
 
 /**
  * Base class for our activities
@@ -133,7 +147,9 @@ public abstract class XoActivity extends Activity {
     private String mBarcodeToken = null;
 
     private AttachmentTransferControlView mSpinner;
+
     private Handler mDialogDismisser;
+
     private Dialog mDialog;
 
     public XoActivity() {
@@ -237,14 +253,15 @@ public abstract class XoActivity extends Activity {
     }
 
     public void createDialog() {
-        LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.waiting_dialog, null);
         mSpinner = (AttachmentTransferControlView) view.findViewById(R.id.content_progress);
 
         mDialog = new Dialog(this);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mDialog.setContentView(view);
-        mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        mDialog.getWindow()
+                .setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         mDialog.setCanceledOnTouchOutside(false);
         mDialog.show();
         mDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
@@ -364,13 +381,16 @@ public abstract class XoActivity extends Activity {
                 + "tmp_crop";
         try {
             Bitmap bitmap = BitmapFactory.decodeFile(croppedImagePath);
+            if (bitmap == null) {
+                return null;
+            }
             File avatarFile = new File(filePath);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, new FileOutputStream(avatarFile));
             Uri uri = getImageContentUri(getBaseContext(), avatarFile);
             data.setData(uri);
 
             File tmpImage = new File(croppedImagePath);
-            if(tmpImage.exists()) {
+            if (tmpImage.exists()) {
                 tmpImage.delete();
             }
 
@@ -425,13 +445,17 @@ public abstract class XoActivity extends Activity {
 
         if (requestCode == REQUEST_CROP_AVATAR) {
             data = selectedAvatarPreProcessing(data);
-            IContentObject co = ContentRegistry.get(this)
-                    .createSelectedAvatar(mAvatarSelection, data);
-            if (co != null) {
-                LOG.debug("selected avatar " + co.getContentDataUrl());
-                for (IXoFragment fragment : mTalkFragments) {
-                    fragment.onAvatarSelected(co);
+            if (data != null) {
+                IContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection,
+                        data);
+                if (co != null) {
+                    LOG.debug("selected avatar " + co.getContentDataUrl());
+                    for (IXoFragment fragment : mTalkFragments) {
+                        fragment.onAvatarSelected(co);
+                    }
                 }
+            } else {
+                Toast.makeText(this, R.string.error_avatar_selection, Toast.LENGTH_LONG).show();
             }
             return;
         }
