@@ -219,7 +219,7 @@
     </string>
     <string name="sms_invitation_text">Hey! I\'m now using the free app Hoccer XO for secure
         chatting. Download it now: http://hoccer.com/ Then add me as a contact: hxo://%1$s
-        \nxo %1$1
+        \nxo %1$s
     </string>
 
     <string-array name="preference_log_level_names">
