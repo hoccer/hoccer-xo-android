@@ -3,15 +3,14 @@ package com.hoccer.xo.android.content.clipboard;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.activity.ClipboardPreviewActivity;
-import com.hoccer.xo.android.activity.MessagingActivity;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.IContentSelector;
-import com.hoccer.xo.android.fragment.CompositionFragment;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -24,15 +23,22 @@ public class ClipboardSelector implements IContentSelector {
     private Clipboard mClipboard;
 
     private String mName;
+    private Drawable mIcon;
 
     public ClipboardSelector(Context context) {
         mName = context.getResources().getString(R.string.content_clipboard);
+        mIcon = context.getResources().getDrawable(R.drawable.ic_attachment_select_data);
         mClipboard = Clipboard.get(context);
     }
 
     @Override
     public String getName() {
         return mName;
+    }
+
+    @Override
+    public Drawable getContentIcon() {
+        return mIcon;
     }
 
     @Override

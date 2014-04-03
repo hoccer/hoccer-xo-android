@@ -3,6 +3,7 @@ package com.hoccer.xo.android.content.audio;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -16,14 +17,21 @@ public class RingtoneSelector implements IContentSelector {
     private static final Logger LOG = Logger.getLogger(RingtoneSelector.class);
 
     private String mName;
+    private Drawable mIcon;
 
     public RingtoneSelector(Context context) {
         mName = context.getResources().getString(R.string.content_ringtone);
+        mIcon = context.getResources().getDrawable(R.drawable.ic_attachment_select_music);
     }
 
     @Override
     public String getName() {
         return mName;
+    }
+
+    @Override
+    public Drawable getContentIcon() {
+        return mIcon;
     }
 
     @Override

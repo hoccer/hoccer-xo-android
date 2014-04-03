@@ -3,6 +3,7 @@ package com.hoccer.xo.android.content.image;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import com.hoccer.talk.content.IContentObject;
@@ -13,14 +14,21 @@ import com.hoccer.xo.release.R;
 public class VideoSelector implements IContentSelector {
 
     private String mName;
+    private Drawable mIcon;
 
     public VideoSelector(Context context) {
         mName = context.getResources().getString(R.string.content_video);
+        mIcon = context.getResources().getDrawable(R.drawable.ic_attachment_select_video);
     }
 
     @Override
     public String getName() {
         return mName;
+    }
+
+    @Override
+    public Drawable getContentIcon() {
+        return mIcon;
     }
 
     @Override

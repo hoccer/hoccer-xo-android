@@ -3,6 +3,7 @@ package com.hoccer.xo.android.content.audio;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import com.hoccer.xo.android.content.SelectedContent;
@@ -12,14 +13,21 @@ import com.hoccer.xo.release.R;
 public class MusicSelector implements IContentSelector {
 
     private String mName;
+    private Drawable mIcon;
 
     public MusicSelector(Context context) {
         mName = context.getResources().getString(R.string.content_music);
+        mIcon = context.getResources().getDrawable(R.drawable.ic_attachment_select_music);
     }
 
     @Override
     public String getName() {
         return mName;
+    }
+
+    @Override
+    public Drawable getContentIcon() {
+        return mIcon;
     }
 
     @Override

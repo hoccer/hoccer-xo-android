@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.content.image;
 
+import android.graphics.drawable.Drawable;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.IContentSelector;
 import com.hoccer.xo.android.content.SelectedContent;
@@ -23,14 +24,21 @@ import java.net.URL;
 public class ImageSelector implements IContentSelector {
 
     private String mName;
+    private Drawable mIcon;
 
     public ImageSelector(Context context) {
         mName = context.getResources().getString(R.string.content_images);
+        mIcon = context.getResources().getDrawable(R.drawable.ic_attachment_select_image);
     }
 
     @Override
     public String getName() {
         return mName;
+    }
+
+    @Override
+    public Drawable getContentIcon() {
+        return mIcon;
     }
 
     @Override

@@ -254,7 +254,7 @@ public class ContentRegistry {
                 Map<String, Object> fields = new HashMap<String, Object>();
                 fields.put(KEY_INTENT, selectionIntent);
                 fields.put(KEY_SELECTOR, selector);
-                fields.put(KEY_ICON, IntentHelper.getIconForIntent(selectionIntent, activity));
+                fields.put(KEY_ICON, selector.getContentIcon());
                 fields.put(KEY_NAME, selector.getName());
                 options.add(fields);
             }
@@ -296,8 +296,8 @@ public class ContentRegistry {
         });
         builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Map<String, Object> sel = options.get(which);
+            public void onClick(DialogInterface dialog, int index) {
+                Map<String, Object> sel = options.get(index);
                 IContentSelector selector = (IContentSelector)sel.get(KEY_SELECTOR);
                 cs.setSelector(selector);
 
@@ -357,7 +357,7 @@ public class ContentRegistry {
             Map<String, Object> fields = new HashMap<String, Object>();
             fields.put(KEY_INTENT, selectionIntent);
             fields.put(KEY_SELECTOR, selector);
-            fields.put(KEY_ICON, IntentHelper.getIconForIntent(selectionIntent, activity));
+            fields.put(KEY_ICON, selector.getContentIcon());
             fields.put(KEY_NAME, selector.getName());
             return fields;
         }

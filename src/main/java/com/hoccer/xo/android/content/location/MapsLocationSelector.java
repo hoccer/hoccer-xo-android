@@ -2,6 +2,7 @@ package com.hoccer.xo.android.content.location;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
 import com.hoccer.xo.release.R;
@@ -9,14 +10,21 @@ import com.hoccer.xo.release.R;
 public class MapsLocationSelector implements IContentSelector {
 
     private String mName;
+    private Drawable mIcon;
 
     public MapsLocationSelector(Context context) {
         mName = context.getResources().getString(R.string.content_location);
+        mIcon = context.getResources().getDrawable(R.drawable.ic_attachment_select_location);
     }
 
     @Override
     public String getName() {
         return mName;
+    }
+
+    @Override
+    public Drawable getContentIcon() {
+        return mIcon;
     }
 
     @Override
