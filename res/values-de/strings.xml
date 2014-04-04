@@ -186,7 +186,7 @@
     <string name="transfer_state_downloading">Downloading...</string>
     <string name="transfer_state_uploading">Uploading...</string>
     <string name="transfer_state_pause">Pause</string>
-    <string name="dialog_attachment_choose_reselect_option">anderen Anhang auswählen</string>
+    <string name="dialog_attachment_choose_reselect_option">Anderen Anhang auswählen</string>
     <string name="dialog_attachment_choose_discard_option">Anhang verwerfen</string>
     <string name="dialog_attachment_title">Anhang bearbeiten</string>
     <string name="dialog_block_user_title">Kontakt blockieren</string>

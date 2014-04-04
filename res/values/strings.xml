@@ -190,8 +190,8 @@
     <string name="transfer_state_downloading">Downloading...</string>
     <string name="transfer_state_uploading">Uploading...</string>
     <string name="transfer_state_pause">Pause</string>
-    <string name="dialog_attachment_choose_reselect_option">choose another Attachment</string>
-    <string name="dialog_attachment_choose_discard_option">remove attachment</string>
+    <string name="dialog_attachment_choose_reselect_option">Choose another Attachment</string>
+    <string name="dialog_attachment_choose_discard_option">Remove attachment</string>
     <string name="dialog_attachment_title">Edit Attachment</string>
     <string name="dialog_block_user_title">Block Contact</string>
     <string name="dialog_block_user_message">Do you really want to block this contact? You will not
