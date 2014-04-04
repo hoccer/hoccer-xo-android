@@ -203,6 +203,10 @@
     <string name="my_profile_title">My profile</string>
     <string name="welcome_to_title">Welcome to XO!</string>
     <string name="contact_item_receive_attachment">Received %1$s attachment</string>
+    <string name="export_credentials_dialog_title">export Credentials</string>
+    <string name="export_credentials_success">Successfully saved your credentials.</string>
+    <string name="export_credentials_failure">Error while saving your Credentials.</string>
+    <string name="no_password">Please enter a Password.</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>
