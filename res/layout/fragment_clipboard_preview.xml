@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <LinearLayout
+            android:id="@+id/clipboard_preview_labels"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            style="@style/AppBaseTheme.Clipboard.Labels">
+
+        <TextView
+                android:id="@+id/content_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="FILE NAME"
+                style="@style/AppBaseTheme.DescriptiveText"/>
+
+        <TextView
+                android:id="@+id/content_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AppBaseTheme.DescriptiveText"
+                android:text="FILE SIZE kb"/>
+
+    </LinearLayout>
+
+    <com.hoccer.xo.android.content.ContentView
+            android:id="@+id/content_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/AppBaseTheme.Clipboard.Content"/>
+
+    <LinearLayout
+            android:id="@+id/clipboard_preview_buttons"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            style="@style/AppBaseTheme.Clipboard.Buttons">
+
+        <Button
+                android:id="@+id/clipboard_preview_button_ok"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/common_ok"/>
+
+        <Button
+                android:id="@+id/clipboard_preview_button_cancel"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/common_cancel"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

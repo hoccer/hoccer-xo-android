@@ -4,12 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
+import com.hoccer.xo.release.R;
 
 public class MapsLocationSelector implements IContentSelector {
 
+    private String mName;
+
+    public MapsLocationSelector(Context context) {
+        mName = context.getResources().getString(R.string.content_location);
+    }
+
     @Override
     public String getName() {
-        return "Location";
+        return mName;
     }
 
     @Override

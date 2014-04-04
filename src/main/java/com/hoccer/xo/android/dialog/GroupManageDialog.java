@@ -43,18 +43,9 @@ public class GroupManageDialog extends DialogFragment {
         mContactsToKick = new ArrayList();
     }
 
-    private void restoreDialog(Bundle savedInstanceState) {
-        mGroup = (TalkClientContact)savedInstanceState.getSerializable("groupContact");
-        mContactsToInvite = (ArrayList<TalkClientContact>)savedInstanceState.getSerializable("contactsToInvite");
-        mContactsToKick = (ArrayList<TalkClientContact>)savedInstanceState.getSerializable("contactsToKick");
-    }
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LOG.debug("onCreateDialog()");
-        if (savedInstanceState != null) {
-            restoreDialog(savedInstanceState);
-        }
         if(mAdapter == null) {
             mAdapter = new GroupManagementContactsAdapter((XoActivity)getActivity(), mGroup, mContactsToInvite, mContactsToKick);
             mAdapter.onCreate();
@@ -140,14 +131,5 @@ public class GroupManageDialog extends DialogFragment {
             mAdapter.onPause();
             mAdapter.onDestroy();
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putSerializable("groupContact", mGroup);
-        outState.putSerializable("contactsToInvite", mContactsToInvite);
-        outState.putSerializable("contactsToKick", mContactsToKick);
     }
 }

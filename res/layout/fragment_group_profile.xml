@@ -30,19 +30,23 @@
 
     <TextView
             android:id="@+id/profile_group_name"
-            android:text="@string/profile_name_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="45dp"
+            android:layout_marginRight="45dp"
             android:layout_marginTop="5dp"
             android:visibility="visible"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
             style="@style/AppBaseTheme.Group.Name"/>
 
     <EditText
             android:id="@+id/profile_group_name_edit"
-            android:text="@string/profile_name_title"
+            android:hint="@string/group_name_hint"
+            android:textColorHint="@color/xo_content_description_text"
             android:gravity="left"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,6 +54,7 @@
             android:layout_marginRight="35dp"
             android:lines="1"
             android:inputType="text|textNoSuggestions"
+            android:maxLength="25"
             android:visibility="gone"
             style="@style/AppBaseTheme.Group.Name"/>
 

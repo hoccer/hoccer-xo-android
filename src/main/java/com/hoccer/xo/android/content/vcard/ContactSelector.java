@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.io.FileNotFoundException;
@@ -16,9 +17,15 @@ public class ContactSelector implements IContentSelector {
 
     private static final Logger LOG = Logger.getLogger(ContactSelector.class);
 
+    private String mName;
+
+    public ContactSelector(Context context) {
+        mName = context.getResources().getString(R.string.content_contact);
+    }
+
     @Override
     public String getName() {
-        return "Contact";
+        return mName;
     }
 
     @Override

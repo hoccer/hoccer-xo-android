@@ -21,6 +21,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/sms_invite_icon"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:layout_marginRight="85dp"
             style="@style/AppBaseTheme.Contact.Name"/>
 
     <TextView

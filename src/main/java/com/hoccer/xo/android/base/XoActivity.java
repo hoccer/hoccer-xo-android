@@ -1,6 +1,7 @@
 package com.hoccer.xo.android.base;
 
 import android.app.Dialog;
+import android.app.ActivityManager;
 import android.content.*;
 import android.graphics.drawable.ColorDrawable;
 import android.os.*;
@@ -12,6 +13,7 @@ import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.activity.AboutActivity;
@@ -25,6 +27,7 @@ import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
 import com.hoccer.xo.android.content.ContentRegistry;
 import com.hoccer.xo.android.content.ContentSelection;
+import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.image.ImageSelector;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.IXoClientService;
@@ -32,32 +35,53 @@ import com.hoccer.xo.android.service.XoClientService;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
 
+import net.hockeyapp.android.CrashManager;
+
 import org.apache.log4j.Logger;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.TaskStackBuilder;
+import android.content.ComponentName;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.provider.Telephony;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import net.hockeyapp.android.CrashManager;
 
 /**
  * Base class for our activities
@@ -134,6 +158,7 @@ public abstract class XoActivity extends Activity {
     private AttachmentTransferControlView mSpinner;
     private Handler mDialogDismisser;
     private Dialog mDialog;
+    private ScreenReceiver mScreenListener;
 
     public XoActivity() {
         LOG = Logger.getLogger(getClass());
@@ -186,6 +211,12 @@ public abstract class XoActivity extends Activity {
 
         // get the barcode scanning service
         mBarcodeService = new IntentIntegrator(this);
+
+        // screen state listener
+        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        mScreenListener = new ScreenReceiver();
+        registerReceiver(mScreenListener, filter);
     }
 
     @Override
@@ -203,6 +234,13 @@ public abstract class XoActivity extends Activity {
         mServiceConnection = new MainServiceConnection();
         bindService(serviceIntent, mServiceConnection, BIND_IMPORTANT);
         checkKeys();
+        getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_ONLINE);
+    }
+
+    private void checkForCrashesIfEnabled() {
+        if (XoConfiguration.reportingEnable()) {
+            CrashManager.register(this, XoConfiguration.HOCKEYAPP_ID);
+        }
     }
 
     private void checkKeys() {
@@ -230,14 +268,15 @@ public abstract class XoActivity extends Activity {
     }
 
     public void createDialog() {
-        LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.waiting_dialog, null);
         mSpinner = (AttachmentTransferControlView) view.findViewById(R.id.content_progress);
 
         mDialog = new Dialog(this);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mDialog.setContentView(view);
-        mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        mDialog.getWindow()
+                .setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         mDialog.setCanceledOnTouchOutside(false);
         mDialog.show();
         mDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
@@ -270,12 +309,6 @@ public abstract class XoActivity extends Activity {
         spinnerStarter.sendEmptyMessageDelayed(0, 500);
     }
 
-    private void checkForCrashesIfEnabled() {
-        if (XoConfiguration.reportingEnable()) {
-            CrashManager.register(this, XoConfiguration.HOCKEYAPP_ID);
-        }
-    }
-
     @Override
     protected void onPause() {
         LOG.debug("onPause()");
@@ -293,12 +326,50 @@ public abstract class XoActivity extends Activity {
             unbindService(mServiceConnection);
             mServiceConnection = null;
         }
+        checkIfAppInForeground();
+    }
+
+    public void checkIfAppInForeground() {
+        Handler checkState = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                ActivityManager activityManager = (ActivityManager) getApplicationContext().
+                        getSystemService(Context.ACTIVITY_SERVICE);
+                List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
+                String ourName = getApplicationContext().getPackageName().toString();
+                if (!services.get(0).topActivity.getPackageName().toString().equalsIgnoreCase(ourName)
+                        || !mScreenListener.isScreenOn()) {
+                    getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_OFFLINE);
+                }
+            }
+        };
+        checkState.sendEmptyMessageDelayed(0, 1000);
     }
 
     @Override
     protected void onDestroy() {
         LOG.debug("onDestroy()");
+        unregisterReceiver(mScreenListener);
         super.onDestroy();
+    }
+
+    private class ScreenReceiver extends BroadcastReceiver {
+
+        private boolean wasScreenOn = true;
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+                wasScreenOn = false;
+            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+                wasScreenOn = true;
+            }
+        }
+
+        public boolean isScreenOn() {
+            return  wasScreenOn;
+        }
+
     }
 
     @Override
@@ -363,13 +434,16 @@ public abstract class XoActivity extends Activity {
                 + "tmp_crop";
         try {
             Bitmap bitmap = BitmapFactory.decodeFile(croppedImagePath);
+            if (bitmap == null) {
+                return null;
+            }
             File avatarFile = new File(filePath);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, new FileOutputStream(avatarFile));
             Uri uri = getImageContentUri(getBaseContext(), avatarFile);
             data.setData(uri);
 
             File tmpImage = new File(croppedImagePath);
-            if(tmpImage.exists()) {
+            if (tmpImage.exists()) {
                 tmpImage.delete();
             }
 
@@ -424,13 +498,17 @@ public abstract class XoActivity extends Activity {
 
         if (requestCode == REQUEST_CROP_AVATAR) {
             data = selectedAvatarPreProcessing(data);
-            IContentObject co = ContentRegistry.get(this)
-                    .createSelectedAvatar(mAvatarSelection, data);
-            if (co != null) {
-                LOG.debug("selected avatar " + co.getContentDataUrl());
-                for (IXoFragment fragment : mTalkFragments) {
-                    fragment.onAvatarSelected(co);
+            if (data != null) {
+                IContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection,
+                        data);
+                if (co != null) {
+                    LOG.debug("selected avatar " + co.getContentDataUrl());
+                    for (IXoFragment fragment : mTalkFragments) {
+                        fragment.onAvatarSelected(co);
+                    }
                 }
+            } else {
+                Toast.makeText(this, R.string.error_avatar_selection, Toast.LENGTH_LONG).show();
             }
             return;
         }
@@ -642,10 +720,8 @@ public abstract class XoActivity extends Activity {
         try {
             TalkClientContact self = mDatabase.findSelfContact(false);
 
-            String message =
-                    "Hey! I'm now using the free app Hoccer XO for secure chatting. " +
-                            "Download it now: http://hoccer.com/ Then add me as a contact: " +
-                            "hxo://" + token + "\nxo " + self.getName();
+            String message = String
+                    .format(getString(R.string.sms_invitation_text), token, self.getName());
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //At least KitKat
                 String defaultSmsPackageName = Telephony.Sms
@@ -673,6 +749,12 @@ public abstract class XoActivity extends Activity {
     }
 
     public void hackReturnedFromDialog() {
+    }
+
+    public void showPopupForContentView(ContentView contentView) {
+    }
+
+    public void clipBoardItemSelected(IContentObject contentObject) {
     }
 
     /**
