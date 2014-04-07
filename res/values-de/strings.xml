@@ -216,6 +216,7 @@
     <string name="export_credentials_success">Successfully saved your credentials.</string>
     <string name="export_credentials_failure">Error while saving your Credentials.</string>
     <string name="no_password">Please enter a Password.</string>
+    <string name="cant_find_credentials">Can\'t find credentials.json on your phone.</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>

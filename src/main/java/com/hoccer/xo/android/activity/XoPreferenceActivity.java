@@ -30,6 +30,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -153,4 +154,117 @@ public class XoPreferenceActivity extends PreferenceActivity
         }
         super.onDestroy();
     }
+
+    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+        if (preference.getKey().equals("preference_export")) {
+            doExport();
+            return true;
+        } else if (preference.getKey().equals("preference_import")) {
+            doImport();
+            return true;
+        }
+
+        return super.onPreferenceTreeClick(preferenceScreen, preference);
+    }
+
+    private void doImport() {
+        final File credentialsFile = new File(
+                XoApplication.getExternalStorage() + File.separator + "credentials.json");
+        if (credentialsFile == null || !credentialsFile.exists()) {
+            Toast.makeText(this, getString(R.string.cant_find_credentials), Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final EditText passwordInput = new EditText(this);
+        passwordInput.setInputType(EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
+        dialogBuilder.setTitle(R.string.export_credentials_dialog_title);
+        dialogBuilder
+                .setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String password = passwordInput.getText().toString();
+                        if (password != null && password.length() > 0) {
+                            importCredentials(credentialsFile, password);
+                            dialog.dismiss();
+                        } else {
+                            Toast.makeText(XoPreferenceActivity.this, R.string.no_password,
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+        dialogBuilder
+                .setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        passwordInput.setText("");
+                        dialog.dismiss();
+                    }
+                });
+        dialogBuilder.setView(passwordInput);
+        dialogBuilder.show();
+    }
+
+    private void importCredentials(File credentialsFile, String password) {
+        byte[] credentials = new byte[(int) credentialsFile.length()];
+
+
+
+        XoApplication.getXoClient().setCryptedCredentialsFromContainer(credentials, password);
+        Toast.makeText(this, "Successfully imported credentials.", Toast.LENGTH_LONG).show();
+    }
+
+    private void doExport() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final EditText passwordInput = new EditText(this);
+        passwordInput.setInputType(EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
+        dialogBuilder.setTitle(R.string.export_credentials_dialog_title);
+        dialogBuilder
+                .setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String password = passwordInput.getText().toString();
+                        if (password != null && password.length() > 0) {
+                            exportCredentials(password);
+                            dialog.dismiss();
+                        } else {
+                            Toast.makeText(XoPreferenceActivity.this, R.string.no_password,
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+        dialogBuilder
+                .setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        passwordInput.setText("");
+                        dialog.dismiss();
+                    }
+                });
+        dialogBuilder.setView(passwordInput);
+        dialogBuilder.show();
+    }
+
+    private void exportCredentials(String password) {
+        try {
+            byte[] credentialsContainer = XoApplication.getXoClient()
+                    .makeCryptedCredentialsContainer(password);
+
+            FileOutputStream fos = new FileOutputStream(
+                    XoApplication.getExternalStorage() + File.separator + "credentials.json");
+            fos.write(credentialsContainer);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            LOG.error("error while writing credentials container to filesyystem.", e);
+            Toast.makeText(this, R.string.export_credentials_failure, Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            LOG.error("error while generating credentials container", e);
+            Toast.makeText(this, R.string.export_credentials_failure, Toast.LENGTH_LONG).show();
+        }
+        Toast.makeText(this, R.string.export_credentials_success, Toast.LENGTH_LONG).show();
+    }
+
 }
