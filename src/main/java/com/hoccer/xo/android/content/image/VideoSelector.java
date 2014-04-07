@@ -41,14 +41,11 @@ public class VideoSelector implements IContentSelector {
     @Override
     public IContentObject createObjectFromSelectionResult(Context context, Intent intent) {
         Uri selectedContent = intent.getData();
-        String[] filePathColumn = {
-                MediaStore.Video.Media.MIME_TYPE,
-                MediaStore.Video.Media.DATA,
-                MediaStore.Video.Media.SIZE,
-                MediaStore.Video.Media.WIDTH,
-                MediaStore.Video.Media.HEIGHT,
-                MediaStore.Video.Media.DISPLAY_NAME
-        };
+        String[] filePathColumn = {MediaStore.Video.Media.MIME_TYPE,
+                                   MediaStore.Video.Media.DATA,
+                                   MediaStore.Video.Media.SIZE,
+                                   MediaStore.Video.Media.WIDTH,
+                                   MediaStore.Video.Media.HEIGHT};
 
         Cursor cursor = context.getContentResolver().query(
                 selectedContent, filePathColumn, null, null, null);
@@ -64,22 +61,19 @@ public class VideoSelector implements IContentSelector {
         int fileWidth = cursor.getInt(widthIndex);
         int heightIndex = cursor.getColumnIndex(filePathColumn[4]);
         int fileHeight = cursor.getInt(heightIndex);
-        int fileNameIndex = cursor.getColumnIndex(filePathColumn[5]);
-        String fileName = cursor.getString(fileNameIndex);
 
         cursor.close();
 
-        if (filePath == null) {
+        if(filePath == null) {
             return null;
         }
 
         SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);
-        contentObject.setFileName(fileName);
         contentObject.setContentMediaType("video");
         contentObject.setContentType(fileType);
         contentObject.setContentLength(fileSize);
-        if (fileWidth > 0 && fileHeight > 0) {
-            contentObject.setContentAspectRatio(((float) fileWidth) / ((float) fileHeight));
+        if(fileWidth > 0 && fileHeight > 0) {
+            contentObject.setContentAspectRatio(((float)fileWidth) / ((float)fileHeight));
         }
 
         return contentObject;

@@ -38,12 +38,9 @@ public class MusicSelector implements IContentSelector {
     @Override
     public SelectedContent createObjectFromSelectionResult(Context context, Intent intent) {
         Uri selectedContent = intent.getData();
-        String[] filePathColumn = {
-                MediaStore.Audio.Media.MIME_TYPE,
-                MediaStore.Audio.Media.DATA,
-                MediaStore.Audio.Media.SIZE,
-                MediaStore.Audio.Media.DISPLAY_NAME
-        };
+        String[] filePathColumn = {MediaStore.Audio.Media.MIME_TYPE,
+                                   MediaStore.Audio.Media.DATA,
+                                   MediaStore.Audio.Media.SIZE};
 
         Cursor cursor = context.getContentResolver().query(
                 selectedContent, filePathColumn, null, null, null);
@@ -55,17 +52,14 @@ public class MusicSelector implements IContentSelector {
         String filePath = cursor.getString(dataIndex);
         int sizeIndex = cursor.getColumnIndex(filePathColumn[2]);
         int fileSize = cursor.getInt(sizeIndex);
-        int fileNameIndex = cursor.getColumnIndex(filePathColumn[3]);
-        String fileName = cursor.getString(fileNameIndex);
 
         cursor.close();
 
-        if (filePath == null) {
+        if(filePath == null) {
             return null;
         }
 
         SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);
-        contentObject.setFileName(fileName);
         contentObject.setContentMediaType("audio");
         contentObject.setContentType(fileType);
         contentObject.setContentLength(fileSize);

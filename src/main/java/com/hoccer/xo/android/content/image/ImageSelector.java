@@ -13,7 +13,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import com.hoccer.xo.release.R;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,8 +22,6 @@ import java.io.InputStream;
 import java.net.URL;
 
 public class ImageSelector implements IContentSelector {
-
-    Logger LOG = Logger.getLogger(ImageSelector.class);
 
     private String mName;
     private Drawable mIcon;
@@ -55,7 +52,6 @@ public class ImageSelector implements IContentSelector {
     public Intent createCropIntent(Context context, Uri data) {
         Intent intent = new Intent("com.android.camera.action.CROP",
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
         intent.setDataAndType(data, "image/*");
         intent.putExtra("crop", "true");
         intent.putExtra("aspectX", 1);
@@ -102,7 +98,6 @@ public class ImageSelector implements IContentSelector {
                     bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(imageFile));
 
                     SelectedContent contentObject = new SelectedContent(intent, "file://" + imageFile.getAbsolutePath());
-                    contentObject.setFileName(displayName);
                     contentObject.setContentType("image/jpeg");
                     contentObject.setContentMediaType("image");
                     contentObject.setContentLength((int) imageFile.length());
@@ -110,7 +105,7 @@ public class ImageSelector implements IContentSelector {
                             ((float) bmp.getWidth()) / ((float) bmp.getHeight()));
                     return contentObject;
                 } catch (FileNotFoundException e) {
-                    LOG.error("Error while creating image from Picasa: ", e);
+                    e.printStackTrace();
                 }
             }
         }
@@ -129,22 +124,19 @@ public class ImageSelector implements IContentSelector {
                 is = new URL(url.toString()).openStream();
             }
             return BitmapFactory.decodeStream(is);
-        } catch (Exception e) {
-            LOG.error("Error while creating bitmap: ", e);
+        } catch (Exception ex) {
+            ex.printStackTrace();
             return null;
         }
     }
 
     private SelectedContent createFromFile(Context context, Intent intent) {
         Uri selectedContent = intent.getData();
-        String[] filePathColumn = {
-                MediaStore.Images.Media.MIME_TYPE,
+        String[] filePathColumn = {MediaStore.Images.Media.MIME_TYPE,
                 MediaStore.Images.Media.DATA,
                 MediaStore.Images.Media.SIZE,
                 MediaStore.Images.Media.WIDTH,
-                MediaStore.Images.Media.HEIGHT,
-                MediaStore.Images.Media.DISPLAY_NAME
-        };
+                MediaStore.Images.Media.HEIGHT};
 
         Cursor cursor = context.getContentResolver().query(
                 selectedContent, filePathColumn, null, null, null);
@@ -160,8 +152,6 @@ public class ImageSelector implements IContentSelector {
         int fileWidth = cursor.getInt(widthIndex);
         int heightIndex = cursor.getColumnIndex(filePathColumn[4]);
         int fileHeight = cursor.getInt(heightIndex);
-        int fileNameIndex = cursor.getColumnIndex(filePathColumn[5]);
-        String fileName = cursor.getString(fileNameIndex);
 
         cursor.close();
 
@@ -170,7 +160,6 @@ public class ImageSelector implements IContentSelector {
         }
 
         SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);
-        contentObject.setFileName(fileName);
         contentObject.setContentType(mimeType);
         contentObject.setContentMediaType("image");
         contentObject.setContentLength(fileSize);
@@ -183,7 +172,6 @@ public class ImageSelector implements IContentSelector {
                 contentObject.setContentAspectRatio(
                         ((float) bmp.getWidth()) / ((float) bmp.getHeight()));
             } catch (IOException e) {
-                LOG.error("Error while creating image from file: ", e);
             }
         }
         return contentObject;

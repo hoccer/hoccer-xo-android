@@ -38,14 +38,11 @@ public class CaptureSelector implements IContentSelector {
     @Override
     public SelectedContent createObjectFromSelectionResult(Context context, Intent intent) {
         Uri selectedContent = intent.getData();
-        String[] filePathColumn = {
-                MediaStore.Images.Media.MIME_TYPE,
-                MediaStore.Images.Media.DATA,
-                MediaStore.Images.Media.SIZE,
-                MediaStore.Images.Media.WIDTH,
-                MediaStore.Images.Media.HEIGHT,
-                MediaStore.Images.Media.DISPLAY_NAME
-        };
+        String[] filePathColumn = {MediaStore.Images.Media.MIME_TYPE,
+                                    MediaStore.Images.Media.DATA,
+                                    MediaStore.Images.Media.SIZE,
+                                    MediaStore.Images.Media.WIDTH,
+                                    MediaStore.Images.Media.HEIGHT};
 
         Cursor cursor = context.getContentResolver().query(
                 selectedContent, filePathColumn, null, null, null);
@@ -61,21 +58,18 @@ public class CaptureSelector implements IContentSelector {
         int fileWidth = cursor.getInt(widthIndex);
         int heightIndex = cursor.getColumnIndex(filePathColumn[4]);
         int fileHeight = cursor.getInt(heightIndex);
-        int fileNameIndex = cursor.getColumnIndex(filePathColumn[5]);
-        String fileName = cursor.getString(fileNameIndex);
 
         cursor.close();
 
-        if (filePath == null) {
+        if(filePath == null) {
             return null;
         }
 
         SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);
-        contentObject.setFileName(fileName);
         contentObject.setContentMediaType("image");
         contentObject.setContentType(fileType);
         contentObject.setContentLength(fileSize);
-        contentObject.setContentAspectRatio(((float) fileWidth) / ((float) fileHeight));
+        contentObject.setContentAspectRatio(((float)fileWidth) / ((float)fileHeight));
 
         return contentObject;
     }

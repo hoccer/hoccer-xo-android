@@ -34,8 +34,6 @@ public class SelectedContent implements IContentObject {
 
     private static final Logger LOG = Logger.getLogger(SelectedContent.class);
 
-    String mFileName;
-
     String mContentUrl;
     
     String mContentDataUrl;
@@ -77,10 +75,6 @@ public class SelectedContent implements IContentObject {
         mContentLength = data.length;
     }
 
-    public void setFileName(String fileName) {
-        this.mFileName = fileName;
-    }
-
     public void setContentType(String mContentType) {
         this.mContentType = mContentType;
     }
@@ -115,11 +109,6 @@ public class SelectedContent implements IContentObject {
     @Override
     public String getContentType() {
         return mContentType;
-    }
-
-    @Override
-    public String getFileName() {
-        return mFileName;
     }
 
     @Override
@@ -230,7 +219,6 @@ public class SelectedContent implements IContentObject {
         }
         TalkClientUpload upload = new TalkClientUpload();
         upload.initializeAsAttachment(
-                object.getFileName(),
                 object.getContentUrl(),
                 object.getContentDataUrl(),
                 object.getContentType(),
