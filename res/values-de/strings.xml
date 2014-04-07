@@ -83,7 +83,7 @@
     <string name="profile_user_unblock_button">User entblockieren</string>
     <string name="profile_user_depair_button">Verbindung aufheben</string>
     <string name="profile_user_delete_button">Kontakt löschen</string>
-    <string name="group_name_hint">Group name</string>
+    <string name="group_name_hint">Gruppenname</string>
     <string name="profile_group_members_title">Mitglieder</string>
     <string name="profile_group_create_button">Gruppe erstellen</string>
     <string name="profile_group_join_button">Gruppe beitreten</string>
@@ -186,7 +186,7 @@
     <string name="transfer_state_downloading">Downloading...</string>
     <string name="transfer_state_uploading">Uploading...</string>
     <string name="transfer_state_pause">Pause</string>
-    <string name="dialog_attachment_choose_reselect_option">anderen Anhang auswählen</string>
+    <string name="dialog_attachment_choose_reselect_option">Anderen Anhang auswählen</string>
     <string name="dialog_attachment_choose_discard_option">Anhang verwerfen</string>
     <string name="dialog_attachment_title">Anhang bearbeiten</string>
     <string name="dialog_block_user_title">Kontakt blockieren</string>
