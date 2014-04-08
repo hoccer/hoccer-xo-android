@@ -68,6 +68,10 @@ public class ButtonAudioViewCache extends ContentViewCache<View> {
             IContentObject contentObject, boolean isLightTheme) {
         TextView filenameText = (TextView) view.findViewById(R.id.tv_content_audio_name);
         String filename = contentObject.getFileName();
+        if (filename == null) {
+            String dataUrl = contentObject.getContentDataUrl();
+            filename = dataUrl.substring(dataUrl.lastIndexOf(File.separator) + 1);
+        }
 
         filenameText.setText(filename);
         if (isLightTheme) {
