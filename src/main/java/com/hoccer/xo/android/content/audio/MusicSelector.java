@@ -42,7 +42,7 @@ public class MusicSelector implements IContentSelector {
                 MediaStore.Audio.Media.MIME_TYPE,
                 MediaStore.Audio.Media.DATA,
                 MediaStore.Audio.Media.SIZE,
-                MediaStore.Audio.Media.DISPLAY_NAME
+                MediaStore.Audio.Media.TITLE
         };
 
         Cursor cursor = context.getContentResolver().query(
