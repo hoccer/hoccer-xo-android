@@ -5,7 +5,7 @@ import com.hoccer.talk.client.XoClient;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.release.R;
 
-import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,7 +115,7 @@ public class StatusFragment extends XoFragment implements IXoStateListener {
         }
         mStatusText.setText(statusText);
 
-        final FragmentTransaction tr = getActivity().getFragmentManager().beginTransaction();
+        final FragmentTransaction tr = getActivity().getSupportFragmentManager().beginTransaction();
         if (state == XoClient.STATE_ACTIVE
                 || state == XoClient.STATE_IDLE) {
             tr.hide(StatusFragment.this);
