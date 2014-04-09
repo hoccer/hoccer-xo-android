@@ -3,8 +3,6 @@ package com.hoccer.xo.android.gesture;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import toxi.geom.Vec2D;
-
 public class LineFeature {
 
     LinkedList<Vec2D> mPoints = new LinkedList<Vec2D>();

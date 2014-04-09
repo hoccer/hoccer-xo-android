@@ -1,26 +1,25 @@
 package com.hoccer.xo.android.gesture;
 
-import java.io.File;
-import java.io.IOException;
+import org.apache.log4j.Logger;
+
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
-import toxi.geom.Vec2D;
-import toxi.geom.Vec3D;
-
+/*
 import com.hoccer.android.Logger;
 import com.hoccer.android.http.HttpClientException;
 import com.hoccer.android.http.HttpHelper;
 import com.hoccer.android.http.HttpServerException;
+*/
 
 public class FeatureHistory {
 
-    private static final String             LOG_TAG             = "FeatureHistory";
+    //private static final Logger LOG = Logger.getLogger(FeatureHistory.class);
+    //private static final String LOG_TAG = "FeatureHistory";
 
     private final LinkedList<LineFeature>[] mLineFeatureHistories;
 
-    private long                            mStartTimeOfHistroy = -1;
+    private long mStartTimeOfHistroy = -1;
 
     public FeatureHistory() {
 
@@ -32,7 +31,7 @@ public class FeatureHistory {
     }
 
     public void add(Vec3D pMeasurement, long pTimestamp) {
-        float[] mesurements = { pMeasurement.x, pMeasurement.y, pMeasurement.z };
+        float[] mesurements = {pMeasurement.x, pMeasurement.y, pMeasurement.z};
         add(mesurements, pTimestamp);
     }
 
@@ -95,7 +94,7 @@ public class FeatureHistory {
     /**
      * returns the current feature pattern in given timespan (latest feature is right most, like you
      * would graph it)
-     * 
+     *
      * @return Pattern e.g. "<up><fastup><down><flat><fastdown>..."
      */
     public FeaturePattern getFeaturePattern(long pTimespan, int pAxis) {
@@ -216,7 +215,7 @@ public class FeatureHistory {
             }
         }
 
-        float[] extrema = { maximum, minimum };
+        float[] extrema = {maximum, minimum};
         return extrema;
     }
 
@@ -245,6 +244,7 @@ public class FeatureHistory {
         return line;
     }
 
+    /*
     public void storeGraph(String pFilename) throws HttpClientException, HttpServerException,
             IOException {
         storeGraph(new File(pFilename));
@@ -322,5 +322,6 @@ public class FeatureHistory {
 
         Logger.v(LOG_TAG, "--------------------------------------");
     }
+    */
 
 }

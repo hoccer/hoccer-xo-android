@@ -1,12 +1,8 @@
 package com.hoccer.xo.android.gesture;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import toxi.geom.Vec3D;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -19,10 +15,13 @@ import com.hoccer.xo.android.gesture.Gestures.*;
 
 public class MotionInterpreter implements SensorEventListener {
 
-    public static final int                  HISTORY_LENGTH             = 20;
-    public static final long                 GESTURE_EXCLUSION_TIMESPAN = 1500;
-    private static final String              LOG_TAG                    = "MotionInterpreter";
+    private static final Logger LOG = Logger.getLogger(MotionInterpreter.class);
 
+    //public static final int HISTORY_LENGTH = 20;
+    public static final long GESTURE_EXCLUSION_TIMESPAN = 1500;
+    private static final String LOG_TAG = "MotionInterpreter";
+
+    /*
     public static final Map<Integer, String> AXIS_NAMES;
 
     static {
@@ -33,19 +32,20 @@ public class MotionInterpreter implements SensorEventListener {
         axisNames.put(SensorManager.DATA_Z, "Z");
         AXIS_NAMES = Collections.unmodifiableMap(axisNames);
     }
+    */
 
-    private final Context                    mContext;
-    private MotionGestureListener            mListener;
-    private List<Detector>                   mDetectors;
+    private final Context mContext;
+    private MotionGestureListener mListener;
+    private List<Detector> mDetectors;
 
-    private long                             mLastGestureTime;
+    private long mLastGestureTime;
 
-    private final FeatureHistory             mFeatureHistory;
-    private Transaction                      pMode;
+    private final FeatureHistory mFeatureHistory;
+    //private Transaction pMode;
 
     public MotionInterpreter(Transaction pMode, Context pContext,
-            MotionGestureListener pOnShakeListener) {
-        Logger.v(LOG_TAG, "creating GestureInterpreter");
+                             MotionGestureListener pOnShakeListener) {
+        LOG.debug(LOG_TAG + " Creating GestureInterpreter");
         mContext = pContext;
 
         mFeatureHistory = new FeatureHistory();
@@ -56,7 +56,7 @@ public class MotionInterpreter implements SensorEventListener {
         setGestureListener(pOnShakeListener);
     }
 
-    public FeatureHistory getFeatureHistery() {
+    public FeatureHistory getFeatureHistory() {
         return mFeatureHistory;
     }
 
@@ -88,10 +88,8 @@ public class MotionInterpreter implements SensorEventListener {
             return;
         }
 
-        SensorManager sensorManager = (SensorManager) mContext
-                .getSystemService(Context.SENSOR_SERVICE);
-        sensorManager.registerListener(this, sensorManager
-                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
+        SensorManager sensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override
@@ -126,7 +124,7 @@ public class MotionInterpreter implements SensorEventListener {
                 && (pTimestamp - mLastGestureTime > GESTURE_EXCLUSION_TIMESPAN)) {
 
             mListener.onMotionGesture(pGesture);
-            Logger.v(LOG_TAG, "Gesture detected: ", Gestures.GESTURE_NAMES.get(pGesture));
+            LOG.debug(LOG_TAG + " Gesture detected: " + Gestures.GESTURE_NAMES.get(pGesture));
 
             mLastGestureTime = pTimestamp;
             mFeatureHistory.clear();
@@ -139,11 +137,9 @@ public class MotionInterpreter implements SensorEventListener {
 
         if (pMode == Transaction.SHARE || pMode == Transaction.SHARE_AND_RECEIVE) {
             addGestureDetector(new ThrowDetector());
-//            addGestureDetector(new DropDetector());
         }
         if (pMode == Transaction.RECEIVE || pMode == Transaction.SHARE_AND_RECEIVE) {
             addGestureDetector(new CatchDetector());
-//            addGestureDetector(new PickDetector());
         }
     }
 
