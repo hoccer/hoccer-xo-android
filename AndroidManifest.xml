@@ -56,8 +56,9 @@
     <!-- GMaps / locations -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- Wifi-Scanning for location grouping -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
-
 
     <!-- Declare permission for controlling our own push package -->
     <permission

@@ -2,6 +2,7 @@ package com.hoccer.xo.android.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import com.hoccer.talk.client.IXoClientDatabaseBackend;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -32,9 +33,10 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
 
     private static final Logger LOG = Logger.getLogger(AndroidTalkDatabase.class);
 
-    private static final String DATABASE_NAME    = "hoccer-talk.db";
+    //private static final String DATABASE_NAME = "hoccer-talk.db";
+    private static String DATABASE_NAME = "hoccer-talk.db";
 
-    private static final int    DATABASE_VERSION = 11;
+    private static final int    DATABASE_VERSION = 12;
 
     private static AndroidTalkDatabase INSTANCE = null;
 
@@ -46,7 +48,9 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
     }
 
     private AndroidTalkDatabase(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        //super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, PreferenceManager.getDefaultSharedPreferences(context).getString("preference_database", "hoccer-talk.db"), null, DATABASE_VERSION);
+        DATABASE_NAME = PreferenceManager.getDefaultSharedPreferences(context).getString("preference_database", "hoccer-talk.db");
     }
 
     @Override
@@ -126,6 +130,12 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
                 Dao<TalkClientMessage, Integer> messages = getDao(TalkClientMessage.class);
                 messages.executeRaw("ALTER TABLE `clientMessage` ADD COLUMN `signature` VARCHAR;");
                 messages.executeRaw("ALTER TABLE `clientMessage` ADD COLUMN `hmac` VARCHAR;");
+            }
+            if (oldVersion < 12) {
+                Dao<TalkClientDownload, Integer> downloads = getDao(TalkClientDownload.class);
+                downloads.executeRaw("ALTER TABLE `clientDownload` ADD COLUMN `fileName` VARCHAR;");
+                Dao<TalkClientUpload, Integer> uploads = getDao(TalkClientUpload.class);
+                uploads.executeRaw("ALTER TABLE `clientUpload` ADD COLUMN `fileName` VARCHAR;");
             }
         } catch (SQLException e) {
             LOG.error("sql error upgrading database", e);

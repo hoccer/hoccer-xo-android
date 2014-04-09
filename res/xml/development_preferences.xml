@@ -69,9 +69,27 @@
 
         <EditTextPreference
                 android:key="preference_server_uri"
-                android:title="Server URI"
+                android:title="Enter Server URI"
                 />
 
+        <ListPreference
+                android:key="preference_server_uri"
+                android:entries="@array/servers"
+                android:entryValues="@array/servers"
+                android:title="Select Server URI"
+                android:defaultValue="wss://server.talk.hoccer.de/"/>
+
+        <ListPreference
+                android:key="preference_database"
+                android:entries="@array/databases"
+                android:entryValues="@array/database_values"
+                android:title="@string/preference_database_title"
+                android:defaultValue="hoccer-talk.db"/>
+
+        <CheckBoxPreference
+                android:key="preference_environmentupdate"
+                android:title="Enable environment updates"
+                android:defaultValue="false"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

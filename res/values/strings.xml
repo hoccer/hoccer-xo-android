@@ -234,4 +234,6 @@
         <item>TRACE</item>
     </string-array>
 
+    <string name="preference_database_title">Local Database</string>
+
 </resources>
