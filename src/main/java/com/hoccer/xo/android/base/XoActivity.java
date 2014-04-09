@@ -16,6 +16,7 @@ import com.hoccer.talk.content.IContentObject;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
+import com.hoccer.xo.android.XoSoundPool;
 import com.hoccer.xo.android.activity.AboutActivity;
 import com.hoccer.xo.android.activity.GroupProfileActivity;
 import com.hoccer.xo.android.activity.LicensesActivity;
@@ -170,6 +171,10 @@ public abstract class XoActivity extends Activity {
 
     public XoClient getXoClient() {
         return XoApplication.getXoClient();
+    }
+
+    public XoSoundPool getXoSoundPool() {
+        return XoApplication.getXoSoundPool();
     }
 
     public ScheduledExecutorService getBackgroundExecutor() {
