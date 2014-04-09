@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppBaseTheme.Clipboard" parent="AppBaseTheme">
+
+    </style>
+
+    <style name="AppBaseTheme.Clipboard.Content" parent="AppBaseTheme.Clipboard">
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+    </style>
+
+    <style name="AppBaseTheme.Clipboard.Labels" parent="AppBaseTheme.Clipboard">
+        <item name="android:layout_marginTop">45dp</item>
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+    </style>
+
+    <style name="AppBaseTheme.Clipboard.Name" parent="AppBaseTheme.Clipboard">
+
+    </style>
+
+    <style name="AppBaseTheme.Clipboard.Size" parent="AppBaseTheme.Clipboard">
+
+    </style>
+
+    <style name="AppBaseTheme.Clipboard.Buttons" parent="AppBaseTheme.Clipboard">
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+    </style>
+</resources>

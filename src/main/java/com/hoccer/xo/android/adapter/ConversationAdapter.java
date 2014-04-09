@@ -11,6 +11,7 @@ import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentView;
+import com.hoccer.xo.android.content.IContentViewListener;
 import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
 
@@ -33,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Adapter for messages in a conversation
  */
 public class ConversationAdapter extends XoAdapter
-        implements IXoMessageListener, IXoTransferListener {
+        implements IXoMessageListener, IXoTransferListener, IContentViewListener {
 
     private static final int VIEW_TYPE_INCOMING = 0;
 
@@ -380,7 +381,7 @@ public class ConversationAdapter extends XoAdapter
     }
 
     private void setAttachment(View view, TalkClientMessage message) {
-        ContentView contentView = (ContentView) view.findViewById(R.id.message_content);
+        final ContentView contentView = (ContentView) view.findViewById(R.id.message_content);
         int displayHeight = mResources.getDisplayMetrics().heightPixels;
         contentView.setMaxContentHeight(Math.round(displayHeight * 0.8f));
 
@@ -400,7 +401,13 @@ public class ConversationAdapter extends XoAdapter
         } else {
             contentView.setVisibility(View.VISIBLE);
             contentView.displayContent(mActivity, contentObject, message);
+            contentView.setContentViewListener(this);
         }
+    }
+
+    @Override
+    public void onContentViewLongClick(ContentView contentView) {
+        mActivity.showPopupForContentView(contentView);
     }
 
     private void setAvatar(View view, final TalkClientContact sendingContact) {
@@ -484,4 +491,5 @@ public class ConversationAdapter extends XoAdapter
             e.printStackTrace();
         }
     }
+
 }

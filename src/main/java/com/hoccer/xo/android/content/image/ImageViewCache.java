@@ -3,7 +3,7 @@ package com.hoccer.xo.android.content.image;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.ContentViewer;
+import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.android.view.AspectImageView;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -16,21 +16,22 @@ import org.apache.log4j.Logger;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import java.util.WeakHashMap;
 
-public class ImageViewer extends ContentViewer<View> implements ImageLoadingListener {
+public class ImageViewCache extends ContentViewCache<View> implements ImageLoadingListener {
 
-    private static final Logger LOG = Logger.getLogger(ImageViewer.class);
+    private static final Logger LOG = Logger.getLogger(ImageViewCache.class);
 
     WeakHashMap<ImageView, String> mUpdateCache = new WeakHashMap<ImageView, String>();
+
+    private ClickableImageView mImageView;
+
+    private IContentObject mContentObject;
 
     @Override
     public boolean canViewObject(IContentObject object) {
@@ -40,30 +41,22 @@ public class ImageViewer extends ContentViewer<View> implements ImageLoadingList
     @Override
     protected View makeView(Activity activity) {
         View view = View.inflate(activity, R.layout.content_image, null);
+        mImageView = (ClickableImageView) view.findViewById(R.id.image_show_button);
         return view;
     }
 
     @Override
     protected void updateViewInternal(final View view, ContentView contentView,
             final IContentObject contentObject, boolean isLightTheme) {
-        ImageButton imageButton = (ImageButton) view.findViewById(R.id.image_show_button);
+
+        mContentObject = contentObject;
         String contentUrl = contentObject.getContentDataUrl();
 
         if (contentObject.isContentAvailable() && contentUrl != null) {
-            imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.parse(contentObject.getContentDataUrl()), "image/*");
-                try {
-                    Activity activity = (Activity) view.getContext();
-                    activity.startActivity(intent);
-                } catch(ClassCastException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-            loadImage(imageButton, contentUrl);
+
+            mImageView.setClickableImageViewListener(contentView);
+            loadImage(mImageView, contentUrl);
+
         } else {
             clearViewInternal(view);
         }
@@ -72,9 +65,9 @@ public class ImageViewer extends ContentViewer<View> implements ImageLoadingList
     @Override
     protected void clearViewInternal(View view) {
         LOG.trace("clearing");
-        ImageButton imageView = (ImageButton) view.findViewById(R.id.image_show_button);
-        ImageLoader.getInstance().cancelDisplayTask(imageView);
-        imageView.setImageDrawable(null);
+        ImageLoader.getInstance().cancelDisplayTask(mImageView);
+        mImageView.setImageDrawable(null);
+        mImageView.setClickableImageViewListener(null);
     }
 
     private void loadImage(ImageView view, String contentUrl) {

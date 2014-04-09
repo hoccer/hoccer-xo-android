@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import org.apache.log4j.Layout;
 import org.apache.log4j.PatternLayout;
 
+import java.sql.SQLException;
 import java.util.Locale;
 
 /**
@@ -17,6 +18,9 @@ import java.util.Locale;
  * This class collects various android-specific settings for the XO client.
  */
 public class XoConfiguration {
+	
+    /* HockeyApp constant id  */
+    public static final String HOCKEYAPP_ID = "60f2a55705e94d33e62a7b1643671f46";
 
     /* Directories in external storage */
     public static final String EXTERNAL_ATTACHMENTS = "Hoccer XO";
@@ -97,6 +101,11 @@ public class XoConfiguration {
         };
         sPreferences.registerOnSharedPreferenceChangeListener(sPreferencesListener);
         sIsSupportModeEnabled = sPreferences.getBoolean("preference_enable_server_side_support_mode", false);
+        if (!sPreferences.contains("preference_keysize")) {
+            SharedPreferences.Editor editor = sPreferences.edit();
+            editor.putString("preference_keysize", "2048");
+            editor.commit();
+        }
     }
 
     public static final void shutdown() {
@@ -106,8 +115,21 @@ public class XoConfiguration {
         }
     }
 
+    public static boolean needToRegenerateKey() {
+        return sPreferences.getBoolean("NEED_TO_REGENERATE_KEYS", true);
+    }
+
+    public static void setRegenerationDone() {
+        SharedPreferences.Editor editor = sPreferences.edit();
+        editor.putBoolean("NEED_TO_REGENERATE_KEYS", false);
+        editor.commit();
+    }
+
     public static boolean isSupportModeEnabled() {
         return sIsSupportModeEnabled;
     }
 
+    public static boolean reportingEnable() {
+        return DEVELOPMENT_MODE_ENABLED || sPreferences.getBoolean("preference_crash_report", false);
+    }
 }

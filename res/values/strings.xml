@@ -70,6 +70,7 @@
     <!-- Profile fragment -->
     <string name="profile_avatar_set_button">Change my image</string>
     <string name="profile_name_title">Name</string>
+    <string name="profile_name_hint">Your name</string>
     <string name="profile_status_text">status</string>
     <string name="profile_name_edit">Change name</string>
     <string name="profile_name_set_button">Set new username</string>
@@ -82,6 +83,7 @@
     <string name="profile_user_unblock_button">Unblock this user</string>
     <string name="profile_user_depair_button">Depair this user</string>
     <string name="profile_user_delete_button">Delete this user</string>
+    <string name="group_name_hint">Group name</string>
     <string name="profile_group_members_title">Members</string>
     <string name="profile_group_create_button">Create group</string>
     <string name="profile_group_join_button">Join group</string>
@@ -97,6 +99,16 @@
     <!-- Content -->
     <string name="content_downloading">Downloading...</string>
     <string name="content_uploading">Uploading...</string>
+
+    <string name="content_images">Photo</string>
+    <string name="content_video">Video</string>
+    <string name="content_capture">Take Photo</string>
+    <string name="content_music">Music</string>
+    <string name="content_ringtone">Ringtone</string>
+    <string name="content_contact">Contact</string>
+    <string name="content_location">Location</string>
+    <string name="content_data">Data</string>
+    <string name="content_clipboard">Clipboard</string>
 
     <!-- Client states (used in status fragment) -->
     <string name="client_state_idle">Idle</string>
@@ -178,8 +190,8 @@
     <string name="transfer_state_downloading">Downloading...</string>
     <string name="transfer_state_uploading">Uploading...</string>
     <string name="transfer_state_pause">Pause</string>
-    <string name="dialog_attachment_choose_reselect_option">choose another Attachment</string>
-    <string name="dialog_attachment_choose_discard_option">remove attachment</string>
+    <string name="dialog_attachment_choose_reselect_option">Choose another Attachment</string>
+    <string name="dialog_attachment_choose_discard_option">Remove attachment</string>
     <string name="dialog_attachment_title">Edit Attachment</string>
     <string name="dialog_block_user_title">Block Contact</string>
     <string name="dialog_block_user_message">Do you really want to block this contact? You will not
@@ -194,12 +206,21 @@
     <string name="pref_auto_download_wifi">On wireless networks</string>
     <string name="pref_auto_download">Automatic downloads</string>
     <string name="pref_legal_information">Legal Information</string>
+    <string name="pref_crash_report">Send report after app crashed</string>
+    <string name="pref_crash_report_switcher">Enable reporting</string>
+    <string name="pref_please_wait">Please wait...</string>
     <string name="profile_compare_key_description">For extra security compare this fingerprint with
         the fingerprint seen by your friends in your contact card.
     </string>
     <string name="my_profile_title">My profile</string>
     <string name="welcome_to_title">Welcome to XO!</string>
     <string name="contact_item_receive_attachment">Received %1$s attachment</string>
+    <string name="error_avatar_selection">The image you\'ve selected is not suitable as Avatar.
+    </string>
+    <string name="sms_invitation_text">Hey! I\'m now using the free app Hoccer XO for secure
+        chatting. Download it now: http://hoccer.com/ Then add me as a contact: hxo://%1$s
+        \nxo %1$s
+    </string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>

@@ -115,6 +115,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- HockeyApp -->
+        <dependency>
+            <groupId>net.hockeyapp.android</groupId>
+            <artifactId>HockeySDK</artifactId>
+            <version>3.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- GeoJson library -->
         <!--
           XXX switch to this library

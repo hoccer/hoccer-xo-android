@@ -2,7 +2,7 @@ package com.hoccer.xo.android.content.audio;
 
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.ContentViewer;
+import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.release.R;
 
 import android.app.Activity;
@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import java.io.File;
 
-public class ButtonAudioViewer extends ContentViewer<View> {
+public class ButtonAudioViewCache extends ContentViewCache<View> {
 
     @Override
     public boolean canViewObject(IContentObject object) {
@@ -67,9 +67,11 @@ public class ButtonAudioViewer extends ContentViewer<View> {
     private void updateFilenameText(View view, ContentView contentView,
             IContentObject contentObject, boolean isLightTheme) {
         TextView filenameText = (TextView) view.findViewById(R.id.tv_content_audio_name);
-
-        String dataUrl = contentObject.getContentDataUrl();
-        String filename = dataUrl.substring(dataUrl.lastIndexOf(File.separator) + 1);
+        String filename = contentObject.getFileName();
+        if (filename == null) {
+            String dataUrl = contentObject.getContentDataUrl();
+            filename = dataUrl.substring(dataUrl.lastIndexOf(File.separator) + 1);
+        }
 
         filenameText.setText(filename);
         if (isLightTheme) {

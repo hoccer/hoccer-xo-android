@@ -6,6 +6,7 @@ import android.location.LocationManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.app.*;
 import com.google.android.gcm.GCMRegistrar;
 
 import com.hoccer.talk.android.push.TalkPushService;
@@ -31,11 +32,6 @@ import com.hoccer.xo.release.R;
 
 import org.apache.log4j.Logger;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.Service;
-import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -126,6 +122,7 @@ public class XoClientService extends Service implements IEnvironmentListener {
     boolean mGcmSupported;
 
     EnvironmentUpdater mEnvironmentUpdater;
+    private getClientIdInConversation m_clientIdReceiver;
 
     @Override
     public void onCreate() {
@@ -179,6 +176,10 @@ public class XoClientService extends Service implements IEnvironmentListener {
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
+        IntentFilter filter = new IntentFilter("com.hoccer.xo.android.service.XoClientService$getClientIdInConversation");
+        filter.addAction("CONTACT_ID_IN_CONVERSATION");
+        m_clientIdReceiver = new getClientIdInConversation();
+        registerReceiver(m_clientIdReceiver, filter);
     }
 
     @Override
@@ -198,6 +199,7 @@ public class XoClientService extends Service implements IEnvironmentListener {
             mPreferences.unregisterOnSharedPreferenceChangeListener(mPreferencesListener);
             mPreferencesListener = null;
         }
+        unregisterReceiver(m_clientIdReceiver);
     }
 
     @Override
@@ -510,13 +512,6 @@ public class XoClientService extends Service implements IEnvironmentListener {
         long now = System.currentTimeMillis();
         long passed = Math.max(0, now - mNotificationTimestamp);
 
-        // cancel present notification if everything has been seen
-        // we back off here to prevent interruption of any in-progress alarms
-        if (allUnseenMessages == null || allUnseenMessages.isEmpty()) {
-            LOG.debug("no unseen messages");
-            cancelMessageNotification();
-            return;
-        }
 
         // do not sound alarms overly often (sound, vibrate)
         if (passed < XoConfiguration.NOTIFICATION_ALARM_BACKOFF) {
@@ -709,10 +704,23 @@ public class XoClientService extends Service implements IEnvironmentListener {
         @Override
         public void onUnseenMessages(List<TalkClientMessage> unseenMessages, boolean notify) {
             LOG.debug("onUnseenMessages(" + unseenMessages.size() + "," + notify + ")");
-            try {
+            ActivityManager activityManager = (ActivityManager) getApplicationContext().
+                    getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
+            if (unseenMessages == null || unseenMessages.isEmpty()) {
+                LOG.debug("no unseen messages");
+                cancelMessageNotification();
+                return;
+            }
+            if (services.get(0).topActivity.getShortClassName().toString()
+                .equalsIgnoreCase(MessagingActivity.class.getName().toString())) {
+                    m_clientIdReceiver.setContactId(unseenMessages.get(0).getConversationContact().getClientContactId());
+                    m_clientIdReceiver.setNotificationData(unseenMessages, notify);
+                    Intent intent = new Intent();
+                    intent.setAction("CHECK_ID_IN_CONVERSATION");
+                    sendBroadcast(intent);
+            } else {
                 updateMessageNotification(unseenMessages, notify);
-            } catch (Throwable t) {
-                LOG.error("exception updating message notification", t);
             }
         }
 
@@ -974,5 +982,27 @@ public class XoClientService extends Service implements IEnvironmentListener {
             mEnvironmentListener.onEnvironmentChanged(mEnabled);
         }
 
+    }
+
+    private class getClientIdInConversation extends BroadcastReceiver {
+        private int m_id;
+        private List<TalkClientMessage> m_unseenMessages;
+        private boolean m_notify;
+
+        @Override
+        public void onReceive(Context arg0, Intent intent) {
+            if (m_id != intent.getIntExtra("id", -1)) {
+                updateMessageNotification(m_unseenMessages, m_notify);
+            }
+        }
+
+        public void setContactId(int clientContactId) {
+            m_id = clientContactId;
+        }
+
+        public void setNotificationData(List<TalkClientMessage> unseenMessages, boolean notify) {
+            m_unseenMessages = unseenMessages;
+            m_notify = notify;
+        }
     }
 }

@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.io.FileNotFoundException;
@@ -16,9 +18,22 @@ public class ContactSelector implements IContentSelector {
 
     private static final Logger LOG = Logger.getLogger(ContactSelector.class);
 
+    private String mName;
+    private Drawable mIcon;
+
+    public ContactSelector(Context context) {
+        mName = context.getResources().getString(R.string.content_contact);
+        mIcon = context.getResources().getDrawable(R.drawable.ic_attachment_select_contact);
+    }
+
     @Override
     public String getName() {
-        return "Contact";
+        return mName;
+    }
+
+    @Override
+    public Drawable getContentIcon() {
+        return mIcon;
     }
 
     @Override

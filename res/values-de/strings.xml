@@ -70,6 +70,7 @@
     <!-- Profile fragment -->
     <string name="profile_avatar_set_button">Mein Bild ändern</string>
     <string name="profile_name_title">Name</string>
+    <string name="profile_name_hint">Dein Name</string>
     <string name="profile_status_text">Status</string>
     <string name="profile_name_edit">Name ändern</string>
     <string name="profile_name_set_button">Neuen Nutzernahmen wählen</string>
@@ -82,6 +83,7 @@
     <string name="profile_user_unblock_button">User entblockieren</string>
     <string name="profile_user_depair_button">Verbindung aufheben</string>
     <string name="profile_user_delete_button">Kontakt löschen</string>
+    <string name="group_name_hint">Gruppenname</string>
     <string name="profile_group_members_title">Mitglieder</string>
     <string name="profile_group_create_button">Gruppe erstellen</string>
     <string name="profile_group_join_button">Gruppe beitreten</string>
@@ -97,6 +99,16 @@
     <!-- Content -->
     <string name="content_downloading">Downloading...</string>
     <string name="content_uploading">Uploading...</string>
+
+    <string name="content_images">Foto</string>
+    <string name="content_video">Video</string>
+    <string name="content_capture">Foto aufnehmen</string>
+    <string name="content_music">Musik</string>
+    <string name="content_ringtone">Klingelton</string>
+    <string name="content_contact">Kontakt</string>
+    <string name="content_location">Ort</string>
+    <string name="content_data">Dokument</string>
+    <string name="content_clipboard">Aus Zwischenablage</string>
 
     <!-- Client states (used in status fragment) -->
     <string name="client_state_idle">Idle</string>
@@ -174,7 +186,7 @@
     <string name="transfer_state_downloading">Downloading...</string>
     <string name="transfer_state_uploading">Uploading...</string>
     <string name="transfer_state_pause">Pause</string>
-    <string name="dialog_attachment_choose_reselect_option">anderen Anhang auswählen</string>
+    <string name="dialog_attachment_choose_reselect_option">Anderen Anhang auswählen</string>
     <string name="dialog_attachment_choose_discard_option">Anhang verwerfen</string>
     <string name="dialog_attachment_title">Anhang bearbeiten</string>
     <string name="dialog_block_user_title">Kontakt blockieren</string>
@@ -191,9 +203,15 @@
     <string name="pref_legal_information">Rechtliches</string>
     <string name="profile_compare_key_description">Für ein Extra an Sicherheit vergleiche diesen Fingerabdruck mit dem Fingerabdruck den Deine Freunde in deiner Kontaktkarte sehen
     </string>
+    <string name="pref_please_wait">Bitte warten...</string>
     <string name="my_profile_title">Mein Profil</string>
     <string name="welcome_to_title">Willkommen bei XO!</string>
     <string name="contact_item_receive_attachment">%1$s Datei erhalten</string>
+    <string name="error_avatar_selection">Sie können dieses Bild nicht als Avatar setzen.
+    </string>
+    <string name="sms_invitation_text">Hey! Ich nutze die Gratis-App HoccerXO zum sicheren Chatten! Jetzt herunterladen: http://hoccer.com/ Dann mich als Kontakt hinzufügen: hxo://%1$s
+        \nxo %2$s
+    </string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>

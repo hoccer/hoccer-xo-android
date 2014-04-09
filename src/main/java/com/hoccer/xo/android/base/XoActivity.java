@@ -1,5 +1,11 @@
 package com.hoccer.xo.android.base;
 
+import android.app.Dialog;
+import android.app.ActivityManager;
+import android.content.*;
+import android.graphics.drawable.ColorDrawable;
+import android.os.*;
+import android.view.*;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -7,6 +13,7 @@ import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.activity.AboutActivity;
@@ -20,38 +27,57 @@ import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
 import com.hoccer.xo.android.content.ContentRegistry;
 import com.hoccer.xo.android.content.ContentSelection;
+import com.hoccer.xo.android.content.ContentView;
+import com.hoccer.xo.android.content.image.ImageSelector;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.IXoClientService;
 import com.hoccer.xo.android.service.XoClientService;
+import com.hoccer.xo.android.view.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
+
+import net.hockeyapp.android.CrashManager;
 
 import org.apache.log4j.Logger;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.TaskStackBuilder;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
 import android.provider.MediaStore;
 import android.provider.Telephony;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -69,6 +95,8 @@ import java.util.concurrent.TimeUnit;
 public abstract class XoActivity extends Activity {
 
     public final static int REQUEST_SELECT_AVATAR = 23;
+
+    public final static int REQUEST_CROP_AVATAR = 24;
 
     public final static int REQUEST_SELECT_ATTACHMENT = 42;
 
@@ -127,6 +155,11 @@ public abstract class XoActivity extends Activity {
 
     private String mBarcodeToken = null;
 
+    private AttachmentTransferControlView mSpinner;
+    private Handler mDialogDismisser;
+    private Dialog mDialog;
+    private ScreenReceiver mScreenListener;
+
     public XoActivity() {
         LOG = Logger.getLogger(getClass());
     }
@@ -178,12 +211,19 @@ public abstract class XoActivity extends Activity {
 
         // get the barcode scanning service
         mBarcodeService = new IntentIntegrator(this);
+
+        // screen state listener
+        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        mScreenListener = new ScreenReceiver();
+        registerReceiver(mScreenListener, filter);
     }
 
     @Override
     protected void onResume() {
         LOG.debug("onResume()");
         super.onResume();
+        checkForCrashesIfEnabled();
 
         // get the background executor
         mBackgroundExecutor = XoApplication.getExecutor();
@@ -193,6 +233,80 @@ public abstract class XoActivity extends Activity {
         startService(serviceIntent);
         mServiceConnection = new MainServiceConnection();
         bindService(serviceIntent, mServiceConnection, BIND_IMPORTANT);
+        checkKeys();
+        getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_ONLINE);
+    }
+
+    private void checkForCrashesIfEnabled() {
+        if (XoConfiguration.reportingEnable()) {
+            CrashManager.register(this, XoConfiguration.HOCKEYAPP_ID);
+        }
+    }
+
+    private void checkKeys() {
+        if (XoConfiguration.needToRegenerateKey()) {
+            createDialog();
+            regenerateKeys();
+        }
+    }
+
+    private void regenerateKeys() {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    XoApplication.getXoClient().regenerateKeyPair();
+                    XoConfiguration.setRegenerationDone();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    mDialogDismisser.sendEmptyMessage(0);
+                }
+            }
+        });
+        t.start();
+    }
+
+    public void createDialog() {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.waiting_dialog, null);
+        mSpinner = (AttachmentTransferControlView) view.findViewById(R.id.content_progress);
+
+        mDialog = new Dialog(this);
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mDialog.setContentView(view);
+        mDialog.getWindow()
+                .setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        mDialog.setCanceledOnTouchOutside(false);
+        mDialog.show();
+        mDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                return true;
+            }
+        });
+
+        Handler spinnerStarter = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                mSpinner.prepareToUpload();
+                mSpinner.spin();
+            }
+        };
+        mDialogDismisser = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                try {
+                    mDialog.dismiss();
+                    mSpinner.completeAndGone();
+                } catch (IllegalArgumentException e) {
+                    LOG.error("Dialog is not attached to current activity.");
+                    e.printStackTrace();
+                    //TODO: Once upon a time we will redesign all this stuff... Maybe.
+                }
+            }
+        };
+        spinnerStarter.sendEmptyMessageDelayed(0, 500);
     }
 
     @Override
@@ -212,12 +326,50 @@ public abstract class XoActivity extends Activity {
             unbindService(mServiceConnection);
             mServiceConnection = null;
         }
+        checkIfAppInForeground();
+    }
+
+    public void checkIfAppInForeground() {
+        Handler checkState = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                ActivityManager activityManager = (ActivityManager) getApplicationContext().
+                        getSystemService(Context.ACTIVITY_SERVICE);
+                List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
+                String ourName = getApplicationContext().getPackageName().toString();
+                if (!services.get(0).topActivity.getPackageName().toString().equalsIgnoreCase(ourName)
+                        || !mScreenListener.isScreenOn()) {
+                    getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_OFFLINE);
+                }
+            }
+        };
+        checkState.sendEmptyMessageDelayed(0, 1000);
     }
 
     @Override
     protected void onDestroy() {
         LOG.debug("onDestroy()");
+        unregisterReceiver(mScreenListener);
         super.onDestroy();
+    }
+
+    private class ScreenReceiver extends BroadcastReceiver {
+
+        private boolean wasScreenOn = true;
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+                wasScreenOn = false;
+            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+                wasScreenOn = true;
+            }
+        }
+
+        public boolean isScreenOn() {
+            return  wasScreenOn;
+        }
+
     }
 
     @Override
@@ -276,20 +428,30 @@ public abstract class XoActivity extends Activity {
     }
 
     private Intent selectedAvatarPreProcessing(Intent data) {
+        String uuid = UUID.randomUUID().toString();
+        String filePath = XoApplication.getAvatarDirectory().getPath() + File.separator + uuid
+                + ".jpg";
+        String croppedImagePath = XoApplication.getAttachmentDirectory().getAbsolutePath()
+                + File.separator
+                + "tmp_crop";
         try {
-            String uuid = UUID.randomUUID().toString();
-            String filePath = XoApplication.getAvatarDirectory().getPath() + File.separator + uuid + ".jpg";
-
-            File destination = new File(filePath);
-            Bitmap image = data.getExtras().getParcelable("data");
-            FileOutputStream out = new FileOutputStream(destination);
-            image.compress(Bitmap.CompressFormat.JPEG, 90, out);
-
-            Uri uri = getImageContentUri(getBaseContext(), destination);
+            Bitmap bitmap = BitmapFactory.decodeFile(croppedImagePath);
+            if (bitmap == null) {
+                return null;
+            }
+            File avatarFile = new File(filePath);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, new FileOutputStream(avatarFile));
+            Uri uri = getImageContentUri(getBaseContext(), avatarFile);
             data.setData(uri);
+
+            File tmpImage = new File(croppedImagePath);
+            if (tmpImage.exists()) {
+                tmpImage.delete();
+            }
+
             return data;
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
@@ -329,28 +491,26 @@ public abstract class XoActivity extends Activity {
 
         if (requestCode == REQUEST_SELECT_AVATAR) {
             if (mAvatarSelection != null) {
-                if (data.getExtras() != null && data.getExtras().getParcelable("data") != null) {
-                    data = selectedAvatarPreProcessing(data);
-                    IContentObject co = ContentRegistry.get(this)
-                            .createSelectedAvatar(mAvatarSelection, data);
-                    if (co != null) {
-                        LOG.debug("selected avatar " + co.getContentDataUrl());
-                        for (IXoFragment fragment : mTalkFragments) {
-                            fragment.onAvatarSelected(co);
-                        }
+                ImageSelector selector = (ImageSelector) mAvatarSelection.getSelector();
+                startActivityForResult(selector.createCropIntent(this, data.getData()),
+                        REQUEST_CROP_AVATAR);
+            }
+            return;
+        }
+
+        if (requestCode == REQUEST_CROP_AVATAR) {
+            data = selectedAvatarPreProcessing(data);
+            if (data != null) {
+                IContentObject co = ContentRegistry.get(this).createSelectedAvatar(mAvatarSelection,
+                        data);
+                if (co != null) {
+                    LOG.debug("selected avatar " + co.getContentDataUrl());
+                    for (IXoFragment fragment : mTalkFragments) {
+                        fragment.onAvatarSelected(co);
                     }
-                } else {
-                    Intent intent = new Intent("com.android.camera.action.CROP",
-                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    intent.setDataAndType(data.getData(), "image/*");
-                    intent.putExtra("crop", "true");
-                    intent.putExtra("aspectX", 1);
-                    intent.putExtra("aspectY", 1);
-                    intent.putExtra("outputX", 300);
-                    intent.putExtra("outputY", 300);
-                    intent.putExtra("return-data", true);
-                    startActivityForResult(intent, REQUEST_SELECT_AVATAR);
                 }
+            } else {
+                Toast.makeText(this, R.string.error_avatar_selection, Toast.LENGTH_LONG).show();
             }
             return;
         }
@@ -388,6 +548,7 @@ public abstract class XoActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    @SuppressLint("NewApi")
     private void navigateUp() {
         LOG.debug("navigateUp()");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && mUpEnabled) {
@@ -561,13 +722,12 @@ public abstract class XoActivity extends Activity {
         try {
             TalkClientContact self = mDatabase.findSelfContact(false);
 
-            String message =
-                    "Hey! I'm now using the free app Hoccer XO for secure chatting. " +
-                            "Download it now: http://hoccer.com/ Then add me as a contact: " +
-                            "hxo://" + token + "\nxo " + self.getName();
+            String message = String
+                    .format(getString(R.string.sms_invitation_text), token, self.getName());
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //At least KitKat
-                String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(this); //Need to change the build to API 19
+                String defaultSmsPackageName = Telephony.Sms
+                        .getDefaultSmsPackage(this); //Need to change the build to API 19
 
                 Intent sendIntent = new Intent(Intent.ACTION_SEND);
                 sendIntent.setType("text/plain");
@@ -591,6 +751,12 @@ public abstract class XoActivity extends Activity {
     }
 
     public void hackReturnedFromDialog() {
+    }
+
+    public void showPopupForContentView(ContentView contentView) {
+    }
+
+    public void clipBoardItemSelected(IContentObject contentObject) {
     }
 
     /**
