@@ -60,7 +60,6 @@ public class GroupProfileFragment extends XoFragment
     public void onCreate(Bundle savedInstanceState) {
         LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -129,6 +128,7 @@ public class GroupProfileFragment extends XoFragment
             mGroupMembersList.setAdapter(mGroupMemberAdapter);
         }
         mGroupMemberAdapter.requestReload();
+        setHasOptionsMenu(true);
     }
 
     @Override

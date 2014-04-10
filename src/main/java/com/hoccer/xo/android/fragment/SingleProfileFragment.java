@@ -64,7 +64,6 @@ public class SingleProfileFragment extends XoFragment
     public void onCreate(Bundle savedInstanceState) {
         LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -105,6 +104,7 @@ public class SingleProfileFragment extends XoFragment
         LOG.debug("onResume()");
         super.onResume();
         getXoClient().registerContactListener(this);
+        setHasOptionsMenu(true);
     }
 
     @Override
