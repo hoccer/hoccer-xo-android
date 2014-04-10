@@ -1,11 +1,9 @@
 package com.hoccer.xo.android.adapter;
 
-import android.content.res.Resources;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import com.hoccer.xo.android.fragment.ContactsFragment;
-import com.hoccer.xo.release.R;
 
 public class ContactsPageAdapter extends FragmentPagerAdapter {
     int mCount;

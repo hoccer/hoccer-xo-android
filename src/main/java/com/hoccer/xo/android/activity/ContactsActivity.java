@@ -3,7 +3,6 @@ package com.hoccer.xo.android.activity;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import com.hoccer.xo.android.adapter.ContactsPageAdapter;
