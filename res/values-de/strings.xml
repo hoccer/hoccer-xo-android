@@ -225,4 +225,9 @@
         <item>TRACE</item>
     </string-array>
 
+    <string-array name="tab_names">
+        <item>CONVERSATIONS</item>
+        <item>NEARBY</item>
+    </string-array>
+
 </resources>

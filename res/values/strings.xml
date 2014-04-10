@@ -234,6 +234,11 @@
         <item>TRACE</item>
     </string-array>
 
+    <string-array name="tab_names">
+        <item>CONVERSATIONS</item>
+        <item>NEARBY</item>
+    </string-array>
+
     <string name="preference_database_title">Local Database</string>
 
 </resources>

@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.activity;
 
+import android.support.v4.app.FragmentManager;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.model.TalkRelationship;
@@ -9,7 +10,6 @@ import com.hoccer.xo.android.fragment.StatusFragment;
 import com.hoccer.xo.release.R;
 
 import android.app.ActionBar;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -56,7 +56,7 @@ public class SingleProfileActivity extends XoActivity
 
         mActionBar = getActionBar();
 
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         mSingleProfileFragment = (SingleProfileFragment) fragmentManager
                 .findFragmentById(R.id.activity_single_profile_fragment);
         mStatusFragment = (StatusFragment) fragmentManager
