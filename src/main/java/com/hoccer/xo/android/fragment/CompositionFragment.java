@@ -11,7 +11,6 @@ import com.hoccer.xo.android.gesture.MotionGestureListener;
 import com.hoccer.xo.release.R;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
