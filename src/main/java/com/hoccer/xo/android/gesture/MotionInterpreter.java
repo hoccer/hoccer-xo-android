@@ -27,9 +27,9 @@ public class MotionInterpreter implements SensorEventListener {
     static {
 
         HashMap<Integer, String> axisNames = new HashMap<Integer, String>(3);
-        axisNames.put(SensorManager.DATA_X, "X");
-        axisNames.put(SensorManager.DATA_Y, "Y");
-        axisNames.put(SensorManager.DATA_Z, "Z");
+        axisNames.put(SensorConstants.X_AXIS, "X");
+        axisNames.put(SensorConstants.Y_AXIS, "Y");
+        axisNames.put(SensorConstants.Z_AXIS, "Z");
         AXIS_NAMES = Collections.unmodifiableMap(axisNames);
     }
     */

@@ -1,6 +1,5 @@
 package com.hoccer.xo.android.gesture;
 
-import android.hardware.SensorManager;
 
 public class CatchDetector implements Detector {
 
@@ -24,10 +23,10 @@ public class CatchDetector implements Detector {
 
     // private boolean turnedCatch(FeatureHistory pHistory) {
     //        
-    // FeaturePattern featurePattern = pHistory.getFeaturePattern(200, SensorManager.DATA_Z);
+    // FeaturePattern featurePattern = pHistory.getFeaturePattern(200, SensorConstants.Z_AXIS);
     // if (featurePattern.matches("<fastup><flat><fastdown>")) {
     //            
-    // LineFeature flat = pHistory.findLineAt(100, SensorManager.DATA_Z);
+    // LineFeature flat = pHistory.findLineAt(100, SensorConstants.Z_AXIS);
     // if (flat.isFlat() && flat.getLength() > 60) {
     //                
     // return true;
@@ -39,23 +38,23 @@ public class CatchDetector implements Detector {
 
     private boolean facingUpCatch(FeatureHistory pHistory) {
 
-        if (pHistory.wasLowerThan(-5, 400, SensorManager.DATA_Z)) {
+        if (pHistory.wasLowerThan(-5, 400, SensorConstants.Z_AXIS)) {
             return false;
         }
 
-        FeaturePattern featurePattern = pHistory.getFeaturePattern(400, SensorManager.DATA_X);
+        FeaturePattern featurePattern = pHistory.getFeaturePattern(400, SensorConstants.X_AXIS);
         if (featurePattern.matches("*<*up>*<*down>*<*up>*<*down>*")) {
             return false;
         }
 
-        if (pHistory.wasHigherThan(15, 400, SensorManager.DATA_Z)) {
+        if (pHistory.wasHigherThan(15, 400, SensorConstants.Z_AXIS)) {
 
-            if (pHistory.wasLowerThan(5, 400, SensorManager.DATA_Z)) {
+            if (pHistory.wasLowerThan(5, 400, SensorConstants.Z_AXIS)) {
 
-                featurePattern = pHistory.getFeaturePattern(400, SensorManager.DATA_Z);
+                featurePattern = pHistory.getFeaturePattern(400, SensorConstants.Z_AXIS);
 
                 if (featurePattern.matches("<*down>*<*up>*<flat>")) {
-                    LineFeature line = pHistory.findLineAt(400, SensorManager.DATA_Z);
+                    LineFeature line = pHistory.findLineAt(400, SensorConstants.Z_AXIS);
                     if (line.getLength() > 40) {
                         return true;
                     }
@@ -68,12 +67,12 @@ public class CatchDetector implements Detector {
     }
 
     private boolean uprightCatch(FeatureHistory pHistory) {
-        if (pHistory.isAtValue(9.81f, 2f, SensorManager.DATA_Y)) {
+        if (pHistory.isAtValue(9.81f, 2f, SensorConstants.Y_AXIS)) {
 
-            if (pHistory.wasLowerThan(2, 400, SensorManager.DATA_Y)) {
+            if (pHistory.wasLowerThan(2, 400, SensorConstants.Y_AXIS)) {
 
                 FeaturePattern featurePattern = pHistory.getFeaturePattern(400,
-                        SensorManager.DATA_Y);
+                        SensorConstants.Y_AXIS);
 
                 if (featurePattern.startsWith("<up>") || featurePattern.startsWith("<fastup>")) {
                     if (featurePattern.endsWith("<flat>") || featurePattern.endsWith("<down>")) {
