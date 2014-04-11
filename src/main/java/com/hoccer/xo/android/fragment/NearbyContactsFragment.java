@@ -28,10 +28,8 @@ public class NearbyContactsFragment extends XoListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        LOG.debug("onCreateView()");
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         mContactList = (ListView) view.findViewById(android.R.id.list);
-
         return view;
     }
 

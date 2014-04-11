@@ -48,7 +48,7 @@ public class NearbyContactsAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return ((TalkClientContact)getItem(position)).getClientContactId();
+        return position;//((TalkClientContact)getItem(position)).getClientContactId();
     }
 
     @Override

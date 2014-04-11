@@ -39,7 +39,7 @@
 
     <TextView
             android:id="@+id/contact_last_message"
-            android:text="Lorem ipsum dolor"
+            android:text=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/contact_icon"
@@ -60,7 +60,7 @@
 
     <TextView
             android:id="@+id/contact_time"
-            android:text="2pm"
+            android:text=""
             android:layout_alignParentRight="true"
             android:layout_alignTop="@id/contact_name"
             android:layout_width="wrap_content"
