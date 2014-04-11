@@ -312,10 +312,6 @@ public abstract class ContactsAdapter extends XoAdapter
             offset += mSmsTokens.size();
         }
         if(!mClientContacts.isEmpty()) {
-//            if(position == offset) {
-//                return VIEW_TYPE_SEPARATOR;
-//            }
-//            offset += 1;
             int clientPos = position - offset;
             if(clientPos >= 0 && clientPos < mClientContacts.size()) {
                 return VIEW_TYPE_CLIENT;
@@ -323,15 +319,10 @@ public abstract class ContactsAdapter extends XoAdapter
             offset += mClientContacts.size();
         }
         if(!mGroupContacts.isEmpty()) {
-//            if(position == offset) {
-//                return VIEW_TYPE_SEPARATOR;
-//            }
-//            offset += 1;
             int groupPos = position - offset;
             if(groupPos >= 0 && groupPos < mGroupContacts.size()) {
                 return VIEW_TYPE_GROUP;
             }
-//            offset += mGroupContacts.size();
         }
         return VIEW_TYPE_SEPARATOR;
     }

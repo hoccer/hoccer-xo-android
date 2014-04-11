@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import com.hoccer.xo.android.fragment.ContactsFragment;
+import com.hoccer.xo.android.fragment.NearbyContactsFragment;
 
 public class ContactsPageAdapter extends FragmentPagerAdapter {
     int mCount;
@@ -11,7 +12,6 @@ public class ContactsPageAdapter extends FragmentPagerAdapter {
     public ContactsPageAdapter(FragmentManager fm, int count) {
         super(fm);
         mCount = count;
-
     }
 
     @Override
@@ -20,7 +20,7 @@ public class ContactsPageAdapter extends FragmentPagerAdapter {
             case 0:
                 return new ContactsFragment();
             case 1:
-                return new ContactsFragment();
+                return new NearbyContactsFragment();
         }
         return null;
     }
