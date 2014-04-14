@@ -28,7 +28,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
     //private static final String DATABASE_NAME = "hoccer-talk.db";
     private static String DATABASE_NAME = "hoccer-talk.db";
 
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 13;
 
     private static AndroidTalkDatabase INSTANCE = null;
 
@@ -143,17 +143,12 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
                 talkGroupMembers.executeRaw("ALTER TABLE `groupMember` ADD COLUMN `sharedKeyId` VARCHAR");
                 talkGroupMembers.executeRaw("ALTER TABLE `groupMember` ADD COLUMN `sharedKeyIdSalt` VARCHAR");
                 talkGroupMembers.executeRaw("ALTER TABLE `groupMember` ADD COLUMN `sharedKeyDate` DATE");
-                talkGroupMembers.executeRaw("ALTER TABLE `groupMember` DROP COLUMN `memberId` DATE");
 
                 Dao<TalkMessage, Integer> talkMessages = getDao(TalkMessage.class);
                 talkMessages.executeRaw("ALTER TABLE `message` ADD COLUMN `sharedKeyId` VARCHAR");
                 talkMessages.executeRaw("ALTER TABLE `message` ADD COLUMN `sharedKeyIdSalt` VARCHAR");
                 talkMessages.executeRaw("ALTER TABLE `message` ADD COLUMN `hmac` VARCHAR");
                 talkMessages.executeRaw("ALTER TABLE `message` ADD COLUMN `signature` VARCHAR");
-
-                Dao<TalkKey, Integer> talkKeys = getDao(TalkKey.class);
-                talkKeys.executeRaw("ALTER TABLE `key` ADD COLUMN `sharedKeyId` VARCHAR");
-                talkKeys.executeRaw("ALTER TABLE `key` ADD COLUMN `sharedKeyIdSalt` VARCHAR");
 
                 Dao<TalkPrivateKey, Integer> talkPrivateKeys = getDao(TalkPrivateKey.class);
                 talkPrivateKeys.executeRaw("ALTER TABLE `privateKey` ADD COLUMN `groupKeyId` VARCHAR");
