@@ -40,7 +40,7 @@ public class EnvironmentUpdater implements LocationListener {
 
     private final boolean mGpsProviderAvailable;
 
-    private boolean isEnabled = false;
+    private boolean isEnabled = true;
 
     public EnvironmentUpdater(Context pContext) {
         mContext = pContext;
@@ -132,7 +132,7 @@ public class EnvironmentUpdater implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-        LOG.debug("onLocationChanged" + location.toString());
+        LOG.debug("onLocationChanged:" + location.toString());
         if (isEnabled) {
             mClient.setEnvironment(getEnvironment());
             mClient.sendEnvironmentUpdate();
@@ -141,20 +141,20 @@ public class EnvironmentUpdater implements LocationListener {
 
     @Override
     public void onProviderDisabled(String provider) {
-        LOG.debug("onProviderDisabled" + provider);
+        LOG.debug("onProviderDisabled:" + provider);
         mClient.sendDestroyEnvironment();
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-        LOG.debug("onProviderEnabled" + provider);
+        LOG.debug("onProviderEnabled:" + provider);
         mClient.setEnvironment(getEnvironment());
         mClient.sendEnvironmentUpdate();
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        LOG.debug("onStatusChanged" + provider);
+        LOG.debug("onStatusChanged:" + provider);
         if (isEnabled) {
             mClient.setEnvironment(getEnvironment());
             mClient.sendEnvironmentUpdate();
