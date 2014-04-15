@@ -7,12 +7,16 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import com.hoccer.xo.android.adapter.ContactsPageAdapter;
 import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.error.EnvironmentUpdaterException;
+import com.hoccer.xo.android.nearby.EnvironmentUpdater;
 import com.hoccer.xo.release.R;
 
-public class ContactsActivity extends XoActivity {
+public class ContactsActivity extends XoActivity implements ViewPager.OnPageChangeListener {
     private ViewPager mViewPager;
     private ActionBar mActionBar;
     private ContactsPageAdapter mAdapter;
+
+    private EnvironmentUpdater mEnvironmentUpdater;
 
     @Override
     protected int getLayoutResource() {
@@ -27,6 +31,7 @@ public class ContactsActivity extends XoActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if(!getXoClient().isRegistered()) {
             Intent intent = new Intent(this, SingleProfileActivity.class);
             intent.putExtra(SingleProfileActivity.EXTRA_CLIENT_CREATE_SELF, true);
@@ -34,6 +39,8 @@ public class ContactsActivity extends XoActivity {
         } else {
             String[] tabs = getResources().getStringArray(R.array.tab_names);
             mViewPager = (ViewPager) findViewById(R.id.pager);
+            mViewPager.setOnPageChangeListener(this);
+
             mActionBar = getActionBar();
             mAdapter = new ContactsPageAdapter(getSupportFragmentManager(), tabs.length);
             mViewPager.setAdapter(mAdapter);
@@ -44,22 +51,7 @@ public class ContactsActivity extends XoActivity {
                         .setTabListener(new ConversationsTabListener()));
             }
 
-            mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-                @Override
-                public void onPageSelected(int position) {
-                    mActionBar.setSelectedNavigationItem(position);
-                }
-
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                }
-
-                @Override
-                public void onPageScrollStateChanged(int state) {
-                }
-            });
-
+            mEnvironmentUpdater = new EnvironmentUpdater(this);
         }
 
     }
@@ -70,6 +62,32 @@ public class ContactsActivity extends XoActivity {
         if(!getXoClient().isRegistered()) {
             finish();
         }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        switch (position) {
+            case 0:
+                mEnvironmentUpdater.stopEnvironmentTracking();
+                break;
+            case 1:
+                try {
+                    mEnvironmentUpdater.startEnvironmentTracking();
+                } catch (EnvironmentUpdaterException e) {
+                    LOG.error("Error when starting EnvironmentUpdater: ", e);
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 
     private class ConversationsTabListener implements ActionBar.TabListener {
