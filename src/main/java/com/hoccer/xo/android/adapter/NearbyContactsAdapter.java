@@ -6,10 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import com.hoccer.talk.client.IXoContactListener;
+import com.hoccer.talk.client.IXoMessageListener;
+import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
@@ -21,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class NearbyContactsAdapter extends BaseAdapter {
+public class NearbyContactsAdapter extends BaseAdapter implements IXoContactListener, IXoMessageListener, IXoTransferListener {
     private XoClientDatabase mDatabase;
     private XoActivity mXoActivity;
     private Logger LOG = null;
@@ -48,7 +52,7 @@ public class NearbyContactsAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return position;//((TalkClientContact)getItem(position)).getClientContactId();
+        return position;
     }
 
     @Override
@@ -60,19 +64,31 @@ public class NearbyContactsAdapter extends BaseAdapter {
         return convertView;
     }
 
+    public void registerListeners() {
+        mXoActivity.getXoClient().registerContactListener(this);
+        mXoActivity.getXoClient().registerTransferListener(this);
+        mXoActivity.getXoClient().registerMessageListener(this);
+    }
+
+    public void unregisterListeners() {
+        mXoActivity.getXoClient().unregisterContactListener(this);
+        mXoActivity.getXoClient().unregisterTransferListener(this);
+        mXoActivity.getXoClient().unregisterMessageListener(this);
+    }
+
     private void getNearbyContactsFromDb() {
         try {
-            mNearbyContacts = mDatabase.findAllGroupContacts();
-            List<TalkClientContact> contacts = mDatabase.findAllGroupContacts();
-//            for(TalkClientContact contact: newGroups) {
+            mNearbyContacts = mDatabase.findAllGroupContacts();//TODO: get nerby group
+            List<TalkClientContact> contacts = mDatabase.findAllGroupContacts();//TODO: get contacts from nearby group (sorted)
+//            for(TalkClientContact contact: contacts) {
 //                TalkClientDownload avatarDownload = contact.getAvatarDownload();
 //                if(avatarDownload != null) {
 //                    mDatabase.refreshClientDownload(avatarDownload);
 //                }
 //            }
 
-            for (TalkClientContact t : mNearbyContacts) {
-                contacts.add(t);
+            for (TalkClientContact t : contacts) {
+                mNearbyContacts.add(t);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -137,4 +153,111 @@ public class NearbyContactsAdapter extends BaseAdapter {
         return String.format(text, attachmentType);
     }
 
+
+
+    public void reloadAdapter() {
+        synchronized (this) {
+            getNearbyContactsFromDb();
+        }
+        mXoActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetInvalidated();
+            }
+        });
+    }
+
+    @Override
+    public void onContactAdded(TalkClientContact contact) {
+        reloadAdapter();
+    }
+
+    @Override
+    public void onContactRemoved(TalkClientContact contact) {
+        reloadAdapter();
+    }
+
+    @Override
+    public void onClientPresenceChanged(TalkClientContact contact) {
+        reloadAdapter();
+    }
+
+    @Override
+    public void onClientRelationshipChanged(TalkClientContact contact) {
+
+    }
+
+    @Override
+    public void onGroupPresenceChanged(TalkClientContact contact) {
+
+    }
+
+    @Override
+    public void onGroupMembershipChanged(TalkClientContact contact) {
+
+    }
+
+    @Override
+    public void onMessageAdded(TalkClientMessage message) {
+        reloadAdapter();
+    }
+
+    @Override
+    public void onMessageRemoved(TalkClientMessage message) {
+
+    }
+
+    @Override
+    public void onMessageStateChanged(TalkClientMessage message) {
+
+    }
+
+    @Override
+    public void onDownloadRegistered(TalkClientDownload download) {
+
+    }
+
+    @Override
+    public void onDownloadStarted(TalkClientDownload download) {
+
+    }
+
+    @Override
+    public void onDownloadProgress(TalkClientDownload download) {
+
+    }
+
+    @Override
+    public void onDownloadFinished(TalkClientDownload download) {
+        if(download.isAvatar()) {
+            reloadAdapter();
+        }
+    }
+
+    @Override
+    public void onDownloadStateChanged(TalkClientDownload download) {
+
+    }
+
+    @Override
+    public void onUploadStarted(TalkClientUpload upload) {
+        if(upload.isAvatar()) {
+            reloadAdapter();
+        }
+    }
+
+    @Override
+    public void onUploadProgress(TalkClientUpload upload) {
+
+    }
+
+    @Override
+    public void onUploadFinished(TalkClientUpload upload) {
+
+    }
+
+    @Override
+    public void onUploadStateChanged(TalkClientUpload upload) {
+
+    }
 }
