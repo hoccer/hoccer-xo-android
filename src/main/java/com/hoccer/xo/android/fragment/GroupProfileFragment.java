@@ -175,16 +175,17 @@ public class GroupProfileFragment extends XoFragment
             editGroup.setVisible(false);
 
         } else {
-
-            if (mGroup.isEditable()) {
-                editGroup.setVisible(true);
-            } else {
-                editGroup.setVisible(false);
-                if (mGroup.isGroupInvited()) {
-                    rejectInvitation.setVisible(true);
-                    joinGroup.setVisible(true);
-                } else if (mGroup.isGroupJoined()) {
-                    leaveGroup.setVisible(true);
+            if (!mGroup.getGroupPresence().isTypeNearby()) {
+                if (mGroup.isEditable()) {
+                    editGroup.setVisible(true);
+                } else {
+                    editGroup.setVisible(false);
+                    if (mGroup.isGroupInvited()) {
+                        rejectInvitation.setVisible(true);
+                        joinGroup.setVisible(true);
+                    } else if (mGroup.isGroupJoined()) {
+                        leaveGroup.setVisible(true);
+                    }
                 }
             }
         }
