@@ -170,6 +170,9 @@
     <build>
         <plugins>
             <!-- Android plugin -->
+            <!-- Documentation of configuration options can be found here:
+                 http://jayway.github.io/maven-android-plugin/apk-mojo.html and here:
+                 http://jayway.github.io/maven-android-plugin/plugin-info.html-->
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
@@ -181,7 +184,7 @@
                     <nativeLibrariesDirectory>${project.basedir}/src/main/native</nativeLibrariesDirectory>
                     <extractDuplicates>true</extractDuplicates>
                     <sdk>
-                        <platform>17</platform>
+                        <platform>19</platform>
                     </sdk>
                     <undeployBeforeDeploy>true</undeployBeforeDeploy>
                     <sign>
