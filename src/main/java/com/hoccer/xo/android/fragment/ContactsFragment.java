@@ -61,19 +61,14 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
                 @Override
                 public boolean shouldShow(TalkClientContact contact) {
                     if (contact.isGroup()) {
-                        if (contact.isGroupInvolved() && contact.isGroupExisting()) {
+                        if (contact.isGroupInvolved() && contact.isGroupExisting() && !contact.getGroupPresence().isTypeNearby()) {
                             return true;
                         }
-                        return false;
-
                     } else if (contact.isClient()) {
                         if (contact.isClientRelated()) {
                             return true;
                         }
-                        return false;
-
                     } else if (contact.isEverRelated()) {
-
                         return true;
                     }
                     return false;

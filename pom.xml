@@ -218,7 +218,7 @@
                     <!-- skip projects with <packaging>pom</packaging> -->
                     <skipPoms>true</skipPoms>
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>res/raw/git_properties</generateGitPropertiesFilename>
+                    <generateGitPropertiesFilename>android/res/raw/git_properties</generateGitPropertiesFilename>
                     <failOnNoGitDirectory>true</failOnNoGitDirectory>
                     <gitDescribe>
                         <skip>false</skip>

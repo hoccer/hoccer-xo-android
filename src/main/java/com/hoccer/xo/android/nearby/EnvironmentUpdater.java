@@ -61,9 +61,14 @@ public class EnvironmentUpdater implements LocationListener {
     public void stopEnvironmentTracking() {
         mLocationManager.removeUpdates(this);
         mClient.sendDestroyEnvironment();
+        isEnabled = false;
     }
 
     public void startEnvironmentTracking() throws EnvironmentUpdaterException {
+
+        // TODO: handle failed startups
+        isEnabled = true;
+
         if(!mGpsProviderAvailable && !mNetworkProviderAvailable) {
             throw new EnvironmentUpdaterException("no source for environment information available");
         }

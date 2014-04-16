@@ -7,22 +7,17 @@ import android.widget.ListView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.adapter.NearbyContactsAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
-import com.hoccer.xo.android.error.EnvironmentUpdaterException;
-import com.hoccer.xo.android.nearby.EnvironmentUpdater;
 
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import android.os.Bundle;
 
-/**
- * Created by jacob on 10.04.14.
- */
+
 public class NearbyContactsFragment extends XoListFragment {
 
     private static final Logger LOG = Logger.getLogger(NearbyContactsFragment.class);
 
-    private EnvironmentUpdater mEnvironmentUpdater;
     NearbyContactsAdapter mNearbyAdapter;
     ListView mContactList;
 
@@ -44,25 +39,17 @@ public class NearbyContactsFragment extends XoListFragment {
             }
         });
         mNearbyAdapter.registerListeners();
-        mEnvironmentUpdater = new EnvironmentUpdater(getActivity());
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        try {
-            mEnvironmentUpdater.startEnvironmentTracking();
-        } catch (EnvironmentUpdaterException e) {
-            // TODO: notify the user that we dont see any environment currently
-            LOG.error("no environment information available", e);
-        }
         setListAdapter(mNearbyAdapter);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mEnvironmentUpdater.stopEnvironmentTracking();
     }
 
     @Override
