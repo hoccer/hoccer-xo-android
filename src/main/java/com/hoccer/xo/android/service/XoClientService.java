@@ -27,6 +27,7 @@ import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.activity.ContactsActivity;
 import com.hoccer.xo.android.activity.MessagingActivity;
+import com.hoccer.xo.android.nearby.EnvironmentUpdater;
 import com.hoccer.xo.android.sms.SmsReceiver;
 import com.hoccer.xo.release.R;
 
@@ -67,7 +68,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 
 
-public class XoClientService extends Service implements IEnvironmentListener {
+public class XoClientService extends Service {
 
     private static final Logger LOG = Logger.getLogger(XoClientService.class);
 
@@ -143,9 +144,6 @@ public class XoClientService extends Service implements IEnvironmentListener {
             mClient.registerTransferListener(mClientListener);
         }
 
-        //mEnvironmentUpdater = new EnvironmentUpdater(getApplicationContext(), this);
-        mEnvironmentUpdater = new EnvironmentUpdater(getBaseContext(), this);
-
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
@@ -160,7 +158,6 @@ public class XoClientService extends Service implements IEnvironmentListener {
                 // TODO: just for testing, geolocation updater activation will be done later differently
                 if (key.equals("preference_environmentupdate")) {
                     Boolean update = mPreferences.getBoolean("preference_environmentupdate", false);
-                    mEnvironmentUpdater.enable(update);
                 }
             }
         };
@@ -843,145 +840,6 @@ public class XoClientService extends Service implements IEnvironmentListener {
             LOG.debug("[" + mId + "] reconnect()");
             mClient.reconnect("client request");
         }
-    }
-
-    public void onEnvironmentChanged(boolean enabled) {
-        if (enabled) {
-            mClient.setEnvironment(mEnvironmentUpdater.freshEnvironment());
-            mClient.sendEnvironmentUpdate();
-        } else {
-            mClient.sendDestroyEnvironment();
-        }
-    }
-
-    public class EnvironmentUpdater implements LocationListener {
-
-        private final LocationManager mLocationManager;
-        private final WifiManager mWifiManager;
-
-        private final Context         mContext;
-
-        private final boolean mNetworkProviderAvailable;
-        private final boolean mGpsProviderAvailable;
-
-        private final IEnvironmentListener mEnvironmentListener;
-
-        private boolean mEnabled = false;
-
-        public EnvironmentUpdater(Context pContext,IEnvironmentListener environmentListener) {
-            mContext = pContext;
-
-            mLocationManager = (LocationManager) pContext.getSystemService(Context.LOCATION_SERVICE);
-            mWifiManager = (WifiManager) pContext.getSystemService(Context.WIFI_SERVICE);
-
-            mNetworkProviderAvailable = mLocationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER);
-            mGpsProviderAvailable = mLocationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER);
-
-            mEnvironmentListener = environmentListener;
-        }
-
-        public Context getContext() {
-            return mContext;
-        }
-
-        public void deactivate() {
-            mLocationManager.removeUpdates(this);
-        }
-
-        public void activate() {
-            final long MIN_UPDATE_TIME = 1000; // Update only after min. this amount of milliseconds elapsed
-            final long MIN_UPDATE_MOVED = 5; // Update only when moved at least this distance in meters
-            if(mGpsProviderAvailable) {
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_UPDATE_TIME, MIN_UPDATE_MOVED, this);
-            }
-
-            if(mNetworkProviderAvailable) {
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_UPDATE_TIME, MIN_UPDATE_MOVED, this);
-            }
-        }
-
-        public void enable(boolean enabled) {
-            if (enabled) {
-                if (!mEnabled) mEnvironmentUpdater.activate();
-            } else {
-                if (mEnabled) mEnvironmentUpdater.deactivate();
-                mEnvironmentListener.onEnvironmentChanged(false);
-            }
-            mEnabled = enabled;
-        }
-
-        public TalkEnvironment freshEnvironment()  {
-
-            TalkEnvironment theEnvironment = new TalkEnvironment();
-
-            Location networkLocation = null;
-            Location gpsLocation = null;
-            if (mNetworkProviderAvailable) {
-                networkLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            }
-            if(mGpsProviderAvailable) {
-                gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            }
-
-            Location location = null;
-            if (gpsLocation != null && networkLocation != null) {
-                // both available, select most precise
-                if (gpsLocation.getAccuracy() < networkLocation.getAccuracy()) {
-                    location = gpsLocation;
-                } else {
-                    location = networkLocation;
-                }
-            } else {
-                location = gpsLocation != null ? gpsLocation : networkLocation;
-            }
-            if (location != null) {
-                Double[] geoLocation = {location.getLongitude(), location.getLatitude()};
-                theEnvironment.setGeoLocation(geoLocation);
-                theEnvironment.setLocationType(location.getProvider());
-                if (location.hasAccuracy()) {
-                    theEnvironment.setAccuracy(location.getAccuracy());
-                } else {
-                    theEnvironment.setAccuracy(0.0f);
-                }
-            }
-
-            // wifi scan result
-            List<ScanResult> scanResults = mWifiManager.getScanResults();
-            if (scanResults != null) {
-                List<String> bssids = new ArrayList<String>();
-                for (ScanResult scan : scanResults) {
-                    bssids.add(scan.BSSID);
-                }
-                theEnvironment.setBssids(bssids.toArray(new String[0]));
-            }
-            theEnvironment.setTimestamp(new Date());
-            return theEnvironment;
-        }
-
-        @Override
-        public void onLocationChanged(Location location) {
-            LOG.debug("onLocationChanged" +location.toString());
-            mEnvironmentListener.onEnvironmentChanged(mEnabled);
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-            LOG.debug("onProviderDisabled" +provider);
-            mEnvironmentListener.onEnvironmentChanged(false);
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-            LOG.debug("onProviderEnabled"+ provider);
-            mEnvironmentListener.onEnvironmentChanged(true);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            LOG.debug("onStatusChanged"+ provider);
-            mEnvironmentListener.onEnvironmentChanged(mEnabled);
-        }
-
     }
 
     private class getClientIdInConversation extends BroadcastReceiver {
