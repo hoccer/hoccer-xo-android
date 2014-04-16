@@ -248,21 +248,9 @@ public abstract class ContactsAdapter extends XoAdapter
     @Override
     public int getCount() {
         int count = 0;
-
         count += mSmsTokens.size();
         count += mClientContacts.size();
         count += mGroupContacts.size();
-
-//        if(!mSmsTokens.isEmpty()) {
-            //count += 1;
-//        }
-//        if(!mClientContacts.isEmpty()) {
-            //count += 1;
-//        }
-//        if(!mGroupContacts.isEmpty()) {
-            //count += 1;
-//        }
-
         return count;
     }
 
@@ -277,10 +265,6 @@ public abstract class ContactsAdapter extends XoAdapter
             offset += mSmsTokens.size();
         }
         if(!mClientContacts.isEmpty()) {
-//            if(position == offset) {
-//                return mResources.getString(R.string.contacts_category_friends);
-//            }
-//            offset += 1;
             int clientPos = position - offset;
             if(clientPos >= 0 && clientPos < mClientContacts.size()) {
                 return mClientContacts.get(clientPos);
@@ -288,15 +272,10 @@ public abstract class ContactsAdapter extends XoAdapter
             offset += mClientContacts.size();
         }
         if(!mGroupContacts.isEmpty()) {
-//            if(position == offset) {
-//                return mResources.getString(R.string.contacts_category_groups);
-//            }
-//            offset += 1;
             int groupPos = position - offset;
             if(groupPos >= 0 && groupPos < mGroupContacts.size()) {
                 return mGroupContacts.get(groupPos);
             }
-//            offset += mGroupContacts.size();
         }
         return "";
     }
@@ -336,25 +315,6 @@ public abstract class ContactsAdapter extends XoAdapter
         if(item instanceof TalkClientSmsToken) {
             return ITEM_ID_TOKENS_BASE + ((TalkClientSmsToken)item).getSmsTokenId();
         }
-
-//        int offset = 0;
-//        if(!mSmsTokens.isEmpty()) {
-//            offset += mSmsTokens.size();
-//        }
-//        if(!mClientContacts.isEmpty()) {
-//            if(position == offset) {
-//                return ITEM_ID_CLIENT_HEADER;
-//            }
-//            offset += 1;
-//            offset += mClientContacts.size();
-//        }
-//        if(!mGroupContacts.isEmpty()) {
-//            if(position == offset) {
-//                return ITEM_ID_GROUP_HEADER;
-//            }
-//            offset += 1;
-//            offset += mGroupContacts.size();
-//        }
         return ITEM_ID_UNKNOWN;
     }
 
