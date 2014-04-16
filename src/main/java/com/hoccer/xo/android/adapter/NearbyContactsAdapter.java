@@ -184,17 +184,17 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     @Override
     public void onClientRelationshipChanged(TalkClientContact contact) {
-
+        reloadAdapter();
     }
 
     @Override
     public void onGroupPresenceChanged(TalkClientContact contact) {
-
+        reloadAdapter();
     }
 
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
-
+        reloadAdapter();
     }
 
     @Override
