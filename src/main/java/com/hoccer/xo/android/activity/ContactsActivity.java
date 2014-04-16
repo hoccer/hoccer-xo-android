@@ -66,14 +66,14 @@ public class ContactsActivity extends XoActivity {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                     if (key.equals("preference_environment_update")) {
-                        mEnvironmentUpdatesEnabled = sharedPreferences.getBoolean("preference_environment_update", false);
+                        mEnvironmentUpdatesEnabled = sharedPreferences.getBoolean("preference_environment_update", true);
                         refreshEnvironmentUpdater();
                     }
                 }
             };
             mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
 
-            mEnvironmentUpdatesEnabled = mPreferences.getBoolean("preference_environment_update", false);
+            mEnvironmentUpdatesEnabled = mPreferences.getBoolean("preference_environment_update", true);
             mEnvironmentUpdater = new EnvironmentUpdater(this);
         }
     }

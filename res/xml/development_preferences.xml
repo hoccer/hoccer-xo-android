@@ -89,7 +89,7 @@
         <CheckBoxPreference
                 android:key="preference_environment_update"
                 android:title="Enable environment updates"
-                android:defaultValue="false"/>
+                android:defaultValue="true"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

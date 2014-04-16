@@ -133,8 +133,7 @@ public class EnvironmentUpdater implements LocationListener {
     public void onLocationChanged(Location location) {
         LOG.debug("onLocationChanged:" + location.toString());
         if (isEnabled) {
-            mClient.setEnvironment(getEnvironment());
-            mClient.sendEnvironmentUpdate();
+            mClient.sendEnvironmentUpdate(getEnvironment());
         }
     }
 
@@ -147,16 +146,14 @@ public class EnvironmentUpdater implements LocationListener {
     @Override
     public void onProviderEnabled(String provider) {
         LOG.debug("onProviderEnabled:" + provider);
-        mClient.setEnvironment(getEnvironment());
-        mClient.sendEnvironmentUpdate();
+        mClient.sendEnvironmentUpdate(getEnvironment());
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         LOG.debug("onStatusChanged:" + provider);
         if (isEnabled) {
-            mClient.setEnvironment(getEnvironment());
-            mClient.sendEnvironmentUpdate();
+            mClient.sendEnvironmentUpdate(getEnvironment());
         }
     }
 
