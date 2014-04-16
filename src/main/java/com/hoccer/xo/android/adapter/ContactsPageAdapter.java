@@ -9,6 +9,9 @@ import com.hoccer.xo.android.fragment.NearbyContactsFragment;
 public class ContactsPageAdapter extends FragmentPagerAdapter {
     int mCount;
 
+    ContactsFragment mContactsFragment;
+    NearbyContactsFragment mNearbyContactsFragment;
+
     public ContactsPageAdapter(FragmentManager fm, int count) {
         super(fm);
         mCount = count;
@@ -18,9 +21,15 @@ public class ContactsPageAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new ContactsFragment();
+                if (mContactsFragment == null) {
+                    mContactsFragment = new ContactsFragment();
+                }
+                return mContactsFragment;
             case 1:
-                return new NearbyContactsFragment();
+                if (mNearbyContactsFragment == null) {
+                    mNearbyContactsFragment = new NearbyContactsFragment();
+                }
+                return mNearbyContactsFragment;
         }
         return null;
     }
