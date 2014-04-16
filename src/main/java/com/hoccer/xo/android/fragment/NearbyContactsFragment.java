@@ -37,6 +37,7 @@ public class NearbyContactsFragment extends XoListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mNearbyAdapter = new NearbyContactsAdapter(getXoDatabase(), getXoActivity());
+        mNearbyAdapter.registerListeners();
         mEnvironmentUpdater = new EnvironmentUpdater(getActivity());
     }
 
@@ -56,6 +57,12 @@ public class NearbyContactsFragment extends XoListFragment {
     public void onPause() {
         super.onPause();
         mEnvironmentUpdater.stopEnvironmentTracking();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mNearbyAdapter.unregisterListeners();
     }
 
     @Override
