@@ -28,19 +28,15 @@ public class EnvironmentUpdater implements LocationListener {
 
     private static final long MIN_UPDATE_MOVED = 5;
 
+    private final Context mContext;
     private final XoClient mClient = XoApplication.getXoClient();
 
     private final LocationManager mLocationManager;
-
     private final WifiManager mWifiManager;
 
-    private final Context mContext;
-
     private final boolean mNetworkProviderAvailable;
-
     private final boolean mGpsProviderAvailable;
-
-    private boolean isEnabled = true;
+    private boolean isEnabled = false;
 
     public EnvironmentUpdater(Context pContext) {
         mContext = pContext;
@@ -48,41 +44,40 @@ public class EnvironmentUpdater implements LocationListener {
         mLocationManager = (LocationManager) pContext.getSystemService(Context.LOCATION_SERVICE);
         mWifiManager = (WifiManager) pContext.getSystemService(Context.WIFI_SERVICE);
 
-        mNetworkProviderAvailable = mLocationManager.getAllProviders()
-                .contains(LocationManager.NETWORK_PROVIDER);
-        mGpsProviderAvailable = mLocationManager.getAllProviders()
-                .contains(LocationManager.GPS_PROVIDER);
+        mNetworkProviderAvailable = mLocationManager.getAllProviders().contains(LocationManager.NETWORK_PROVIDER);
+        mGpsProviderAvailable = mLocationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER);
     }
 
     public Context getContext() {
         return mContext;
     }
 
-    public void stopEnvironmentTracking() {
-        mLocationManager.removeUpdates(this);
-        mClient.sendDestroyEnvironment();
-        isEnabled = false;
+    public boolean isEnabled() {
+        return isEnabled;
     }
 
     public void startEnvironmentTracking() throws EnvironmentUpdaterException {
-
         // TODO: handle failed startups
         isEnabled = true;
 
-        if(!mGpsProviderAvailable && !mNetworkProviderAvailable) {
+        if (!mGpsProviderAvailable && !mNetworkProviderAvailable) {
             throw new EnvironmentUpdaterException("no source for environment information available");
         }
 
         if (mGpsProviderAvailable) {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_UPDATE_TIME,
-                    MIN_UPDATE_MOVED, this);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_UPDATE_TIME, MIN_UPDATE_MOVED, this);
         }
 
         if (mNetworkProviderAvailable) {
             mLocationManager
-                    .requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_UPDATE_TIME,
-                            MIN_UPDATE_MOVED, this);
+                    .requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_UPDATE_TIME, MIN_UPDATE_MOVED, this);
         }
+    }
+
+    public void stopEnvironmentTracking() {
+        mLocationManager.removeUpdates(this);
+        mClient.sendDestroyEnvironment();
+        isEnabled = false;
     }
 
     public TalkEnvironment getEnvironment() {
@@ -92,8 +87,7 @@ public class EnvironmentUpdater implements LocationListener {
         Location networkLocation = null;
         Location gpsLocation = null;
         if (mNetworkProviderAvailable) {
-            networkLocation = mLocationManager
-                    .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            networkLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         }
         if (mGpsProviderAvailable) {
             gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -167,4 +161,3 @@ public class EnvironmentUpdater implements LocationListener {
     }
 
 }
-

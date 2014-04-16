@@ -3,7 +3,9 @@ package com.hoccer.xo.android.activity;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import com.hoccer.xo.android.adapter.ContactsPageAdapter;
@@ -14,13 +16,18 @@ import com.hoccer.xo.android.nearby.EnvironmentUpdater;
 import com.hoccer.xo.release.R;
 
 public class ContactsActivity extends XoActivity {
+
+    private SharedPreferences mPreferences;
+    private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
+
     private ViewPager mViewPager;
     private ActionBar mActionBar;
     private ContactsPageAdapter mAdapter;
 
     private EnvironmentUpdater mEnvironmentUpdater;
 
-    private boolean mNoUserInput;
+    private boolean mEnvironmentUpdatesEnabled;
+    private boolean mNoUserInput = false;
 
     @Override
     protected int getLayoutResource() {
@@ -51,13 +58,24 @@ public class ContactsActivity extends XoActivity {
             mActionBar.setHomeButtonEnabled(false);
             mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
             for (String tabName : tabs) {
-                mActionBar.addTab(mActionBar.newTab().setText(tabName)
-                        .setTabListener(new ConversationsTabListener()));
+                mActionBar.addTab(mActionBar.newTab().setText(tabName).setTabListener(new ConversationsTabListener()));
             }
 
+            mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    if (key.equals("preference_environment_update")) {
+                        mEnvironmentUpdatesEnabled = sharedPreferences.getBoolean("preference_environment_update", false);
+                        refreshEnvironmentUpdater();
+                    }
+                }
+            };
+            mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
+
+            mEnvironmentUpdatesEnabled = mPreferences.getBoolean("preference_environment_update", false);
             mEnvironmentUpdater = new EnvironmentUpdater(this);
         }
-
     }
 
     @Override
@@ -65,6 +83,30 @@ public class ContactsActivity extends XoActivity {
         super.onResume();
         if (!getXoClient().isRegistered()) {
             finish();
+        } else {
+            refreshEnvironmentUpdater();
+        }
+
+    }
+
+    private void refreshEnvironmentUpdater() {
+        int position = mViewPager.getCurrentItem();
+
+        Fragment fragment = mAdapter.getItem(position);
+        if (fragment instanceof NearbyContactsFragment) {
+            if (mEnvironmentUpdatesEnabled) {
+                if (!mEnvironmentUpdater.isEnabled()) {
+                    try {
+                        mEnvironmentUpdater.startEnvironmentTracking();
+                    } catch (EnvironmentUpdaterException e) {
+                        LOG.error("Error when starting EnvironmentUpdater: ", e);
+                    }
+                }
+            }
+        } else {
+            if (mEnvironmentUpdater.isEnabled()) {
+                mEnvironmentUpdater.stopEnvironmentTracking();
+            }
         }
     }
 
@@ -77,16 +119,7 @@ public class ContactsActivity extends XoActivity {
 
         @Override
         public void onPageSelected(int position) {
-            Fragment fragment = mAdapter.getItem(position);
-            if (fragment instanceof NearbyContactsFragment) {
-                try {
-                    mEnvironmentUpdater.startEnvironmentTracking();
-                } catch (EnvironmentUpdaterException e) {
-                    LOG.error("Error when starting EnvironmentUpdater: ", e);
-                }
-            } else {
-                mEnvironmentUpdater.stopEnvironmentTracking();
-            }
+            refreshEnvironmentUpdater();
         }
 
         @Override
