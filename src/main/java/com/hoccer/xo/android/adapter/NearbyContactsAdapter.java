@@ -39,7 +39,6 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         mDatabase = db;
         mXoActivity = xoActivity;
         LOG = Logger.getLogger(getClass());
-        getNearbyContactsFromDb();
     }
 
     public Filter getFilter() {
@@ -86,23 +85,23 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         mXoActivity.getXoClient().unregisterMessageListener(this);
     }
 
-    private void getNearbyContactsFromDb() {
+    public void retrieveDataFromDb() {
         try {
-            mNearbyContacts = mDatabase.findAllGroupContacts();//TODO: get nerby group
-//            if(mFilter != null) {
-//                newClients = filter(newClients, mFilter);
-//                newGroups = filter(newGroups, mFilter);
-//            }
-            List<TalkClientContact> contacts = mDatabase.findAllGroupContacts();//TODO: get contacts from nearby group (sorted)
+            mNearbyContacts = mDatabase.findAllGroupContacts();
+            if(mFilter != null) {
+                mNearbyContacts = filter(mNearbyContacts, mFilter);//TODO: Is there only one NearbyGroup ???
+            }
+            List<TalkClientContact> contacts = mDatabase.findAllContacts();
+            for (TalkClientContact t : contacts) {
+                if (t.isClientGroupInvited(mNearbyContacts.get(0)) || t.isClientGroupJoined(mNearbyContacts.get(0))) {
+                    mNearbyContacts.add(t);
+                }
+            }
             for(TalkClientContact contact: contacts) {
                 TalkClientDownload avatarDownload = contact.getAvatarDownload();
                 if(avatarDownload != null) {
                     mDatabase.refreshClientDownload(avatarDownload);
                 }
-            }
-
-            for (TalkClientContact t : contacts) {
-                mNearbyContacts.add(t);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -173,9 +172,9 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         return String.format(text, attachmentType);
     }
 
-    public void updateAdapter() {
+    private void updateAdapter() {
         synchronized (this) {
-            getNearbyContactsFromDb();
+            retrieveDataFromDb();
         }
         mXoActivity.runOnUiThread(new Runnable() {
             @Override
@@ -187,6 +186,16 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     public interface Filter {
         public boolean shouldShow(TalkClientContact contact);
+    }
+
+    private List<TalkClientContact> filter(List<TalkClientContact> in, Filter filter) {
+        ArrayList<TalkClientContact> res = new ArrayList<TalkClientContact>();
+        for(TalkClientContact contact: in) {
+            if(filter.shouldShow(contact)) {
+                res.add(contact);
+            }
+        }
+        return res;
     }
 
     @Override
