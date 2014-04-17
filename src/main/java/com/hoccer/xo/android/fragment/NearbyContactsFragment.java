@@ -34,8 +34,7 @@ public class NearbyContactsFragment extends XoListFragment {
         mNearbyAdapter.setFilter(new NearbyContactsAdapter.Filter() {
             @Override
             public boolean shouldShow(TalkClientContact contact) {
-//                if (contact.getGroupPresence().isTypeNearby()) {
-                if (contact.isGroupInvolved() && contact.isGroupExisting() && !contact.getGroupPresence().isTypeNearby()) {
+                if (contact.getGroupPresence().isTypeNearby()) {
                     return true;
                 }
                 return false;

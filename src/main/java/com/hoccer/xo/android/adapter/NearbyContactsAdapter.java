@@ -110,10 +110,6 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
 
     private void updateContact(final View view, final TalkClientContact contact) {
-//        TextView nameView = (TextView) view.findViewById(R.id.contact_name);
-//        AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
-//        TextView typeView = (TextView) view.findViewById(R.id.contact_type);
-
         TextView nameView = ViewHolderForAdapters.get(view, R.id.contact_name);
         AvatarView avatarView = ViewHolderForAdapters.get(view, R.id.contact_icon);
         TextView typeView = ViewHolderForAdapters.get(view, R.id.contact_type);
@@ -173,12 +169,12 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
     }
 
     private void updateAdapter() {
-        synchronized (this) {
-            retrieveDataFromDb();
-        }
         mXoActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                synchronized (this) {
+                    retrieveDataFromDb();
+                }
                 notifyDataSetChanged();
             }
         });
