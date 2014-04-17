@@ -15,7 +15,6 @@ import android.os.Bundle;
 
 
 public class NearbyContactsFragment extends XoListFragment {
-
     private static final Logger LOG = Logger.getLogger(NearbyContactsFragment.class);
 
     NearbyContactsAdapter mNearbyAdapter;
@@ -32,6 +31,16 @@ public class NearbyContactsFragment extends XoListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mNearbyAdapter = new NearbyContactsAdapter(getXoDatabase(), getXoActivity());
+        mNearbyAdapter.setFilter(new NearbyContactsAdapter.Filter() {
+            @Override
+            public boolean shouldShow(TalkClientContact contact) {
+                if (contact.getGroupPresence().isTypeNearby()) {
+                    return true;
+                }
+                return false;
+            }
+        });
+        mNearbyAdapter.retrieveDataFromDb();
         mNearbyAdapter.registerListeners();
     }
 
