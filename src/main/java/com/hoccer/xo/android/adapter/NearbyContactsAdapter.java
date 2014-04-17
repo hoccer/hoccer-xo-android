@@ -39,6 +39,20 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         mDatabase = db;
         mXoActivity = xoActivity;
         LOG = Logger.getLogger(getClass());
+
+        this.setFilter(new NearbyContactsAdapter.Filter() {
+            @Override
+            public boolean shouldShow(TalkClientContact contact) {
+                if (contact.isGroup()) {
+                    if (contact.isGroupInvolved() && contact.isGroupExisting() && contact.getGroupPresence().isTypeNearby()) {
+                        return true;
+                    }
+                } else if (!contact.isDeleted() && contact.isNearby()) {
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     public Filter getFilter() {
@@ -87,17 +101,13 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     public void retrieveDataFromDb() {
         try {
-            mNearbyContacts = mDatabase.findAllGroupContacts();
+            mNearbyContacts = mDatabase.findAllContacts();
+
             if(mFilter != null) {
-                mNearbyContacts = filter(mNearbyContacts, mFilter);//TODO: Is there only one NearbyGroup ???
+                mNearbyContacts = filter(mNearbyContacts, mFilter);
             }
-            List<TalkClientContact> contacts = mDatabase.findAllContacts();
-            for (TalkClientContact t : contacts) {
-                if (t.isClientGroupInvited(mNearbyContacts.get(0)) || t.isClientGroupJoined(mNearbyContacts.get(0))) {
-                    mNearbyContacts.add(t);
-                }
-            }
-            for(TalkClientContact contact: contacts) {
+
+            for(TalkClientContact contact: mNearbyContacts) {
                 TalkClientDownload avatarDownload = contact.getAvatarDownload();
                 if(avatarDownload != null) {
                     mDatabase.refreshClientDownload(avatarDownload);
