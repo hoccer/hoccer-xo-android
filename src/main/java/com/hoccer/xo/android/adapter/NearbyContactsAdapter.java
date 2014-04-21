@@ -1,6 +1,7 @@
 package com.hoccer.xo.android.adapter;
 
 import android.content.Context;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import java.util.List;
 public class NearbyContactsAdapter extends BaseAdapter implements IXoContactListener, IXoMessageListener, IXoTransferListener {
     private XoClientDatabase mDatabase;
     private XoActivity mXoActivity;
+    Filter mFilter = null;
     private Logger LOG = null;
 
     private List<TalkClientContact> mNearbyContacts = new ArrayList<TalkClientContact>();
@@ -37,7 +39,28 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         mDatabase = db;
         mXoActivity = xoActivity;
         LOG = Logger.getLogger(getClass());
-        getNearbyContactsFromDb();
+
+        this.setFilter(new NearbyContactsAdapter.Filter() {
+            @Override
+            public boolean shouldShow(TalkClientContact contact) {
+                if (contact.isGroup()) {
+                    if (contact.isGroupInvolved() && contact.isGroupExisting() && contact.getGroupPresence().isTypeNearby()) {
+                        return true;
+                    }
+                } else if (!contact.isDeleted() && contact.isNearby()) {
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    public Filter getFilter() {
+        return mFilter;
+    }
+
+    public void setFilter(Filter filter) {
+        this.mFilter = filter;
     }
 
     @Override
@@ -76,19 +99,19 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         mXoActivity.getXoClient().unregisterMessageListener(this);
     }
 
-    private void getNearbyContactsFromDb() {
+    public void retrieveDataFromDb() {
         try {
-            mNearbyContacts = mDatabase.findAllGroupContacts();//TODO: get nerby group
-            List<TalkClientContact> contacts = mDatabase.findAllGroupContacts();//TODO: get contacts from nearby group (sorted)
-//            for(TalkClientContact contact: contacts) {
-//                TalkClientDownload avatarDownload = contact.getAvatarDownload();
-//                if(avatarDownload != null) {
-//                    mDatabase.refreshClientDownload(avatarDownload);
-//                }
-//            }
+            mNearbyContacts = mDatabase.findAllContacts();
 
-            for (TalkClientContact t : contacts) {
-                mNearbyContacts.add(t);
+            if(mFilter != null) {
+                mNearbyContacts = filter(mNearbyContacts, mFilter);
+            }
+
+            for(TalkClientContact contact: mNearbyContacts) {
+                TalkClientDownload avatarDownload = contact.getAvatarDownload();
+                if(avatarDownload != null) {
+                    mDatabase.refreshClientDownload(avatarDownload);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -97,10 +120,12 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
 
     private void updateContact(final View view, final TalkClientContact contact) {
-        TextView nameView = (TextView) view.findViewById(R.id.contact_name);
-        AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
+        TextView nameView = ViewHolderForAdapters.get(view, R.id.contact_name);
+        AvatarView avatarView = ViewHolderForAdapters.get(view, R.id.contact_icon);
+        TextView typeView = ViewHolderForAdapters.get(view, R.id.contact_type);
+
+
         nameView.setText(contact.getName());
-        TextView typeView = (TextView) view.findViewById(R.id.contact_type);
         avatarView.setContact(contact);
         // TODO: do we have only one type for nearby group?
         if (contact.isGroup()) {
@@ -153,53 +178,65 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         return String.format(text, attachmentType);
     }
 
-
-
-    public void reloadAdapter() {
-        synchronized (this) {
-            getNearbyContactsFromDb();
-        }
+    private void updateAdapter() {
         mXoActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                notifyDataSetInvalidated();
+                synchronized (this) {
+                    retrieveDataFromDb();
+                }
+                notifyDataSetChanged();
             }
         });
     }
 
+    public interface Filter {
+        public boolean shouldShow(TalkClientContact contact);
+    }
+
+    private List<TalkClientContact> filter(List<TalkClientContact> in, Filter filter) {
+        ArrayList<TalkClientContact> res = new ArrayList<TalkClientContact>();
+        for(TalkClientContact contact: in) {
+            if(filter.shouldShow(contact)) {
+                res.add(contact);
+            }
+        }
+        return res;
+    }
+
     @Override
     public void onContactAdded(TalkClientContact contact) {
-        reloadAdapter();
+        updateAdapter();
     }
 
     @Override
     public void onContactRemoved(TalkClientContact contact) {
-        reloadAdapter();
+        updateAdapter();
     }
 
     @Override
     public void onClientPresenceChanged(TalkClientContact contact) {
-        reloadAdapter();
+        updateAdapter();
     }
 
     @Override
     public void onClientRelationshipChanged(TalkClientContact contact) {
-        reloadAdapter();
+        updateAdapter();
     }
 
     @Override
     public void onGroupPresenceChanged(TalkClientContact contact) {
-        reloadAdapter();
+        updateAdapter();
     }
 
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
-        reloadAdapter();
+        updateAdapter();
     }
 
     @Override
     public void onMessageAdded(TalkClientMessage message) {
-        reloadAdapter();
+        updateAdapter();
     }
 
     @Override
@@ -230,7 +267,7 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
     @Override
     public void onDownloadFinished(TalkClientDownload download) {
         if(download.isAvatar()) {
-            reloadAdapter();
+            updateAdapter();
         }
     }
 
@@ -242,7 +279,7 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
     @Override
     public void onUploadStarted(TalkClientUpload upload) {
         if(upload.isAvatar()) {
-            reloadAdapter();
+            updateAdapter();
         }
     }
 

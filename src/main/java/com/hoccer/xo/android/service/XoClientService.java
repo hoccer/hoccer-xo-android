@@ -1,11 +1,5 @@
 package com.hoccer.xo.android.service;
 
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
-import android.os.Bundle;
 import android.app.*;
 import com.google.android.gcm.GCMRegistrar;
 
@@ -22,12 +16,10 @@ import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.talk.client.model.TalkClientUpload;
-import com.hoccer.talk.model.TalkEnvironment;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.activity.ContactsActivity;
 import com.hoccer.xo.android.activity.MessagingActivity;
-import com.hoccer.xo.android.nearby.EnvironmentUpdater;
 import com.hoccer.xo.android.sms.SmsReceiver;
 import com.hoccer.xo.release.R;
 
@@ -49,7 +41,6 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 
-import java.io.IOException;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.*;
@@ -122,7 +113,6 @@ public class XoClientService extends Service {
 
     boolean mGcmSupported;
 
-    EnvironmentUpdater mEnvironmentUpdater;
     private getClientIdInConversation m_clientIdReceiver;
 
     @Override
@@ -154,10 +144,6 @@ public class XoClientService extends Service {
                 if (key.equals("preference_download_auto_mobile")
                         || key.equals("preference_download_auto_wifi")) {
                     configureAutoDownloads();
-                }
-                // TODO: just for testing, geolocation updater activation will be done later differently
-                if (key.equals("preference_environmentupdate")) {
-                    Boolean update = mPreferences.getBoolean("preference_environmentupdate", false);
                 }
             }
         };

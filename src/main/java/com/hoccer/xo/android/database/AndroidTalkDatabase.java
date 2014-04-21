@@ -153,6 +153,9 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
                 Dao<TalkPrivateKey, Integer> talkPrivateKeys = getDao(TalkPrivateKey.class);
                 talkPrivateKeys.executeRaw("ALTER TABLE `privateKey` ADD COLUMN `groupKeyId` VARCHAR");
                 talkPrivateKeys.executeRaw("ALTER TABLE `privateKey` ADD COLUMN `groupKeyIdSalt` VARCHAR");
+
+                Dao<TalkClientContact, Integer> talkClientContacts = getDao(TalkClientContact.class);
+                talkClientContacts.executeRaw("ALTER TABLE `clientContact` ADD COLUMN `isNearby` BOOLEAN");
             }
         } catch (SQLException e) {
             LOG.error("sql error upgrading database", e);
