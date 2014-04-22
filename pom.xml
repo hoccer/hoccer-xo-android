@@ -181,6 +181,7 @@
                     <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
                     <assetsDirectory>${project.basedir}/assets</assetsDirectory>
                     <resourceDirectory>${project.basedir}/res</resourceDirectory>
+                    <resourceOverlayDirectory>${project.build.directory}/generated-resources</resourceOverlayDirectory>
                     <nativeLibrariesDirectory>${project.basedir}/src/main/native</nativeLibrariesDirectory>
                     <extractDuplicates>true</extractDuplicates>
                     <sdk>
@@ -205,7 +206,7 @@
                 <version>${git-commit-id.version}</version>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>revision</goal>
                         </goals>
@@ -218,7 +219,7 @@
                     <!-- skip projects with <packaging>pom</packaging> -->
                     <skipPoms>true</skipPoms>
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>android/res/raw/git_properties</generateGitPropertiesFilename>
+                    <generateGitPropertiesFilename>${project.build.directory}/generated-resources/raw/git_properties</generateGitPropertiesFilename>
                     <failOnNoGitDirectory>true</failOnNoGitDirectory>
                     <gitDescribe>
                         <skip>false</skip>

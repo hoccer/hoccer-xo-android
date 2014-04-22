@@ -76,13 +76,15 @@ public class EnvironmentUpdater implements LocationListener {
 
     public void stopEnvironmentTracking() {
         mLocationManager.removeUpdates(this);
-        mClient.sendDestroyEnvironment();
+        mClient.sendDestroyEnvironment(TalkEnvironment.TYPE_NEARBY);
         isEnabled = false;
     }
 
     public TalkEnvironment getEnvironment() {
         LOG.trace("getEnvironment()");
         TalkEnvironment theEnvironment = new TalkEnvironment();
+
+        theEnvironment.setType(TalkEnvironment.TYPE_NEARBY);
 
         Location networkLocation = null;
         Location gpsLocation = null;
@@ -140,7 +142,7 @@ public class EnvironmentUpdater implements LocationListener {
     @Override
     public void onProviderDisabled(String provider) {
         LOG.debug("onProviderDisabled:" + provider);
-        mClient.sendDestroyEnvironment();
+        mClient.sendDestroyEnvironment(TalkEnvironment.TYPE_NEARBY);
     }
 
     @Override
