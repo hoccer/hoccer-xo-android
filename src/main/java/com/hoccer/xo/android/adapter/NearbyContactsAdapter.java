@@ -105,12 +105,9 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
             if(mFilter != null) {
                 mNearbyContacts = filter(mNearbyContacts, mFilter);
             }
-            List<TalkClientContact> sortedList = new ArrayList<TalkClientContact>();
             for(TalkClientContact contact: mNearbyContacts) {
                 if (contact.isGroup()) {
-                    sortedList.set(0, contact);
-                } else {
-                    sortedList.add(contact);
+                    mNearbyContacts.set(0, contact);
                 }
                 TalkClientDownload avatarDownload = contact.getAvatarDownload();
                 if(avatarDownload != null) {
