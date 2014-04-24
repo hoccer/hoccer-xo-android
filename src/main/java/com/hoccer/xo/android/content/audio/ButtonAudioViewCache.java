@@ -43,12 +43,14 @@ public class ButtonAudioViewCache extends ContentViewCache<View> {
     private void updateImageButton(final View view, ContentView contentView,
             final IContentObject contentObject,
             boolean isLightTheme) {
-        ImageButton playButton = (ImageButton) view.findViewById(R.id.audio_play_pause);
-        int imageResource = isLightTheme ? R.drawable.ic_dark_music : R.drawable.ic_light_music;
+
+        ImageButton playButton = (ImageButton) view.findViewById(R.id.audio_play);
+        int imageResource = isLightTheme ? R.drawable.ic_dark_video : R.drawable.ic_light_music;
         playButton.setImageResource(imageResource);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (contentObject.isContentAvailable()) {
                     String url = contentObject.getContentUrl();
                     if (url == null) {
@@ -66,6 +68,7 @@ public class ButtonAudioViewCache extends ContentViewCache<View> {
 
     private void updateFilenameText(View view, ContentView contentView,
             IContentObject contentObject, boolean isLightTheme) {
+
         TextView filenameText = (TextView) view.findViewById(R.id.tv_content_audio_name);
         String filename = contentObject.getFileName();
         if (filename == null) {

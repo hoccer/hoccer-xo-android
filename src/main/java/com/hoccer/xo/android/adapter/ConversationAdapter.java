@@ -381,6 +381,7 @@ public class ConversationAdapter extends XoAdapter
     }
 
     private void setAttachment(View view, TalkClientMessage message) {
+        LOG.error("ConversationAdapter:setAttachment-------------------------------------------: TOOGLED!!!!!");
         final ContentView contentView = (ContentView) view.findViewById(R.id.message_content);
         int displayHeight = mResources.getDisplayMetrics().heightPixels;
         contentView.setMaxContentHeight(Math.round(displayHeight * 0.8f));

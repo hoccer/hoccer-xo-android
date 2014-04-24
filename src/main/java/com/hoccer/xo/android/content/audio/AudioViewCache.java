@@ -19,12 +19,14 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
 
     @Override
     protected AudioPlayerView makeView(Activity activity) {
+
         return new AudioPlayerView(activity);
     }
 
     @Override
     protected void updateViewInternal(AudioPlayerView view, ContentView contentView,
             IContentObject contentObject, boolean isLightTheme) {
+
         if (contentObject.getContentDataUrl() != null) {
             view.setFile(contentObject.getContentDataUrl());
         }

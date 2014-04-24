@@ -12,7 +12,8 @@ import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.content.audio.ButtonAudioViewCache;
+//import com.hoccer.xo.android.content.audio.ButtonAudioViewCache;
+import com.hoccer.xo.android.content.audio.AudioViewCache;
 import com.hoccer.xo.android.content.audio.MusicSelector;
 import com.hoccer.xo.android.content.clipboard.ClipboardSelector;
 import com.hoccer.xo.android.content.data.DataViewCache;
@@ -103,7 +104,8 @@ public class ContentRegistry {
 
         mAttachmentViewCaches.add(new ImageViewCache());
         mAttachmentViewCaches.add(new VideoViewCache());
-        mAttachmentViewCaches.add(new ButtonAudioViewCache());
+//        mAttachmentViewCaches.add(new ButtonAudioViewCache());
+        mAttachmentViewCaches.add(new AudioViewCache());
         mAttachmentViewCaches.add(new ContactViewCache());
         mAttachmentViewCaches.add(new LocationViewCache());
         mAttachmentViewCaches.add(new DataViewCache());

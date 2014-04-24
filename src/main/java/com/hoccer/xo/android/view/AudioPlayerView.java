@@ -45,7 +45,7 @@ public class AudioPlayerView
         mPlayer.setOnPreparedListener(this);
         mPlayer.setOnCompletionListener(this);
         addView(inflate(context, R.layout.content_audio, null));
-        mPlayPause = (ImageButton) findViewById(R.id.audio_play_pause);
+        mPlayPause = (ImageButton) findViewById(R.id.audio_play);
         mPlayPause.setOnClickListener(this);
     }
 
@@ -73,8 +73,8 @@ public class AudioPlayerView
         try {
             mPlayer.setDataSource(path);
             mPlayer.prepareAsync();
-        } catch (IOException e) {
-            LOG.error("exception setting data source", e);
+        } catch (Exception e) {
+            LOG.error("setFile: exception setting data source", e);
         }
     }
 
@@ -98,5 +98,4 @@ public class AudioPlayerView
         LOG.debug("onCompletion()");
         mPlayPause.setImageResource(R.drawable.ic_light_av_play);
     }
-
 }

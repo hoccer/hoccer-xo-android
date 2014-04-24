@@ -16,13 +16,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/audio_play_pause"
+                android:layout_toLeftOf="@+id/audio_play"
                 android:gravity="center_vertical"
                 android:text="filename.mp3" tools:ignore="HardcodedText"/>
 
+        <!--<ImageButton-->
+                <!--android:id="@+id/audio_play_pause"-->
+                <!--android:src="@drawable/ic_dark_music"-->
+                <!--android:layout_width="@dimen/default_attachment_icon_dim"-->
+                <!--android:layout_height="@dimen/default_attachment_icon_dim"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:scaleType="fitXY"-->
+                <!--android:background="@android:color/transparent"-->
+                <!--/>-->
+
         <ImageButton
-                android:id="@+id/audio_play_pause"
-                android:src="@drawable/ic_dark_music"
+                android:id="@+id/audio_play"
+                android:src="@drawable/ic_dark_video"
                 android:layout_width="@dimen/default_attachment_icon_dim"
                 android:layout_height="@dimen/default_attachment_icon_dim"
                 android:layout_alignParentRight="true"

@@ -148,7 +148,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             } else if(mediaType.equals("data")) {
                 imageResource = R.drawable.ic_dark_data;
             } else if(mediaType.equals("audio")) {
-                imageResource = R.drawable.ic_dark_music;
+                imageResource = R.drawable.ic_dark_video;
             }
         } else {
             imageResource = android.R.drawable.stat_notify_error;
@@ -234,23 +234,27 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
         @Override
         public void onClick(View v) {
+
+            mAddAttachmentButton.setImageResource(R.drawable.ic_light_av_pause);
+
             // start dialog
-            AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
-            builder.setTitle(R.string.dialog_attachment_title);
-            builder.setItems(R.array.dialog_attachment_choose, this);
-            builder.setCancelable(false);
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.show();
+//            AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
+//            builder.setTitle(R.string.dialog_attachment_title);
+//            builder.setItems(R.array.dialog_attachment_choose, this);
+//            builder.setCancelable(false);
+//            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    dialog.dismiss();
+//                }
+//            });
+//            AlertDialog dialog = builder.create();
+//            dialog.show();
         }
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
+
             switch(which) {
                 case 0:
                     mAttachment = null;
