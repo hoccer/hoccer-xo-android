@@ -1,9 +1,12 @@
 package com.hoccer.xo.android.activity;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -89,11 +92,34 @@ public class ContactsActivity extends XoActivity {
 
     }
 
+    private void checkIfGpsIsTurnedOn() {
+        final LocationManager manager = (LocationManager)getSystemService(getBaseContext().LOCATION_SERVICE);
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !manager.isProviderEnabled( LocationManager.NETWORK_PROVIDER)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(getResources().getString(R.string.nearby_enable_location_service))
+                    .setCancelable(false)
+                    .setPositiveButton(getResources().getString(R.string.nearby_yes),
+                            new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    })
+                    .setNegativeButton(getResources().getString(R.string.nearby_no),
+                            new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+    }
+
     private void refreshEnvironmentUpdater() {
         int position = mViewPager.getCurrentItem();
-
         Fragment fragment = mAdapter.getItem(position);
         if (fragment instanceof NearbyContactsFragment) {
+            checkIfGpsIsTurnedOn();
             if (mEnvironmentUpdatesEnabled) {
                 if (!mEnvironmentUpdater.isEnabled()) {
                     try {

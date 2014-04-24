@@ -38,6 +38,12 @@
         Do you wish to accept?
     </string>
 
+    <!-- Nearby location request -->
+    <string name="nearby_enable_location_service">This feature uses location service
+        (GPS or Network location). Do you want to enable it?</string>
+    <string name="nearby_yes">Yes</string>
+    <string name="nearby_no">No</string>
+
     <!-- Contact list items -->
     <string name="contact_name_new_client">New Friend</string>
     <string name="contact_name_new_group">New Group</string>

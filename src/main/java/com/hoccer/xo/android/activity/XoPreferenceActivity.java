@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.Message;
@@ -41,6 +42,7 @@ public class XoPreferenceActivity extends PreferenceActivity implements SharedPr
         } else {
             addPreferencesFromResource(R.xml.preferences);
         }
+        getListView().setBackgroundColor(Color.WHITE);
     }
 
     @Override

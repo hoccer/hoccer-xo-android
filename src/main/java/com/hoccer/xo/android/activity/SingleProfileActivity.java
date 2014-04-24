@@ -95,11 +95,6 @@ public class SingleProfileActivity extends XoActivity
             menu.findItem(R.id.menu_profile_block).setVisible(false);
             menu.findItem(R.id.menu_profile_unblock).setVisible(false);
             menu.findItem(R.id.menu_profile_delete).setVisible(false);
-        } else if(contact.isNearby()) {
-            menu.findItem(R.id.menu_profile_edit).setVisible(false);
-            menu.findItem(R.id.menu_profile_block).setVisible(false);
-            menu.findItem(R.id.menu_profile_unblock).setVisible(false);
-            menu.findItem(R.id.menu_profile_delete).setVisible(false);
         } else {
             TalkRelationship relationship = contact.getClientRelationship();
             if (relationship == null || relationship.isBlocked()) {

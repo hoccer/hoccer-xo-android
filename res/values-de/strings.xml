@@ -38,6 +38,12 @@
         Möchtest du die Einladung annehmen?
     </string>
 
+    <!-- Nearby location request -->
+    <string name="nearby_enable_location_service">To use this feature you need to enable location service
+        (GPS or Network location). Do you want to enable it?</string>
+    <string name="nearby_yes">Yes</string>
+    <string name="nearby_no">No</string>
+
     <!-- Contact list items -->
     <string name="contact_name_new_client">Neuer Kontakt</string>
     <string name="contact_name_new_group">Neue Gruppe</string>
