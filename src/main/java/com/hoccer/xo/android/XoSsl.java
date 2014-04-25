@@ -13,7 +13,7 @@ import java.security.KeyStore;
 
 /**
  * Static SSL configuration
- *
+ * <p/>
  * This class takes care of our SSL initialization.
  */
 public class XoSsl {
@@ -25,31 +25,32 @@ public class XoSsl {
     private static WebSocketClientFactory WS_CLIENT_FACTORY = null;
 
     public static KeyStore getKeyStore() {
-        if(KEYSTORE == null) {
-            throw new RuntimeException("SSL security not initialized");
+        if (KEYSTORE == null) {
+            throw new RuntimeException("SSL KeyStore not initialized");
         }
         return KEYSTORE;
     }
 
     public static WebSocketClientFactory getWebSocketClientFactory() {
-        if(WS_CLIENT_FACTORY == null) {
-            LOG.info("creating ws client factory");
+        if (WS_CLIENT_FACTORY == null) {
+            LOG.info("Creating WebSocketClientFactory");
+
             ExecutorThreadPool pool = new ExecutorThreadPool(XoApplication.getExecutor());
-            WebSocketClientFactory wscFactory = new WebSocketClientFactory(pool);
-            SslContextFactory sslcFactory = wscFactory.getSslContextFactory();
-            sslcFactory.setTrustAll(false);
-            sslcFactory.setKeyStore(getKeyStore());
-            sslcFactory.setEnableCRLDP(false);
-            sslcFactory.setEnableOCSP(false);
-            sslcFactory.setSessionCachingEnabled(XoClientConfiguration.TLS_SESSION_CACHE_ENABLED);
-            sslcFactory.setSslSessionCacheSize(XoClientConfiguration.TLS_SESSION_CACHE_SIZE);
-            sslcFactory.setIncludeCipherSuites(XoClientConfiguration.TLS_CIPHERS);
-            sslcFactory.setIncludeProtocols(XoClientConfiguration.TLS_PROTOCOLS);
+            WebSocketClientFactory webSocketClientFactory = new WebSocketClientFactory(pool);
+            SslContextFactory sslContextFactory = webSocketClientFactory.getSslContextFactory();
+            sslContextFactory.setTrustAll(false);
+            sslContextFactory.setKeyStore(getKeyStore());
+            sslContextFactory.setEnableCRLDP(false);
+            sslContextFactory.setEnableOCSP(false);
+            sslContextFactory.setSessionCachingEnabled(XoClientConfiguration.TLS_SESSION_CACHE_ENABLED);
+            sslContextFactory.setSslSessionCacheSize(XoClientConfiguration.TLS_SESSION_CACHE_SIZE);
+            sslContextFactory.setIncludeCipherSuites(XoClientConfiguration.TLS_CIPHERS);
+            sslContextFactory.setIncludeProtocols(XoClientConfiguration.TLS_PROTOCOLS);
             try {
-                wscFactory.start();
-                WS_CLIENT_FACTORY = wscFactory;
+                webSocketClientFactory.start();
+                WS_CLIENT_FACTORY = webSocketClientFactory;
             } catch (Exception e) {
-                LOG.error("could not initialize ws client factory", e);
+                LOG.error("Could not initialize WebSocketClientFactory: ", e);
             }
         }
         return WS_CLIENT_FACTORY;
@@ -57,9 +58,9 @@ public class XoSsl {
 
     public static void initialize(XoApplication application) {
         // set up SSL
-        LOG.info("initializing ssl keystore");
+        LOG.info("Initializing ssl KeyStore");
         try {
-            // get the keystore
+            // get the KeyStore
             KeyStore ks = KeyStore.getInstance("BKS");
             // load our keys into it
             InputStream in = application.getResources().openRawResource(R.raw.ssl_bks);
@@ -70,10 +71,10 @@ public class XoSsl {
             }
             // configure HttpClient
             HttpClientWithKeystore.initializeSsl(ks);
-            // remember the keystore
+            // remember the KeyStore
             KEYSTORE = ks;
         } catch (Exception e) {
-            LOG.error("error initializing SSL keystore", e);
+            LOG.error("Error initializing SSL KeyStore: ", e);
         }
     }
 
