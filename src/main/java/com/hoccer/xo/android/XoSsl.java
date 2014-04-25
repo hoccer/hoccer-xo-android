@@ -47,10 +47,10 @@ public class XoSsl {
             sslcFactory.setIncludeProtocols(XoClientConfiguration.TLS_PROTOCOLS);
             try {
                 wscFactory.start();
+                WS_CLIENT_FACTORY = wscFactory;
             } catch (Exception e) {
                 LOG.error("could not initialize ws client factory", e);
             }
-            WS_CLIENT_FACTORY = wscFactory;
         }
         return WS_CLIENT_FACTORY;
     }
