@@ -1,6 +1,6 @@
 package com.hoccer.xo.android;
 
-import com.hoccer.talk.client.HttpClientWithKeystore;
+import com.hoccer.talk.client.HttpClientWithKeyStore;
 import com.hoccer.talk.client.XoClientConfiguration;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -46,6 +46,7 @@ public class XoSsl {
             sslContextFactory.setSslSessionCacheSize(XoClientConfiguration.TLS_SESSION_CACHE_SIZE);
             sslContextFactory.setIncludeCipherSuites(XoClientConfiguration.TLS_CIPHERS);
             sslContextFactory.setIncludeProtocols(XoClientConfiguration.TLS_PROTOCOLS);
+
             try {
                 webSocketClientFactory.start();
                 WS_CLIENT_FACTORY = webSocketClientFactory;
@@ -70,7 +71,7 @@ public class XoSsl {
                 in.close();
             }
             // configure HttpClient
-            HttpClientWithKeystore.initializeSsl(ks);
+            HttpClientWithKeyStore.initializeSsl(ks);
             // remember the KeyStore
             KEYSTORE = ks;
         } catch (Exception e) {
