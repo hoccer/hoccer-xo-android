@@ -4,7 +4,7 @@
           android:versionCode="20"
           android:versionName="1.0.1">
 
-    <!-- We run on 2.3.3 (10) and up, we use features from up to 4.2 (17) -->
+    <!-- We run on 4.0 (14) and up, we use features from up to 4.2 (17) -->
     <uses-sdk
             android:minSdkVersion="14"
             android:targetSdkVersion="17"/>
