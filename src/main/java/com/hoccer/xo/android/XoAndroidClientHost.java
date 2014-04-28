@@ -107,7 +107,7 @@ public class XoAndroidClientHost implements IXoClientHost {
         String clientLanguage = null;
         Locale locale = mContext.getResources().getConfiguration().locale;
         if (locale != null) {
-            clientLanguage = locale.getISO3Language();
+            clientLanguage = locale.getLanguage();
         }
         return clientLanguage;
     }
