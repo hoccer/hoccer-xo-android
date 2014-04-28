@@ -309,9 +309,11 @@ public class ContentView extends LinearLayout implements View.OnClickListener, V
     private void updateContentView(boolean viewCacheChanged, ContentViewCache<?> oldViewCache,
             Activity activity,
             IContentObject object, TalkClientMessage message) {
+        LOG.error("updateContentView-----------------------------------------------------------");
         if(viewCacheChanged || mContentChild == null) {
             // remove old
             if(mContentChild != null) {
+                LOG.error("removing stuff-----------------------------------------------------------");
                 View v = mContentChild;
                 mContentChild = null;
                 mContentWrapper.removeView(v);
@@ -319,8 +321,10 @@ public class ContentView extends LinearLayout implements View.OnClickListener, V
             }
             // add new
             boolean isIncomingMessage = false;
+            String contactName = "";
             if (message != null) {
                 isIncomingMessage = message.isIncoming();
+                contactName = message.getConversationContact().getName();
             }
             mContentChild = mViewCache.getViewForObject(activity, this, object, isIncomingMessage);
             mContentWrapper.addView(mContentChild,

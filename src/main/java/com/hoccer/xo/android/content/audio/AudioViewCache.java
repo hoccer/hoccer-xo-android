@@ -20,6 +20,8 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
 
     private List<AudioPlayerView> mActivePlayerList = new ArrayList<AudioPlayerView>();
 
+    AudioPlayerView mCurrentPlayerView;
+
     @Override
     public boolean canViewObject(IContentObject object) {
         if (object.getContentMediaType().equals("audio")) {
@@ -35,6 +37,8 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
 
         mActivePlayerList.add(newPlayer);
 
+        LOG.error("-----------------------------------------------------------: COUNT OF AUDIO PLAYERS: " + mActivePlayerList.size());
+
         return newPlayer;
     }
 
@@ -44,20 +48,27 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
 
         if (contentObject.getContentDataUrl() != null) {
             updateFilenameText(view, contentObject, isLightTheme);
+            LOG.error("update: -----------------------------------------------------------:" + contentObject.getContentDataUrl());
             view.setFile(contentObject.getContentDataUrl());
+
         }
     }
 
-    public void togglePlayback(boolean toggle, String currentPath){
+    public void togglePlayback(boolean toggle, String currentPath, AudioPlayerView activeAudioPlayerView){
         // toggle = true ? playback started : stopped
 
-        if (toggle == true){
+        mCurrentPlayerView = activeAudioPlayerView;
+
+        if ((toggle == true) && (currentPath != null)) {
             // check if any player is already active and stop it
+
+//            activeAudioPlayerView
 
             Iterator<AudioPlayerView> iterator = mActivePlayerList.iterator();
             while (iterator.hasNext()) {
 
                 AudioPlayerView currPlayer = iterator.next();
+
                 if (currPlayer.isPlaying() && (!currentPath.equals(currPlayer.getCurrentPath()))){
                     currPlayer.pausePlaying();
                 }

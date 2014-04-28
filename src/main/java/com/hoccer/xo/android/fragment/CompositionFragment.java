@@ -238,18 +238,18 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             mAddAttachmentButton.setImageResource(R.drawable.ic_light_av_pause);
 
             // start dialog
-//            AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
-//            builder.setTitle(R.string.dialog_attachment_title);
-//            builder.setItems(R.array.dialog_attachment_choose, this);
-//            builder.setCancelable(false);
-//            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    dialog.dismiss();
-//                }
-//            });
-//            AlertDialog dialog = builder.create();
-//            dialog.show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
+            builder.setTitle(R.string.dialog_attachment_title);
+            builder.setItems(R.array.dialog_attachment_choose, this);
+            builder.setCancelable(false);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
 
         @Override
