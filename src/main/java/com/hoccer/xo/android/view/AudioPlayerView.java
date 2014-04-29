@@ -51,31 +51,31 @@ public class AudioPlayerView
 //        mPlayer.setOnPreparedListener(this);
 //        mPlayer.setOnCompletionListener(this);
         addView(inflate(context, R.layout.content_audio, null));
-        mPlayer = AudioPlayer.get(context, this);
+        mPlayer = AudioPlayer.get(context);
         mPlayPause = (ImageButton) findViewById(R.id.audio_play);
         mPlayPause.setOnClickListener(this);
         mParentCache = parentCache;
     }
 
-    public void pausePlaying(){
+    public void pausePlaying() {
 //        LOG.error("********************************* pause: " + mCurrentPath);
         mPlayPause.setImageResource(R.drawable.ic_dark_play);
         mPlayer.pause();
     }
 
-    public void stopPlaying(){
+    public void stopPlaying() {
 //        LOG.error("********************************* stop: " + mCurrentPath);
         mPlayPause.setImageResource(R.drawable.ic_dark_play);
         mPlayer.stop();
     }
 
-    public void startPlaying(String audioPath){
+    public void startPlaying(String audioPath) {
         //LOG.error("********************************* start: " + mCurrentPath);
         mPlayPause.setImageResource(R.drawable.ic_dark_pause);
         mPlayer.start(audioPath);
     }
 
-    public boolean isPlaying(){
+    public boolean isPlaying() {
         return mPlayer.isPlaying();
     }
 
@@ -92,15 +92,15 @@ public class AudioPlayerView
         if(v == mPlayPause) {
             LOG.debug("onClick(PlayPause)");
 
-            boolean playing = false;
+//            boolean playing = false;
 
             if(isPlaying()) {
                 pausePlaying();
             } else {
-                playing = true;
+//                playing = true;
                 startPlaying(mAudioPlayerPath);
             }
-            mParentCache.togglePlayback(playing, mAudioPlayerPath, this);
+//            mParentCache.togglePlayback(playing, mAudioPlayerPath, this);
         }
     }
 
@@ -132,24 +132,5 @@ public class AudioPlayerView
 //        }
     }
 
-//    @Override
-//    public boolean onError(MediaPlayer mp, int what, int extra) {
-//        LOG.debug("onError(" + what + "," + extra + ")");
-//        mPlayPause.setEnabled(false);
-//        mPlayPause.setImageResource(R.drawable.ic_dark_play);
-//        return false;
-//    }
-//
-//    @Override
-//    public void onPrepared(MediaPlayer mp) {
-//        LOG.debug("onPrepared()");
-//        mPlayPause.setEnabled(true);
-//        mPlayPause.setImageResource(R.drawable.ic_dark_play);
-//    }
-//
-//    @Override
-//    public void onCompletion(MediaPlayer mp) {
-//        LOG.debug("onCompletion()");
-//        mPlayPause.setImageResource(R.drawable.ic_dark_play);
-//    }
+
 }

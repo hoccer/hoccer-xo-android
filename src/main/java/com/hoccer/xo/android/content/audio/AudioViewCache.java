@@ -35,7 +35,7 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
 
         AudioPlayerView newPlayer = new AudioPlayerView(activity, this);
 
-        mActivePlayerList.add(newPlayer);
+        //mActivePlayerList.add(newPlayer);
 
         LOG.error("-----------------------------------------------------------: COUNT OF AUDIO PLAYERS: " + mActivePlayerList.size());
 
@@ -50,7 +50,6 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
             updateFilenameText(view, contentObject, isLightTheme);
             LOG.error("update: -----------------------------------------------------------:" + contentObject.getContentDataUrl());
             view.setFile(contentObject.getContentDataUrl());
-
         }
     }
 
