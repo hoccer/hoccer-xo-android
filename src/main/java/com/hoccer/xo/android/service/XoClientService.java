@@ -113,7 +113,7 @@ public class XoClientService extends Service {
 
     boolean mGcmSupported;
 
-    private getClientIdInConversation m_clientIdReceiver;
+    private ClientIdReceiver m_clientIdReceiver;
 
     @Override
     public void onCreate() {
@@ -159,9 +159,9 @@ public class XoClientService extends Service {
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        IntentFilter filter = new IntentFilter("com.hoccer.xo.android.service.XoClientService$getClientIdInConversation");
+        IntentFilter filter = new IntentFilter("com.hoccer.xo.android.service.XoClientService$ClientIdReceiver");
         filter.addAction("CONTACT_ID_IN_CONVERSATION");
-        m_clientIdReceiver = new getClientIdInConversation();
+        m_clientIdReceiver = new ClientIdReceiver();
         registerReceiver(m_clientIdReceiver, filter);
     }
 
@@ -508,6 +508,7 @@ public class XoClientService extends Service {
         // also removes messages from deleted clients
         List<TalkClientContact> contacts = new ArrayList<TalkClientContact>();
         Map<Integer, TalkClientContact> contactsById = new HashMap<Integer, TalkClientContact>();
+
         for (TalkClientMessage message : allUnseenMessages) {
             TalkClientContact contact = message.getConversationContact();
             //TODO: check NullPointerException
@@ -828,9 +829,9 @@ public class XoClientService extends Service {
         }
     }
 
-    private class getClientIdInConversation extends BroadcastReceiver {
+    private class ClientIdReceiver extends BroadcastReceiver {
         private int m_id;
-        private List<TalkClientMessage> m_unseenMessages;
+        private List<TalkClientMessage> m_unseenMessages = new ArrayList<TalkClientMessage>();
         private boolean m_notify;
 
         @Override
