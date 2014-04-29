@@ -1,7 +1,6 @@
 package com.hoccer.xo.android.view;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -12,125 +11,98 @@ import org.apache.log4j.Logger;
 
 public class AudioPlayerView
         extends LinearLayout
-        implements View.OnClickListener
-//                ,
-//                   MediaPlayer.OnErrorListener,
-//                   MediaPlayer.OnPreparedListener,
-//                   MediaPlayer.OnCompletionListener
-{
+        implements View.OnClickListener {
 
     private final static Logger LOG = Logger.getLogger(AudioPlayerView.class);
 
     private AudioPlayer mPlayer;
 
-    private ImageButton mPlayPause;
+    private ImageButton mPlayPauseButton;
 
-    private AudioViewCache mParentCache;
+//    private AudioViewCache mAudioViewCache;
+
+    private boolean mActive = false;
 
     String mAudioPlayerPath;
 
-    public AudioPlayerView(Context context, AudioViewCache parentCache) {
+    public AudioPlayerView(Context context/*, AudioViewCache parentCache*/) {
         super(context);
-        initialize(context, parentCache);
+        initialize(context/*, parentCache*/);
     }
 
-//    public AudioPlayerView(Context context, AttributeSet attrs, AudioViewCache parentCache) {
-//        super(context, attrs);
-//        initialize(context, parentCache);
-//    }
-//
-//    public AudioPlayerView(Context context, AttributeSet attrs, int defStyle, AudioViewCache parentCache) {
-//        super(context, attrs, defStyle);
-//        initialize(context, parentCache);
-//    }
-
-    private void initialize(Context context, AudioViewCache parentCache) {
-//        LOG.error("??????????????????????????????????????????? initialize ");
-//        mPlayer = new MediaPlayer();
-//        mPlayer.setOnErrorListener(this);
-//        mPlayer.setOnPreparedListener(this);
-//        mPlayer.setOnCompletionListener(this);
+    private void initialize(Context context/*, AudioViewCache parentCache*/) {
         addView(inflate(context, R.layout.content_audio, null));
         mPlayer = AudioPlayer.get(context);
-        mPlayPause = (ImageButton) findViewById(R.id.audio_play);
-        mPlayPause.setOnClickListener(this);
-        mParentCache = parentCache;
+        mPlayPauseButton = (ImageButton) findViewById(R.id.audio_play);
+        mPlayPauseButton.setOnClickListener(this);
+//        mAudioViewCache = parentCache;
     }
 
-    public void pausePlaying() {
-//        LOG.error("********************************* pause: " + mCurrentPath);
-        mPlayPause.setImageResource(R.drawable.ic_dark_play);
+    private void showPauseButton() {
+        mPlayPauseButton.setImageResource(R.drawable.ic_dark_pause);
+    }
+
+    private void showPlayButton() {
+        mPlayPauseButton.setImageResource(R.drawable.ic_dark_play);
+    }
+
+    private void pausePlaying() {
         mPlayer.pause();
     }
 
-    public void stopPlaying() {
-//        LOG.error("********************************* stop: " + mCurrentPath);
-        mPlayPause.setImageResource(R.drawable.ic_dark_play);
-        mPlayer.stop();
+    private void startPlaying() {
+        mPlayer.start(this);
     }
 
-    public void startPlaying(String audioPath) {
-        //LOG.error("********************************* start: " + mCurrentPath);
-        mPlayPause.setImageResource(R.drawable.ic_dark_pause);
-        mPlayer.start(audioPath);
+    public void setStopState() {
+        setActive(false);
+        showPlayButton();
     }
 
-    public boolean isPlaying() {
-        return mPlayer.isPlaying();
+    public void setPauseState() {
+        setActive(false);
+        showPlayButton();
     }
 
-//    public boolean isPlaying(String fileName){
-//        return mPlayer.isPlaying(fileName);
-//    }
+    public void setPlayState() {
+        setActive(true);
+        showPauseButton();
+    }
 
-    public String getCurrentPath(){
-        return mPlayer.getCurrentPath();
+    public String getPlayerViewPath() {
+        return mAudioPlayerPath;
     }
 
     @Override
-    public void onClick(View v) {
-        if(v == mPlayPause) {
-            LOG.debug("onClick(PlayPause)");
+    public void onClick(View view) {
+        if (view == mPlayPauseButton) {
 
-//            boolean playing = false;
-
-            if(isPlaying()) {
+            if (isActive()) {
                 pausePlaying();
-            } else {
-//                playing = true;
-                startPlaying(mAudioPlayerPath);
+            } else
+                startPlaying();
             }
-//            mParentCache.togglePlayback(playing, mAudioPlayerPath, this);
-        }
+
+//            if (isActive() && mPlayer.isPlaying()) {
+//                pausePlaying();
+//            } else if (!isActive() && mPlayer.isPlaying()) {
+//                togglePlaying();
+//            } else if (isActive() && mPlayer.isPaused()) {
+//                togglePlaying();
+//            } else {
+//                startPlaying(mAudioPlayerPath);
+//            }
     }
 
     public void setFile(String path) {
-        LOG.error("setFile---------------------------------%%%%%%%%%%%%%%%%%%%%%%%%%% " + path);
-//        mPlayer.setUrl(path);
-
         mAudioPlayerPath = path;
-
-//        if(isPlaying(path)) {
-//            mPlayPause.setImageResource(R.drawable.ic_dark_play);
-//        }
-        //LOG.error("??????????????????????????????????????????? setFile ");
-//        LOG.debug("setFile(" + path + ")");
-////        mPlayPause.setEnabled(false);
-//        if(isPlaying()) {
-//            mPlayPause.setImageResource(R.drawable.ic_dark_play);
-//        }
-////        if(isPlaying()) {
-////            stopPlaying();
-////        }
-//        try {
-////            mPlayer.setDataSource(path);
-////            mPlayer.prepareAsync();
-//
-//            mCurrentPath = path;
-//        } catch (Exception e) {
-//            //LOG.error("setFile: exception setting data source", e);
-//        }
     }
 
+    public boolean isActive() {
+        return mActive;
+    }
 
+    private void setActive(boolean mActive) {
+        this.mActive = mActive;
+    }
 }

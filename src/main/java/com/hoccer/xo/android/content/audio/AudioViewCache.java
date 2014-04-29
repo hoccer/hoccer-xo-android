@@ -18,9 +18,6 @@ import java.util.ArrayList;
 
 public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
 
-    private List<AudioPlayerView> mActivePlayerList = new ArrayList<AudioPlayerView>();
-
-    AudioPlayerView mCurrentPlayerView;
 
     @Override
     public boolean canViewObject(IContentObject object) {
@@ -32,19 +29,12 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
 
     @Override
     protected AudioPlayerView makeView(Activity activity) {
-
-        AudioPlayerView newPlayer = new AudioPlayerView(activity, this);
-
-        //mActivePlayerList.add(newPlayer);
-
-        LOG.error("-----------------------------------------------------------: COUNT OF AUDIO PLAYERS: " + mActivePlayerList.size());
-
-        return newPlayer;
+        return new AudioPlayerView(activity);
     }
 
     @Override
     protected void updateViewInternal(AudioPlayerView view, ContentView contentView,
-            IContentObject contentObject, boolean isLightTheme) {
+                                      IContentObject contentObject, boolean isLightTheme) {
 
         if (contentObject.getContentDataUrl() != null) {
             updateFilenameText(view, contentObject, isLightTheme);
@@ -53,25 +43,21 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
         }
     }
 
-    public void togglePlayback(boolean toggle, String currentPath, AudioPlayerView activeAudioPlayerView){
-        // toggle = true ? playback started : stopped
+    public void togglePlayback(String currentPath, AudioPlayerView activeAudioPlayerView) {
 
-        mCurrentPlayerView = activeAudioPlayerView;
 
-        if ((toggle == true) && (currentPath != null)) {
+        if (currentPath != null) {
             // check if any player is already active and stop it
 
-//            activeAudioPlayerView
-
-            Iterator<AudioPlayerView> iterator = mActivePlayerList.iterator();
-            while (iterator.hasNext()) {
-
-                AudioPlayerView currPlayer = iterator.next();
-
-                if (currPlayer.isPlaying() && (!currentPath.equals(currPlayer.getCurrentPath()))){
-                    currPlayer.pausePlaying();
-                }
-            }
+//            Iterator<AudioPlayerView> iterator = mActivePlayerList.iterator();
+//            while (iterator.hasNext()) {
+//
+//                AudioPlayerView currPlayerView = iterator.next();
+//
+//                if (currPlayerView.isActive() && (!currentPath.equals(currPlayerView.getPlayerViewPath()))){
+//                    currPlayerView.showPauseButton();
+//                }
+//            }
         }
     }
 
@@ -97,5 +83,4 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
     @Override
     protected void clearViewInternal(AudioPlayerView view) {
     }
-
 }

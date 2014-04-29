@@ -6,9 +6,9 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
-import org.apache.log4j.Logger;
-
+import android.view.View;
 import com.hoccer.xo.android.view.AudioPlayerView;
+import org.apache.log4j.Logger;
 
 /*
  * Created by alexw on 28.04.14.
@@ -20,14 +20,16 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     private static AudioPlayer INSTANCE = null;
 
     private int mId = 1;
-    private String mCurrentPath = "";
 
     private AudioManager mAudioManager;
     private MediaPlayer mMediaPlayer;
     private Notification.Builder mBuilder;
 
-    private Context mParentContext;
+    private Context mContext;
     private boolean paused = false;
+
+    private AudioPlayerView mTempActivePlayerView;
+    private AudioPlayerView mActivePlayerView;
 
     public static synchronized AudioPlayer get(Context context) {
         if(INSTANCE == null) {
@@ -38,8 +40,11 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     public AudioPlayer(Context context){
 
-        mParentContext = context;
-        mAudioManager = (AudioManager) mParentContext.getSystemService(Context.AUDIO_SERVICE);
+        mContext = context;
+
+//        mViewCache = ContentRegistry.get(mContext).selectViewCacheForContent();
+
+        mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setOnErrorListener(this);
@@ -66,10 +71,10 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     private void createNotification(){
 
-//        final Intent emptyIntent = new Intent(mParentContext, AudioPlayer.class);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(mParentContext, 0, emptyIntent, 0);
+//        final Intent emptyIntent = new Intent(mContext, AudioPlayer.class);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, emptyIntent, 0);
 //
-//        mBuilder = new Notification.Builder(mParentContext)
+//        mBuilder = new Notification.Builder(mContext)
 //                .setSmallIcon(R.drawable.logo)
 //                .setContentTitle("Awesome Author")
 //                .setContentText("Awesome Track")
@@ -81,44 +86,38 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 //
 //        mBuilder.setPriority(100);
 //
-//        NotificationManager notificationManager = (NotificationManager) mParentContext.getSystemService(Context.NOTIFICATION_SERVICE);
+//        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 //        notificationManager.notify(mId, mBuilder.build());
     }
 
-    private void setUrl(String path){
+    private void initMediaPlayer(String path){
         try {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(path);
             mMediaPlayer.prepareAsync();
-
-            mCurrentPath = path;
         } catch (Exception e) {
             LOG.error("setFile: exception setting data source", e);
         }
     }
 
-    public String getCurrentPath(){
-        return mCurrentPath;
-    }
+    public void start(AudioPlayerView audioPlayerView) {
 
-    public void start(String path) {
-
-        if (isPaused() && isSameTrack(path)) {
+        if (isPaused() && isSameView(audioPlayerView)) {
             mMediaPlayer.start();
+            mActivePlayerView.setPlayState();
         } else {
-            setUrl(path);
+            mTempActivePlayerView = audioPlayerView;
+            initMediaPlayer(audioPlayerView.getPlayerViewPath());
         }
     }
 
-    private boolean isSameTrack(String path) {
-        return mCurrentPath == path;
+    private boolean isSameView(View audioPlayerView) {
+        return mActivePlayerView == audioPlayerView;
     }
 
     public void stop(){
 
         muteMusic();
-
-        mCurrentPath = null;
 
         //TODO! calling these crashes the app
 
@@ -131,6 +130,8 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         muteMusic();
         mMediaPlayer.pause();
         setPaused(true);
+
+        mActivePlayerView.setPauseState();
     }
 
     private void setPaused(boolean paused) {
@@ -139,7 +140,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     private void muteMusic(){
 
-        NotificationManager notificationManager = (NotificationManager) mParentContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(mId);
 
         // Abandon audio focus when playback complete
@@ -148,10 +149,6 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     public boolean isPlaying() {
         return mMediaPlayer.isPlaying();
-    }
-
-    public boolean isPlaying(String fileName) {
-        return fileName.equals(mCurrentPath);
     }
 
     @Override
@@ -176,10 +173,21 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
             mMediaPlayer.start();
             mMediaPlayer.setVolume(1.0f, 1.0f);
+
+
+            if (mActivePlayerView != null) {
+                mActivePlayerView.setStopState();
+            }
+            mActivePlayerView = mTempActivePlayerView;
+            mActivePlayerView.setPlayState();
         }
         else{
             LOG.debug("Audio focus request not granted");
         }
+    }
+
+    private boolean isOtherViewActive() {
+        return mActivePlayerView == null;
     }
 
     public boolean isPaused() {
