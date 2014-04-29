@@ -90,8 +90,10 @@ public class ContentView extends LinearLayout implements View.OnClickListener, V
             } else {
                 updateFooter(ContentState.SELECTED);
                 mContentWrapper.setVisibility(View.VISIBLE);
-                mContentChild.setEnabled(true);
-                mContentChild.invalidate();
+                if (mContentChild != null) {
+                    mContentChild.setEnabled(true);
+                    mContentChild.invalidate();
+                }
                 mWaitUntilOperationIsFinished = false;
             }
         }
