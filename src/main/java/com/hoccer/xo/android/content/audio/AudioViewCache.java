@@ -38,8 +38,8 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
 
         if (contentObject.getContentDataUrl() != null) {
             updateFilenameText(view, contentObject, isLightTheme);
-            LOG.error("update: -----------------------------------------------------------:" + contentObject.getContentDataUrl());
             view.setFile(contentObject.getContentDataUrl());
+            view.testForSettingViewInPlayingMode();
         }
     }
 
@@ -65,7 +65,7 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
 
         TextView filenameText = (TextView) view.findViewById(R.id.tv_content_audio_name);
         String filename = contentObject.getFileName();
-        LOG.error("-----------------------------------------------------------: " + filename);
+        //LOG.error("-----------------------------------------------------------: " + filename);
 
         if (filename == null) {
             String dataUrl = contentObject.getContentDataUrl();

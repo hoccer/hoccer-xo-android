@@ -19,23 +19,20 @@ public class AudioPlayerView
 
     private ImageButton mPlayPauseButton;
 
-//    private AudioViewCache mAudioViewCache;
-
     private boolean mActive = false;
 
-    String mAudioPlayerPath;
+    private String mAudioPlayerPath;
 
-    public AudioPlayerView(Context context/*, AudioViewCache parentCache*/) {
+    public AudioPlayerView(Context context) {
         super(context);
         initialize(context/*, parentCache*/);
     }
 
-    private void initialize(Context context/*, AudioViewCache parentCache*/) {
+    private void initialize(Context context) {
         addView(inflate(context, R.layout.content_audio, null));
         mPlayer = AudioPlayer.get(context);
         mPlayPauseButton = (ImageButton) findViewById(R.id.audio_play);
         mPlayPauseButton.setOnClickListener(this);
-//        mAudioViewCache = parentCache;
     }
 
     private void showPauseButton() {
@@ -43,6 +40,7 @@ public class AudioPlayerView
     }
 
     private void showPlayButton() {
+        LOG.error("Button Id --------------------- " + mPlayPauseButton );
         mPlayPauseButton.setImageResource(R.drawable.ic_dark_play);
     }
 
@@ -57,16 +55,19 @@ public class AudioPlayerView
     public void setStopState() {
         setActive(false);
         showPlayButton();
+        LOG.error("setStopState      $$$$$$$$$$$$$$$$$$$$$$$$$$&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& " + mAudioPlayerPath);
     }
 
     public void setPauseState() {
         setActive(false);
         showPlayButton();
+        LOG.error("setPauseState      $$$$$$$$$$$$$$$$$$$$$$$$$$&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& " + mAudioPlayerPath);
     }
 
     public void setPlayState() {
         setActive(true);
         showPauseButton();
+        LOG.error("setPlayState      $$$$$$$$$$$$$$$$$$$$$$$$$$&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& " + mAudioPlayerPath);
     }
 
     public String getPlayerViewPath() {
@@ -82,20 +83,16 @@ public class AudioPlayerView
             } else
                 startPlaying();
             }
-
-//            if (isActive() && mPlayer.isPlaying()) {
-//                pausePlaying();
-//            } else if (!isActive() && mPlayer.isPlaying()) {
-//                togglePlaying();
-//            } else if (isActive() && mPlayer.isPaused()) {
-//                togglePlaying();
-//            } else {
-//                startPlaying(mAudioPlayerPath);
-//            }
     }
 
     public void setFile(String path) {
         mAudioPlayerPath = path;
+    }
+
+    public void testForSettingViewInPlayingMode(){
+        if(mAudioPlayerPath.equals(mPlayer.getAudioPlayerPath())){
+            setPlayState();
+        }
     }
 
     public boolean isActive() {
@@ -103,6 +100,7 @@ public class AudioPlayerView
     }
 
     private void setActive(boolean mActive) {
+
         this.mActive = mActive;
     }
 }

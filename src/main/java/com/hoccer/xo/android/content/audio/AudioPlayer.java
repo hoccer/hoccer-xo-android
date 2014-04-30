@@ -28,6 +28,9 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     private Context mContext;
     private boolean paused = false;
 
+    private String mAudioPlayerPath;
+    private String mTempPlayerPath;
+
     private AudioPlayerView mTempActivePlayerView;
     private AudioPlayerView mActivePlayerView;
 
@@ -41,8 +44,6 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     public AudioPlayer(Context context){
 
         mContext = context;
-
-//        mViewCache = ContentRegistry.get(mContext).selectViewCacheForContent();
 
         mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
@@ -95,6 +96,8 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(path);
             mMediaPlayer.prepareAsync();
+
+            mTempPlayerPath = path;
         } catch (Exception e) {
             LOG.error("setFile: exception setting data source", e);
         }
@@ -113,16 +116,6 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     private boolean isSameView(View audioPlayerView) {
         return mActivePlayerView == audioPlayerView;
-    }
-
-    public void stop(){
-
-        muteMusic();
-
-        //TODO! calling these crashes the app
-
-        mMediaPlayer.stop();
-        mMediaPlayer.release();
     }
 
     public void pause(){
@@ -146,11 +139,6 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         // Abandon audio focus when playback complete
         mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
     }
-
-    public boolean isPlaying() {
-        return mMediaPlayer.isPlaying();
-    }
-
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         LOG.debug("onError(" + what + "," + extra + ")");
@@ -173,7 +161,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
             mMediaPlayer.start();
             mMediaPlayer.setVolume(1.0f, 1.0f);
-
+            mAudioPlayerPath = mTempPlayerPath;
 
             if (mActivePlayerView != null) {
                 mActivePlayerView.setStopState();
@@ -186,11 +174,11 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         }
     }
 
-    private boolean isOtherViewActive() {
-        return mActivePlayerView == null;
-    }
-
     public boolean isPaused() {
         return paused;
+    }
+
+    public String getAudioPlayerPath() {
+        return mAudioPlayerPath;
     }
 }
