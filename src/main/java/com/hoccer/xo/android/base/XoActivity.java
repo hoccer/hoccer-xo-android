@@ -1,7 +1,6 @@
 package com.hoccer.xo.android.base;
 
-import android.app.Dialog;
-import android.app.ActivityManager;
+import android.app.*;
 import android.content.*;
 import android.graphics.drawable.ColorDrawable;
 import android.os.*;
@@ -9,6 +8,7 @@ import android.view.*;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import com.hoccer.talk.client.IXoAlertListener;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -40,10 +40,7 @@ import net.hockeyapp.android.CrashManager;
 import org.apache.log4j.Logger;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.TaskStackBuilder;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
@@ -159,6 +156,7 @@ public abstract class XoActivity extends Activity {
     private Handler mDialogDismisser;
     private Dialog mDialog;
     private ScreenReceiver mScreenListener;
+    private XoAlertListener mAlertListener;
 
     public XoActivity() {
         LOG = Logger.getLogger(getClass());
@@ -217,6 +215,8 @@ public abstract class XoActivity extends Activity {
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         mScreenListener = new ScreenReceiver();
         registerReceiver(mScreenListener, filter);
+
+        mAlertListener = new XoAlertListener(this);
     }
 
     @Override
@@ -235,6 +235,8 @@ public abstract class XoActivity extends Activity {
         bindService(serviceIntent, mServiceConnection, BIND_IMPORTANT);
         checkKeys();
         getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_ONLINE);
+
+        getXoClient().registerAlertListener(mAlertListener);
     }
 
     private void checkForCrashesIfEnabled() {
@@ -327,6 +329,8 @@ public abstract class XoActivity extends Activity {
             mServiceConnection = null;
         }
         checkIfAppInForeground();
+
+        getXoClient().unregisterAlertListener(mAlertListener);
     }
 
     public void checkIfAppInForeground() {
@@ -790,6 +794,55 @@ public abstract class XoActivity extends Activity {
             for (IXoFragment fragment : mTalkFragments) {
                 fragment.onServiceDisconnected();
             }
+        }
+    }
+
+    public class XoAlertListener implements IXoAlertListener {
+
+        private Context mContext;
+
+        XoAlertListener(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        public void onInternalAlert(String title, String message) {
+            final String alertTitle = title;
+            final String alertMessage = message;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    displayAlert(alertTitle, alertMessage);
+                }
+            });
+        }
+
+        @Override
+        public void onAlertMessageReceived(String message) {
+            final String alertMessage = message;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    displayAlert(null, alertMessage);
+                }
+            });
+        }
+
+        private void displayAlert(String title, String message) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+            if (title != null) {
+                builder.setTitle(title);
+            }
+            builder.setMessage(message);
+            builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int index) {
+                    dialog.dismiss();
+                }
+            });
+
+            Dialog dialog = builder.create();
+            dialog.show();
         }
     }
 
