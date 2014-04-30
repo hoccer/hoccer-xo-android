@@ -39,7 +39,7 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
         if (contentObject.getContentDataUrl() != null) {
             updateFilenameText(view, contentObject, isLightTheme);
             view.setFile(contentObject.getContentDataUrl());
-            view.testForSettingViewInPlayingMode();
+            view.updateViewState();
         }
     }
 
@@ -54,7 +54,7 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
 //
 //                AudioPlayerView currPlayerView = iterator.next();
 //
-//                if (currPlayerView.isActive() && (!currentPath.equals(currPlayerView.getPlayerViewPath()))){
+//                if (currPlayerView.isActive() && (!currentPath.equals(currPlayerView.getMediaFilePath()))){
 //                    currPlayerView.showPauseButton();
 //                }
 //            }

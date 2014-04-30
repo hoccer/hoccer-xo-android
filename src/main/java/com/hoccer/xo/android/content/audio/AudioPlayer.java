@@ -6,9 +6,10 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
-import android.view.View;
-import com.hoccer.xo.android.view.AudioPlayerView;
 import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Created by alexw on 28.04.14.
@@ -28,20 +29,19 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     private Context mContext;
     private boolean paused = false;
 
-    private String mAudioPlayerPath;
+    private String mCurrentMediaFilePath;
     private String mTempPlayerPath;
 
-    private AudioPlayerView mTempActivePlayerView;
-    private AudioPlayerView mActivePlayerView;
+    private List<PauseStateChangedListener> pauseStateChangedListeners = new ArrayList<PauseStateChangedListener>();
 
     public static synchronized AudioPlayer get(Context context) {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             INSTANCE = new AudioPlayer(context);
         }
         return INSTANCE;
     }
 
-    public AudioPlayer(Context context){
+    public AudioPlayer(Context context) {
 
         mContext = context;
 
@@ -64,13 +64,13 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
                 LOG.debug("AUDIOFOCUS_GAIN");
             } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
                 LOG.debug("AUDIOFOCUS_LOSS");
-            } else if( focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+            } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
                 LOG.debug("AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
             }
         }
     };
 
-    private void createNotification(){
+    private void createNotification() {
 
 //        final Intent emptyIntent = new Intent(mContext, AudioPlayer.class);
 //        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, emptyIntent, 0);
@@ -91,7 +91,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 //        notificationManager.notify(mId, mBuilder.build());
     }
 
-    private void initMediaPlayer(String path){
+    private void initMediaPlayer(String path) {
         try {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(path);
@@ -103,35 +103,41 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         }
     }
 
-    public void start(AudioPlayerView audioPlayerView) {
+    public void start(String mediaFilePath) {
 
-        if (isPaused() && isSameView(audioPlayerView)) {
-            mMediaPlayer.start();
-            mActivePlayerView.setPlayState();
+        if (isPaused() && isSamePath(mediaFilePath)) {
+            play();
         } else {
-            mTempActivePlayerView = audioPlayerView;
-            initMediaPlayer(audioPlayerView.getPlayerViewPath());
+            mCurrentMediaFilePath = mediaFilePath;
+            initMediaPlayer(mCurrentMediaFilePath);
         }
     }
 
-    private boolean isSameView(View audioPlayerView) {
-        return mActivePlayerView == audioPlayerView;
+    public void play() {
+        mMediaPlayer.start();
+        setPaused(false);
+
+        notifyPauseStateChangedListeners();
     }
 
-    public void pause(){
+    public void pause() {
 
         muteMusic();
         mMediaPlayer.pause();
         setPaused(true);
 
-        mActivePlayerView.setPauseState();
+        notifyPauseStateChangedListeners();
+    }
+
+    private boolean isSamePath(String mediaFilePath) {
+        return mCurrentMediaFilePath == mediaFilePath;
     }
 
     private void setPaused(boolean paused) {
         this.paused = paused;
     }
 
-    private void muteMusic(){
+    private void muteMusic() {
 
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(mId);
@@ -139,6 +145,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         // Abandon audio focus when playback complete
         mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
     }
+
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         LOG.debug("onError(" + what + "," + extra + ")");
@@ -156,20 +163,10 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
                 AudioManager.AUDIOFOCUS_GAIN);
 
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-
             createNotification();
-
-            mMediaPlayer.start();
-            mMediaPlayer.setVolume(1.0f, 1.0f);
-            mAudioPlayerPath = mTempPlayerPath;
-
-            if (mActivePlayerView != null) {
-                mActivePlayerView.setStopState();
-            }
-            mActivePlayerView = mTempActivePlayerView;
-            mActivePlayerView.setPlayState();
-        }
-        else{
+            mCurrentMediaFilePath = mTempPlayerPath;
+            play();
+        } else {
             LOG.debug("Audio focus request not granted");
         }
     }
@@ -178,7 +175,26 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         return paused;
     }
 
-    public String getAudioPlayerPath() {
-        return mAudioPlayerPath;
+    public String getCurrentMediaFilePath() {
+        return mCurrentMediaFilePath;
     }
+
+    public interface PauseStateChangedListener {
+        void onPauseStateChanged();
+    }
+
+    public void addPauseStateChangedListener(PauseStateChangedListener l) {
+        pauseStateChangedListeners.add(l);
+    }
+
+    public void removePauseStateChangedListener(PauseStateChangedListener l) {
+        pauseStateChangedListeners.remove(l);
+    }
+
+    private void notifyPauseStateChangedListeners() {
+        for (PauseStateChangedListener l : pauseStateChangedListeners) {
+            l.onPauseStateChanged();
+        }
+    }
+
 }
