@@ -2,11 +2,12 @@
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:custom="http://schemas.android.com/apk/res-auto"
+
         android:id="@+id/messaging_composer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/xo_compose_message_background">
+        android:background="@color/xo_main_background">
 
     <View
             android:layout_width="match_parent"

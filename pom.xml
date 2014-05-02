@@ -115,12 +115,25 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Android support library -->
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>support-v4</artifactId>
+            <version>r7</version>
+        </dependency>
+
         <!-- HockeyApp -->
         <dependency>
             <groupId>net.hockeyapp.android</groupId>
             <artifactId>HockeySDK</artifactId>
             <version>3.0.1</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.1.5</version>
         </dependency>
 
         <!-- GeoJson library -->
@@ -138,6 +151,9 @@
     <build>
         <plugins>
             <!-- Android plugin -->
+            <!-- Documentation of configuration options can be found here:
+                 http://jayway.github.io/maven-android-plugin/apk-mojo.html and here:
+                 http://jayway.github.io/maven-android-plugin/plugin-info.html-->
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>android-maven-plugin</artifactId>
@@ -146,6 +162,7 @@
                     <androidManifestFile>${project.basedir}/AndroidManifest.xml</androidManifestFile>
                     <assetsDirectory>${project.basedir}/assets</assetsDirectory>
                     <resourceDirectory>${project.basedir}/res</resourceDirectory>
+                    <resourceOverlayDirectory>${project.build.directory}/generated-resources</resourceOverlayDirectory>
                     <nativeLibrariesDirectory>${project.basedir}/src/main/native</nativeLibrariesDirectory>
                     <extractDuplicates>true</extractDuplicates>
                     <sdk>
@@ -170,7 +187,7 @@
                 <version>${git-commit-id.version}</version>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>revision</goal>
                         </goals>
@@ -183,7 +200,7 @@
                     <!-- skip projects with <packaging>pom</packaging> -->
                     <skipPoms>true</skipPoms>
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <generateGitPropertiesFilename>res/raw/git_properties</generateGitPropertiesFilename>
+                    <generateGitPropertiesFilename>${project.build.directory}/generated-resources/raw/git_properties</generateGitPropertiesFilename>
                     <failOnNoGitDirectory>true</failOnNoGitDirectory>
                     <gitDescribe>
                         <skip>false</skip>

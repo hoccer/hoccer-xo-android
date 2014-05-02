@@ -10,7 +10,7 @@ import com.hoccer.xo.android.service.IXoClientService;
 import org.apache.log4j.Logger;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 
 import java.io.File;
 import java.util.concurrent.ScheduledExecutorService;

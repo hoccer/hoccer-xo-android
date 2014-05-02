@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.content.*;
 import android.graphics.drawable.ColorDrawable;
 import android.os.*;
+import android.support.v4.app.FragmentActivity;
 import android.view.*;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -93,7 +94,7 @@ import java.util.concurrent.TimeUnit;
  * These activites continually keep the background service which
  * we use for connection retention alive by calling it via RPC.
  */
-public abstract class XoActivity extends Activity {
+public abstract class XoActivity extends FragmentActivity {
 
     public final static int REQUEST_SELECT_AVATAR = 23;
 
@@ -424,6 +425,8 @@ public abstract class XoActivity extends Activity {
                     e.printStackTrace();
                 }
                 break;
+            case R.id.menu_kill:
+                this.finish();
             default:
                 return super.onOptionsItemSelected(item);
         }

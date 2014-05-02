@@ -2,6 +2,7 @@
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
               class="com.hoccer.xo.android.fragment.AboutFragment"
               android:id="@+id/activity_about_fragment"
+              android:background="@color/xo_main_background"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">

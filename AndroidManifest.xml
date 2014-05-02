@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.hoccer.xo.release"
-          android:versionCode="20"
-          android:versionName="1.0.1">
+          android:versionCode="22"
+          android:versionName="2.0.0">
 
-    <!-- We run on 2.3.3 (10) and up, we use features from up to 4.2 (17) -->
+    <!-- We run on 4.0 (14) and up, we use features from up to 4.2 (17) -->
     <uses-sdk
             android:minSdkVersion="14"
             android:targetSdkVersion="17"/>
@@ -56,8 +56,9 @@
     <!-- GMaps / locations -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!-- Wifi-Scanning for location grouping -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
-
 
     <!-- Declare permission for controlling our own push package -->
     <permission

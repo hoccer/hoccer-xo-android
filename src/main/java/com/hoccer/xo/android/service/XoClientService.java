@@ -43,11 +43,7 @@ import android.preference.PreferenceManager;
 
 import java.net.URI;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -61,6 +57,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * It should be started with startService() and kept alive using keepAlive() RPC calls
  * for as long as it is needed. If not called regularly the service will stop itself.
  */
+
+
 public class XoClientService extends Service {
 
     private static final Logger LOG = Logger.getLogger(XoClientService.class);
@@ -115,7 +113,7 @@ public class XoClientService extends Service {
 
     boolean mGcmSupported;
 
-    private getClientIdInConversation m_clientIdReceiver;
+    private ClientIdReceiver m_clientIdReceiver;
 
     @Override
     public void onCreate() {
@@ -161,9 +159,9 @@ public class XoClientService extends Service {
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        IntentFilter filter = new IntentFilter("com.hoccer.xo.android.service.XoClientService$getClientIdInConversation");
+        IntentFilter filter = new IntentFilter("com.hoccer.xo.android.service.XoClientService$ClientIdReceiver");
         filter.addAction("CONTACT_ID_IN_CONVERSATION");
-        m_clientIdReceiver = new getClientIdInConversation();
+        m_clientIdReceiver = new ClientIdReceiver();
         registerReceiver(m_clientIdReceiver, filter);
     }
 
@@ -510,6 +508,7 @@ public class XoClientService extends Service {
         // also removes messages from deleted clients
         List<TalkClientContact> contacts = new ArrayList<TalkClientContact>();
         Map<Integer, TalkClientContact> contactsById = new HashMap<Integer, TalkClientContact>();
+
         for (TalkClientMessage message : allUnseenMessages) {
             TalkClientContact contact = message.getConversationContact();
             //TODO: check NullPointerException
@@ -830,9 +829,9 @@ public class XoClientService extends Service {
         }
     }
 
-    private class getClientIdInConversation extends BroadcastReceiver {
+    private class ClientIdReceiver extends BroadcastReceiver {
         private int m_id;
-        private List<TalkClientMessage> m_unseenMessages;
+        private List<TalkClientMessage> m_unseenMessages = new ArrayList<TalkClientMessage>();
         private boolean m_notify;
 
         @Override
@@ -851,5 +850,4 @@ public class XoClientService extends Service {
             m_notify = notify;
         }
     }
-
 }
