@@ -59,10 +59,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Base class for our activities
- * <p/>
- * All our activities inherit from SherlockFragmentActivity
- * to maintain a common look and feel in the whole application.
- * <p/>
  * These activites continually keep the background service which
  * we use for connection retention alive by calling it via RPC.
  */
