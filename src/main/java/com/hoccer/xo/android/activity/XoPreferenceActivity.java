@@ -1,5 +1,7 @@
 package com.hoccer.xo.android.activity;
 
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
@@ -39,6 +41,8 @@ public class XoPreferenceActivity extends PreferenceActivity
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final Logger LOG = Logger.getLogger(XoPreferenceActivity.class);
+
+    private static final String CREDENTIALS_TRANSFER_FILE = "credentials.json";
 
     private AttachmentTransferControlView mSpinner;
 
@@ -170,7 +174,7 @@ public class XoPreferenceActivity extends PreferenceActivity
 
     private void doImport() {
         final File credentialsFile = new File(
-                XoApplication.getExternalStorage() + File.separator + "credentials.json");
+                XoApplication.getExternalStorage() + File.separator + CREDENTIALS_TRANSFER_FILE);
         if (credentialsFile == null || !credentialsFile.exists()) {
             Toast.makeText(this, getString(R.string.cant_find_credentials), Toast.LENGTH_LONG)
                     .show();
@@ -178,9 +182,12 @@ public class XoPreferenceActivity extends PreferenceActivity
         }
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        final EditText passwordInput = new EditText(this);
+
+        final LinearLayout passwordInputView = (LinearLayout)getLayoutInflater().inflate(R.layout.view_password_input, null);
+        final EditText passwordInput = (EditText)passwordInputView.findViewById(R.id.password_input);
         passwordInput.setInputType(EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
-        dialogBuilder.setTitle(R.string.export_credentials_dialog_title);
+
+        dialogBuilder.setTitle(R.string.import_credentials_dialog_title);
         dialogBuilder
                 .setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
                     @Override
@@ -203,23 +210,24 @@ public class XoPreferenceActivity extends PreferenceActivity
                         dialog.dismiss();
                     }
                 });
-        dialogBuilder.setView(passwordInput);
+        dialogBuilder.setView(passwordInputView);
         dialogBuilder.show();
     }
 
     private void importCredentials(File credentialsFile, String password) {
         byte[] credentials = new byte[(int) credentialsFile.length()];
 
-
-
-        XoApplication.getXoClient().setCryptedCredentialsFromContainer(credentials, password);
-        Toast.makeText(this, "Successfully imported credentials.", Toast.LENGTH_LONG).show();
+        XoApplication.getXoClient().setEncryptedCredentialsFromContainer(credentials, password);
+        Toast.makeText(this, R.string.import_credentials_success, Toast.LENGTH_LONG).show();
     }
 
     private void doExport() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-        final EditText passwordInput = new EditText(this);
+
+        final LinearLayout passwordInputView = (LinearLayout)getLayoutInflater().inflate(R.layout.view_password_input, null);
+        final EditText passwordInput = (EditText)passwordInputView.findViewById(R.id.password_input);
         passwordInput.setInputType(EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
+
         dialogBuilder.setTitle(R.string.export_credentials_dialog_title);
         dialogBuilder
                 .setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
@@ -243,22 +251,22 @@ public class XoPreferenceActivity extends PreferenceActivity
                         dialog.dismiss();
                     }
                 });
-        dialogBuilder.setView(passwordInput);
+        dialogBuilder.setView(passwordInputView);
         dialogBuilder.show();
     }
 
     private void exportCredentials(String password) {
         try {
             byte[] credentialsContainer = XoApplication.getXoClient()
-                    .makeCryptedCredentialsContainer(password);
+                    .makeEncryptedCredentialsContainer(password);
 
             FileOutputStream fos = new FileOutputStream(
-                    XoApplication.getExternalStorage() + File.separator + "credentials.json");
+                    XoApplication.getExternalStorage() + File.separator + CREDENTIALS_TRANSFER_FILE);
             fos.write(credentialsContainer);
             fos.flush();
             fos.close();
         } catch (IOException e) {
-            LOG.error("error while writing credentials container to filesyystem.", e);
+            LOG.error("error while writing credentials container to filesystem.", e);
             Toast.makeText(this, R.string.export_credentials_failure, Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             LOG.error("error while generating credentials container", e);
