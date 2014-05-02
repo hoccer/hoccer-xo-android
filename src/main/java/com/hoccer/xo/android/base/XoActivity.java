@@ -4,7 +4,10 @@ import android.app.*;
 import android.content.*;
 import android.graphics.drawable.ColorDrawable;
 import android.os.*;
-import android.view.*;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
+import android.widget.TextView;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -16,18 +19,10 @@ import com.hoccer.talk.content.IContentObject;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
-import com.hoccer.xo.android.activity.AboutActivity;
-import com.hoccer.xo.android.activity.GroupProfileActivity;
-import com.hoccer.xo.android.activity.LicensesActivity;
-import com.hoccer.xo.android.activity.MessagingActivity;
-import com.hoccer.xo.android.activity.PairingActivity;
-import com.hoccer.xo.android.activity.SingleProfileActivity;
-import com.hoccer.xo.android.activity.XoPreferenceActivity;
+import com.hoccer.xo.android.activity.*;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
-import com.hoccer.xo.android.content.ContentRegistry;
-import com.hoccer.xo.android.content.ContentSelection;
-import com.hoccer.xo.android.content.ContentView;
+import com.hoccer.xo.android.content.*;
 import com.hoccer.xo.android.content.image.ImageSelector;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.IXoClientService;
@@ -41,31 +36,14 @@ import org.apache.log4j.Logger;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.RemoteException;
+
 import android.provider.MediaStore;
 import android.provider.Telephony;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
+import android.view.*;
 import android.widget.Toast;
 
 import java.io.File;
@@ -74,7 +52,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -371,7 +348,7 @@ public abstract class XoActivity extends Activity {
         }
 
         public boolean isScreenOn() {
-            return  wasScreenOn;
+            return wasScreenOn;
         }
 
     }
@@ -583,20 +560,21 @@ public abstract class XoActivity extends Activity {
     private void scheduleKeepAlive() {
         shutdownKeepAlive();
         mKeepAliveTimer = mBackgroundExecutor.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                if (mService != null) {
-                    try {
-                        mService.keepAlive();
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        },
+                                                                      @Override
+                                                                      public void run() {
+                                                                          if (mService != null) {
+                                                                              try {
+                                                                                  mService.keepAlive();
+                                                                              } catch (RemoteException e) {
+                                                                                  e.printStackTrace();
+                                                                              }
+                                                                          }
+                                                                      }
+                                                                  },
                 XoConfiguration.SERVICE_KEEPALIVE_PING_DELAY,
                 XoConfiguration.SERVICE_KEEPALIVE_PING_INTERVAL,
-                TimeUnit.SECONDS);
+                TimeUnit.SECONDS
+        );
     }
 
     /**
@@ -797,6 +775,10 @@ public abstract class XoActivity extends Activity {
         }
     }
 
+    /**
+     * This class is an implementation of IXoAlertListener which displays alerts inside an AlertDialog.
+     * Links and other data inside the message text are tappable.
+     */
     public class XoAlertListener implements IXoAlertListener {
 
         private Context mContext;
@@ -828,12 +810,24 @@ public abstract class XoActivity extends Activity {
             });
         }
 
+        /**
+         * Displays an AlertDialog from a given title and message string.
+         * The displayed message text is interactive: links etc. can be tapped.
+         *
+         * @param title   The given alert title
+         * @param message The given alert message
+         */
         private void displayAlert(String title, String message) {
+
+            // Scan for urls other information
+            final SpannableString interactiveMessage = new SpannableString(message);
+            Linkify.addLinks(interactiveMessage, Linkify.ALL);
+
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             if (title != null) {
                 builder.setTitle(title);
             }
-            builder.setMessage(message);
+            builder.setMessage(interactiveMessage);
             builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int index) {
@@ -843,6 +837,9 @@ public abstract class XoActivity extends Activity {
 
             Dialog dialog = builder.create();
             dialog.show();
+
+            // Make message interactive
+            ((TextView) dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
         }
     }
 
