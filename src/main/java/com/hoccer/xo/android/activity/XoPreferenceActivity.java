@@ -173,8 +173,8 @@ public class XoPreferenceActivity extends PreferenceActivity
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 
-        final LinearLayout passwordInputView = (LinearLayout)getLayoutInflater().inflate(R.layout.view_password_input, null);
-        final EditText passwordInput = (EditText)passwordInputView.findViewById(R.id.password_input);
+        final LinearLayout passwordInputView = (LinearLayout) getLayoutInflater().inflate(R.layout.view_password_input, null);
+        final EditText passwordInput = (EditText) passwordInputView.findViewById(R.id.password_input);
 
         dialogBuilder.setTitle(R.string.import_credentials_dialog_title);
         dialogBuilder
@@ -232,8 +232,8 @@ public class XoPreferenceActivity extends PreferenceActivity
     private void doExport() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 
-        final LinearLayout passwordInputView = (LinearLayout)getLayoutInflater().inflate(R.layout.view_password_input, null);
-        final EditText passwordInput = (EditText)passwordInputView.findViewById(R.id.password_input);
+        final LinearLayout passwordInputView = (LinearLayout) getLayoutInflater().inflate(R.layout.view_password_input, null);
+        final EditText passwordInput = (EditText) passwordInputView.findViewById(R.id.password_input);
 
         dialogBuilder.setTitle(R.string.export_credentials_dialog_title);
         dialogBuilder
