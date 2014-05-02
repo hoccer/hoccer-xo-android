@@ -205,7 +205,11 @@
     <string name="pref_auto_downloads_mobile">On mobile networks</string>
     <string name="pref_auto_download_wifi">On wireless networks</string>
     <string name="pref_auto_download">Automatic downloads</string>
+    <string name="pref_credentials">Credentials</string>
+    <string name="pref_export_credentials">Export credentials</string>
+    <string name="pref_import_credentials">Import credentials</string>
     <string name="pref_legal_information">Legal Information</string>
+    <string name="pref_encryption">Encryption</string>
     <string name="pref_crash_report">Send report after app crashed</string>
     <string name="pref_crash_report_switcher">Enable reporting</string>
     <string name="pref_please_wait">Please wait...</string>
@@ -221,6 +225,17 @@
         chatting. Download it now: http://hoccer.com/ Then add me as a contact: hxo://%1$s
         \nxo %1$s
     </string>
+    <string name="export_credentials_dialog_title">Export credentials</string>
+    <string name="export_credentials_success">Successfully saved your credentials.</string>
+    <string name="export_credentials_failure">Error while saving your credentials.</string>
+
+    <string name="import_credentials_dialog_title">Import credentials</string>
+    <string name="import_credentials_success">Successfully imported your credentials.\nPlease restart the app.</string>
+    <string name="import_credentials_failure">Error while importing your credentials.</string>
+
+    <string name="enter_password">Passwort:</string>
+    <string name="no_password">Please enter a Password.</string>
+    <string name="cant_find_credentials">Can\'t find "credentials.json" on your device.</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>

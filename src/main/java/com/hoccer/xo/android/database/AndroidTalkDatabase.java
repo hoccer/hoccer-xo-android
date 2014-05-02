@@ -132,4 +132,8 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
         }
     }
 
+    public void recreateDatabase() {
+
+    }
+
 }
