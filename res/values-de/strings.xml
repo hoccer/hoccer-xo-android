@@ -221,7 +221,7 @@
     <string name="export_credentials_failure">Es ist ein Fehler beim exportieren der Zugangsdaten aufgetreten.</string>
 
     <string name="import_credentials_dialog_title">Zugangsdaten importieren</string>
-    <string name="import_credentials_success">Zugangsdaten erfolgreich importiert.</string>
+    <string name="import_credentials_success">Zugangsdaten erfolgreich importiert.\nBitte starten Sie die App neu.</string>
     <string name="import_credentials_failure">Es ist ein Fehler beim importieren der Zugangsdaten aufgetreten.</string>
 
     <string name="enter_password">Passwort:</string>

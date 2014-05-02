@@ -230,7 +230,7 @@
     <string name="export_credentials_failure">Error while saving your credentials.</string>
 
     <string name="import_credentials_dialog_title">Import credentials</string>
-    <string name="import_credentials_success">Successfully imported your credentials.</string>
+    <string name="import_credentials_success">Successfully imported your credentials.\nPlease restart the app.</string>
     <string name="import_credentials_failure">Error while importing your credentials.</string>
 
     <string name="enter_password">Passwort:</string>
