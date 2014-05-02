@@ -1,7 +1,7 @@
 package com.hoccer.xo.android.activity;
 
+import android.view.*;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
@@ -23,12 +23,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -181,7 +175,6 @@ public class XoPreferenceActivity extends PreferenceActivity
 
         final LinearLayout passwordInputView = (LinearLayout)getLayoutInflater().inflate(R.layout.view_password_input, null);
         final EditText passwordInput = (EditText)passwordInputView.findViewById(R.id.password_input);
-        passwordInput.setInputType(EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
 
         dialogBuilder.setTitle(R.string.import_credentials_dialog_title);
         dialogBuilder
@@ -206,7 +199,10 @@ public class XoPreferenceActivity extends PreferenceActivity
                     }
                 });
         dialogBuilder.setView(passwordInputView);
-        dialogBuilder.show();
+
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        dialog.show();
     }
 
     private void importCredentials(File credentialsFile, String password) {
@@ -238,7 +234,6 @@ public class XoPreferenceActivity extends PreferenceActivity
 
         final LinearLayout passwordInputView = (LinearLayout)getLayoutInflater().inflate(R.layout.view_password_input, null);
         final EditText passwordInput = (EditText)passwordInputView.findViewById(R.id.password_input);
-        passwordInput.setInputType(EditorInfo.TYPE_TEXT_VARIATION_PASSWORD);
 
         dialogBuilder.setTitle(R.string.export_credentials_dialog_title);
         dialogBuilder
@@ -263,7 +258,10 @@ public class XoPreferenceActivity extends PreferenceActivity
                     }
                 });
         dialogBuilder.setView(passwordInputView);
-        dialogBuilder.show();
+
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        dialog.show();
     }
 
     private void exportCredentials(String password) {
