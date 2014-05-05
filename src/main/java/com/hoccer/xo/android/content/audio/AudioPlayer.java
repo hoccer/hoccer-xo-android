@@ -30,7 +30,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     private boolean paused = false;
 
     private String mCurrentMediaFilePath;
-    private String mTempPlayerPath;
+    private String mTempMediaFilePath;
 
     private List<PauseStateChangedListener> pauseStateChangedListeners = new ArrayList<PauseStateChangedListener>();
 
@@ -91,13 +91,12 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 //        notificationManager.notify(mId, mBuilder.build());
     }
 
-    private void initMediaPlayer(String path) {
+    private void resetAndPrepareMediaPlayer(String mediaFilePath) {
+        mTempMediaFilePath = mediaFilePath;
         try {
             mMediaPlayer.reset();
-            mMediaPlayer.setDataSource(path);
+            mMediaPlayer.setDataSource(mediaFilePath);
             mMediaPlayer.prepareAsync();
-
-            mTempPlayerPath = path;
         } catch (Exception e) {
             LOG.error("setFile: exception setting data source", e);
         }
@@ -105,12 +104,15 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     public void start(String mediaFilePath) {
 
-        if (isPaused() && isSamePath(mediaFilePath)) {
+        if (isResumable(mediaFilePath)) {
             play();
         } else {
-            mCurrentMediaFilePath = mediaFilePath;
-            initMediaPlayer(mCurrentMediaFilePath);
+            resetAndPrepareMediaPlayer(mediaFilePath);
         }
+    }
+
+    private boolean isResumable(String mediaFilePath) {
+        return isPaused() && isSamePath(mediaFilePath);
     }
 
     public void play() {
@@ -164,7 +166,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             createNotification();
-            mCurrentMediaFilePath = mTempPlayerPath;
+            setCurrentMediaFilePath(mTempMediaFilePath);
             play();
         } else {
             LOG.debug("Audio focus request not granted");
@@ -177,6 +179,18 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     public String getCurrentMediaFilePath() {
         return mCurrentMediaFilePath;
+    }
+
+//    public List<PauseStateChangedListener> getListeners() {
+//        return pauseStateChangedListeners;
+//    }
+
+    public void removePauseStateChangedListeners() {
+        pauseStateChangedListeners.clear();
+    }
+
+    private void setCurrentMediaFilePath(String currentMediaFilePath) {
+        this.mCurrentMediaFilePath = currentMediaFilePath;
     }
 
     public interface PauseStateChangedListener {
