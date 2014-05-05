@@ -96,13 +96,20 @@ public class SingleProfileActivity extends XoActivity
             menu.findItem(R.id.menu_profile_unblock).setVisible(false);
             menu.findItem(R.id.menu_profile_delete).setVisible(false);
         } else {
-            TalkRelationship relationship = contact.getClientRelationship();
-            if (relationship == null || relationship.isBlocked()) {
+            if (contact.isNearby()) {
+                menu.findItem(R.id.menu_profile_edit).setVisible(false);
+                menu.findItem(R.id.menu_profile_delete).setVisible(false);
                 menu.findItem(R.id.menu_profile_block).setVisible(false);
-                menu.findItem(R.id.menu_profile_unblock).setVisible(true);
-            } else {
-                menu.findItem(R.id.menu_profile_block).setVisible(true);
                 menu.findItem(R.id.menu_profile_unblock).setVisible(false);
+            } else {
+                TalkRelationship relationship = contact.getClientRelationship();
+                if (relationship == null || relationship.isBlocked()) {
+                    menu.findItem(R.id.menu_profile_block).setVisible(false);
+                    menu.findItem(R.id.menu_profile_unblock).setVisible(true);
+                } else {
+                    menu.findItem(R.id.menu_profile_block).setVisible(true);
+                    menu.findItem(R.id.menu_profile_unblock).setVisible(false);
+                }
             }
         }
 
