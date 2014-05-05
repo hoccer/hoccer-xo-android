@@ -72,7 +72,11 @@ public class AudioPlayerView
     }
 
     public boolean isActive() {
-        return !mPlayer.isPaused() && mMediaFilePath.equals(mPlayer.getCurrentMediaFilePath());
+        if (mMediaFilePath != null) {
+            return !mPlayer.isPaused() && !mPlayer.isStopped() && mMediaFilePath.equals(mPlayer.getCurrentMediaFilePath());
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -84,13 +88,11 @@ public class AudioPlayerView
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         mPlayer.addPauseStateChangedListener(this);
-        LOG.error("onAttachedToWindow: " + mMediaFilePath);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mPlayer.removePauseStateChangedListener(this);
-        LOG.error("onDetachedFromWindow: " + mMediaFilePath);
     }
 }

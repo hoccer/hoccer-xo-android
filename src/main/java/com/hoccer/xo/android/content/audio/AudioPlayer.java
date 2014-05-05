@@ -14,7 +14,7 @@ import java.util.List;
 /*
  * Created by alexw on 28.04.14.
  */
-public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
+public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
     private final static Logger LOG = Logger.getLogger(AudioPlayer.class);
 
@@ -23,11 +23,12 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     private int mId = 1;
 
     private AudioManager mAudioManager;
-    private MediaPlayer mMediaPlayer;
+    private MediaPlayer mMediaPlayer = null;
     private Notification.Builder mBuilder;
 
     private Context mContext;
     private boolean paused = false;
+    private boolean stopped = true;
 
     private String mCurrentMediaFilePath;
     private String mTempMediaFilePath;
@@ -42,14 +43,15 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     public AudioPlayer(Context context) {
-
         mContext = context;
-
         mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+    }
 
+    private void createMediaPlayer() {
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setOnErrorListener(this);
         mMediaPlayer.setOnPreparedListener(this);
+        mMediaPlayer.setOnCompletionListener(this);
     }
 
     private OnAudioFocusChangeListener mAudioFocusChangeListener = new OnAudioFocusChangeListener() {
@@ -103,10 +105,12 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     public void start(String mediaFilePath) {
-
         if (isResumable(mediaFilePath)) {
             play();
         } else {
+            if(mMediaPlayer == null) {
+                createMediaPlayer();
+            }
             resetAndPrepareMediaPlayer(mediaFilePath);
         }
     }
@@ -118,25 +122,36 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     public void play() {
         mMediaPlayer.start();
         setPaused(false);
-
+        setStopped(false);
         notifyPauseStateChangedListeners();
     }
 
     public void pause() {
-
         muteMusic();
         mMediaPlayer.pause();
         setPaused(true);
+        setStopped(false);
+        notifyPauseStateChangedListeners();
+    }
 
+    public void stop() {
+        mMediaPlayer.release();
+        mMediaPlayer = null;
+        setPaused(false);
+        setStopped(true);
         notifyPauseStateChangedListeners();
     }
 
     private boolean isSamePath(String mediaFilePath) {
-        return mCurrentMediaFilePath == mediaFilePath;
+        return mCurrentMediaFilePath.equals(mediaFilePath);
     }
 
     private void setPaused(boolean paused) {
         this.paused = paused;
+    }
+
+    private void setStopped(boolean stopped){
+        this.stopped = stopped;
     }
 
     private void muteMusic() {
@@ -156,8 +171,6 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        LOG.debug("onPrepared()");
-
         int result = mAudioManager.requestAudioFocus(mAudioFocusChangeListener,
                 // Use the music stream.
                 AudioManager.STREAM_MUSIC,
@@ -173,17 +186,22 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         }
     }
 
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        stop();
+    }
+
     public boolean isPaused() {
         return paused;
+    }
+
+    public boolean isStopped() {
+        return stopped;
     }
 
     public String getCurrentMediaFilePath() {
         return mCurrentMediaFilePath;
     }
-
-//    public List<PauseStateChangedListener> getListeners() {
-//        return pauseStateChangedListeners;
-//    }
 
     public void removePauseStateChangedListeners() {
         pauseStateChangedListeners.clear();
