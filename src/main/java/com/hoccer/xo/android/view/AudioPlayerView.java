@@ -29,7 +29,6 @@ public class AudioPlayerView
         addView(inflate(context, R.layout.content_audio, null));
 
         mPlayer = AudioPlayer.get(context);
-        mPlayer.addPauseStateChangedListener(this);
 
         mPlayPauseButton = (ImageButton) findViewById(R.id.audio_play);
         mPlayPauseButton.setOnClickListener(this);
@@ -79,5 +78,19 @@ public class AudioPlayerView
     @Override
     public void onPauseStateChanged() {
         updatePlayPauseView();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        mPlayer.addPauseStateChangedListener(this);
+        LOG.error("onAttachedToWindow: " + mMediaFilePath);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mPlayer.removePauseStateChangedListener(this);
+        LOG.error("onDetachedFromWindow: " + mMediaFilePath);
     }
 }
