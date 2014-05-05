@@ -1,45 +1,32 @@
 package com.hoccer.xo.android.activity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
+import android.os.Message;
+import android.preference.PreferenceManager;
 import android.view.*;
-import android.widget.LinearLayout;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
 
 import net.hockeyapp.android.CrashManager;
-
 import org.apache.log4j.Logger;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
-import android.widget.EditText;
-import android.widget.Toast;
 
-import java.io.*;
 import java.sql.SQLException;
 
-public class XoPreferenceActivity extends PreferenceActivity
-        implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class XoPreferenceActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final Logger LOG = Logger.getLogger(XoPreferenceActivity.class);
-
-    private static final String CREDENTIALS_TRANSFER_FILE = "credentials.json";
-
     private AttachmentTransferControlView mSpinner;
-
     private Handler mDialogDismisser;
-
     private Dialog mWaitingDialog;
 
     @Override
@@ -82,15 +69,14 @@ public class XoPreferenceActivity extends PreferenceActivity
     }
 
     public void createDialog() {
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.waiting_dialog, null);
         mSpinner = (AttachmentTransferControlView) view.findViewById(R.id.content_progress);
 
         mWaitingDialog = new Dialog(this);
         mWaitingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mWaitingDialog.setContentView(view);
-        mWaitingDialog.getWindow()
-                .setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        mWaitingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         mWaitingDialog.setCanceledOnTouchOutside(false);
         if (!isFinishing()) {
             mWaitingDialog.show();
@@ -121,7 +107,7 @@ public class XoPreferenceActivity extends PreferenceActivity
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals("preference_keysize")) {
+        if(key.equals("preference_keysize")) {
             createDialog();
             regenerateKeys();
         }
@@ -150,138 +136,4 @@ public class XoPreferenceActivity extends PreferenceActivity
         }
         super.onDestroy();
     }
-
-    @Override
-    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-        if (preference.getKey().equals("preference_export")) {
-            doExport();
-            return true;
-        } else if (preference.getKey().equals("preference_import")) {
-            doImport();
-            return true;
-        }
-
-        return super.onPreferenceTreeClick(preferenceScreen, preference);
-    }
-
-    private void doImport() {
-        final File credentialsFile = new File(XoApplication.getExternalStorage() + File.separator + CREDENTIALS_TRANSFER_FILE);
-        if (credentialsFile == null || !credentialsFile.exists()) {
-            Toast.makeText(this, getString(R.string.cant_find_credentials), Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-
-        final LinearLayout passwordInputView = (LinearLayout) getLayoutInflater().inflate(R.layout.view_password_input, null);
-        final EditText passwordInput = (EditText) passwordInputView.findViewById(R.id.password_input);
-
-        dialogBuilder.setTitle(R.string.import_credentials_dialog_title);
-        dialogBuilder
-                .setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String password = passwordInput.getText().toString();
-                        if (password != null && password.length() > 0) {
-                            importCredentials(credentialsFile, password);
-                            dialog.dismiss();
-                        } else {
-                            Toast.makeText(XoPreferenceActivity.this, R.string.no_password, Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-        dialogBuilder
-                .setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        passwordInput.setText("");
-                        dialog.dismiss();
-                    }
-                });
-        dialogBuilder.setView(passwordInputView);
-
-        AlertDialog dialog = dialogBuilder.create();
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        dialog.show();
-    }
-
-    private void importCredentials(File credentialsFile, String password) {
-
-        try {
-            FileInputStream fileInputStream = new FileInputStream(XoApplication.getExternalStorage() + File.separator + CREDENTIALS_TRANSFER_FILE);
-
-            byte[] credentials = new byte[(int) credentialsFile.length()];
-            fileInputStream.read(credentials);
-
-            boolean result = XoApplication.getXoClient().setEncryptedCredentialsFromContainer(credentials, password);
-            if (result) {
-                Toast.makeText(this, R.string.import_credentials_success, Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(this, R.string.import_credentials_failure, Toast.LENGTH_LONG).show();
-            }
-
-        } catch (FileNotFoundException e) {
-            LOG.error("Error while importing credentials", e);
-            Toast.makeText(this, R.string.cant_find_credentials, Toast.LENGTH_LONG).show();
-        } catch (IOException e) {
-            LOG.error("Error while importing credentials", e);
-            Toast.makeText(this, R.string.import_credentials_failure, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void doExport() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-
-        final LinearLayout passwordInputView = (LinearLayout) getLayoutInflater().inflate(R.layout.view_password_input, null);
-        final EditText passwordInput = (EditText) passwordInputView.findViewById(R.id.password_input);
-
-        dialogBuilder.setTitle(R.string.export_credentials_dialog_title);
-        dialogBuilder
-                .setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String password = passwordInput.getText().toString();
-                        if (password != null && password.length() > 0) {
-                            exportCredentials(password);
-                            dialog.dismiss();
-                        } else {
-                            Toast.makeText(XoPreferenceActivity.this, R.string.no_password, Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-        dialogBuilder
-                .setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        passwordInput.setText("");
-                        dialog.dismiss();
-                    }
-                });
-        dialogBuilder.setView(passwordInputView);
-
-        AlertDialog dialog = dialogBuilder.create();
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        dialog.show();
-    }
-
-    private void exportCredentials(String password) {
-        try {
-            byte[] credentialsContainer = XoApplication.getXoClient()
-                    .makeEncryptedCredentialsContainer(password);
-
-            FileOutputStream fos = new FileOutputStream(
-                    XoApplication.getExternalStorage() + File.separator + CREDENTIALS_TRANSFER_FILE);
-            fos.write(credentialsContainer);
-            fos.flush();
-            fos.close();
-        } catch (IOException e) {
-            LOG.error("error while writing credentials container to filesystem.", e);
-            Toast.makeText(this, R.string.export_credentials_failure, Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            LOG.error("error while generating credentials container", e);
-            Toast.makeText(this, R.string.export_credentials_failure, Toast.LENGTH_LONG).show();
-        }
-        Toast.makeText(this, R.string.export_credentials_success, Toast.LENGTH_LONG).show();
-    }
-
 }
