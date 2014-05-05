@@ -8,7 +8,7 @@ import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.gesture.Gestures;
 import com.hoccer.xo.android.gesture.MotionGestureListener;
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;

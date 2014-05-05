@@ -23,7 +23,7 @@ public class XoConfiguration {
     public static final String HOCKEYAPP_ID = "60f2a55705e94d33e62a7b1643671f46";
 
     /* Directories in external storage */
-    public static final String EXTERNAL_ATTACHMENTS = "Hoccer XO";
+    public static final String EXTERNAL_ATTACHMENTS = "CustomGW";
 
     /* Directories in internal storage */
     public static final String INTERNAL_AVATARS = "avatars";

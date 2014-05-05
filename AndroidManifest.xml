@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.hoccer.xo.release"
+          package="com.whitelabel.gw.release"
           android:versionCode="20"
           android:versionName="1.0.1">
 
@@ -50,7 +50,7 @@
     <!-- SMS receive for pairing tokens -->
     <uses-permission android:name="android.permission.RECEIVE_SMS"/>
     <!-- Our own GCM permission -->
-    <uses-permission android:name="com.hoccer.xo.release.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="com.whitelabel.gw.release.permission.C2D_MESSAGE"/>
     <!-- Google Play Services / GMaps -->
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
     <!-- GMaps / locations -->
@@ -61,15 +61,15 @@
 
     <!-- Declare permission for controlling our own push package -->
     <permission
-            android:name="com.hoccer.xo.release.permission.C2D_MESSAGE"
+            android:name="com.whitelabel.gw.release.permission.C2D_MESSAGE"
             android:protectionLevel="signature"/>
 
     <!-- Declare our application -->
     <application
             android:name="com.hoccer.xo.android.XoApplication"
             android:allowBackup="false"
-            android:icon="@drawable/ic_launcher"
-            android:label="@string/app_name"
+            android:icon="@drawable/gw_icon100x100"
+            android:label="Hoccer Wings"
             android:theme="@style/AppTheme">
 
         <!-- Google Play Services -->
@@ -115,7 +115,7 @@
         <!-- Clipboard activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.ClipboardPreviewActivity"
-                android:label="Hoccer XO"
+                android:label="My really awesome App"
                 android:parentActivityName="com.hoccer.xo.android.activity.MessagingActivity"
                 android:windowSoftInputMode="stateHidden">
             <meta-data

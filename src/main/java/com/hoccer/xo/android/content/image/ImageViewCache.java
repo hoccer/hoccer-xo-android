@@ -5,7 +5,7 @@ import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.android.view.AspectImageView;
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;

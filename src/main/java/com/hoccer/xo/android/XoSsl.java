@@ -2,7 +2,7 @@ package com.hoccer.xo.android;
 
 import com.hoccer.talk.client.HttpClientWithKeystore;
 import com.hoccer.talk.client.XoClientConfiguration;
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 import org.apache.log4j.Logger;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;

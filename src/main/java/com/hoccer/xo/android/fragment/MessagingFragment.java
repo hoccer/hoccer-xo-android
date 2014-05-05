@@ -6,7 +6,7 @@ import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.android.view.OnOverscrollListener;
 import com.hoccer.xo.android.view.OverscrollListView;
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 
 import org.apache.log4j.Logger;
 

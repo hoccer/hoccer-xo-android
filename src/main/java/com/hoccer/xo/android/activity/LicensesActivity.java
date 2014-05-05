@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.TextView;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

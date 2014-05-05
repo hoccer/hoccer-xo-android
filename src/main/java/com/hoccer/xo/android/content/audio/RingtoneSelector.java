@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 import org.apache.log4j.Logger;
 
 public class RingtoneSelector implements IContentSelector {

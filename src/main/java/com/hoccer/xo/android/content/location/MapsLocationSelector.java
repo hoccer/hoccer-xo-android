@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 
 public class MapsLocationSelector implements IContentSelector {
 

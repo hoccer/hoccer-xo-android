@@ -5,7 +5,7 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ImageView;
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 
 /**
  * Image view that can enforce an aspect ratio and a maximum height

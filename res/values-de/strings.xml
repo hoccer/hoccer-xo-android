@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Hoccer XO</string>
+    <string name="app_name">Hoccer Wings</string>
 
     <string name="demo_message">Lorem ipsum dolor...</string>
 
@@ -205,11 +205,11 @@
     </string>
     <string name="pref_please_wait">Bitte warten...</string>
     <string name="my_profile_title">Mein Profil</string>
-    <string name="welcome_to_title">Willkommen bei XO!</string>
+    <string name="welcome_to_title">Willkommen bei CustomGW!</string>
     <string name="contact_item_receive_attachment">%1$s Datei erhalten</string>
     <string name="error_avatar_selection">Sie können dieses Bild nicht als Avatar setzen.
     </string>
-    <string name="sms_invitation_text">Hey! Ich nutze die Gratis-App HoccerXO zum sicheren Chatten! Jetzt herunterladen: http://hoccer.com/ Dann mich als Kontakt hinzufügen: hxo://%1$s
+    <string name="sms_invitation_text">Hey! Ich nutze die Gratis-App CustomGW zum sicheren Chatten! Jetzt herunterladen: http://hoccer.com/ Dann mich als Kontakt hinzufügen: hxo://%1$s
         \nxo %2$s
     </string>
 

@@ -12,7 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 import org.apache.log4j.Logger;
 
 import java.io.File;

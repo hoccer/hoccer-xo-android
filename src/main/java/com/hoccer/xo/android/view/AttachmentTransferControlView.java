@@ -10,7 +10,7 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 
 public class AttachmentTransferControlView extends View {
     private final float SPINNER_LENGTH = 50;

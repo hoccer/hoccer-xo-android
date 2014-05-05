@@ -3,7 +3,7 @@ package com.hoccer.xo.android.fragment;
 import com.hoccer.talk.client.IXoStateListener;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.xo.android.base.XoFragment;
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 
 import android.app.FragmentTransaction;
 import android.os.Bundle;

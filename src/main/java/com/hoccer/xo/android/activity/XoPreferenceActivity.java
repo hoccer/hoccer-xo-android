@@ -12,7 +12,7 @@ import android.view.*;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 
 import net.hockeyapp.android.CrashManager;
 import org.apache.log4j.Logger;

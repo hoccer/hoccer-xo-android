@@ -8,7 +8,7 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.GroupProfileFragment;
 import com.hoccer.xo.android.fragment.StatusFragment;
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 
 import java.sql.SQLException;
 

@@ -6,7 +6,7 @@ import com.hoccer.talk.model.TalkRelationship;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.SingleProfileFragment;
 import com.hoccer.xo.android.fragment.StatusFragment;
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 
 import android.app.ActionBar;
 import android.app.FragmentManager;
