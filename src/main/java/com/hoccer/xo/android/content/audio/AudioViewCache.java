@@ -12,9 +12,6 @@ import android.app.Activity;
 import com.hoccer.xo.release.R;
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
 
 public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
 
@@ -39,25 +36,7 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
         if (contentObject.getContentDataUrl() != null) {
             updateFilenameText(view, contentObject, isLightTheme);
             view.setFile(contentObject.getContentDataUrl());
-            view.updateViewState();
-        }
-    }
-
-    public void togglePlayback(String currentPath, AudioPlayerView activeAudioPlayerView) {
-
-
-        if (currentPath != null) {
-            // check if any player is already active and stop it
-
-//            Iterator<AudioPlayerView> iterator = mActivePlayerList.iterator();
-//            while (iterator.hasNext()) {
-//
-//                AudioPlayerView currPlayerView = iterator.next();
-//
-//                if (currPlayerView.isActive() && (!currentPath.equals(currPlayerView.getMediaFilePath()))){
-//                    currPlayerView.showPauseButton();
-//                }
-//            }
+            view.updatePlayPauseView();
         }
     }
 
@@ -65,7 +44,6 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
 
         TextView filenameText = (TextView) view.findViewById(R.id.tv_content_audio_name);
         String filename = contentObject.getFileName();
-        //LOG.error("-----------------------------------------------------------: " + filename);
 
         if (filename == null) {
             String dataUrl = contentObject.getContentDataUrl();

@@ -64,7 +64,7 @@ public class AudioPlayerView
         mMediaFilePath = path;
     }
 
-    public void updateViewState() {
+    public void updatePlayPauseView() {
         if (isActive()) {
             showPauseButton();
         } else {
@@ -78,6 +78,6 @@ public class AudioPlayerView
 
     @Override
     public void onPauseStateChanged() {
-        updateViewState();
+        updatePlayPauseView();
     }
 }
