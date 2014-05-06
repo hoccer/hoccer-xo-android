@@ -3,20 +3,15 @@ package com.hoccer.xo.android.content.audio;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import com.hoccer.xo.android.activity.ContactsActivity;
-import com.hoccer.xo.android.activity.MessagingActivity;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
-import android.content.IntentFilter;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +79,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
 //    private BroadcastReceiver xxx;
 
-    private void createNotification() {
+    private void addNotification() {
 
         Intent resultIntent = new Intent(mContext, ContactsActivity.class);
         PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -154,14 +149,21 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     public void play() {
-        mMediaPlayer.start();
-        setPaused(false);
-        setStopped(false);
-        notifyPauseStateChangedListeners();
+
+        int result = mAudioManager.requestAudioFocus(mAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            mMediaPlayer.start();
+            setPaused(false);
+            setStopped(false);
+            setCurrentMediaFilePath(mTempMediaFilePath);
+            addNotification();
+            notifyPauseStateChangedListeners();
+        } else {
+            LOG.debug("Audio focus request not granted");
+        }
     }
 
     public void pause() {
-        muteMusic();
         mMediaPlayer.pause();
         setPaused(true);
         setStopped(false);
@@ -169,11 +171,18 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     public void stop() {
+        mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
         mMediaPlayer.release();
         mMediaPlayer = null;
         setPaused(false);
         setStopped(true);
+        removeNotification();
         notifyPauseStateChangedListeners();
+    }
+
+    private void removeNotification() {
+        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(mId);
     }
 
     private boolean isSamePath(String mediaFilePath) {
@@ -188,15 +197,6 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         this.stopped = stopped;
     }
 
-    private void muteMusic() {
-
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(mId);
-
-        // Abandon audio focus when playback complete
-        mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
-    }
-
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         LOG.debug("onError(" + what + "," + extra + ")");
@@ -205,19 +205,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        int result = mAudioManager.requestAudioFocus(mAudioFocusChangeListener,
-                // Use the music stream.
-                AudioManager.STREAM_MUSIC,
-                // Request permanent focus.
-                AudioManager.AUDIOFOCUS_GAIN);
-
-        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            setCurrentMediaFilePath(mTempMediaFilePath);
-            play();
-            createNotification();
-        } else {
-            LOG.debug("Audio focus request not granted");
-        }
+        play();
     }
 
     @Override
