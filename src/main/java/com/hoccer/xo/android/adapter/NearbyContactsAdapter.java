@@ -1,7 +1,6 @@
 package com.hoccer.xo.android.adapter;
 
 import android.content.Context;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ import java.util.List;
 public class NearbyContactsAdapter extends BaseAdapter implements IXoContactListener, IXoMessageListener, IXoTransferListener {
     private XoClientDatabase mDatabase;
     private XoActivity mXoActivity;
-    Filter mFilter = null;
     private Logger LOG = null;
 
     private List<TalkClientContact> mNearbyContacts = new ArrayList<TalkClientContact>();
@@ -39,28 +37,6 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         mDatabase = db;
         mXoActivity = xoActivity;
         LOG = Logger.getLogger(getClass());
-
-        this.setFilter(new NearbyContactsAdapter.Filter() {
-            @Override
-            public boolean shouldShow(TalkClientContact contact) {
-                if (contact.isGroup()) {
-                    if (contact.isGroupInvolved() && contact.isGroupExisting() && contact.getGroupPresence().isTypeNearby()) {
-                        return true;
-                    }
-                } else if (!contact.isDeleted() && contact.isNearby()) {
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-
-    public Filter getFilter() {
-        return mFilter;
-    }
-
-    public void setFilter(Filter filter) {
-        this.mFilter = filter;
     }
 
     @Override
@@ -101,14 +77,12 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     public void retrieveDataFromDb() {
         try {
-            mNearbyContacts = mDatabase.findAllContacts();
-            if(mFilter != null) {
-                mNearbyContacts = filter(mNearbyContacts, mFilter);
-            }
-            for(TalkClientContact contact: mNearbyContacts) {
-                if (contact.isGroup()) {
-                    mNearbyContacts.set(0, contact);
-                }
+            mNearbyContacts = mDatabase.findAllNearbyGroupContacts();
+            mNearbyContacts.addAll(mDatabase.findAllNearbyClientContacts());
+
+            LOG.debug("######## found: " + mNearbyContacts.size());
+
+            for(TalkClientContact contact : mNearbyContacts) {
                 TalkClientDownload avatarDownload = contact.getAvatarDownload();
                 if(avatarDownload != null) {
                     mDatabase.refreshClientDownload(avatarDownload);
