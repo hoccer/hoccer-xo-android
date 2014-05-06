@@ -56,7 +56,7 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if(convertView == null) {
+        if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contact_client, null);
         }
         updateContact(convertView, (TalkClientContact) getItem(position));
@@ -79,12 +79,9 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         try {
             mNearbyContacts = mDatabase.findAllNearbyGroupContacts();
             mNearbyContacts.addAll(mDatabase.findAllNearbyClientContacts());
-
-            LOG.debug("######## found: " + mNearbyContacts.size());
-
-            for(TalkClientContact contact : mNearbyContacts) {
+            for (TalkClientContact contact : mNearbyContacts) {
                 TalkClientDownload avatarDownload = contact.getAvatarDownload();
-                if(avatarDownload != null) {
+                if (avatarDownload != null) {
                     mDatabase.refreshClientDownload(avatarDownload);
                 }
             }
@@ -171,8 +168,8 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     private List<TalkClientContact> filter(List<TalkClientContact> in, Filter filter) {
         ArrayList<TalkClientContact> res = new ArrayList<TalkClientContact>();
-        for(TalkClientContact contact: in) {
-            if(filter.shouldShow(contact)) {
+        for (TalkClientContact contact : in) {
+            if (filter.shouldShow(contact)) {
                 res.add(contact);
             }
         }
@@ -241,7 +238,7 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     @Override
     public void onDownloadFinished(TalkClientDownload download) {
-        if(download.isAvatar()) {
+        if (download.isAvatar()) {
             updateAdapter();
         }
     }
@@ -253,7 +250,7 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     @Override
     public void onUploadStarted(TalkClientUpload upload) {
-        if(upload.isAvatar()) {
+        if (upload.isAvatar()) {
             updateAdapter();
         }
     }
