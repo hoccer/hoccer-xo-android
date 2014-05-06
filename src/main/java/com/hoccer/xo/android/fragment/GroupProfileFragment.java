@@ -158,33 +158,36 @@ public class GroupProfileFragment extends XoFragment
     }
 
     private void configureOptionsMenuItems(Menu menu) {
-        MenuItem myProfile = menu.findItem(R.id.menu_my_profile);
-        myProfile.setVisible(true);
+        MenuItem profileItem = menu.findItem(R.id.menu_my_profile);
+        profileItem.setVisible(true);
 
-        MenuItem editGroup = menu.findItem(R.id.menu_group_profile_edit);
-        MenuItem rejectInvitation = menu.findItem(R.id.menu_group_profile_reject_invitation);
-        MenuItem joinGroup = menu.findItem(R.id.menu_group_profile_join);
-        MenuItem leaveGroup = menu.findItem(R.id.menu_group_profile_leave);
+        MenuItem musicItem = menu.findItem(R.id.menu_music_viewer);
+        musicItem.setVisible(true);
 
-        editGroup.setVisible(false);
-        rejectInvitation.setVisible(false);
-        joinGroup.setVisible(false);
-        leaveGroup.setVisible(false);
+        MenuItem editGroupItem = menu.findItem(R.id.menu_group_profile_edit);
+        MenuItem rejectInvitationItem = menu.findItem(R.id.menu_group_profile_reject_invitation);
+        MenuItem joinGroupItem = menu.findItem(R.id.menu_group_profile_join);
+        MenuItem leaveGroupItem = menu.findItem(R.id.menu_group_profile_leave);
+
+        editGroupItem.setVisible(false);
+        rejectInvitationItem.setVisible(false);
+        joinGroupItem.setVisible(false);
+        leaveGroupItem.setVisible(false);
 
         if (mMode == Mode.CREATE_GROUP) {
-            editGroup.setVisible(false);
+            editGroupItem.setVisible(false);
 
         } else {
             if (!mGroup.getGroupPresence().isTypeNearby()) {
                 if (mGroup.isEditable()) {
-                    editGroup.setVisible(true);
+                    editGroupItem.setVisible(true);
                 } else {
-                    editGroup.setVisible(false);
+                    editGroupItem.setVisible(false);
                     if (mGroup.isGroupInvited()) {
-                        rejectInvitation.setVisible(true);
-                        joinGroup.setVisible(true);
+                        rejectInvitationItem.setVisible(true);
+                        joinGroupItem.setVisible(true);
                     } else if (mGroup.isGroupJoined()) {
-                        leaveGroup.setVisible(true);
+                        leaveGroupItem.setVisible(true);
                     }
                 }
             }

@@ -124,6 +124,17 @@
                     android:value="com.hoccer.xo.android.activity.MessagingActivity"/>
         </activity>
 
+        <!-- MusicViewer activity -->
+        <activity
+                android:name="com.hoccer.xo.android.activity.MusicViewerActivity"
+                android:label="@string/app_name"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateHidden">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
+        </activity>
+
         <!-- Single Profile activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.SingleProfileActivity"

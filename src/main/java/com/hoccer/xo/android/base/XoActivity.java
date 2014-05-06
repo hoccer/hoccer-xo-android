@@ -18,13 +18,7 @@ import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.XoSoundPool;
-import com.hoccer.xo.android.activity.AboutActivity;
-import com.hoccer.xo.android.activity.GroupProfileActivity;
-import com.hoccer.xo.android.activity.LicensesActivity;
-import com.hoccer.xo.android.activity.MessagingActivity;
-import com.hoccer.xo.android.activity.PairingActivity;
-import com.hoccer.xo.android.activity.SingleProfileActivity;
-import com.hoccer.xo.android.activity.XoPreferenceActivity;
+import com.hoccer.xo.android.activity.*;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
 import com.hoccer.xo.android.content.ContentRegistry;
@@ -403,6 +397,9 @@ public abstract class XoActivity extends FragmentActivity {
                     e.printStackTrace();
                 }
                 break;
+            case R.id.menu_music_viewer:
+                showMusicViewer();
+                break;
             case R.id.menu_pair:
                 showPairing();
                 break;
@@ -672,6 +669,11 @@ public abstract class XoActivity extends FragmentActivity {
     public void showPairing() {
         LOG.debug("showPairing()");
         startActivity(new Intent(this, PairingActivity.class));
+    }
+
+    public void showMusicViewer() {
+        LOG.debug("showMusicViewer()");
+        startActivity(new Intent(this, MusicViewerActivity.class));
     }
 
     public void showAbout() {
