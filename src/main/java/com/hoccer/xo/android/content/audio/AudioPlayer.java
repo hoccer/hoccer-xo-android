@@ -9,6 +9,7 @@ import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import com.hoccer.xo.android.activity.ContactsActivity;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -39,6 +40,9 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     private String mTempMediaFilePath;
 
     private List<PauseStateChangedListener> pauseStateChangedListeners = new ArrayList<PauseStateChangedListener>();
+    private PendingIntent mResultPendingIntent;
+    private String mTitle;
+    private String mSubtitle;
 
     public static synchronized AudioPlayer get(Context context) {
         if (INSTANCE == null) {
@@ -79,27 +83,40 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
 //    private BroadcastReceiver xxx;
 
-    private void addNotification() {
-
-        Intent resultIntent = new Intent(mContext, ContactsActivity.class);
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(mContext, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-//        Intent nextIntent = new Intent("1");
-//        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(mContext, 0, nextIntent, 0);
+    private void updateNotification() {
 
         mBuilder = new NotificationCompat.Builder(mContext)
                 .setSmallIcon(R.drawable.ic_launcher)
-                .setContentTitle(mCurrentMediaFilePath)
-                .setContentText(mCurrentMediaFilePath)
+                .setContentTitle(mTitle)
+                .setContentText(mSubtitle)
                 .setAutoCancel(false)
                 .setOngoing(true)
-                .setContentIntent(resultPendingIntent);
-//                .addAction(R.drawable.ic_action_about, isPaused() ? "Pause" : "Play",nextPendingIntent);
+                .setContentIntent(mResultPendingIntent);
 
         mBuilder.setPriority(Notification.PRIORITY_MAX);
 
+        if(!isPaused()) {
+            mBuilder.addAction(R.drawable.ic_dark_pause, "", mResultPendingIntent);
+        } else {
+            mBuilder.addAction(R.drawable.ic_dark_play, "", mResultPendingIntent);
+        }
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(mId, mBuilder.build());
+    }
+
+    private void addNotification() {
+
+        Intent resultIntent = new Intent(mContext, ContactsActivity.class);
+        mResultPendingIntent = PendingIntent.getActivity(mContext, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        mTitle = mCurrentMediaFilePath.substring(mCurrentMediaFilePath.lastIndexOf("/") + 1);
+        mSubtitle = "Artist";
+
+        updateNotification();
+
+        Intent nextIntent = new Intent(mContext, );
+        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(mContext, 0, nextIntent, 0);
+
 
 
 //        IntentFilter filter = new IntentFilter();
@@ -167,6 +184,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         mMediaPlayer.pause();
         setPaused(true);
         setStopped(false);
+        updateNotification();
         notifyPauseStateChangedListeners();
     }
 
