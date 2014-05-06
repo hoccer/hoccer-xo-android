@@ -95,11 +95,18 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         TextView nameView = ViewHolderForAdapters.get(view, R.id.contact_name);
         AvatarView avatarView = ViewHolderForAdapters.get(view, R.id.contact_icon);
         TextView typeView = ViewHolderForAdapters.get(view, R.id.contact_type);
-
+        TextView lastMessageTimeView = (TextView) view.findViewById(R.id.contact_time);
+        TextView lastMessageText = (TextView) view.findViewById(R.id.contact_last_message);
+        TextView unseenView = (TextView) view.findViewById(R.id.contact_unseen_messages);
 
         nameView.setText(contact.getName());
         avatarView.setContact(contact);
-        // TODO: do we have only one type for nearby group?
+
+        typeView.setText("");
+        lastMessageText.setText("");
+        lastMessageTimeView.setText("");
+        unseenView.setText("");
+
         if (contact.isGroup()) {
             if (contact.isGroupInvited()) {
                 typeView.setText(R.string.common_group_invite);
@@ -119,8 +126,7 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
             Date messageTime = message.getTimestamp();
             SimpleDateFormat sdf = new SimpleDateFormat("EEE HH:mm");
             String lastMessageTime = sdf.format(messageTime);
-            TextView lastMessageTimeView = (TextView) view.findViewById(R.id.contact_time);
-            TextView lastMessageText = (TextView) view.findViewById(R.id.contact_last_message);
+
             lastMessageTimeView.setText(lastMessageTime);
             if (message.getAttachmentDownload() != null) {
                 TalkClientDownload attachment = message.getAttachmentDownload();
@@ -130,7 +136,6 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
                 lastMessageText.setText(message.getText());
             }
         }
-        TextView unseenView = (TextView) view.findViewById(R.id.contact_unseen_messages);
         if (unseenMessages > 0) {
             unseenView.setText(Long.toString(unseenMessages));
             unseenView.setVisibility(View.VISIBLE);
