@@ -1,7 +1,6 @@
 package com.hoccer.xo.android.content.audio;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -10,13 +9,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import com.hoccer.xo.android.activity.ContactsActivity;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
+
 
 public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
@@ -26,6 +28,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private final static Logger LOG = Logger.getLogger(MediaPlayerService.class);
 
     private int mId = 1;
+
+    private String mArtist = "";
+    private String mTitle = "";
 
     private AudioManager mAudioManager;
     private MediaPlayer mMediaPlayer = null;
@@ -39,9 +44,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private String mTempMediaFilePath;
 
     private PendingIntent mResultPendingIntent;
-
-    private String mTitle;
-    private String mSubtitle;
 
     private PendingIntent mPlayStateTogglePendingIntent;
     private final IBinder mBinder = new MediaPlayerBinder();
@@ -116,7 +118,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle(mTitle)
-                .setContentText(mSubtitle)
+                .setContentText(mArtist)
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setContentIntent(mResultPendingIntent);
@@ -139,10 +141,25 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         Intent resultIntent = new Intent(this, ContactsActivity.class);
         mResultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        mTitle = mCurrentMediaFilePath.substring(mCurrentMediaFilePath.lastIndexOf("/") + 1);
-        mSubtitle = "Artist";
+        String path = Uri.parse(mCurrentMediaFilePath).getPath();
 
+        updateMetaData(path);
         updateNotification();
+    }
+
+    private void updateMetaData(String path) {
+        MediaMetadataRetriever mediaDataBla = new MediaMetadataRetriever();
+        try {
+            mediaDataBla.setDataSource(path);
+            mArtist = mediaDataBla.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+            mTitle = mediaDataBla.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+        }catch(IllegalArgumentException e){
+            LOG.error("Failed to set media data! " + e.getMessage());
+        }
+
+        if (mTitle == null || mTitle.isEmpty()) {
+            mTitle = path.substring(path.lastIndexOf("/") + 1);
+        }
     }
 
     private void resetAndPrepareMediaPlayer(String mediaFilePath) {
@@ -222,6 +239,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
+        LOG.debug("onError(" + what + "," + extra + ")");
         LOG.debug("onError(" + what + "," + extra + ")");
         return false;
     }
