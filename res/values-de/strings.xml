@@ -18,13 +18,13 @@
     <string name="menu_my_profile">Mein Profil</string>
     <string name="menu_pair">Kontakt hinzufügen</string>
     <string name="menu_group_profile_add_person">Hinzufügen</string>
-    <string name="menu_music_viewer">Musik</string>
     <string name="menu_new_group">Gruppe erstellen</string>
     <string name="menu_scan_code">Code scannen</string>
     <string name="menu_show_code">Code anzeigen</string>
     <string name="menu_add_attachment">Anhang hinzufügen</string>
     <string name="menu_profile">Profil</string>
     <string name="menu_settings">Einstellungen</string>
+    <string name="menu_music_viewer">Musik</string>
     <string name="menu_about">Über uns</string>
     <string name="menu_reconnect">erneut verbinden</string>
     <string name="menu_quit">schließen</string>

@@ -161,9 +161,6 @@ public class GroupProfileFragment extends XoFragment
         MenuItem profileItem = menu.findItem(R.id.menu_my_profile);
         profileItem.setVisible(true);
 
-        MenuItem musicItem = menu.findItem(R.id.menu_music_viewer);
-        musicItem.setVisible(true);
-
         MenuItem editGroupItem = menu.findItem(R.id.menu_group_profile_edit);
         MenuItem rejectInvitationItem = menu.findItem(R.id.menu_group_profile_reject_invitation);
         MenuItem joinGroupItem = menu.findItem(R.id.menu_group_profile_join);
@@ -192,6 +189,9 @@ public class GroupProfileFragment extends XoFragment
                 }
             }
         }
+
+        MenuItem musicItem = menu.findItem(R.id.menu_music_viewer);
+        musicItem.setVisible(true);
     }
 
     @Override

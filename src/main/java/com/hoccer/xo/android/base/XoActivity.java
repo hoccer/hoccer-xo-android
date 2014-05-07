@@ -397,9 +397,6 @@ public abstract class XoActivity extends FragmentActivity {
                     e.printStackTrace();
                 }
                 break;
-            case R.id.menu_music_viewer:
-                showMusicViewer();
-                break;
             case R.id.menu_pair:
                 showPairing();
                 break;
@@ -414,6 +411,9 @@ public abstract class XoActivity extends FragmentActivity {
                 break;
             case R.id.menu_settings:
                 showPreferences();
+                break;
+            case R.id.menu_music_viewer:
+                showMusicViewer();
                 break;
             case R.id.menu_reconnect:
                 try {
