@@ -1,6 +1,11 @@
 package com.hoccer.xo.android.fragment;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +21,13 @@ import org.apache.log4j.Logger;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.hoccer.xo.android.content.audio.AudioPlayer;
+import com.hoccer.xo.android.content.audio.MediaPlayerService;
 
 public class MusicViewerFragment extends XoListFragment {
 
     private ArrayList<HashMap<String, String>> mSongsList = new ArrayList<HashMap<String, String>>();
 
-    private AudioPlayer mAudioPlayer;
+    private MediaPlayerService mMediaPlayerService;
 
     private final static Logger LOG = Logger.getLogger(MusicViewerFragment.class);
 
@@ -32,7 +37,9 @@ public class MusicViewerFragment extends XoListFragment {
 
         View view = inflater.inflate(R.layout.fragment_music_viewer, container, false);
 
-        mAudioPlayer = AudioPlayer.get(getXoActivity().getApplicationContext());
+        Intent intent = new Intent(getActivity(), MediaPlayerService.class);
+        getActivity().startService(intent);
+        bindService(intent);
 
         return view;
     }
@@ -79,10 +86,28 @@ public class MusicViewerFragment extends XoListFragment {
 
                 LOG.error(mSongsList.get(songIndex).values().toArray()[0].toString());
 
-                mAudioPlayer.start(mSongsList.get(songIndex).values().toArray()[0].toString());
+                mMediaPlayerService.start(mSongsList.get(songIndex).values().toArray()[0].toString());
 
                 getXoActivity().showFullscreenPlayer();
             }
         });
+    }
+
+    private void bindService(Intent intent){
+
+        ServiceConnection connection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
+                mMediaPlayerService = binder.getService();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mMediaPlayerService = null;
+            }
+        };
+
+        getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
     }
 }

@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import com.hoccer.xo.android.content.audio.AudioPlayer;
+import com.hoccer.xo.android.content.audio.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -32,7 +36,7 @@ public class FullscreenPlayerActivity extends Activity implements OnCompletionLi
     private TextView songCurrentDurationLabel;
     private TextView songTotalDurationLabel;
     // Media Player
-    private AudioPlayer mAudioPlayer;
+    private MediaPlayerService mMediaPlayerService;
     // Handler to update UI timer, progress bar etc,.
     private Handler mHandler = new Handler();
 
@@ -53,6 +57,10 @@ public class FullscreenPlayerActivity extends Activity implements OnCompletionLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.music_fullscreen_player);
 
+        Intent intent = new Intent(this, MediaPlayerService.class);
+        startService(intent);
+        bindService(intent);
+
         LOG.debug("------------------------- onCreate");
 
         // All player buttons
@@ -70,11 +78,9 @@ public class FullscreenPlayerActivity extends Activity implements OnCompletionLi
 //        songTotalDurationLabel = (TextView) findViewById(R.id.songTotalDurationLabel);
 
         // Mediaplayer
-        mAudioPlayer = AudioPlayer.get(this);
+//        mAudioPlayer = MediaPlayerService.get(this);
 
-        mTempFilePath = mAudioPlayer.getCurrentMediaFilePath();
 
-        songTitleLabel.setText(mTempFilePath);
 //        songManager = new SongsManager();
 //        utils = new Utilities();
 
@@ -100,13 +106,13 @@ public class FullscreenPlayerActivity extends Activity implements OnCompletionLi
 
                 LOG.error("------------------------- Play onClick");
                 // check for already playing
-                if(!mAudioPlayer.isPaused() && !mAudioPlayer.isStopped()){
-                    mAudioPlayer.pause();
+                if(!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()){
+                    mMediaPlayerService.pause();
                         // Changing button image to play button
                         btnPlay.setImageResource(R.drawable.ic_dark_play);
                 }else{
                     // Resume song
-                        mAudioPlayer.start(mTempFilePath);
+                    mMediaPlayerService.start(mTempFilePath);
                         // Changing button image to pause button
                         btnPlay.setImageResource(R.drawable.ic_dark_pause);
                 }
@@ -420,6 +426,31 @@ public class FullscreenPlayerActivity extends Activity implements OnCompletionLi
     public void onDestroy(){
         super.onDestroy();
 //        mp.release();
+    }
+
+    private void bindService(Intent intent){
+
+        ServiceConnection connection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
+                mMediaPlayerService = binder.getService();
+
+                mTempFilePath = mMediaPlayerService.getCurrentMediaFilePath();
+
+                songTitleLabel.setText(mTempFilePath);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mMediaPlayerService = null;
+            }
+        };
+
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+
+//        mPlayPauseButton = (ImageButton) findViewById(R.id.audio_play);
+//        mPlayPauseButton.setOnClickListener(this);
     }
 
 }
