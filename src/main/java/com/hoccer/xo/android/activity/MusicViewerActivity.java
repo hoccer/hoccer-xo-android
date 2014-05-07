@@ -1,7 +1,6 @@
 package com.hoccer.xo.android.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.MusicViewerFragment;
@@ -27,8 +26,7 @@ public class MusicViewerActivity extends XoActivity {
 
         enableUpNavigation();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        mMusicViewerFragment = (MusicViewerFragment) fragmentManager.findFragmentById(R.id.music_viewer_fragment);
+        mMusicViewerFragment = (MusicViewerFragment) getSupportFragmentManager().findFragmentById(R.id.music_viewer_fragment);
     }
 
     @Override
