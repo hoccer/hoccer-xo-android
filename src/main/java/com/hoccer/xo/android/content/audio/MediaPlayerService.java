@@ -1,31 +1,36 @@
 package com.hoccer.xo.android.content.audio;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Binder;
+import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import com.hoccer.xo.android.activity.ContactsActivity;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
+public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
-    private final static Logger LOG = Logger.getLogger(AudioPlayer.class);
+    public static final String PLAYSTATE_CHANGED_ACTION = "com.hoccer.xo.android.content.audio.playStateChangedAction";
 
-    private static AudioPlayer INSTANCE = null;
+    private static final String UPDATE_PLAYSTATE_ACTION = "com.hoccer.xo.android.content.audio.updatePlayStateAction";
+    private final static Logger LOG = Logger.getLogger(MediaPlayerService.class);
 
     private int mId = 1;
+
+    private String mArtist = "";
+    private String mTitle = "";
 
     private AudioManager mAudioManager;
     private MediaPlayer mMediaPlayer = null;
@@ -38,24 +43,20 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     private String mCurrentMediaFilePath;
     private String mTempMediaFilePath;
 
-    private List<PauseStateChangedListener> pauseStateChangedListeners = new ArrayList<PauseStateChangedListener>();
     private PendingIntent mResultPendingIntent;
-    private String mTitle;
-    private String mSubtitle;
+
     private PendingIntent mPlayStateTogglePendingIntent;
+    private final IBinder mBinder = new MediaPlayerBinder();
 
-    private static String TOGGLE_PLAYSTATE_ACTION = "com.hoccer.xo.android.content.audio.togglePlayStateAction";
-
-    public static synchronized AudioPlayer get(Context context) {
-        if (INSTANCE == null) {
-            INSTANCE = new AudioPlayer(context);
+    public class MediaPlayerBinder extends Binder {
+        public MediaPlayerService getService() {
+            return MediaPlayerService.this;
         }
-        return INSTANCE;
     }
 
-    private AudioPlayer(Context context) {
-        mContext = context;
-        mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+    @Override
+    public void onCreate(){
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         createBroadcastReceiver();
         createPlayStateTogglePendingIntent();
@@ -63,15 +64,15 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     private void registerPlayStateToggleIntentFilter() {
-        IntentFilter filter = new IntentFilter(TOGGLE_PLAYSTATE_ACTION);
-        mContext.registerReceiver(mReceiver, filter);
+        IntentFilter filter = new IntentFilter(UPDATE_PLAYSTATE_ACTION);
+        registerReceiver(mReceiver, filter);
     }
 
     private void createBroadcastReceiver() {
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(TOGGLE_PLAYSTATE_ACTION)) {
+                if (intent.getAction().equals(UPDATE_PLAYSTATE_ACTION)) {
                     if (isPaused()) {
                         play();
                     } else {
@@ -83,8 +84,8 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     private void createPlayStateTogglePendingIntent() {
-        Intent nextIntent = new Intent(TOGGLE_PLAYSTATE_ACTION);
-        mPlayStateTogglePendingIntent = PendingIntent.getBroadcast(mContext, 0, nextIntent, 0);
+        Intent nextIntent = new Intent(UPDATE_PLAYSTATE_ACTION);
+        mPlayStateTogglePendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent, 0);
     }
 
     private void createMediaPlayer() {
@@ -114,10 +115,10 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     private void updateNotification() {
 
-        mBuilder = new NotificationCompat.Builder(mContext)
+        mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setContentTitle(mTitle)
-                .setContentText(mSubtitle)
+                .setContentText(mArtist)
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setContentIntent(mResultPendingIntent);
@@ -129,26 +130,36 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         } else {
             mBuilder.addAction(R.drawable.ic_dark_play, "", mPlayStateTogglePendingIntent);
         }
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(mId, mBuilder.build());
+
+        startForeground(mId, mBuilder.build());
     }
 
     private BroadcastReceiver mReceiver;
 
     private void addNotification() {
 
-        Intent resultIntent = new Intent(mContext, ContactsActivity.class);
-        mResultPendingIntent = PendingIntent.getActivity(mContext, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent resultIntent = new Intent(this, ContactsActivity.class);
+        mResultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //TEST ------------------------------
-        // mContext.sendBroadcast(nextIntent);
-        //TEST END -----------------------------
+        String path = Uri.parse(mCurrentMediaFilePath).getPath();
 
-        mTitle = mCurrentMediaFilePath.substring(mCurrentMediaFilePath.lastIndexOf("/") + 1);
-        mSubtitle = "Artist";
-
+        updateMetaData(path);
         updateNotification();
+    }
 
+    private void updateMetaData(String path) {
+        MediaMetadataRetriever mediaDataBla = new MediaMetadataRetriever();
+        try {
+            mediaDataBla.setDataSource(path);
+            mArtist = mediaDataBla.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+            mTitle = mediaDataBla.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+        }catch(IllegalArgumentException e){
+            LOG.error("Failed to set media data! " + e.getMessage());
+        }
+
+        if (mTitle == null || mTitle.isEmpty()) {
+            mTitle = path.substring(path.lastIndexOf("/") + 1);
+        }
     }
 
     private void resetAndPrepareMediaPlayer(String mediaFilePath) {
@@ -186,7 +197,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
             setStopped(false);
             setCurrentMediaFilePath(mTempMediaFilePath);
             addNotification();
-            notifyPauseStateChangedListeners();
+            broadcastPlayState();
         } else {
             LOG.debug("Audio focus request not granted");
         }
@@ -197,7 +208,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         setPaused(true);
         setStopped(false);
         updateNotification();
-        notifyPauseStateChangedListeners();
+        broadcastPlayState();
     }
 
     public void stop() {
@@ -207,12 +218,11 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         setPaused(false);
         setStopped(true);
         removeNotification();
-        notifyPauseStateChangedListeners();
+        broadcastPlayState();
     }
 
     private void removeNotification() {
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(mId);
+        stopForeground(true);
     }
 
     private boolean isSamePath(String mediaFilePath) {
@@ -229,6 +239,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
+        LOG.debug("onError(" + what + "," + extra + ")");
         LOG.debug("onError(" + what + "," + extra + ")");
         return false;
     }
@@ -259,22 +270,13 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         this.mCurrentMediaFilePath = currentMediaFilePath;
     }
 
-    public interface PauseStateChangedListener {
-        void onPauseStateChanged();
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
     }
 
-    public void addPauseStateChangedListener(PauseStateChangedListener l) {
-        pauseStateChangedListeners.add(l);
+    private void broadcastPlayState() {
+        Intent intent = new Intent(PLAYSTATE_CHANGED_ACTION);
+        this.sendBroadcast(intent);
     }
-
-    public void removePauseStateChangedListener(PauseStateChangedListener l) {
-        pauseStateChangedListeners.remove(l);
-    }
-
-    private void notifyPauseStateChangedListeners() {
-        for (PauseStateChangedListener l : pauseStateChangedListeners) {
-            l.onPauseStateChanged();
-        }
-    }
-
 }

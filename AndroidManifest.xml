@@ -260,6 +260,8 @@
             </intent-filter>
         </receiver>
 
+        <service android:name="com.hoccer.xo.android.content.audio.MediaPlayerService"/>
+
     </application>
 
 </manifest>
