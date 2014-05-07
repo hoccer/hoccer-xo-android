@@ -3,8 +3,10 @@ package com.hoccer.xo.android.content.audio;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
@@ -17,9 +19,6 @@ import org.apache.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * Created by alexw on 28.04.14.
- */
 public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
     private final static Logger LOG = Logger.getLogger(AudioPlayer.class);
@@ -43,6 +42,9 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     private PendingIntent mResultPendingIntent;
     private String mTitle;
     private String mSubtitle;
+    private PendingIntent mPlayStateTogglePendingIntent;
+
+    private static String TOGGLE_PLAYSTATE_ACTION = "com.hoccer.xo.android.content.audio.togglePlayStateAction";
 
     public static synchronized AudioPlayer get(Context context) {
         if (INSTANCE == null) {
@@ -51,9 +53,38 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         return INSTANCE;
     }
 
-    public AudioPlayer(Context context) {
+    private AudioPlayer(Context context) {
         mContext = context;
         mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+
+        createBroadcastReceiver();
+        createPlayStateTogglePendingIntent();
+        registerPlayStateToggleIntentFilter();
+    }
+
+    private void registerPlayStateToggleIntentFilter() {
+        IntentFilter filter = new IntentFilter(TOGGLE_PLAYSTATE_ACTION);
+        mContext.registerReceiver(mReceiver, filter);
+    }
+
+    private void createBroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(TOGGLE_PLAYSTATE_ACTION)) {
+                    if (isPaused()) {
+                        play();
+                    } else {
+                        pause();
+                    }
+                }
+            }
+        };
+    }
+
+    private void createPlayStateTogglePendingIntent() {
+        Intent nextIntent = new Intent(TOGGLE_PLAYSTATE_ACTION);
+        mPlayStateTogglePendingIntent = PendingIntent.getBroadcast(mContext, 0, nextIntent, 0);
     }
 
     private void createMediaPlayer() {
@@ -81,8 +112,6 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         }
     };
 
-//    private BroadcastReceiver xxx;
-
     private void updateNotification() {
 
         mBuilder = new NotificationCompat.Builder(mContext)
@@ -95,47 +124,30 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
         mBuilder.setPriority(Notification.PRIORITY_MAX);
 
-        if(!isPaused()) {
-            mBuilder.addAction(R.drawable.ic_dark_pause, "", mResultPendingIntent);
+        if (!isPaused()) {
+            mBuilder.addAction(R.drawable.ic_dark_pause, "", mPlayStateTogglePendingIntent);
         } else {
-            mBuilder.addAction(R.drawable.ic_dark_play, "", mResultPendingIntent);
+            mBuilder.addAction(R.drawable.ic_dark_play, "", mPlayStateTogglePendingIntent);
         }
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(mId, mBuilder.build());
     }
+
+    private BroadcastReceiver mReceiver;
 
     private void addNotification() {
 
         Intent resultIntent = new Intent(mContext, ContactsActivity.class);
         mResultPendingIntent = PendingIntent.getActivity(mContext, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        //TEST ------------------------------
+        // mContext.sendBroadcast(nextIntent);
+        //TEST END -----------------------------
+
         mTitle = mCurrentMediaFilePath.substring(mCurrentMediaFilePath.lastIndexOf("/") + 1);
         mSubtitle = "Artist";
 
         updateNotification();
-
-        Intent nextIntent = new Intent(mContext, ContactsActivity.class);
-        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(mContext, 0, nextIntent, 0);
-
-
-
-//        IntentFilter filter = new IntentFilter();
-//        filter.addAction("1");
-//
-//        xxx = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                if (intent.getAction().equals("1")) {
-//                    //play
-//                    Log.d("bla", "play");
-//                } else {
-//                    //pause
-//                    Log.d( "bla", "pause");
-//                }
-//            }
-//        };
-//
-//        mContext.registerReceiver(xxx, filter);
 
     }
 
