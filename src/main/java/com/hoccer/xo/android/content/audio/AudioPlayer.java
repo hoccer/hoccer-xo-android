@@ -114,7 +114,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
         updateNotification();
 
-        Intent nextIntent = new Intent(mContext, );
+        Intent nextIntent = new Intent(mContext, ContactsActivity.class);
         PendingIntent nextPendingIntent = PendingIntent.getBroadcast(mContext, 0, nextIntent, 0);
 
 
