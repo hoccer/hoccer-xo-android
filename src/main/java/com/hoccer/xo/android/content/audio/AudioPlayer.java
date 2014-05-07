@@ -2,10 +2,16 @@ package com.hoccer.xo.android.content.audio;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+import com.hoccer.xo.android.activity.ContactsActivity;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -24,7 +30,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     private AudioManager mAudioManager;
     private MediaPlayer mMediaPlayer = null;
-    private Notification.Builder mBuilder;
+    private NotificationCompat.Builder mBuilder;
 
     private Context mContext;
     private boolean paused = false;
@@ -34,6 +40,9 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     private String mTempMediaFilePath;
 
     private List<PauseStateChangedListener> pauseStateChangedListeners = new ArrayList<PauseStateChangedListener>();
+    private PendingIntent mResultPendingIntent;
+    private String mTitle;
+    private String mSubtitle;
 
     public static synchronized AudioPlayer get(Context context) {
         if (INSTANCE == null) {
@@ -72,25 +81,62 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         }
     };
 
-    private void createNotification() {
+//    private BroadcastReceiver xxx;
 
-//        final Intent emptyIntent = new Intent(mContext, AudioPlayer.class);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, emptyIntent, 0);
+    private void updateNotification() {
+
+        mBuilder = new NotificationCompat.Builder(mContext)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle(mTitle)
+                .setContentText(mSubtitle)
+                .setAutoCancel(false)
+                .setOngoing(true)
+                .setContentIntent(mResultPendingIntent);
+
+        mBuilder.setPriority(Notification.PRIORITY_MAX);
+
+        if(!isPaused()) {
+            mBuilder.addAction(R.drawable.ic_dark_pause, "", mResultPendingIntent);
+        } else {
+            mBuilder.addAction(R.drawable.ic_dark_play, "", mResultPendingIntent);
+        }
+        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(mId, mBuilder.build());
+    }
+
+    private void addNotification() {
+
+        Intent resultIntent = new Intent(mContext, ContactsActivity.class);
+        mResultPendingIntent = PendingIntent.getActivity(mContext, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        mTitle = mCurrentMediaFilePath.substring(mCurrentMediaFilePath.lastIndexOf("/") + 1);
+        mSubtitle = "Artist";
+
+        updateNotification();
+
+        Intent nextIntent = new Intent(mContext, ContactsActivity.class);
+        PendingIntent nextPendingIntent = PendingIntent.getBroadcast(mContext, 0, nextIntent, 0);
+
+
+
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction("1");
 //
-//        mBuilder = new Notification.Builder(mContext)
-//                .setSmallIcon(R.drawable.logo)
-//                .setContentTitle("Awesome Author")
-//                .setContentText("Awesome Track")
-//                .setContentIntent(pendingIntent)
-//                .setAutoCancel(false)
-//                .addAction(R.drawable.btn01, "Click", pendingIntent)
-//                .addAction(R.drawable.btn02, "Me", pendingIntent)
-//                .addAction(R.drawable.btn03, "Please", pendingIntent);
+//        xxx = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                if (intent.getAction().equals("1")) {
+//                    //play
+//                    Log.d("bla", "play");
+//                } else {
+//                    //pause
+//                    Log.d( "bla", "pause");
+//                }
+//            }
+//        };
 //
-//        mBuilder.setPriority(100);
-//
-//        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-//        notificationManager.notify(mId, mBuilder.build());
+//        mContext.registerReceiver(xxx, filter);
+
     }
 
     private void resetAndPrepareMediaPlayer(String mediaFilePath) {
@@ -108,7 +154,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         if (isResumable(mediaFilePath)) {
             play();
         } else {
-            if(mMediaPlayer == null) {
+            if (mMediaPlayer == null) {
                 createMediaPlayer();
             }
             resetAndPrepareMediaPlayer(mediaFilePath);
@@ -120,26 +166,41 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
     public void play() {
-        mMediaPlayer.start();
-        setPaused(false);
-        setStopped(false);
-        notifyPauseStateChangedListeners();
+
+        int result = mAudioManager.requestAudioFocus(mAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            mMediaPlayer.start();
+            setPaused(false);
+            setStopped(false);
+            setCurrentMediaFilePath(mTempMediaFilePath);
+            addNotification();
+            notifyPauseStateChangedListeners();
+        } else {
+            LOG.debug("Audio focus request not granted");
+        }
     }
 
     public void pause() {
-        muteMusic();
         mMediaPlayer.pause();
         setPaused(true);
         setStopped(false);
+        updateNotification();
         notifyPauseStateChangedListeners();
     }
 
     public void stop() {
+        mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
         mMediaPlayer.release();
         mMediaPlayer = null;
         setPaused(false);
         setStopped(true);
+        removeNotification();
         notifyPauseStateChangedListeners();
+    }
+
+    private void removeNotification() {
+        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(mId);
     }
 
     private boolean isSamePath(String mediaFilePath) {
@@ -150,17 +211,8 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
         this.paused = paused;
     }
 
-    private void setStopped(boolean stopped){
+    private void setStopped(boolean stopped) {
         this.stopped = stopped;
-    }
-
-    private void muteMusic() {
-
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(mId);
-
-        // Abandon audio focus when playback complete
-        mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
     }
 
     @Override
@@ -171,19 +223,7 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        int result = mAudioManager.requestAudioFocus(mAudioFocusChangeListener,
-                // Use the music stream.
-                AudioManager.STREAM_MUSIC,
-                // Request permanent focus.
-                AudioManager.AUDIOFOCUS_GAIN);
-
-        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            createNotification();
-            setCurrentMediaFilePath(mTempMediaFilePath);
-            play();
-        } else {
-            LOG.debug("Audio focus request not granted");
-        }
+        play();
     }
 
     @Override
@@ -201,10 +241,6 @@ public class AudioPlayer implements MediaPlayer.OnPreparedListener, MediaPlayer.
 
     public String getCurrentMediaFilePath() {
         return mCurrentMediaFilePath;
-    }
-
-    public void removePauseStateChangedListeners() {
-        pauseStateChangedListeners.clear();
     }
 
     private void setCurrentMediaFilePath(String currentMediaFilePath) {
