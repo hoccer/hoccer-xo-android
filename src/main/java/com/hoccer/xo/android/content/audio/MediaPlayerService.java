@@ -128,8 +128,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         } else {
             mBuilder.addAction(R.drawable.ic_dark_play, "", mPlayStateTogglePendingIntent);
         }
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(mId, mBuilder.build());
+
+        startForeground(mId, mBuilder.build());
     }
 
     private BroadcastReceiver mReceiver;
@@ -205,8 +205,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     private void removeNotification() {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(mId);
+        stopForeground(true);
     }
 
     private boolean isSamePath(String mediaFilePath) {
