@@ -36,7 +36,6 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
         if (contentObject.getContentDataUrl() != null) {
             updateFilenameText(view, contentObject, isLightTheme);
             view.setFile(contentObject.getContentDataUrl());
-            view.updatePlayPauseView();
         }
     }
 
