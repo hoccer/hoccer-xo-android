@@ -6,7 +6,7 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.MusicViewerFragment;
 import com.hoccer.xo.release.R;
 
-public class MusicViewerActivity extends XoActivity {
+public class AudioAttachmentListActivity extends XoActivity {
 
     private MusicViewerFragment mMusicViewerFragment;
 

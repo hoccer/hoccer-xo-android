@@ -668,7 +668,7 @@ public abstract class XoActivity extends FragmentActivity {
 
     public void showMusicViewer() {
         LOG.debug("showMusicViewer()");
-        startActivity(new Intent(this, MusicViewerActivity.class));
+        startActivity(new Intent(this, AudioAttachmentListActivity.class));
     }
 
     public void showFullscreenPlayer() {

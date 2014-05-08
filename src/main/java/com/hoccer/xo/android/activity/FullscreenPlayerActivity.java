@@ -184,7 +184,7 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
 
     public void onStartTrackingTouch(SeekBar seekBar) {
         mHandler.removeCallbacks(mUpdateTimeTask);
-        mUpdateTimeTask = null;
+//        mUpdateTimeTask = null;
         LOG.error("------------------------- onStartTrackingTouch");
     }
 
