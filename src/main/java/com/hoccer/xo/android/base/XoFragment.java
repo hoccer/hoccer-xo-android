@@ -4,7 +4,6 @@ import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.android.XoSoundPool;
 import com.hoccer.xo.android.service.IXoClientService;
 
 import org.apache.log4j.Logger;
@@ -33,10 +32,6 @@ public abstract class XoFragment extends Fragment implements IXoFragment {
 
     public XoClient getXoClient() {
         return XoApplication.getXoClient();
-    }
-
-    public XoSoundPool getXoSoundPool() {
-        return XoApplication.getXoSoundPool();
     }
 
     public File getAvatarDirectory() {

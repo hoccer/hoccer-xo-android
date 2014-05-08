@@ -41,8 +41,6 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
     private static IXoClientHost CLIENT_HOST = null;
     /** global xo client (initialized in onCreate) */
     private static XoClient CLIENT = null;
-    /** global xo sound pool for system sounds (initialized in onCreate) */
-    private static XoSoundPool SOUND_POOL = null;
     /** root of user-visible storage (initialized in onCreate) */
     private static File EXTERNAL_STORAGE = null;
     /** root of app-private storage (initialized in onCreate) */
@@ -57,10 +55,6 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
     /** @return the xo client */
     public static XoClient getXoClient() {
         return CLIENT;
-    }
-    /** @return the xo sound pool */
-    public static XoSoundPool getXoSoundPool() {
-        return SOUND_POOL;
     }
     /**
      * @return user-visible storage directory
@@ -245,9 +239,6 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
 //        client.setEncryptedUploadDirectory(getEncryptedUploadDirectory().toString()); //TODO: to be deleted encryption happens on the fly now
         client.setEncryptedDownloadDirectory(getEncryptedDownloadDirectory().toString());
         CLIENT = client;
-
-        // create sound pool instance
-        SOUND_POOL = new XoSoundPool(this);
     }
 
     @Override

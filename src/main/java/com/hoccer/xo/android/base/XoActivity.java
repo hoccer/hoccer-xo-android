@@ -19,7 +19,6 @@ import com.hoccer.talk.content.IContentObject;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
-import com.hoccer.xo.android.XoSoundPool;
 import com.hoccer.xo.android.activity.*;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
@@ -142,10 +141,6 @@ public abstract class XoActivity extends Activity {
 
     public XoClient getXoClient() {
         return XoApplication.getXoClient();
-    }
-
-    public XoSoundPool getXoSoundPool() {
-        return XoApplication.getXoSoundPool();
     }
 
     public ScheduledExecutorService getBackgroundExecutor() {

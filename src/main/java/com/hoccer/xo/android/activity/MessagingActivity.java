@@ -12,8 +12,6 @@ import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.clipboard.Clipboard;
 import com.hoccer.xo.android.fragment.CompositionFragment;
 import com.hoccer.xo.android.fragment.MessagingFragment;
-import com.hoccer.xo.android.gesture.Gestures;
-import com.hoccer.xo.android.gesture.MotionInterpreter;
 import com.hoccer.xo.release.R;
 
 import android.app.ActionBar;
@@ -37,8 +35,6 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
     TalkClientContact mContact;
     private IContentObject mClipboardAttachment;
     private  getContactIdInConversation m_checkIdReceiver;
-
-    private MotionInterpreter mMotionInterpreter;
 
     @Override
     protected int getLayoutResource() {
@@ -73,8 +69,6 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
         filter.addAction("CHECK_ID_IN_CONVERSATION");
         m_checkIdReceiver = new getContactIdInConversation();
         registerReceiver(m_checkIdReceiver, filter);
-
-        mMotionInterpreter = new MotionInterpreter(Gestures.Transaction.SHARE, this, mCompositionFragment);
     }
 
     @Override
@@ -102,7 +96,6 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
             }
         }
 
-        mMotionInterpreter.activate();
         getXoClient().registerContactListener(this);
     }
 
@@ -111,7 +104,6 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
         LOG.debug("onPause()");
         super.onPause();
 
-        mMotionInterpreter.deactivate();
         getXoClient().unregisterContactListener(this);
     }
 

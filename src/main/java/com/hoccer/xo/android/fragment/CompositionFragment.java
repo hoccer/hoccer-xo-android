@@ -6,8 +6,6 @@ import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.SelectedContent;
-import com.hoccer.xo.android.gesture.Gestures;
-import com.hoccer.xo.android.gesture.MotionGestureListener;
 import com.hoccer.xo.release.R;
 
 import android.app.AlertDialog;
@@ -27,7 +25,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class CompositionFragment extends XoFragment implements View.OnClickListener,
-        View.OnLongClickListener, MotionGestureListener {
+        View.OnLongClickListener {
 
     private EditText mTextEdit;
 
@@ -209,17 +207,6 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             clearComposedMessage();
         }
         return longpressHandled;
-    }
-
-    @Override
-    public void onMotionGesture(int pType) {
-        String gestureName = Gestures.GESTURE_NAMES.get(pType);
-        LOG.debug("Received gesture of type: " + gestureName);
-
-        if (isComposed()) {
-            getXoSoundPool().playThrowSound();
-            sendComposedMessage();
-        }
     }
 
     private class AddAttachmentOnClickListener implements View.OnClickListener {
