@@ -103,10 +103,9 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginBottom="20dp"
             android:layout_above="@id/player_footer_bg"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"/>
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"/>
 
     <!-- Timer Display -->
     <LinearLayout
@@ -124,7 +123,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="left"
-                android:textColor="#eeeeee"
+                android:textColor="#ff8e8e8e"
                 android:textStyle="bold"/>
         <!-- Total Duration Label -->
         <TextView
@@ -133,8 +132,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:textColor="#04cbde"
+                android:textColor="#ff8e8e8e"
                 android:textStyle="bold"/>
+
     </LinearLayout>
 
     <!-- Repeat / Shuffle buttons -->
@@ -161,4 +161,7 @@
                 android:layout_marginLeft="5dp"
                 android:background="@null"/>
     </LinearLayout>
+
+    <!-- Repeat / Shuffle buttons -->
+
 </RelativeLayout>
