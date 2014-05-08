@@ -87,8 +87,6 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
 
             @Override
             public void onClick(View view) {
-
-                LOG.error("------------------------- Play onClick");
                 if (!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
                     mMediaPlayerService.pause();
                     mButtonPlay.setImageResource(R.drawable.ic_dark_play);
@@ -130,7 +128,7 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
 
             @Override
             public void onClick(View view) {
-                LOG.error("------------------------- Prev onClick");
+                mMediaPlayerService.setSeekPosition(0);
             }
         });
 
