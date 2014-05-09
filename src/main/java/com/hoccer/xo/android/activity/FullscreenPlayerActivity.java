@@ -1,9 +1,6 @@
 package com.hoccer.xo.android.activity;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.*;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
@@ -18,7 +15,7 @@ import com.hoccer.xo.android.content.audio.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
-public class FullscreenPlayerActivity extends XoActivity implements OnCompletionListener, SeekBar.OnSeekBarChangeListener {
+public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSeekBarChangeListener {
 
     private ImageButton mButtonPlay;
     private ImageButton mButtonNext;
@@ -32,6 +29,7 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
     private TextView mSongTotalDurationLabel;
 
     private MediaPlayerService mMediaPlayerService;
+    private BroadcastReceiver mBroadcastReceiver;
 
     private Handler mHandler = new Handler();
 
@@ -72,11 +70,11 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
 
         mSongProgressBar.setOnSeekBarChangeListener(this);
 
-//        mMediaPlayerService.registerOnCompletitionListener(this);
 
         mSongProgressBar.setProgress(0);
         mSongProgressBar.setMax(100);
 
+        createBroadcastReceiver();
         updateProgressBar();
 
         mButtonPlay.setOnClickListener(new View.OnClickListener() {
@@ -136,17 +134,22 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
     private Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
 
-            long totalDuration = mMediaPlayerService.getTotalDuration();
-            long currentDuration = mMediaPlayerService.getCurrentPosition();
+            try {
+                long totalDuration = mMediaPlayerService.getTotalDuration();
+                long currentDuration = mMediaPlayerService.getCurrentPosition();
 
-            mSongTotalDurationLabel.setText("" + milliSecondsToTimer(totalDuration));
-            mSongCurrentDurationLabel.setText("" + milliSecondsToTimer(currentDuration));
+                mSongTotalDurationLabel.setText("" + milliSecondsToTimer(totalDuration));
+                mSongCurrentDurationLabel.setText("" + milliSecondsToTimer(currentDuration));
 
-            int progress = getProgressPercentage(currentDuration, totalDuration);
+                int progress = getProgressPercentage(currentDuration, totalDuration);
 
-            mSongProgressBar.setProgress(progress);
+                mSongProgressBar.setProgress(progress);
 
-            mHandler.postDelayed(this, 100);
+                mHandler.postDelayed(this, 100);
+            }
+            catch(Exception e){
+                LOG.error(e);
+            }
         }
     };
 
@@ -167,11 +170,6 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
         mMediaPlayerService.setSeekPosition(seekBar.getProgress());
 
         updateProgressBar();
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
-        // used for shuffling or repeat later on
     }
 
     private void bindService(Intent intent){
@@ -234,17 +232,7 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
         return percentage.intValue();
     }
 
-    @Override
-    public void onBackPressed(){
-
-        super.onBackPressed();
-
-        mHandler.removeCallbacks(mUpdateTimeTask);
-        mUpdateTimeTask = null;
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean focused){
+    private void updatePlayPauseView(){
         if(mMediaPlayerService != null) {
             if (!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
                 mButtonPlay.setImageResource(R.drawable.ic_dark_pause);
@@ -252,5 +240,30 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
                 mButtonPlay.setImageResource(R.drawable.ic_dark_play);
             }
         }
+    }
+
+    @Override
+    public void onBackPressed(){
+
+        super.onBackPressed();
+
+        mHandler.removeCallbacks(mUpdateTimeTask);
+        mUpdateTimeTask = null;
+
+        unregisterReceiver(mBroadcastReceiver);
+        mBroadcastReceiver = null;
+    }
+
+    private void createBroadcastReceiver() {
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(MediaPlayerService.PLAYSTATE_CHANGED_ACTION)) {
+                    updatePlayPauseView();
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
+        registerReceiver(mBroadcastReceiver, filter);
     }
 }

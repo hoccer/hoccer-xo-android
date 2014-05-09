@@ -278,7 +278,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     public long getTotalDuration() {
-        return mMediaPlayer.getDuration();
+        return (isStopped()) ? 0 : mMediaPlayer.getDuration();
     }
 
     public long getCurrentPosition() {
