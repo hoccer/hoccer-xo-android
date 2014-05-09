@@ -190,7 +190,7 @@ public class GroupProfileFragment extends XoFragment
             }
         }
 
-        MenuItem musicItem = menu.findItem(R.id.menu_music_viewer);
+        MenuItem musicItem = menu.findItem(R.id.menu_audio_attachment_list);
         musicItem.setVisible(true);
     }
 

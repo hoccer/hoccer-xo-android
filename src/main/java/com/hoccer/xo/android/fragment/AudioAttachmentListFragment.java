@@ -23,13 +23,13 @@ import java.util.HashMap;
 
 import com.hoccer.xo.android.content.audio.MediaPlayerService;
 
-public class MusicViewerFragment extends XoListFragment {
+public class AudioAttachmentListFragment extends XoListFragment {
 
     private ArrayList<HashMap<String, String>> mSongsList = new ArrayList<HashMap<String, String>>();
 
     private MediaPlayerService mMediaPlayerService;
 
-    private final static Logger LOG = Logger.getLogger(MusicViewerFragment.class);
+    private final static Logger LOG = Logger.getLogger(AudioAttachmentListFragment.class);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

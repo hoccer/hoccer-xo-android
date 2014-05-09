@@ -407,8 +407,8 @@ public abstract class XoActivity extends FragmentActivity {
             case R.id.menu_settings:
                 showPreferences();
                 break;
-            case R.id.menu_music_viewer:
-                showMusicViewer();
+            case R.id.menu_audio_attachment_list:
+                showAudioAttachmentList();
                 break;
             case R.id.menu_reconnect:
                 try {
@@ -666,8 +666,8 @@ public abstract class XoActivity extends FragmentActivity {
         startActivity(new Intent(this, PairingActivity.class));
     }
 
-    public void showMusicViewer() {
-        LOG.debug("showMusicViewer()");
+    public void showAudioAttachmentList() {
+        LOG.debug("showAudioAttachmentList()");
         startActivity(new Intent(this, AudioAttachmentListActivity.class));
     }
 
