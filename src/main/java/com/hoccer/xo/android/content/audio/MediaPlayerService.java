@@ -232,10 +232,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mMediaPlayer.seekTo(currentPosition);
     }
 
-    public void registerOnCompletitionListener(MediaPlayer.OnCompletionListener listener){
-        mMediaPlayer.setOnCompletionListener(listener);
-    }
-
     private void removeNotification() {
         stopForeground(true);
     }
@@ -282,7 +278,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     public long getCurrentPosition() {
-        return mMediaPlayer.getCurrentPosition();
+        return (isStopped()) ? 0 :  mMediaPlayer.getCurrentPosition();
     }
 
     public String getCurrentMediaFilePath() {

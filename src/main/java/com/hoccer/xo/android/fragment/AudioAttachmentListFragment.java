@@ -82,8 +82,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 // getting listitem index
                 int songIndex = position;
 
-                LOG.error("strangely, this worked now. Here is where you should start the Fullscreen Player");
-
                 LOG.error(mSongsList.get(songIndex).values().toArray()[0].toString());
 
                 mMediaPlayerService.start(mSongsList.get(songIndex).values().toArray()[0].toString());

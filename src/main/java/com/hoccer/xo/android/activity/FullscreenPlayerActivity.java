@@ -27,6 +27,7 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
     private TextView mSongTitleLabel;
     private TextView mSongCurrentDurationLabel;
     private TextView mSongTotalDurationLabel;
+    private long mTotalDuration = 0;
 
     private MediaPlayerService mMediaPlayerService;
     private BroadcastReceiver mBroadcastReceiver;
@@ -69,7 +70,6 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
         mSongTotalDurationLabel = (TextView) findViewById(R.id.songTotalDurationLabel);
 
         mSongProgressBar.setOnSeekBarChangeListener(this);
-
 
         mSongProgressBar.setProgress(0);
         mSongProgressBar.setMax(100);
@@ -135,13 +135,11 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
         public void run() {
 
             try {
-                long totalDuration = mMediaPlayerService.getTotalDuration();
                 long currentDuration = mMediaPlayerService.getCurrentPosition();
 
-                mSongTotalDurationLabel.setText("" + milliSecondsToTimer(totalDuration));
                 mSongCurrentDurationLabel.setText("" + milliSecondsToTimer(currentDuration));
 
-                int progress = getProgressPercentage(currentDuration, totalDuration);
+                int progress = getProgressPercentage(currentDuration, mTotalDuration);
 
                 mSongProgressBar.setProgress(progress);
 
@@ -188,6 +186,8 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
                 String labelText = ( artistName.equals("") && trackName.equals("") ) ? mTempFilePath : (artistName + "\n" + trackName);
 
                 mSongTitleLabel.setText(labelText);
+                mTotalDuration = mMediaPlayerService.getTotalDuration();
+                mSongTotalDurationLabel.setText("" + milliSecondsToTimer(mTotalDuration));
             }
 
             @Override
