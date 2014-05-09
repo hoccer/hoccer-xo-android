@@ -297,7 +297,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     public long getCurrentPosition() {
-        return mMediaPlayer.getCurrentPosition();
+        return (isStopped()) ? 0 :  mMediaPlayer.getCurrentPosition();
     }
 
     public String getCurrentMediaFilePath() {
