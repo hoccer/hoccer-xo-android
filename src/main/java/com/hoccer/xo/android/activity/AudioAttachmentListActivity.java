@@ -25,7 +25,7 @@ public class AudioAttachmentListActivity extends XoActivity {
         super.onCreate(savedInstanceState);
 
         enableUpNavigation();
-
+        LOG.error("BAZINGA AudioAttachmentListActivity");
         mAudioAttachmentListFragment = (AudioAttachmentListFragment) getSupportFragmentManager().findFragmentById(R.id.audio_attachment_list_fragment);
     }
 

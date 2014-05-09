@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.model.TalkAttachment;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
@@ -16,13 +17,15 @@ import java.util.List;
  */
 public class AttachmentListAdapter extends XoAdapter {
 
-    private List<TalkAttachment> mAttachments;
+    private List<TalkClientDownload> mAttachments;
     private int mViewResourceId;
     private int mTextViewId;
 
-    public AttachmentListAdapter(XoActivity pXoContext, List<TalkAttachment> pAttachments, int pViewResourceId, int pTextViewId){
+    public AttachmentListAdapter(XoActivity pXoContext, List<TalkClientDownload> pAttachments, int pViewResourceId, int pTextViewId){
         super(pXoContext);
+        LOG.error("AttachmentListAdapter contructor");
         mAttachments = pAttachments;
+        LOG.error("Attachments: " + mAttachments.size());
         mViewResourceId = pViewResourceId;
         mTextViewId = pTextViewId;
     }
@@ -33,7 +36,7 @@ public class AttachmentListAdapter extends XoAdapter {
     }
 
     @Override
-    public TalkAttachment getItem(int position) {
+    public TalkClientDownload getItem(int position) {
         return mAttachments.get(position);
     }
 
@@ -48,14 +51,14 @@ public class AttachmentListAdapter extends XoAdapter {
         if (convertView != null) {
             attachmentView = convertView;
         } else {
-            attachmentView = mInflater.inflate(mViewResourceId, parent);
+            attachmentView = mInflater.inflate(mViewResourceId, null);
         }
         ((TextView) attachmentView.findViewById(mTextViewId)).setText(getDisplayName(position));
         return attachmentView;
     }
 
     private String getDisplayName(int pPosition) {
-        TalkAttachment attachment = mAttachments.get(pPosition);
+        TalkClientDownload attachment = mAttachments.get(pPosition);
         if (attachment.getMediaType().equalsIgnoreCase("audio")) {
             attachment.getFileName();
         }

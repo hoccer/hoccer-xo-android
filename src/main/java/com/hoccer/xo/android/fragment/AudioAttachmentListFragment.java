@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.model.TalkAttachment;
 import com.hoccer.xo.android.adapter.AttachmentListAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
@@ -26,21 +27,21 @@ public class AudioAttachmentListFragment extends XoListFragment {
     private MediaPlayerService mMediaPlayerService;
 
     private final static Logger LOG = Logger.getLogger(AudioAttachmentListFragment.class);
-    private List<TalkAttachment> mAudioAttachmentList;
+    private List<TalkClientDownload> mAudioAttachmentList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.fragment_audio_attachment_list, container, false);
-
+        LOG.error("BAZINGA: AudioAttachmentListFragment.onCreateView");
         return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-
+        LOG.error("BAZINGA: AudioAttachmentListFragment.onActivityCreated");
         Intent intent = new Intent(getActivity(), MediaPlayerService.class);
         getActivity().startService(intent);
         bindService(intent);
@@ -48,7 +49,9 @@ public class AudioAttachmentListFragment extends XoListFragment {
         ListAdapter adapter;
 
         try {
-            mAudioAttachmentList = getXoDatabase().findAttachmentsByMediaType("audio");
+            LOG.error("BAZINGA: AudioAttachmentListFragment.onActivityCreated: lade mAudioAttachmentList");
+            //mAudioAttachmentList = getXoDatabase().findAttachmentsByMediaType("audio");
+            mAudioAttachmentList = getXoDatabase().findClientDownloadByMediaType("audio");
             adapter = new AttachmentListAdapter(getXoActivity(),
                     mAudioAttachmentList,R.layout.music_viewer_item, R.id.songTitle);
         } catch (SQLException e) {
@@ -64,7 +67,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                mMediaPlayerService.start(mAudioAttachmentList.get(position).getUrl());
+                mMediaPlayerService.start(mAudioAttachmentList.get(position).getContentDataUrl());
 
                 getXoActivity().showFullscreenPlayer();
             }

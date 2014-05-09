@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-
-
-    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
-        <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/image_album"
-                android:src="@drawable/ic_launcher"
-                android:layout_gravity="center"/>
-        <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1">
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Medium Text"
-                    android:id="@+id/title_text"/>
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Small Text"
-                    android:id="@+id/artist_text"/>
-        </LinearLayout>
-        <ImageButton
-                android:layout_width="wrap_content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/btn_play_pause"
-                android:src="@drawable/ic_light_av_play"
-                android:layout_gravity="right"
-                android:layout_marginRight="0dp"
-                android:background="@android:color/transparent"/>
+                android:padding="10dp">
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:id="@+id/hoccer_music_image"
+            android:src="@drawable/ic_notification"
+            android:layout_gravity="center"
+            android:layout_alignParentLeft="true"
+            />
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_toRightOf="@+id/hoccer_music_image"
+            android:gravity="center_vertical"
+            android:visibility="gone"
+            android:id="@+id/media_metadata_layout">
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/media_metadata_title_text"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/media_metadata_artist_text"/>
     </LinearLayout>
-</LinearLayout>
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="fill_parent"
+              android:textAppearance="?android:attr/textAppearanceMedium"
+              android:layout_toRightOf="@id/hoccer_music_image"
+              android:gravity="center"
+              android:visibility="gone"
+              android:id="@+id/filename_text"/>
+    <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/btn_play_pause"
+            android:src="@drawable/ic_light_av_play"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/transparent"/>
+</RelativeLayout>

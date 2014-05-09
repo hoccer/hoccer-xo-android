@@ -15,23 +15,22 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.view.View;
 import android.widget.RemoteViews;
 import com.hoccer.xo.android.activity.ContactsActivity;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
+import java.beans.Visibility;
+
 
 public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
+    public static final int MUSIC_PLAYER_NOTIFICATION_ID = 1;
     public static final String PLAYSTATE_CHANGED_ACTION = "com.hoccer.xo.android.content.audio.playStateChangedAction";
 
     private static final String UPDATE_PLAYSTATE_ACTION = "com.hoccer.xo.android.content.audio.updatePlayStateAction";
-    private final static Logger LOG = Logger.getLogger(MediaPlayerService.class);
-
-    private int mId = 1;
-
-    private String mArtist = "";
-    private String mTitle = "";
+    private static final Logger LOG = Logger.getLogger(MediaPlayerService.class);
 
     private AudioManager mAudioManager;
     private MediaPlayer mMediaPlayer = null;
@@ -47,6 +46,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private PendingIntent mPlayStateTogglePendingIntent;
     private final IBinder mBinder = new MediaPlayerBinder();
+    private MediaMetaData mMediaMetaData;
+    private CharSequence mFileName;
+    private RemoteViews mNotificationViews;
 
     public class MediaPlayerBinder extends Binder {
         public MediaPlayerService getService() {
@@ -55,7 +57,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         createBroadcastReceiver();
@@ -74,7 +76,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(UPDATE_PLAYSTATE_ACTION)) {
                     if (isPaused()) {
-                        play();
+                        play(true);
                     } else {
                         pause();
                     }
@@ -114,55 +116,63 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     };
 
     private void updateNotification() {
-
-        RemoteViews views = new RemoteViews(getPackageName(), R.layout.view_audioplayer_notification);
-        views.setImageViewResource(R.id.image_album, R.drawable.ic_launcher);
-        views.setTextViewText(R.id.title_text, mTitle);
-        views.setTextViewText(R.id.artist_text, mArtist);
-        views.setOnClickPendingIntent(R.id.btn_play_pause, mPlayStateTogglePendingIntent);
-
         if (!isPaused()) {
-            views.setImageViewResource(R.id.btn_play_pause, R.drawable.ic_dark_content_play);
+            mNotificationViews.setImageViewResource(R.id.btn_play_pause, R.drawable.ic_dark_content_play);
         } else {
-            views.setImageViewResource(R.id.btn_play_pause, R.drawable.ic_dark_content_pause);
+            mNotificationViews.setImageViewResource(R.id.btn_play_pause, R.drawable.ic_dark_content_pause);
         }
+        mBuilder.setContent(mNotificationViews);
+        startForeground(MUSIC_PLAYER_NOTIFICATION_ID, mBuilder.build());
+    }
+
+    private BroadcastReceiver mReceiver;
+
+    private void createNotification() {
+        Intent resultIntent = new Intent(this, ContactsActivity.class);
+        mResultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        mNotificationViews = createNotificationViews();
 
         mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_launcher)
-                .setContent(views)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContent(mNotificationViews)
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setContentIntent(mResultPendingIntent);
 
         mBuilder.setPriority(Notification.PRIORITY_MAX);
-        startForeground(mId, mBuilder.build());
     }
 
-    private BroadcastReceiver mReceiver;
-
-    private void addNotification() {
-
-        Intent resultIntent = new Intent(this, ContactsActivity.class);
-        mResultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        String path = Uri.parse(mCurrentMediaFilePath).getPath();
-
-        updateMetaData(path);
-        updateNotification();
+    private RemoteViews createNotificationViews() {
+        RemoteViews views = new RemoteViews(getPackageName(), R.layout.view_audioplayer_notification);
+        views.setOnClickPendingIntent(R.id.btn_play_pause, mPlayStateTogglePendingIntent);
+        updateMetaDataView(views);
+        return views;
     }
 
-    private void updateMetaData(String path) {
-        MediaMetadataRetriever mediaDataBla = new MediaMetadataRetriever();
-        try {
-            mediaDataBla.setDataSource(path);
-            mArtist = mediaDataBla.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-            mTitle = mediaDataBla.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-        }catch(IllegalArgumentException e){
-            LOG.error("Failed to set media data! " + e.getMessage());
+    private void updateMetaDataView(RemoteViews views) {
+        String title = getString(R.string.unknown_title);
+        String artist = getString(R.string.unkown_artist);
+        String metaDataTitle = mMediaMetaData.getTitle();
+        String metaDataArtist = mMediaMetaData.getArtist();
+        boolean metaDataAvailable = false;
+        if (metaDataTitle != null && metaDataTitle.isEmpty()) {
+            title = metaDataTitle;
+            metaDataAvailable = true;
         }
-
-        if (mTitle == null || mTitle.isEmpty()) {
-            mTitle = path.substring(path.lastIndexOf("/") + 1);
+        if (metaDataArtist != null && metaDataArtist.isEmpty()) {
+            artist = metaDataArtist;
+            metaDataAvailable = true;
+        }
+        if (metaDataAvailable) {
+            views.setViewVisibility(R.id.media_metadata_layout, View.VISIBLE);
+            views.setViewVisibility(R.id.filename_text, View.GONE);
+            views.setTextViewText(R.id.media_metadata_title_text, title);
+            views.setTextViewText(R.id.media_metadata_artist_text, artist);
+        } else {
+            views.setViewVisibility(R.id.filename_text, View.VISIBLE);
+            views.setViewVisibility(R.id.media_metadata_layout, View.GONE);
+            views.setTextViewText(R.id.filename_text, mFileName);
         }
     }
 
@@ -179,7 +189,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     public void start(String mediaFilePath) {
         if (isResumable(mediaFilePath)) {
-            play();
+            play(true);
         } else {
             if (mMediaPlayer == null) {
                 createMediaPlayer();
@@ -192,19 +202,28 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         return isPaused() && isSamePath(mediaFilePath);
     }
 
-    public void play() {
-
+    public void play(boolean resumable) {
         int result = mAudioManager.requestAudioFocus(mAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             mMediaPlayer.start();
             setPaused(false);
             setStopped(false);
-            setCurrentMediaFilePath(mTempMediaFilePath);
-            addNotification();
+            if (!resumable) {
+                setCurrentMediaFilePath(mTempMediaFilePath);
+                resetFileNameAndMetaData();
+                createNotification();
+            }
+            updateNotification();
             broadcastPlayState();
         } else {
             LOG.debug("Audio focus request not granted");
         }
+    }
+
+    private void resetFileNameAndMetaData() {
+        String path = Uri.parse(mCurrentMediaFilePath).getPath();
+        mFileName = extractFileName(path);
+        mMediaMetaData = retrieveMetaData(path);
     }
 
     public void pause() {
@@ -225,15 +244,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         broadcastPlayState();
     }
 
-    public void setSeekPosition( int position ){
+    public void setSeekPosition(int position) {
         long totalDuration = getTotalDuration();
         int currentPosition = progressToTimer(position, (int) totalDuration);
 
         mMediaPlayer.seekTo(currentPosition);
-    }
-
-    public void registerOnCompletitionListener(MediaPlayer.OnCompletionListener listener){
-        mMediaPlayer.setOnCompletionListener(listener);
     }
 
     private void removeNotification() {
@@ -261,7 +276,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        play();
+        play(false);
     }
 
     @Override
@@ -282,19 +297,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     public long getCurrentPosition() {
-        return mMediaPlayer.getCurrentPosition();
+        return (isStopped()) ? 0 :  mMediaPlayer.getCurrentPosition();
     }
 
     public String getCurrentMediaFilePath() {
         return mCurrentMediaFilePath;
-    }
-
-    public String getArtistName(){
-        return mArtist;
-    }
-
-    public String getTrackName(){
-        return mTitle;
     }
 
     private void setCurrentMediaFilePath(String currentMediaFilePath) {
@@ -304,7 +311,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private int progressToTimer(int progress, int totalDuration) {
         int currentDuration = 0;
         totalDuration = (int) (totalDuration / 1000);
-        currentDuration = (int) ((((double)progress) / 100) * totalDuration);
+        currentDuration = (int) ((((double) progress) / 100) * totalDuration);
 
         // return current duration in milliseconds
         return currentDuration * 1000;
@@ -318,5 +325,50 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private void broadcastPlayState() {
         Intent intent = new Intent(PLAYSTATE_CHANGED_ACTION);
         this.sendBroadcast(intent);
+    }
+
+    private String extractFileName(String path) {
+        String fileName = path.substring(path.lastIndexOf("/") + 1);
+        return fileName;
+    }
+
+    private MediaMetaData retrieveMetaData(String path) {
+
+        MediaMetaData metaData = null;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        try {
+            retriever.setDataSource(path);
+            metaData = new MediaMetaData();
+            metaData.setTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
+            metaData.setArtist(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
+        } catch (IllegalArgumentException e) {
+            LOG.error("Failed to set media data! " + e.getMessage());
+        }
+        return metaData;
+    }
+
+    public class MediaMetaData {
+        private String title;
+        private String artist;
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public void setArtist(String artist) {
+            this.artist = artist;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getArtist() {
+            return artist;
+        }
+    }
+
+    public MediaMetaData getMediaMetaData() {
+        return mMediaMetaData;
     }
 }

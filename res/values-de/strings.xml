@@ -200,6 +200,10 @@
     <string name="dialog_block_user_message">Bist du dir sicher, dass du diesen Kontakt blockieren möchtest? Du wirst keine weiteren Nachrichten von diesem Kontakt erhalten. 
     </string>
 
+    <!-- Media Player -->
+    <string name="unknown_title">Unbekannter Titel</string>
+    <string name="unkown_artist">Unbekannter Künstler</string>
+
     <!-- Preferences -->
     <string name="preference_keysize_summary">RSA Schlüssel</string>
     <string name="preference_keysize_title">RSA Schlüssellänge</string>
