@@ -1,8 +1,6 @@
 package com.hoccer.xo.android.activity;
 
 import android.content.*;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -189,8 +187,8 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
 
                 mTempFilePath = mMediaPlayerService.getCurrentMediaFilePath();
 
-                String artistName = (mMediaPlayerService.getArtistName() == null) ? "" : mMediaPlayerService.getArtistName();
-                String trackName = (mMediaPlayerService.getTrackName() == null) ? "" : mMediaPlayerService.getTrackName();
+                String artistName = (mMediaPlayerService.getMediaMetaData().getArtist() == null) ? "" : mMediaPlayerService.getMediaMetaData().getArtist();
+                String trackName = (mMediaPlayerService.getMediaMetaData().getTitle() == null) ? "" : mMediaPlayerService.getMediaMetaData().getTitle();
 
                 String labelText = ( artistName.equals("") && trackName.equals("") ) ? mTempFilePath : (artistName + "\n" + trackName);
 
