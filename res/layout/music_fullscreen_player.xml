@@ -37,9 +37,9 @@
             android:paddingBottom="10dp"
             android:gravity="center"
             android:layout_below="@id/player_header_bg">
-        <ImageView android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:src="@drawable/ic_attachment_select_music"/>
+        <ImageView android:layout_width="fill_parent"
+                   android:layout_height="300dp"
+                   android:src="@drawable/ab_texture_tile_appbasetheme"/>
     </LinearLayout>
 
     <!-- Player Footer -->

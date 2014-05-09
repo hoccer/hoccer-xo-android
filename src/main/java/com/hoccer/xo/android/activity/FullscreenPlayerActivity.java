@@ -212,7 +212,10 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
 
                 mTempFilePath = mMediaPlayerService.getCurrentMediaFilePath();
 
-                mSongTitleLabel.setText(mTempFilePath);
+                String artistName = (mMediaPlayerService.getArtistName() == null) ? "" : mMediaPlayerService.getArtistName();
+                String trackName = (mMediaPlayerService.getTrackName() == null) ? "" : mMediaPlayerService.getTrackName();
+
+                mSongTitleLabel.setText(artistName + "\n" + trackName);
             }
 
             @Override
