@@ -139,10 +139,7 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
             long totalDuration = mMediaPlayerService.getTotalDuration();
             long currentDuration = mMediaPlayerService.getCurrentPosition();
 
-            LOG.error("------------------------- run: " + totalDuration + ", " + currentDuration);
-
             mSongTotalDurationLabel.setText("" + milliSecondsToTimer(totalDuration));
-
             mSongCurrentDurationLabel.setText("" + milliSecondsToTimer(currentDuration));
 
             int progress = getProgressPercentage(currentDuration, totalDuration);
@@ -155,19 +152,17 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
-        LOG.error("------------------------- onProgressChanged");
+        // abstract method implemented
     }
 
     public void onStartTrackingTouch(SeekBar seekBar) {
         mHandler.removeCallbacks(mUpdateTimeTask);
-        LOG.error("------------------------- onStartTrackingTouch");
     }
 
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         mHandler.removeCallbacks(mUpdateTimeTask);
-        LOG.error("------------------------- onStopTrackingTouch");
 
         mMediaPlayerService.setSeekPosition(seekBar.getProgress());
 
@@ -242,11 +237,20 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
     @Override
     public void onBackPressed(){
 
-        LOG.error("-------------------------------onBackPressed()");
-
         super.onBackPressed();
 
         mHandler.removeCallbacks(mUpdateTimeTask);
         mUpdateTimeTask = null;
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean focused){
+        if(mMediaPlayerService != null) {
+            if (!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
+                mButtonPlay.setImageResource(R.drawable.ic_dark_pause);
+            } else {
+                mButtonPlay.setImageResource(R.drawable.ic_dark_play);
+            }
+        }
     }
 }
