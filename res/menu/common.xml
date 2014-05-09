@@ -26,11 +26,19 @@
         <!--android:showAsAction="never"-->
         <!--android:title="@string/menu_licenses"/>-->
 
+
+
     <item
         android:id="@+id/menu_settings"
         android:orderInCategory="920"
         android:showAsAction="never"
         android:title="@string/menu_settings"/>
+
+    <item
+            android:id="@+id/menu_music_viewer"
+            android:orderInCategory="100"
+            android:showAsAction="never"
+            android:title="@string/menu_music_viewer"/>
 
     <item
             android:id="@+id/menu_kill"

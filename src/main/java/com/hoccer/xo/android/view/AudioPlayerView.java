@@ -44,7 +44,6 @@ public class AudioPlayerView
                 MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
                 mMediaPlayerService = binder.getService();
                 updatePlayPauseView();
-                invalidate();
             }
 
             @Override

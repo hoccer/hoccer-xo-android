@@ -37,7 +37,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private MediaPlayer mMediaPlayer = null;
     private NotificationCompat.Builder mBuilder;
 
-    private Context mContext;
     private boolean paused = false;
     private boolean stopped = true;
 
@@ -226,6 +225,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         broadcastPlayState();
     }
 
+    public void setSeekPosition( int position ){
+        long totalDuration = getTotalDuration();
+        int currentPosition = progressToTimer(position, (int) totalDuration);
+
+        mMediaPlayer.seekTo(currentPosition);
+    }
+
+    public void registerOnCompletitionListener(MediaPlayer.OnCompletionListener listener){
+        mMediaPlayer.setOnCompletionListener(listener);
+    }
+
     private void removeNotification() {
         stopForeground(true);
     }
@@ -267,12 +277,30 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         return stopped;
     }
 
+
+    public long getTotalDuration() {
+        return mMediaPlayer.getDuration();
+    }
+
+    public long getCurrentPosition() {
+        return mMediaPlayer.getCurrentPosition();
+    }
+
     public String getCurrentMediaFilePath() {
         return mCurrentMediaFilePath;
     }
 
     private void setCurrentMediaFilePath(String currentMediaFilePath) {
         this.mCurrentMediaFilePath = currentMediaFilePath;
+    }
+
+    private int progressToTimer(int progress, int totalDuration) {
+        int currentDuration = 0;
+        totalDuration = (int) (totalDuration / 1000);
+        currentDuration = (int) ((((double)progress) / 100) * totalDuration);
+
+        // return current duration in milliseconds
+        return currentDuration * 1000;
     }
 
     @Override

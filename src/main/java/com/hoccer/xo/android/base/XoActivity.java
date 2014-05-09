@@ -4,9 +4,7 @@ import android.app.Dialog;
 import android.app.ActivityManager;
 import android.content.*;
 import android.graphics.drawable.ColorDrawable;
-import android.os.*;
 import android.support.v4.app.FragmentActivity;
-import android.view.*;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -18,18 +16,13 @@ import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.XoSoundPool;
-import com.hoccer.xo.android.activity.AboutActivity;
-import com.hoccer.xo.android.activity.GroupProfileActivity;
-import com.hoccer.xo.android.activity.LicensesActivity;
-import com.hoccer.xo.android.activity.MessagingActivity;
-import com.hoccer.xo.android.activity.PairingActivity;
-import com.hoccer.xo.android.activity.SingleProfileActivity;
-import com.hoccer.xo.android.activity.XoPreferenceActivity;
+import com.hoccer.xo.android.activity.*;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
 import com.hoccer.xo.android.content.ContentRegistry;
 import com.hoccer.xo.android.content.ContentSelection;
 import com.hoccer.xo.android.content.ContentView;
+import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.content.image.ImageSelector;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.IXoClientService;
@@ -43,8 +36,6 @@ import org.apache.log4j.Logger;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Dialog;
 import android.app.TaskStackBuilder;
 import android.content.ComponentName;
 import android.content.ContentValues;
@@ -55,7 +46,6 @@ import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -79,7 +69,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -418,6 +407,9 @@ public abstract class XoActivity extends FragmentActivity {
             case R.id.menu_settings:
                 showPreferences();
                 break;
+            case R.id.menu_music_viewer:
+                showMusicViewer();
+                break;
             case R.id.menu_reconnect:
                 try {
                     mService.reconnect();
@@ -672,6 +664,16 @@ public abstract class XoActivity extends FragmentActivity {
     public void showPairing() {
         LOG.debug("showPairing()");
         startActivity(new Intent(this, PairingActivity.class));
+    }
+
+    public void showMusicViewer() {
+        LOG.debug("showMusicViewer()");
+        startActivity(new Intent(this, AudioAttachmentListActivity.class));
+    }
+
+    public void showFullscreenPlayer() {
+        LOG.debug("showFullscreenPlayer()");
+        startActivity(new Intent(this, FullscreenPlayerActivity.class));
     }
 
     public void showAbout() {
