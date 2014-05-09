@@ -15,8 +15,10 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.widget.RemoteViews;
-import com.hoccer.xo.android.activity.ContactsActivity;
+import com.hoccer.xo.android.activity.*;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -56,6 +58,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public void onCreate(){
+
+        super.onCreate();
+
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         createBroadcastReceiver();
@@ -142,8 +147,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private void addNotification() {
 
+        //TODO going back crashes the app
+        //Intent resultIntent = new Intent(this, FullscreenPlayerActivity.class);
         Intent resultIntent = new Intent(this, ContactsActivity.class);
-        mResultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addNextIntentWithParentStack(resultIntent);
+
+        mResultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
         String path = Uri.parse(mCurrentMediaFilePath).getPath();
 
