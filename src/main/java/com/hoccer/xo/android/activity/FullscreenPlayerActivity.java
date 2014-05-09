@@ -36,6 +36,8 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
 
     private String mTempFilePath;
 
+    private ServiceConnection mServiceConnection;
+
     private final static Logger LOG = Logger.getLogger(FullscreenPlayerActivity.class);
 
 
@@ -127,6 +129,13 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        unbindService( mServiceConnection);
+    }
+
     private void updateProgressBar() {
         mHandler.postDelayed(mUpdateTimeTask, 100);
     }
@@ -172,7 +181,7 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
 
     private void bindService(Intent intent){
 
-        ServiceConnection connection = new ServiceConnection() {
+        mServiceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
@@ -196,7 +205,7 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
             }
         };
 
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     public String milliSecondsToTimer(long milliseconds){
