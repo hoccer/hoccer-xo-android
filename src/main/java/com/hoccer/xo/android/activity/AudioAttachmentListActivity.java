@@ -12,7 +12,7 @@ public class AudioAttachmentListActivity extends XoActivity {
 
     @Override
     protected int getLayoutResource() {
-        return R.layout.activity_music_viewer;
+        return R.layout.activity_audio_attachment_list;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class AudioAttachmentListActivity extends XoActivity {
         super.onCreate(savedInstanceState);
 
         enableUpNavigation();
-
+        LOG.error("BAZINGA AudioAttachmentListActivity");
         mAudioAttachmentListFragment = (AudioAttachmentListFragment) getSupportFragmentManager().findFragmentById(R.id.audio_attachment_list_fragment);
     }
 
