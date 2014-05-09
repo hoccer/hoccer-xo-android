@@ -134,6 +134,8 @@ public class ContentRegistry {
         if(mediaType != null) {
             if(mediaType.equals("image")) {
                 mediaTypeString = "Image";
+            } else if(mediaType.equals("audio")) {
+                mediaTypeString = "Audio";
             } else if(mediaType.equals("video")) {
                 mediaTypeString = "Video";
             } else if(mediaType.equals("contact")) {

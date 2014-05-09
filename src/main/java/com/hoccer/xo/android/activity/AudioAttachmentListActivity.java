@@ -12,7 +12,7 @@ public class AudioAttachmentListActivity extends XoActivity {
 
     @Override
     protected int getLayoutResource() {
-        return R.layout.activity_music_viewer;
+        return R.layout.activity_audio_attachment_list;
     }
 
     @Override
