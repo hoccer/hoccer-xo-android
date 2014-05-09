@@ -3,16 +3,16 @@ package com.hoccer.xo.android.activity;
 import android.os.Bundle;
 import android.view.Menu;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.fragment.MusicViewerFragment;
+import com.hoccer.xo.android.fragment.AudioAttachmentListFragment;
 import com.hoccer.xo.release.R;
 
 public class AudioAttachmentListActivity extends XoActivity {
 
-    private MusicViewerFragment mMusicViewerFragment;
+    private AudioAttachmentListFragment mAudioAttachmentListFragment;
 
     @Override
     protected int getLayoutResource() {
-        return R.layout.activity_music_viewer;
+        return R.layout.activity_audio_attachment_list;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class AudioAttachmentListActivity extends XoActivity {
 
         enableUpNavigation();
 
-        mMusicViewerFragment = (MusicViewerFragment) getSupportFragmentManager().findFragmentById(R.id.music_viewer_fragment);
+        mAudioAttachmentListFragment = (AudioAttachmentListFragment) getSupportFragmentManager().findFragmentById(R.id.music_viewer_fragment);
     }
 
     @Override
