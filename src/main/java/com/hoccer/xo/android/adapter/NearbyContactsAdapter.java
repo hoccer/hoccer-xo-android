@@ -1,7 +1,6 @@
 package com.hoccer.xo.android.adapter;
 
 import android.content.Context;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ import java.util.List;
 public class NearbyContactsAdapter extends BaseAdapter implements IXoContactListener, IXoMessageListener, IXoTransferListener {
     private XoClientDatabase mDatabase;
     private XoActivity mXoActivity;
-    Filter mFilter = null;
     private Logger LOG = null;
 
     private List<TalkClientContact> mNearbyContacts = new ArrayList<TalkClientContact>();
@@ -39,28 +37,6 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         mDatabase = db;
         mXoActivity = xoActivity;
         LOG = Logger.getLogger(getClass());
-
-        this.setFilter(new NearbyContactsAdapter.Filter() {
-            @Override
-            public boolean shouldShow(TalkClientContact contact) {
-                if (contact.isGroup()) {
-                    if (contact.isGroupInvolved() && contact.isGroupExisting() && contact.getGroupPresence().isTypeNearby()) {
-                        return true;
-                    }
-                } else if (!contact.isDeleted() && contact.isNearby()) {
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-
-    public Filter getFilter() {
-        return mFilter;
-    }
-
-    public void setFilter(Filter filter) {
-        this.mFilter = filter;
     }
 
     @Override
@@ -80,7 +56,7 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if(convertView == null) {
+        if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contact_client, null);
         }
         updateContact(convertView, (TalkClientContact) getItem(position));
@@ -101,16 +77,11 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     public void retrieveDataFromDb() {
         try {
-            mNearbyContacts = mDatabase.findAllContacts();
-            if(mFilter != null) {
-                mNearbyContacts = filter(mNearbyContacts, mFilter);
-            }
-            for(TalkClientContact contact: mNearbyContacts) {
-                if (contact.isGroup()) {
-                    mNearbyContacts.set(0, contact);
-                }
+            mNearbyContacts = mDatabase.findAllNearbyGroupContacts();
+            mNearbyContacts.addAll(mDatabase.findAllNearbyClientContacts());
+            for (TalkClientContact contact : mNearbyContacts) {
                 TalkClientDownload avatarDownload = contact.getAvatarDownload();
-                if(avatarDownload != null) {
+                if (avatarDownload != null) {
                     mDatabase.refreshClientDownload(avatarDownload);
                 }
             }
@@ -124,11 +95,18 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         TextView nameView = ViewHolderForAdapters.get(view, R.id.contact_name);
         AvatarView avatarView = ViewHolderForAdapters.get(view, R.id.contact_icon);
         TextView typeView = ViewHolderForAdapters.get(view, R.id.contact_type);
-
+        TextView lastMessageTimeView = (TextView) view.findViewById(R.id.contact_time);
+        TextView lastMessageText = (TextView) view.findViewById(R.id.contact_last_message);
+        TextView unseenView = (TextView) view.findViewById(R.id.contact_unseen_messages);
 
         nameView.setText(contact.getName());
         avatarView.setContact(contact);
-        // TODO: do we have only one type for nearby group?
+
+        typeView.setText("");
+        lastMessageText.setText("");
+        lastMessageTimeView.setText("");
+        unseenView.setText("");
+
         if (contact.isGroup()) {
             if (contact.isGroupInvited()) {
                 typeView.setText(R.string.common_group_invite);
@@ -148,8 +126,7 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
             Date messageTime = message.getTimestamp();
             SimpleDateFormat sdf = new SimpleDateFormat("EEE HH:mm");
             String lastMessageTime = sdf.format(messageTime);
-            TextView lastMessageTimeView = (TextView) view.findViewById(R.id.contact_time);
-            TextView lastMessageText = (TextView) view.findViewById(R.id.contact_last_message);
+
             lastMessageTimeView.setText(lastMessageTime);
             if (message.getAttachmentDownload() != null) {
                 TalkClientDownload attachment = message.getAttachmentDownload();
@@ -159,7 +136,6 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
                 lastMessageText.setText(message.getText());
             }
         }
-        TextView unseenView = (TextView) view.findViewById(R.id.contact_unseen_messages);
         if (unseenMessages > 0) {
             unseenView.setText(Long.toString(unseenMessages));
             unseenView.setVisibility(View.VISIBLE);
@@ -197,8 +173,8 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     private List<TalkClientContact> filter(List<TalkClientContact> in, Filter filter) {
         ArrayList<TalkClientContact> res = new ArrayList<TalkClientContact>();
-        for(TalkClientContact contact: in) {
-            if(filter.shouldShow(contact)) {
+        for (TalkClientContact contact : in) {
+            if (filter.shouldShow(contact)) {
                 res.add(contact);
             }
         }
@@ -267,7 +243,7 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     @Override
     public void onDownloadFinished(TalkClientDownload download) {
-        if(download.isAvatar()) {
+        if (download.isAvatar()) {
             updateAdapter();
         }
     }
@@ -279,7 +255,7 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     @Override
     public void onUploadStarted(TalkClientUpload upload) {
-        if(upload.isAvatar()) {
+        if (upload.isAvatar()) {
             updateAdapter();
         }
     }
