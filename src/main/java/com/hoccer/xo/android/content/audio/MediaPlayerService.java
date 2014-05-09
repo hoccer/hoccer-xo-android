@@ -156,11 +156,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         String metaDataTitle = mMediaMetaData.getTitle();
         String metaDataArtist = mMediaMetaData.getArtist();
         boolean metaDataAvailable = false;
-        if (metaDataTitle != null && metaDataTitle.isEmpty()) {
+        if (metaDataTitle != null && !metaDataTitle.isEmpty()) {
             title = metaDataTitle;
             metaDataAvailable = true;
         }
-        if (metaDataArtist != null && metaDataArtist.isEmpty()) {
+        if (metaDataArtist != null && !metaDataArtist.isEmpty()) {
             artist = metaDataArtist;
             metaDataAvailable = true;
         }
