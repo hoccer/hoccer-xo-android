@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.widget.RemoteViews;
 import com.hoccer.xo.android.activity.ContactsActivity;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -115,22 +116,26 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private void updateNotification() {
 
+        RemoteViews views = new RemoteViews(getPackageName(), R.layout.view_audioplayer_notification);
+        views.setImageViewResource(R.id.image_album, R.drawable.ic_launcher);
+        views.setTextViewText(R.id.title_text, mTitle);
+        views.setTextViewText(R.id.artist_text, mArtist);
+        views.setOnClickPendingIntent(R.id.btn_play_pause, mPlayStateTogglePendingIntent);
+
+        if (!isPaused()) {
+            views.setImageViewResource(R.id.btn_play_pause, R.drawable.ic_dark_content_play);
+        } else {
+            views.setImageViewResource(R.id.btn_play_pause, R.drawable.ic_dark_content_pause);
+        }
+
         mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher)
-                .setContentTitle(mTitle)
-                .setContentText(mArtist)
+                .setContent(views)
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setContentIntent(mResultPendingIntent);
 
         mBuilder.setPriority(Notification.PRIORITY_MAX);
-
-        if (!isPaused()) {
-            mBuilder.addAction(R.drawable.ic_dark_pause, "", mPlayStateTogglePendingIntent);
-        } else {
-            mBuilder.addAction(R.drawable.ic_dark_play, "", mPlayStateTogglePendingIntent);
-        }
-
         startForeground(mId, mBuilder.build());
     }
 
