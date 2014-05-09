@@ -21,8 +21,6 @@ import org.apache.log4j.Logger;
 public class FullscreenPlayerActivity extends XoActivity implements OnCompletionListener, SeekBar.OnSeekBarChangeListener {
 
     private ImageButton mButtonPlay;
-    private ImageButton mButtonForward;
-    private ImageButton mButtonBackward;
     private ImageButton mButtonNext;
     private ImageButton mButtonPrevious;
     private ImageButton mButtonPlaylist;
@@ -63,8 +61,6 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
         enableUpNavigation();
 
         mButtonPlay = (ImageButton) findViewById(R.id.btnPlay);
-        mButtonForward = (ImageButton) findViewById(R.id.btnForward);
-        mButtonBackward = (ImageButton) findViewById(R.id.btnBackward);
         mButtonNext = (ImageButton) findViewById(R.id.btnNext);
         mButtonPrevious = (ImageButton) findViewById(R.id.btnPrevious);
         mButtonRepeat = (ImageButton) findViewById(R.id.btnRepeat);
@@ -94,24 +90,6 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
                     mMediaPlayerService.start(mTempFilePath);
                     mButtonPlay.setImageResource(R.drawable.ic_dark_pause);
                 }
-            }
-        });
-
-        mButtonForward.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-
-                LOG.error("------------------------- Forward onClick");
-            }
-        });
-
-        mButtonBackward.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-
-                LOG.error("------------------------- Back onClick");
             }
         });
 
@@ -182,7 +160,6 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
 
     public void onStartTrackingTouch(SeekBar seekBar) {
         mHandler.removeCallbacks(mUpdateTimeTask);
-//        mUpdateTimeTask = null;
         LOG.error("------------------------- onStartTrackingTouch");
     }
 
@@ -215,7 +192,9 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
                 String artistName = (mMediaPlayerService.getArtistName() == null) ? "" : mMediaPlayerService.getArtistName();
                 String trackName = (mMediaPlayerService.getTrackName() == null) ? "" : mMediaPlayerService.getTrackName();
 
-                mSongTitleLabel.setText(artistName + "\n" + trackName);
+                String labelText = ( artistName.equals("") && trackName.equals("") ) ? mTempFilePath : (artistName + "\n" + trackName);
+
+                mSongTitleLabel.setText(labelText);
             }
 
             @Override
@@ -258,5 +237,16 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
         percentage =(((double)currentSeconds)/totalSeconds)*100;
 
         return percentage.intValue();
+    }
+
+    @Override
+    public void onBackPressed(){
+
+        LOG.error("-------------------------------onBackPressed()");
+
+        super.onBackPressed();
+
+        mHandler.removeCallbacks(mUpdateTimeTask);
+        mUpdateTimeTask = null;
     }
 }
