@@ -15,14 +15,16 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
+import com.hoccer.xo.android.activity.*;
 import com.hoccer.xo.android.activity.ContactsActivity;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.beans.Visibility;
-
 
 public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
@@ -57,7 +59,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     @Override
-    public void onCreate() {
+    public void onCreate(){
+
+        super.onCreate();
+
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         createBroadcastReceiver();
@@ -128,8 +133,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private BroadcastReceiver mReceiver;
 
     private void createNotification() {
+        //TODO going back crashes the app
+        //Intent resultIntent = new Intent(this, FullscreenPlayerActivity.class);
         Intent resultIntent = new Intent(this, ContactsActivity.class);
-        mResultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addNextIntentWithParentStack(resultIntent);
+
+        mResultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
         mNotificationViews = createNotificationViews();
 
@@ -156,11 +167,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         String metaDataTitle = mMediaMetaData.getTitle();
         String metaDataArtist = mMediaMetaData.getArtist();
         boolean metaDataAvailable = false;
-        if (metaDataTitle != null && metaDataTitle.isEmpty()) {
+        if (metaDataTitle != null && !metaDataTitle.isEmpty()) {
             title = metaDataTitle;
             metaDataAvailable = true;
         }
-        if (metaDataArtist != null && metaDataArtist.isEmpty()) {
+        if (metaDataArtist != null && !metaDataArtist.isEmpty()) {
             artist = metaDataArtist;
             metaDataAvailable = true;
         }
