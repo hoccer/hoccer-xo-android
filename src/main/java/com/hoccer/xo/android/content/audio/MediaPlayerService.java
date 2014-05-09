@@ -277,9 +277,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         return stopped;
     }
 
-
     public long getTotalDuration() {
-        return mMediaPlayer.getDuration();
+        return (isStopped()) ? 0 : mMediaPlayer.getDuration();
     }
 
     public long getCurrentPosition() {
@@ -288,6 +287,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     public String getCurrentMediaFilePath() {
         return mCurrentMediaFilePath;
+    }
+
+    public String getArtistName(){
+        return mArtist;
+    }
+
+    public String getTrackName(){
+        return mTitle;
     }
 
     private void setCurrentMediaFilePath(String currentMediaFilePath) {

@@ -5,8 +5,8 @@
               android:orientation="vertical">
 
     <fragment
-            class="com.hoccer.xo.android.fragment.MusicViewerFragment"
-            android:id="@+id/music_viewer_fragment"
+            class="com.hoccer.xo.android.fragment.AudioAttachmentListFragment"
+            android:id="@+id/audio_attachment_list_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 

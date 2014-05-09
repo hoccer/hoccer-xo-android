@@ -1,9 +1,6 @@
 package com.hoccer.xo.android.activity;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.*;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
@@ -18,11 +15,9 @@ import com.hoccer.xo.android.content.audio.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
-public class FullscreenPlayerActivity extends XoActivity implements OnCompletionListener, SeekBar.OnSeekBarChangeListener {
+public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSeekBarChangeListener {
 
     private ImageButton mButtonPlay;
-    private ImageButton mButtonForward;
-    private ImageButton mButtonBackward;
     private ImageButton mButtonNext;
     private ImageButton mButtonPrevious;
     private ImageButton mButtonPlaylist;
@@ -34,6 +29,7 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
     private TextView mSongTotalDurationLabel;
 
     private MediaPlayerService mMediaPlayerService;
+    private BroadcastReceiver mBroadcastReceiver;
 
     private Handler mHandler = new Handler();
 
@@ -63,8 +59,6 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
         enableUpNavigation();
 
         mButtonPlay = (ImageButton) findViewById(R.id.btnPlay);
-        mButtonForward = (ImageButton) findViewById(R.id.btnForward);
-        mButtonBackward = (ImageButton) findViewById(R.id.btnBackward);
         mButtonNext = (ImageButton) findViewById(R.id.btnNext);
         mButtonPrevious = (ImageButton) findViewById(R.id.btnPrevious);
         mButtonRepeat = (ImageButton) findViewById(R.id.btnRepeat);
@@ -76,11 +70,11 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
 
         mSongProgressBar.setOnSeekBarChangeListener(this);
 
-//        mMediaPlayerService.registerOnCompletitionListener(this);
 
         mSongProgressBar.setProgress(0);
         mSongProgressBar.setMax(100);
 
+        createBroadcastReceiver();
         updateProgressBar();
 
         mButtonPlay.setOnClickListener(new View.OnClickListener() {
@@ -94,24 +88,6 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
                     mMediaPlayerService.start(mTempFilePath);
                     mButtonPlay.setImageResource(R.drawable.ic_dark_pause);
                 }
-            }
-        });
-
-        mButtonForward.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-
-                LOG.error("------------------------- Forward onClick");
-            }
-        });
-
-        mButtonBackward.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-
-                LOG.error("------------------------- Back onClick");
             }
         });
 
@@ -158,48 +134,42 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
     private Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
 
-            long totalDuration = mMediaPlayerService.getTotalDuration();
-            long currentDuration = mMediaPlayerService.getCurrentPosition();
+            try {
+                long totalDuration = mMediaPlayerService.getTotalDuration();
+                long currentDuration = mMediaPlayerService.getCurrentPosition();
 
-            LOG.error("------------------------- run: " + totalDuration + ", " + currentDuration);
+                mSongTotalDurationLabel.setText("" + milliSecondsToTimer(totalDuration));
+                mSongCurrentDurationLabel.setText("" + milliSecondsToTimer(currentDuration));
 
-            mSongTotalDurationLabel.setText("" + milliSecondsToTimer(totalDuration));
+                int progress = getProgressPercentage(currentDuration, totalDuration);
 
-            mSongCurrentDurationLabel.setText("" + milliSecondsToTimer(currentDuration));
+                mSongProgressBar.setProgress(progress);
 
-            int progress = getProgressPercentage(currentDuration, totalDuration);
-
-            mSongProgressBar.setProgress(progress);
-
-            mHandler.postDelayed(this, 100);
+                mHandler.postDelayed(this, 100);
+            }
+            catch(Exception e){
+                LOG.error(e);
+            }
         }
     };
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
-        LOG.error("------------------------- onProgressChanged");
+        // abstract method implemented
     }
 
     public void onStartTrackingTouch(SeekBar seekBar) {
         mHandler.removeCallbacks(mUpdateTimeTask);
-//        mUpdateTimeTask = null;
-        LOG.error("------------------------- onStartTrackingTouch");
     }
 
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         mHandler.removeCallbacks(mUpdateTimeTask);
-        LOG.error("------------------------- onStopTrackingTouch");
 
         mMediaPlayerService.setSeekPosition(seekBar.getProgress());
 
         updateProgressBar();
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
-        // used for shuffling or repeat later on
     }
 
     private void bindService(Intent intent){
@@ -212,7 +182,12 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
 
                 mTempFilePath = mMediaPlayerService.getCurrentMediaFilePath();
 
-                mSongTitleLabel.setText(mTempFilePath);
+                String artistName = (mMediaPlayerService.getArtistName() == null) ? "" : mMediaPlayerService.getArtistName();
+                String trackName = (mMediaPlayerService.getTrackName() == null) ? "" : mMediaPlayerService.getTrackName();
+
+                String labelText = ( artistName.equals("") && trackName.equals("") ) ? mTempFilePath : (artistName + "\n" + trackName);
+
+                mSongTitleLabel.setText(labelText);
             }
 
             @Override
@@ -255,5 +230,40 @@ public class FullscreenPlayerActivity extends XoActivity implements OnCompletion
         percentage =(((double)currentSeconds)/totalSeconds)*100;
 
         return percentage.intValue();
+    }
+
+    private void updatePlayPauseView(){
+        if(mMediaPlayerService != null) {
+            if (!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
+                mButtonPlay.setImageResource(R.drawable.ic_dark_pause);
+            } else {
+                mButtonPlay.setImageResource(R.drawable.ic_dark_play);
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed(){
+
+        super.onBackPressed();
+
+        mHandler.removeCallbacks(mUpdateTimeTask);
+        mUpdateTimeTask = null;
+
+        unregisterReceiver(mBroadcastReceiver);
+        mBroadcastReceiver = null;
+    }
+
+    private void createBroadcastReceiver() {
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(MediaPlayerService.PLAYSTATE_CHANGED_ACTION)) {
+                    updatePlayPauseView();
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
+        registerReceiver(mBroadcastReceiver, filter);
     }
 }
