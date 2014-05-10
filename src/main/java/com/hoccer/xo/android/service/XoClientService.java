@@ -511,19 +511,22 @@ public class XoClientService extends Service {
 
         for (TalkClientMessage message : allUnseenMessages) {
             TalkClientContact contact = message.getConversationContact();
-            //TODO: check NullPointerException
-            int contactId = contact.getClientContactId();
-            if (!contactsById.containsKey(contactId)) {
-                try {
-                    db.refreshClientContact(contact);
-                } catch (SQLException e) {
-                    LOG.error("sql error", e);
+            if (contact != null) {
+                int contactId = contact.getClientContactId();
+                if (!contactsById.containsKey(contactId)) {
+                    try {
+                        db.refreshClientContact(contact);
+                    } catch (SQLException e) {
+                        LOG.error("sql error", e);
+                    }
+                    if (!contact.isDeleted()) {
+                        contactsById.put(contactId, contact);
+                        contacts.add(contact);
+                        unseenMessages.add(message);
+                    }
                 }
-                if (!contact.isDeleted()) {
-                    contactsById.put(contactId, contact);
-                    contacts.add(contact);
-                    unseenMessages.add(message);
-                }
+            }  else {
+                LOG.error("message without contact in unseen messages");
             }
         }
 

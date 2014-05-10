@@ -151,6 +151,7 @@ public class AvatarView extends LinearLayout implements IXoContactListener {
                     mPresenceIndicator.setVisibility(View.INVISIBLE);
                     return;
                 }
+                /*
                 if (presence != null) {
                     if (presence.getClientStatus() != null && !presence.getClientStatus().equals("I am.")) {
                         if (presence.getClientStatus()
@@ -166,6 +167,14 @@ public class AvatarView extends LinearLayout implements IXoContactListener {
                         } else {
                             mPresenceIndicator.setVisibility(View.INVISIBLE);
                         }
+                    }
+                }
+                */
+                if (presence != null) {
+                    if (presence.isPresent()) {
+                        mPresenceIndicator.setVisibility(View.VISIBLE);
+                    } else {
+                        mPresenceIndicator.setVisibility(View.INVISIBLE);
                     }
                 }
             }
