@@ -149,6 +149,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
                 talkMessages.executeRaw("ALTER TABLE `message` ADD COLUMN `sharedKeyIdSalt` VARCHAR");
                 talkMessages.executeRaw("ALTER TABLE `message` ADD COLUMN `hmac` VARCHAR");
                 talkMessages.executeRaw("ALTER TABLE `message` ADD COLUMN `signature` VARCHAR");
+                talkMessages.executeRaw("ALTER TABLE `message` ADD COLUMN `system` VARCHAR");
 
                 Dao<TalkPrivateKey, Integer> talkPrivateKeys = getDao(TalkPrivateKey.class);
                 talkPrivateKeys.executeRaw("ALTER TABLE `privateKey` ADD COLUMN `groupKeyId` VARCHAR");
