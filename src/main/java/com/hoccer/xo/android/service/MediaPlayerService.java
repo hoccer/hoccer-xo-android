@@ -143,7 +143,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mNotificationViews = createNotificationViews();
 
         mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_notification)
+                .setSmallIcon(R.drawable.ic_notification_music)
                 .setContent(mNotificationViews)
                 .setAutoCancel(false)
                 .setOngoing(true)
