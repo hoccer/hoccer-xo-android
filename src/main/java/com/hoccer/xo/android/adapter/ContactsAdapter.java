@@ -102,17 +102,12 @@ public abstract class ContactsAdapter extends XoAdapter
                     newTokens = new ArrayList<TalkClientSmsToken>();
                 }
 
-                TalkClientContact selfContact = mDatabase.findSelfContact(false);
                 List<TalkClientContact> newClients = mDatabase.findAllClientContacts();
-                newClients.add(selfContact);
-
-
                 LOG.debug("found " + newClients.size() + " contacts");
 
                 if(mFilter != null) {
                     newClients = filter(newClients, mFilter);
                 }
-
                 LOG.debug("filtered " + newClients.size() + " contacts");
 
                 for(TalkClientContact contact: newClients) {
