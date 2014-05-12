@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -138,7 +139,7 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mServiceConnection);
-        unregisterReceiver(mBroadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
         mBroadcastReceiver = null;
     }
 
@@ -278,6 +279,6 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
             }
         };
         IntentFilter filter = new IntentFilter(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
-        registerReceiver(mBroadcastReceiver, filter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, filter);
     }
 }

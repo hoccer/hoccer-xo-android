@@ -2,6 +2,7 @@ package com.hoccer.xo.android.view;
 
 import android.content.*;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -119,7 +120,7 @@ public class AudioPlayerView
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mContext.unbindService(mConnection);
-        mContext.unregisterReceiver(mReceiver);
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mReceiver);
         mReceiver = null;
     }
 
@@ -133,7 +134,7 @@ public class AudioPlayerView
             }
         };
         IntentFilter filter = new IntentFilter(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
-        mContext.registerReceiver(mReceiver, filter);
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(mReceiver, filter);
     }
 
     public boolean isBound() {
