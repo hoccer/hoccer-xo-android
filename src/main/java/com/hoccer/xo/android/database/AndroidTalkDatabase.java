@@ -34,7 +34,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
 
     private static final String DATABASE_NAME    = "hoccer-talk.db";
 
-    private static final int    DATABASE_VERSION = 14; // TODO: set this to 14
+    private static final int    DATABASE_VERSION = 13; // TODO: set this to 14
 
     private static AndroidTalkDatabase INSTANCE = null;
 
@@ -133,7 +133,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
                 Dao<TalkClientUpload, Integer> uploads = getDao(TalkClientUpload.class);
                 uploads.executeRaw("ALTER TABLE `clientUpload` ADD COLUMN `fileName` VARCHAR;");
             }
-            if(oldVersion < 14) {
+            if(oldVersion < 13) {
                 renameFilecacheUris(db);
             }
         } catch (SQLException e) {
