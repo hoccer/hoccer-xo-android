@@ -11,16 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.hoccer.talk.client.model.TalkClientDownload;
-import com.hoccer.talk.model.TalkAttachment;
 import com.hoccer.xo.android.adapter.AttachmentListAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
+import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
 import java.util.List;
-
-import com.hoccer.xo.android.content.audio.MediaPlayerService;
 
 public class AudioAttachmentListFragment extends XoListFragment {
 
@@ -28,6 +26,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
     private final static Logger LOG = Logger.getLogger(AudioAttachmentListFragment.class);
     private List<TalkClientDownload> mAudioAttachmentList;
+    private ServiceConnection mConnection;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -74,9 +73,15 @@ public class AudioAttachmentListFragment extends XoListFragment {
         });
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unbindService(mConnection);
+    }
+
     private void bindService(Intent intent){
 
-        ServiceConnection connection = new ServiceConnection() {
+        mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
@@ -89,6 +94,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
             }
         };
 
-        getActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 }

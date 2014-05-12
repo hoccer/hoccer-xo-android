@@ -4,12 +4,14 @@ import android.content.*;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.NavUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.content.audio.MediaPlayerService;
+import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -130,8 +132,9 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        unbindService( mServiceConnection);
+        unbindService(mServiceConnection);
+        unregisterReceiver(mBroadcastReceiver);
+        mBroadcastReceiver = null;
     }
 
     private void updateProgressBar() {
@@ -151,8 +154,7 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
                 mSongProgressBar.setProgress(progress);
 
                 mHandler.postDelayed(this, 100);
-            }
-            catch(Exception e){
+            } catch (Exception e) {
                 LOG.error(e);
             }
         }
@@ -177,7 +179,7 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
         updateProgressBar();
     }
 
-    private void bindService(Intent intent){
+    private void bindService(Intent intent) {
 
         mServiceConnection = new ServiceConnection() {
             @Override
@@ -187,12 +189,12 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
 
                 mTempFilePath = mMediaPlayerService.getCurrentMediaFilePath();
 
-                String artistName = (mMediaPlayerService.getMediaMetaData().getArtist() == null) ? "" : mMediaPlayerService.getMediaMetaData().getArtist();
-                String trackName = (mMediaPlayerService.getMediaMetaData().getTitle() == null) ? "" : mMediaPlayerService.getMediaMetaData().getTitle();
+//                String artistName = (mMediaPlayerService.getMediaMetaData().getArtist() == null) ? "" : mMediaPlayerService.getMediaMetaData().getArtist();
+//                String trackName = (mMediaPlayerService.getMediaMetaData().getTitle() == null) ? "" : mMediaPlayerService.getMediaMetaData().getTitle();
 
-                String labelText = ( artistName.equals("") && trackName.equals("") ) ? mTempFilePath : (artistName + "\n" + trackName);
+//                String labelText = (artistName.equals("") && trackName.equals("")) ? mTempFilePath : (artistName + "\n" + trackName);
 
-                mSongTitleLabel.setText(labelText);
+                mSongTitleLabel.setText("test");
                 mTotalDuration = mMediaPlayerService.getTotalDuration();
                 mSongTotalDurationLabel.setText("" + milliSecondsToTimer(mTotalDuration));
             }
@@ -206,41 +208,42 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    public String milliSecondsToTimer(long milliseconds){
+    public String milliSecondsToTimer(long milliseconds) {
         String finalTimerString = "";
         String secondsString = "";
 
-        int hours = (int)( milliseconds / (1000 * 60 * 60));
-        int minutes = (int)(milliseconds % (1000 * 60 * 60)) / (1000 * 60);
+        int hours = (int) (milliseconds / (1000 * 60 * 60));
+        int minutes = (int) (milliseconds % (1000 * 60 * 60)) / (1000 * 60);
         int seconds = (int) ((milliseconds % (1000 * 60 * 60)) % (1000 * 60) / 1000);
 
-        if(hours > 0){
+        if (hours > 0) {
             finalTimerString = hours + ":";
         }
 
-        if( seconds < 10 ){
+        if (seconds < 10) {
             secondsString = "0" + seconds;
-        }else{
-            secondsString = "" + seconds;}
+        } else {
+            secondsString = "" + seconds;
+        }
 
         finalTimerString = finalTimerString + minutes + ":" + secondsString;
 
         return finalTimerString;
     }
 
-    public int getProgressPercentage(long currentDuration, long totalDuration){
+    public int getProgressPercentage(long currentDuration, long totalDuration) {
         Double percentage = 0.0d;
 
         long currentSeconds = (int) (currentDuration / 1000);
         long totalSeconds = (int) (totalDuration / 1000);
 
-        percentage =(((double)currentSeconds)/totalSeconds)*100;
+        percentage = (((double) currentSeconds) / totalSeconds) * 100;
 
         return percentage.intValue();
     }
 
-    private void updatePlayPauseView(){
-        if(mMediaPlayerService != null) {
+    private void updatePlayPauseView() {
+        if (mMediaPlayerService != null) {
             if (!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
                 mButtonPlay.setImageResource(R.drawable.ic_dark_pause);
             } else {
@@ -250,15 +253,12 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
 
         super.onBackPressed();
 
         mHandler.removeCallbacks(mUpdateTimeTask);
         mUpdateTimeTask = null;
-
-        unregisterReceiver(mBroadcastReceiver);
-        mBroadcastReceiver = null;
     }
 
     private void createBroadcastReceiver() {

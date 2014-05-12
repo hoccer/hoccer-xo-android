@@ -118,9 +118,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private void updateNotification() {
         if (!isPaused()) {
-            mNotificationViews.setImageViewResource(R.id.btn_play_pause, R.drawable.ic_dark_content_play);
-        } else {
             mNotificationViews.setImageViewResource(R.id.btn_play_pause, R.drawable.ic_dark_content_pause);
+        } else {
+            mNotificationViews.setImageViewResource(R.id.btn_play_pause, R.drawable.ic_dark_content_play);
         }
         mBuilder.setContent(mNotificationViews);
         startForeground(MUSIC_PLAYER_NOTIFICATION_ID, mBuilder.build());
@@ -132,8 +132,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
         Intent resultIntent = new Intent(this, FullscreenPlayerActivity.class);
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addNextIntent(resultIntent);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this)
+                .addParentStack(FullscreenPlayerActivity.class)
+                .addNextIntent(resultIntent);
 
         mResultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
