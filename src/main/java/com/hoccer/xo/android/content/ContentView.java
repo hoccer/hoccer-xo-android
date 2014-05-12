@@ -293,30 +293,31 @@ public class ContentView extends LinearLayout implements View.OnClickListener, V
         }
 
         removeChildViewIfContentHasChanged(contentChanged, stateChanged);
-        try {
-            updateContentView(cacheChanged, oldViewCache, activity, content, message);
-        } catch (NullPointerException exception) {
-            LOG.error("probably received an unkown media-type", exception);
-            return;
-        }
-        if(contentAvailable && (cacheChanged || contentChanged || stateChanged)){
-            boolean isLightTheme = message != null ? message.isIncoming() : true;
-            mViewCache.updateView(mContentChild, this, content, isLightTheme);
-        }
-//        int visibility = isInEditMode() ? GONE : VISIBLE;
-//        mContentWrapper.setVisibility(visibility);
-
-        // disable content child when we are showing the footer
-        if(mContentChild != null) {
-            mContentChild.setEnabled(!footerVisible);
-            if (footerVisible) {
-                mContentWrapper.setVisibility(View.INVISIBLE);
-            } else {
-                mContentWrapper.setVisibility(View.VISIBLE);
+        if(contentAvailable) {
+            try {
+                updateContentView(cacheChanged, oldViewCache, activity, content, message);
+            } catch (NullPointerException exception) {
+                LOG.error("probably received an unkown media-type", exception);
+                return;
             }
-        }
+            if (cacheChanged || contentChanged || stateChanged) {
+                boolean isLightTheme = message != null ? message.isIncoming() : true;
+                mViewCache.updateView(mContentChild, this, content, isLightTheme);
+            }
 
-        this.setOnLongClickListener(this);
+            if(mContentChild != null) {
+                mContentChild.setEnabled(!footerVisible);
+                if (footerVisible) {
+                    mContentWrapper.setVisibility(View.INVISIBLE);
+                } else {
+                    mContentWrapper.setVisibility(View.VISIBLE);
+                }
+            this.setOnLongClickListener(this);
+            }
+        } else {
+            mContentWrapper.setVisibility(View.INVISIBLE);
+            this.setOnLongClickListener(null);
+        }
     }
 
     private void isValidContent(IContentObject content) throws FileNotFoundException {
