@@ -130,6 +130,11 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mServiceConnection);
@@ -187,14 +192,16 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
                 MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
                 mMediaPlayerService = binder.getService();
 
+                updatePlayPauseView();
+
                 mTempFilePath = mMediaPlayerService.getCurrentMediaFilePath();
 
-//                String artistName = (mMediaPlayerService.getMediaMetaData().getArtist() == null) ? "" : mMediaPlayerService.getMediaMetaData().getArtist();
-//                String trackName = (mMediaPlayerService.getMediaMetaData().getTitle() == null) ? "" : mMediaPlayerService.getMediaMetaData().getTitle();
+                String artistName = (mMediaPlayerService.getMediaMetaData().getArtist() == null) ? "" : mMediaPlayerService.getMediaMetaData().getArtist();
+                String trackName = (mMediaPlayerService.getMediaMetaData().getTitle() == null) ? "" : mMediaPlayerService.getMediaMetaData().getTitle();
 
-//                String labelText = (artistName.equals("") && trackName.equals("")) ? mTempFilePath : (artistName + "\n" + trackName);
+                String labelText = (artistName.equals("") && trackName.equals("")) ? mTempFilePath : (artistName + "\n" + trackName);
 
-                mSongTitleLabel.setText("test");
+                mSongTitleLabel.setText(labelText);
                 mTotalDuration = mMediaPlayerService.getTotalDuration();
                 mSongTotalDurationLabel.setText("" + milliSecondsToTimer(mTotalDuration));
             }
