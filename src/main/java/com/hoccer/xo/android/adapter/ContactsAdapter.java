@@ -52,7 +52,6 @@ public abstract class ContactsAdapter extends XoAdapter
 
     List<TalkClientSmsToken> mSmsTokens = new ArrayList<TalkClientSmsToken>();
     List<TalkClientContact> mClientContacts = new ArrayList<TalkClientContact>();
-    List<TalkClientContact> mGroupContacts = new ArrayList<TalkClientContact>();
 
     public Filter getFilter() {
         return mFilter;
@@ -107,16 +106,14 @@ public abstract class ContactsAdapter extends XoAdapter
                 List<TalkClientContact> newClients = mDatabase.findAllClientContacts();
                 newClients.add(selfContact);
 
-                List<TalkClientContact> newGroups = mDatabase.findAllGroupContacts();
 
-                LOG.debug("found " + newClients.size() + " friends " + newGroups.size() + " groups");
+                LOG.debug("found " + newClients.size() + " contacts");
 
                 if(mFilter != null) {
                     newClients = filter(newClients, mFilter);
-                    newGroups = filter(newGroups, mFilter);
                 }
 
-                LOG.debug("filtered " + newClients.size() + " friends " + newGroups.size() + " groups");
+                LOG.debug("filtered " + newClients.size() + " contacts");
 
                 for(TalkClientContact contact: newClients) {
                     TalkClientDownload avatarDownload = contact.getAvatarDownload();
@@ -124,15 +121,8 @@ public abstract class ContactsAdapter extends XoAdapter
                         mDatabase.refreshClientDownload(avatarDownload);
                     }
                 }
-                for(TalkClientContact contact: newGroups) {
-                    TalkClientDownload avatarDownload = contact.getAvatarDownload();
-                    if(avatarDownload != null) {
-                        mDatabase.refreshClientDownload(avatarDownload);
-                    }
-                }
 
                 mClientContacts = newClients;
-                mGroupContacts = newGroups;
                 mSmsTokens = newTokens;
             } catch (SQLException e) {
                 LOG.error("SQL error", e);
@@ -251,17 +241,6 @@ public abstract class ContactsAdapter extends XoAdapter
 
         count += mSmsTokens.size();
         count += mClientContacts.size();
-        count += mGroupContacts.size();
-
-        if(!mSmsTokens.isEmpty()) {
-            //count += 1;
-        }
-        if(!mClientContacts.isEmpty()) {
-            //count += 1;
-        }
-        if(!mGroupContacts.isEmpty()) {
-            //count += 1;
-        }
 
         return count;
     }
@@ -277,26 +256,11 @@ public abstract class ContactsAdapter extends XoAdapter
             offset += mSmsTokens.size();
         }
         if(!mClientContacts.isEmpty()) {
-//            if(position == offset) {
-//                return mResources.getString(R.string.contacts_category_friends);
-//            }
-//            offset += 1;
             int clientPos = position - offset;
             if(clientPos >= 0 && clientPos < mClientContacts.size()) {
                 return mClientContacts.get(clientPos);
             }
             offset += mClientContacts.size();
-        }
-        if(!mGroupContacts.isEmpty()) {
-//            if(position == offset) {
-//                return mResources.getString(R.string.contacts_category_groups);
-//            }
-//            offset += 1;
-            int groupPos = position - offset;
-            if(groupPos >= 0 && groupPos < mGroupContacts.size()) {
-                return mGroupContacts.get(groupPos);
-            }
-            offset += mGroupContacts.size();
         }
         return "";
     }
@@ -312,26 +276,11 @@ public abstract class ContactsAdapter extends XoAdapter
             offset += mSmsTokens.size();
         }
         if(!mClientContacts.isEmpty()) {
-//            if(position == offset) {
-//                return VIEW_TYPE_SEPARATOR;
-//            }
-//            offset += 1;
             int clientPos = position - offset;
             if(clientPos >= 0 && clientPos < mClientContacts.size()) {
                 return VIEW_TYPE_CLIENT;
             }
             offset += mClientContacts.size();
-        }
-        if(!mGroupContacts.isEmpty()) {
-//            if(position == offset) {
-//                return VIEW_TYPE_SEPARATOR;
-//            }
-//            offset += 1;
-            int groupPos = position - offset;
-            if(groupPos >= 0 && groupPos < mGroupContacts.size()) {
-                return VIEW_TYPE_GROUP;
-            }
-            offset += mGroupContacts.size();
         }
         return VIEW_TYPE_SEPARATOR;
     }
@@ -351,18 +300,7 @@ public abstract class ContactsAdapter extends XoAdapter
             offset += mSmsTokens.size();
         }
         if(!mClientContacts.isEmpty()) {
-//            if(position == offset) {
-//                return ITEM_ID_CLIENT_HEADER;
-//            }
-//            offset += 1;
             offset += mClientContacts.size();
-        }
-        if(!mGroupContacts.isEmpty()) {
-//            if(position == offset) {
-//                return ITEM_ID_GROUP_HEADER;
-//            }
-//            offset += 1;
-            offset += mGroupContacts.size();
         }
         return ITEM_ID_UNKNOWN;
     }
