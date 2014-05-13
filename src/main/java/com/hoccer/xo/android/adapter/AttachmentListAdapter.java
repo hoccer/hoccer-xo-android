@@ -1,5 +1,7 @@
 package com.hoccer.xo.android.adapter;
 
+import android.database.DataSetObserver;
+import android.database.Observable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -21,6 +23,7 @@ public class AttachmentListAdapter extends XoAdapter {
     private List<MediaMetaData> mAttachmentMetaData;
     private int mViewResourceId;
     private int mTextViewId;
+    private AttachmentListObserver mAttachmentListObserver;
 
     public AttachmentListAdapter(XoActivity pXoContext, List<TalkClientDownload> pAttachments, int pViewResourceId, int pTextViewId, String pContentMediaType){
         super(pXoContext);
@@ -28,6 +31,8 @@ public class AttachmentListAdapter extends XoAdapter {
         mAttachments = pAttachments;
         mViewResourceId = pViewResourceId;
         mTextViewId = pTextViewId;
+
+        mAttachmentListObserver = new AttachmentListObserver();
 
         if (pContentMediaType.equalsIgnoreCase(ContentMediaType.AUDIO) || pContentMediaType.equalsIgnoreCase(ContentMediaType.VIDEO)) {
             fetchMetaDataFromAttachmentList();
@@ -61,6 +66,10 @@ public class AttachmentListAdapter extends XoAdapter {
         return attachmentView;
     }
 
+    public AttachmentListObserver getAttachmentListObserver() {
+        return mAttachmentListObserver;
+    }
+
     private String getDisplayName(int pPosition) {
         String displayName;
         TalkClientDownload attachment = mAttachments.get(pPosition);
@@ -74,6 +83,14 @@ public class AttachmentListAdapter extends XoAdapter {
             filePaths.add(attachment.getDataFile());
         }
         mAttachmentMetaData = MediaMetaData.factorMetaDataForFileList(filePaths);
+    }
+
+    class AttachmentListObserver extends DataSetObserver{
+        @Override
+        public void onChanged() {
+            super.onChanged();
+
+        }
     }
 
 }
