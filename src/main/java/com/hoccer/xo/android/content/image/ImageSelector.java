@@ -143,7 +143,7 @@ public class ImageSelector implements IContentSelector {
                 MediaStore.Images.Media.SIZE,
                 MediaStore.Images.Media.WIDTH,
                 MediaStore.Images.Media.HEIGHT,
-                MediaStore.Images.Media.DISPLAY_NAME
+                MediaStore.Images.Media.TITLE
         };
 
         Cursor cursor = context.getContentResolver().query(

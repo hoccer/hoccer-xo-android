@@ -28,7 +28,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
     //private static final String DATABASE_NAME = "hoccer-talk.db";
     private static String DATABASE_NAME = "hoccer-talk.db";
 
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 14;
 
     private static AndroidTalkDatabase INSTANCE = null;
 
@@ -130,6 +130,9 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
                 uploads.executeRaw("ALTER TABLE `clientUpload` ADD COLUMN `fileName` VARCHAR;");
             }
             if (oldVersion < 13) {
+                renameFilecacheUris(db);
+            }
+            if (oldVersion < 14) {
                 Dao<TalkGroup, Integer> talkGroups = getDao(TalkGroup.class);
                 talkGroups.executeRaw("ALTER TABLE `group` ADD COLUMN `keyDate` DATE");
                 talkGroups.executeRaw("ALTER TABLE `group` ADD COLUMN `groupType` VARCHAR");
@@ -160,6 +163,16 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
             }
         } catch (SQLException e) {
             LOG.error("sql error upgrading database", e);
+        }
+    }
+
+    private void renameFilecacheUris(SQLiteDatabase db) {
+        try {
+            XoClientDatabase database = new XoClientDatabase(this);
+            database.initialize();
+            database.migrateAllFilecacheUris();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
