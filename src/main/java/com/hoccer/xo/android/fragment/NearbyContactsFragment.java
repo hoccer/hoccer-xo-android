@@ -64,7 +64,13 @@ public class NearbyContactsFragment extends XoListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        TalkClientContact contact = (TalkClientContact) mContactList.getItemAtPosition(position);
-        getXoActivity().showContactConversation(contact);
+        if (l == mContactList) {
+            LOG.debug("onListItemClick(contactList," + position + ")");
+            Object item = mContactList.getItemAtPosition(position);
+            if (item instanceof TalkClientContact) {
+                TalkClientContact contact = (TalkClientContact) item;
+                getXoActivity().showContactConversation(contact);
+            }
+        }
     }
 }

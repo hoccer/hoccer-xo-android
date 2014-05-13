@@ -230,6 +230,7 @@ public abstract class XoActivity extends FragmentActivity {
         bindService(serviceIntent, mServiceConnection, BIND_IMPORTANT);
         checkKeys();
         getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_ONLINE);
+
     }
 
     private void checkForCrashesIfEnabled() {
@@ -334,7 +335,7 @@ public abstract class XoActivity extends FragmentActivity {
                 String ourName = getApplicationContext().getPackageName().toString();
                 if (!services.get(0).topActivity.getPackageName().toString().equalsIgnoreCase(ourName)
                         || !mScreenListener.isScreenOn()) {
-                    getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_OFFLINE);
+                    getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_BACKGROUND);
                 }
             }
         };
