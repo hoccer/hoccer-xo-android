@@ -49,7 +49,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private CharSequence mFileName;
     private RemoteViews mNotificationViews;
 
-    private LocalBroadcastManager mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
+    private LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mReceiver;
 
     public class MediaPlayerBinder extends Binder {
@@ -62,6 +62,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     public void onCreate() {
 
         super.onCreate();
+
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
