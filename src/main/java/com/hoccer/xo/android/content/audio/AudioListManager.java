@@ -1,6 +1,7 @@
 package com.hoccer.xo.android.content.audio;
 
 import android.content.*;
+import android.database.Observable;
 import android.os.IBinder;
 import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.XoClientDatabase;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class AudioListManager implements Iterator<TalkClientDownload>, IXoTransferListener {
+public class AudioListManager extends Observable implements Iterator<TalkClientDownload>, IXoTransferListener {
 
     private static AudioListManager INSTANCE = null;
 

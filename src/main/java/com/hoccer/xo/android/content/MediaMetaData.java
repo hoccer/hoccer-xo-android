@@ -13,13 +13,17 @@ public class MediaMetaData {
 
     private static final Logger LOG = Logger.getLogger(MediaMetaData.class);
 
+    private String mFilePath = null;
     private String mTitle = null;
     private String mArtist = null;
     private String mAlbumTitle = null;
     private String mMimeType = null;
     private boolean mHasAudio = false;
     private boolean mHasVideo = false;
-    private byte[] mArtwork = null;
+
+    public MediaMetaData(String pFilePath) {
+        mFilePath = pFilePath;
+    }
 
     public String getTitle() {
         return mTitle;
@@ -46,7 +50,10 @@ public class MediaMetaData {
     }
 
     public byte[] getArtwork() {
-        return mArtwork;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(mFilePath);
+
+        return retriever.getEmbeddedPicture();
     }
 
     private void setTitle(String pTitle) {
@@ -73,10 +80,6 @@ public class MediaMetaData {
         mHasVideo = pHasVideo;
     }
 
-    private void setArtwork(byte[] pArtwork) {
-        mArtwork = pArtwork;
-    }
-
     public static MediaMetaData factorMetaDataForFile(String pMediaFilePath) throws IllegalArgumentException {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
 
@@ -85,18 +88,18 @@ public class MediaMetaData {
 
     public static List<MediaMetaData> factorMetaDataForFileList(List<String> pMediaFilePathList) throws IllegalArgumentException {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        ArrayList<MediaMetaData> metaDatas = new ArrayList<MediaMetaData>();
+        ArrayList<MediaMetaData> metaDataList = new ArrayList<MediaMetaData>();
 
         for (String mediaFilePath : pMediaFilePathList) {
-            metaDatas.add(retrieveMetaDataFromFile(retriever,mediaFilePath));
+            metaDataList.add(retrieveMetaDataFromFile(retriever, mediaFilePath));
         }
 
-        return metaDatas;
+        return metaDataList;
     }
 
 
     private static MediaMetaData retrieveMetaDataFromFile(MediaMetadataRetriever pRetriever, String pMediaFilePath) {
-        MediaMetaData metaData = new MediaMetaData();
+        MediaMetaData metaData = new MediaMetaData(pMediaFilePath);
 
         pRetriever.setDataSource(pMediaFilePath);
         metaData.setTitle(pRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
@@ -111,8 +114,6 @@ public class MediaMetaData {
         if (pRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO) != null) {
             metaData.setHasVideo(true);
         }
-
-        metaData.setArtwork(pRetriever.getEmbeddedPicture());
 
         return metaData;
     }

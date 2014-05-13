@@ -28,6 +28,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
     private final static Logger LOG = Logger.getLogger(AudioAttachmentListFragment.class);
     private ServiceConnection mConnection;
+    private AttachmentListAdapter mAttachmentListAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,13 +46,11 @@ public class AudioAttachmentListFragment extends XoListFragment {
         getActivity().startService(intent);
         bindService(intent);
 
-        ListAdapter adapter;
-
         final List<TalkClientDownload> audioAttachmentList = AudioListManager.get(getActivity()).getAudioList();
-        adapter = new AttachmentListAdapter(getXoActivity(),
-                audioAttachmentList, R.layout.attachmentlist_general_item, R.id.songTitle);
+        mAttachmentListAdapter = new AttachmentListAdapter(getXoActivity(),
+                audioAttachmentList, R.layout.attachmentlist_general_item, R.id.songTitle, ContentMediaType.AUDIO);
 
-        setListAdapter(adapter);
+        setListAdapter(mAttachmentListAdapter);
 
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -63,6 +62,18 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 getXoActivity().showFullscreenPlayer();
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AudioListManager.get(getActivity()).registerObserver(mAttachmentListAdapter.getAttachmentListObserver());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        AudioListManager.get(getActivity()).unregisterObserver(mAttachmentListAdapter.getAttachmentListObserver());
     }
 
     @Override
