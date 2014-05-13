@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.RemoteViews;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.content.MediaMetaData;
+import com.hoccer.xo.android.content.audio.AudioListManager;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
