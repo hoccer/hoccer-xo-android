@@ -2,8 +2,11 @@ package com.hoccer.xo.android.content.audio;
 
 import android.content.*;
 import android.os.IBinder;
+import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import org.apache.log4j.Logger;
@@ -13,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class AudioListManager implements Iterator<TalkClientDownload> {
+public class AudioListManager implements Iterator<TalkClientDownload>, IXoTransferListener {
 
     private static AudioListManager INSTANCE = null;
 
@@ -49,6 +52,8 @@ public class AudioListManager implements Iterator<TalkClientDownload> {
         } catch (SQLException e) {
             LOG.error("SQL query failed: " + e);
         }
+
+        XoApplication.getXoClient().registerTransferListener(this);
     }
 
     @Override
@@ -72,5 +77,35 @@ public class AudioListManager implements Iterator<TalkClientDownload> {
 
     public List<TalkClientDownload> getAudioList() {
         return mAudioAttachmentList;
+    }
+
+    public void onDownloadRegistered(TalkClientDownload download) {
+    }
+
+    public void onDownloadStarted(TalkClientDownload download) {
+    }
+
+    public void onDownloadProgress(TalkClientDownload download) {
+    }
+
+    public void onDownloadFinished(TalkClientDownload download) {
+        if(download.getContentMediaType().equals("audio")){
+            mAudioAttachmentList.add(download);
+        }
+    }
+
+    public void onDownloadStateChanged(TalkClientDownload download) {
+    }
+
+    public void onUploadStarted(TalkClientUpload upload) {
+    }
+
+    public void onUploadProgress(TalkClientUpload upload) {
+    }
+
+    public void onUploadFinished(TalkClientUpload upload) {
+    }
+
+    public void onUploadStateChanged(TalkClientUpload upload) {
     }
 }
