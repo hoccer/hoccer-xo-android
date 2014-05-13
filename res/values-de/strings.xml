@@ -175,8 +175,10 @@
     <string name="menu_group_profile_leave">Gruppe verlassen</string>
     <string name="location">Standort</string>
     <string name="video">Video</string>
+    <string name="data">Document</string>
     <string name="show_location_instruction">Standort anzeigen</string>
     <string name="play_video_instruction">Video abspielen</string>
+    <string name="open_doc_instruction">Datei öffnen</string>
     <string name="vcard_description">Alle Kontaktdetails</string>
     <string name="profile_name_text">Name</string>
     <string name="profile_key_text">Schlüssel</string>

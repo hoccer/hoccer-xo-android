@@ -3,9 +3,12 @@ package com.hoccer.xo.android.content.data;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hoccer.talk.content.IContentObject;
@@ -16,7 +19,7 @@ import org.apache.log4j.Logger;
 
 import java.net.URLConnection;
 
-public class DataViewCache extends ContentViewCache<Button> {
+public class DataViewCache extends ContentViewCache<View> {
 
     private static final Logger LOG = Logger.getLogger(DataViewCache.class);
 
@@ -32,47 +35,55 @@ public class DataViewCache extends ContentViewCache<Button> {
     }
 
     @Override
-    protected Button makeView(Activity activity) {
-        Button button = new Button(activity);
-        button.setText(activity.getString(R.string.open_file));
-        return button;
+    protected View makeView(Activity activity) {
+        View view = View.inflate(activity, R.layout.content_data, null);
+        return view;
     }
 
     @Override
-    protected void updateViewInternal(final Button view, ContentView contentView, final IContentObject contentObject, boolean isLightTheme) {
+    protected void updateViewInternal(final View view, ContentView contentView, final IContentObject contentObject, boolean isLightTheme) {
         if(contentObject.isContentAvailable()) {
-            view.setVisibility(View.VISIBLE);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(contentObject.isContentAvailable()) {
-                        String url = contentObject.getContentUrl();
-                        if(url == null) {
-                            url = contentObject.getContentDataUrl();
-                        }
-                        if(url != null) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            String type = URLConnection.guessContentTypeFromName(url);
-                            Uri data = Uri.parse(url);
-                            intent.setDataAndType(data, type);
-                            try {
-                                view.getContext().startActivity(intent);
-                            } catch(ActivityNotFoundException exception) {
-                                // TODO: tell the user there is no app installd which can handle the file
-                                // for now we use a Toast!
-                                Toast.makeText(view.getContext(),
-                                        R.string.error_no_such_app,
-                                        Toast.LENGTH_LONG).show();
+            ImageButton openMapButton = (ImageButton) view.findViewById(R.id.ib_content_open);
+            int imageResource = isLightTheme ? R.drawable.ic_dark_video
+                    : R.drawable.ic_light_video;
+            openMapButton.setImageResource(imageResource);
+            TextView title = (TextView) view.findViewById(R.id.tv_doc_title);
+                title.setText(title.getText() + ": " + contentObject.getFileName());
+                openMapButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(contentObject.isContentAvailable()) {
+                            String url = contentObject.getContentUrl();
+                            if(url == null) {
+                                url = contentObject.getContentDataUrl();
+                            }
+                            if(url != null) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                String type = URLConnection.guessContentTypeFromName(url);
+                                Uri data = Uri.parse(url);
+                                intent.setDataAndType(data, type);
+                                try {
+                                    view.getContext().startActivity(intent);
+                                } catch(ActivityNotFoundException exception) {
+                                    // TODO: tell the user there is no app installd which can handle the file
+                                    // for now we use a Toast!
+                                    Toast.makeText(view.getContext(),
+                                            R.string.error_no_such_app,
+                                            Toast.LENGTH_LONG).show();
+                                }
                             }
                         }
                     }
-                }
             });
+            int textColor = isLightTheme ? Color.BLACK : Color.WHITE;
+            TextView description = (TextView) view.findViewById(R.id.tv_doc_description);
+            title.setTextColor(textColor);
+            description.setTextColor(textColor);
         }
     }
 
     @Override
-    protected void clearViewInternal(Button view) {
+    protected void clearViewInternal(View view) {
 
     }
 

@@ -15,6 +15,7 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.audio.ButtonAudioViewCache;
 import com.hoccer.xo.android.content.audio.MusicSelector;
 import com.hoccer.xo.android.content.clipboard.ClipboardSelector;
+import com.hoccer.xo.android.content.data.DataSelector;
 import com.hoccer.xo.android.content.data.DataViewCache;
 import com.hoccer.xo.android.content.image.*;
 import com.hoccer.xo.android.content.image.ImageViewCache;
@@ -97,7 +98,7 @@ public class ContentRegistry {
         initializeSelector(new MusicSelector(mContext));
         initializeSelector(new ContactSelector(mContext));
         initializeSelector(new MapsLocationSelector(mContext));
-//        initializeSelector(new DataSelector(mContext));
+        initializeSelector(new DataSelector(mContext));
 
         mClipboardSelector = new ClipboardSelector(mContext);
 
