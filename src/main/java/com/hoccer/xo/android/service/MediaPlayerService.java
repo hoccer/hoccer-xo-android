@@ -20,6 +20,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.RemoteViews;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
+import com.hoccer.xo.android.content.audio.MediaMetaData;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -199,7 +200,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private void resetFileNameAndMetaData() {
         String path = Uri.parse(mCurrentMediaFilePath).getPath();
         mFileName = extractFileName(path);
-        mMediaMetaData = retrieveMetaData(path);
+        try {
+            mMediaMetaData = MediaMetaData.factorMetaDataForFile(path);
+        } catch (IllegalArgumentException e) {
+            LOG.error(e);
+        }
     }
 
     private boolean isResumable(String mediaFilePath) {
@@ -339,42 +344,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private String extractFileName(String path) {
         String fileName = path.substring(path.lastIndexOf("/") + 1);
         return fileName;
-    }
-
-    private MediaMetaData retrieveMetaData(String path) {
-
-        MediaMetaData metaData = null;
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        try {
-            retriever.setDataSource(path);
-            metaData = new MediaMetaData();
-            metaData.setTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
-            metaData.setArtist(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
-        } catch (IllegalArgumentException e) {
-            LOG.error("Failed to set media data! " + e.getMessage());
-        }
-        return metaData;
-    }
-
-    public class MediaMetaData {
-        private String title;
-        private String artist;
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public void setArtist(String artist) {
-            this.artist = artist;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getArtist() {
-            return artist;
-        }
     }
 
     public MediaMetaData getMediaMetaData() {

@@ -57,11 +57,13 @@ public class AttachmentListAdapter extends XoAdapter {
     }
 
     private String getDisplayName(int pPosition) {
+        String displayName;
         TalkClientDownload attachment = mAttachments.get(pPosition);
+        displayName = attachment.getFileName();
         if (attachment.getMediaType().equalsIgnoreCase("audio")) {
             //  TODO get ID3 tags vom audio file
             attachment.getFileName();
         }
-        return mAttachments.get(pPosition).getFileName();
+        return displayName;
     }
 }
