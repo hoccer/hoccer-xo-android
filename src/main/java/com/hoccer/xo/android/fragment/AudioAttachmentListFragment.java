@@ -50,7 +50,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
         mAudioAttachmentList = AudioListManager.get(getActivity().getApplicationContext()).getAudioList();
         adapter = new AttachmentListAdapter(getXoActivity(),
-                mAudioAttachmentList, R.layout.attachmentlist_general_item, R.id.songTitle);
+                mAudioAttachmentList, R.layout.attachmentlist_general_item, R.id.songTitle, ContentMediaType.AUDIO);
 
         setListAdapter(adapter);
 
