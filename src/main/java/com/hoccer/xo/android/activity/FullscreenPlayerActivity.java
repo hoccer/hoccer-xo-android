@@ -12,6 +12,8 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.content.audio.AudioListManager;
+import com.hoccer.xo.android.content.audio.MusicLoader;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -95,11 +97,9 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
         });
 
         mButtonNext.setOnClickListener(new View.OnClickListener() {
-
             @Override
-            public void onClick(View view) {
-
-                LOG.error("------------------------- Next onClick");
+            public void onClick(View v) {
+                playNextTrack();
             }
         });
 
@@ -280,5 +280,9 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
         };
         IntentFilter filter = new IntentFilter(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, filter);
+    }
+
+    private void playNextTrack() {
+        AudioListManager.get(getApplicationContext()).playNext();
     }
 }

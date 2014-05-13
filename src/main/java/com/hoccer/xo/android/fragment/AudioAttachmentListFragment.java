@@ -13,6 +13,7 @@ import android.widget.*;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.xo.android.adapter.AttachmentListAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
+import com.hoccer.xo.android.content.audio.AudioListManager;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -49,6 +50,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
         try {
             //mAudioAttachmentList = getXoDatabase().findAttachmentsByMediaType("audio");
             mAudioAttachmentList = getXoDatabase().findClientDownloadByMediaType("audio");
+            AudioListManager.get(getActivity().getApplicationContext()).setAudioAttachmentList(mAudioAttachmentList);
             adapter = new AttachmentListAdapter(getXoActivity(),
                     mAudioAttachmentList,R.layout.music_viewer_item, R.id.songTitle);
         } catch (SQLException e) {
