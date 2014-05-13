@@ -27,7 +27,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
     private MediaPlayerService mMediaPlayerService;
 
     private final static Logger LOG = Logger.getLogger(AudioAttachmentListFragment.class);
-    private List<TalkClientDownload> mAudioAttachmentList;
     private ServiceConnection mConnection;
 
     @Override
@@ -48,9 +47,9 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
         ListAdapter adapter;
 
-        mAudioAttachmentList = AudioListManager.get(getActivity().getApplicationContext()).getAudioList();
+        final List<TalkClientDownload> audioAttachmentList = AudioListManager.get(getActivity()).getAudioList();
         adapter = new AttachmentListAdapter(getXoActivity(),
-                mAudioAttachmentList, R.layout.attachmentlist_general_item, R.id.songTitle, ContentMediaType.AUDIO);
+                audioAttachmentList, R.layout.attachmentlist_general_item, R.id.songTitle);
 
         setListAdapter(adapter);
 
@@ -59,7 +58,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                mMediaPlayerService.start(mAudioAttachmentList.get(position).getContentDataUrl());
+                mMediaPlayerService.start(audioAttachmentList.get(position).getContentDataUrl());
 
                 getXoActivity().showFullscreenPlayer();
             }

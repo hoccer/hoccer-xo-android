@@ -26,9 +26,9 @@ public class AudioListManager implements Iterator<TalkClientDownload> {
 
     private int currentIndex = 0;
 
-    public static synchronized AudioListManager get(Context applicationContext) {
+    public static synchronized AudioListManager get(Context context) {
         if (INSTANCE == null) {
-            INSTANCE = new AudioListManager(applicationContext);
+            INSTANCE = new AudioListManager(context.getApplicationContext());
         }
         return INSTANCE;
     }
