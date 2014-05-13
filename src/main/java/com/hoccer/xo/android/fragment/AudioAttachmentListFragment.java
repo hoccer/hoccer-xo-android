@@ -34,14 +34,13 @@ public class AudioAttachmentListFragment extends XoListFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.fragment_audio_attachment_list, container, false);
-        LOG.error("BAZINGA: AudioAttachmentListFragment.onCreateView");
         return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
-        LOG.error("BAZINGA: AudioAttachmentListFragment.onActivityCreated");
+
         Intent intent = new Intent(getActivity(), MediaPlayerService.class);
         getActivity().startService(intent);
         bindService(intent);
@@ -49,7 +48,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
         ListAdapter adapter;
 
         try {
-            LOG.error("BAZINGA: AudioAttachmentListFragment.onActivityCreated: lade mAudioAttachmentList");
             //mAudioAttachmentList = getXoDatabase().findAttachmentsByMediaType("audio");
             mAudioAttachmentList = getXoDatabase().findClientDownloadByMediaType("audio");
             AudioListManager.get(getActivity().getApplicationContext()).setAudioAttachmentList(mAudioAttachmentList);
