@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.content.audio;
+package com.hoccer.xo.android.content;
 
 import android.media.MediaMetadataRetriever;
 import org.apache.log4j.Logger;

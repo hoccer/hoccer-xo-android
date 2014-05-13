@@ -1,12 +1,10 @@
 package com.hoccer.xo.android.adapter;
 
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientDownload;
-import com.hoccer.talk.model.TalkAttachment;
+import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 
@@ -20,6 +18,7 @@ public class AttachmentListAdapter extends XoAdapter {
     private List<TalkClientDownload> mAttachments;
     private int mViewResourceId;
     private int mTextViewId;
+    private String mAttachmentMediaType = ContentMediaType.UNKNOWN;
 
     public AttachmentListAdapter(XoActivity pXoContext, List<TalkClientDownload> pAttachments, int pViewResourceId, int pTextViewId){
         super(pXoContext);
@@ -27,6 +26,10 @@ public class AttachmentListAdapter extends XoAdapter {
         mAttachments = pAttachments;
         mViewResourceId = pViewResourceId;
         mTextViewId = pTextViewId;
+    }
+
+    public void setAttachmentMediaType(String pAttachmentMediaType) {
+        mAttachmentMediaType = pAttachmentMediaType;
     }
 
     @Override
@@ -60,10 +63,11 @@ public class AttachmentListAdapter extends XoAdapter {
         String displayName;
         TalkClientDownload attachment = mAttachments.get(pPosition);
         displayName = attachment.getFileName();
-        if (attachment.getMediaType().equalsIgnoreCase("audio")) {
+        if (attachment.getMediaType().equalsIgnoreCase(ContentMediaType.AUDIO)) {
             //  TODO get ID3 tags vom audio file
             attachment.getFileName();
         }
         return displayName;
     }
+
 }
