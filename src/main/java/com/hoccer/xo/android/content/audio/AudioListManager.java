@@ -1,15 +1,15 @@
 package com.hoccer.xo.android.content.audio;
 
 import android.content.*;
+import android.database.DataSetObserver;
 import android.database.Observable;
-import android.os.IBinder;
 import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
-import com.hoccer.xo.android.service.MediaPlayerService;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class AudioListManager extends Observable implements Iterator<TalkClientDownload>, IXoTransferListener {
+public class AudioListManager extends Observable<DataSetObserver> implements Iterator<TalkClientDownload>, IXoTransferListener {
 
     private static AudioListManager INSTANCE = null;
 
@@ -26,7 +26,7 @@ public class AudioListManager extends Observable implements Iterator<TalkClientD
     private final Context mContext;
     private final XoClientDatabase mDatabase;
 
-    private List<TalkClientDownload> mAudioAttachmentList = new ArrayList<TalkClientDownload>();
+    private List<TalkClientDownload> mAudioList = new ArrayList<TalkClientDownload>();
 
     private int currentIndex = 0;
 
@@ -49,7 +49,7 @@ public class AudioListManager extends Observable implements Iterator<TalkClientD
         }
 
         try {
-            mAudioAttachmentList = mDatabase.findClientDownloadByMediaType("audio");
+            mAudioList = mDatabase.findClientDownloadByMediaType(ContentMediaType.AUDIO);
         } catch (SQLException e) {
             LOG.error("SQL query failed: " + e);
         }
@@ -59,8 +59,8 @@ public class AudioListManager extends Observable implements Iterator<TalkClientD
 
     @Override
     public boolean hasNext() {
-        if (!mAudioAttachmentList.isEmpty()) {
-            if (currentIndex + 1 < mAudioAttachmentList.size()) {
+        if (!mAudioList.isEmpty()) {
+            if (currentIndex + 1 < mAudioList.size()) {
                 return true;
             }
         }
@@ -69,7 +69,7 @@ public class AudioListManager extends Observable implements Iterator<TalkClientD
 
     @Override
     public TalkClientDownload next() {
-        return mAudioAttachmentList.get(++currentIndex);
+        return mAudioList.get(++currentIndex);
     }
 
     @Override
@@ -77,7 +77,13 @@ public class AudioListManager extends Observable implements Iterator<TalkClientD
     }
 
     public List<TalkClientDownload> getAudioList() {
-        return mAudioAttachmentList;
+        return mAudioList;
+    }
+
+    private void notifyAudioListChanged() {
+        for (DataSetObserver observer: mObservers){
+            observer.onChanged();
+        }
     }
 
     public void onDownloadRegistered(TalkClientDownload download) {
@@ -90,8 +96,9 @@ public class AudioListManager extends Observable implements Iterator<TalkClientD
     }
 
     public void onDownloadFinished(TalkClientDownload download) {
-        if(download.getContentMediaType().equals("audio")){
-            mAudioAttachmentList.add(download);
+        if(download.getContentMediaType().equals(ContentMediaType.AUDIO)){
+            mAudioList.add(download);
+            notifyAudioListChanged();
         }
     }
 
