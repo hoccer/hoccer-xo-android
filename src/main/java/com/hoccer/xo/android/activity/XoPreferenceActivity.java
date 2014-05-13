@@ -2,16 +2,19 @@ package com.hoccer.xo.android.activity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.*;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
+import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
 
@@ -30,6 +33,11 @@ public class XoPreferenceActivity extends PreferenceActivity implements SharedPr
     private Handler mDialogDismisser;
     private Dialog mWaitingDialog;
 
+    private MediaPlayerService mMediaPlayerService;
+    private ServiceConnection mMediaPlayerServiceConnection;
+    private Menu mMenu;
+    private BroadcastReceiver mBroadcastReceiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -43,6 +51,11 @@ public class XoPreferenceActivity extends PreferenceActivity implements SharedPr
             addPreferencesFromResource(R.xml.preferences);
         }
         getListView().setBackgroundColor(Color.WHITE);
+
+        Intent intent = new Intent(this, MediaPlayerService.class);
+        startService(intent);
+        bindMediaPlayerService(intent);
+        createMediaPlayerBroadcastReceiver();
     }
 
     @Override
@@ -52,11 +65,27 @@ public class XoPreferenceActivity extends PreferenceActivity implements SharedPr
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        boolean result = super.onCreateOptionsMenu(menu);
+
+        getMenuInflater().inflate(R.menu.fragment_preferences, menu);
+        mMenu = menu;
+        updateActionBarIcons(menu);
+
+        return result;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                break;
+            case R.id.menu_media_player:
+                openFullScreenPlayer();
+                updateActionBarIcons(mMenu);
                 break;
             default:
                 return super.onOptionsItemSelected(item);
@@ -137,5 +166,63 @@ public class XoPreferenceActivity extends PreferenceActivity implements SharedPr
             mSpinner.completeAndGone();
         }
         super.onDestroy();
+
+        unbindService(mMediaPlayerServiceConnection);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
+        mBroadcastReceiver = null;
+    }
+
+    private void openFullScreenPlayer(){
+        Intent resultIntent = new Intent(this, FullscreenPlayerActivity.class);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this)
+                .addParentStack(FullscreenPlayerActivity.class)
+                .addNextIntent(resultIntent);
+
+        stackBuilder.startActivities();
+    }
+
+    private void createMediaPlayerBroadcastReceiver() {
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(MediaPlayerService.PLAYSTATE_CHANGED_ACTION)) {
+                    updateActionBarIcons(mMenu);
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, filter);
+    }
+
+    private void updateActionBarIcons( Menu menu){
+        if ( mMediaPlayerService != null && menu != null) {
+            MenuItem mediaPlayerItem = menu.findItem(R.id.menu_media_player);
+
+            if ( mMediaPlayerService.isStopped() || mMediaPlayerService.isPaused()) {
+                mediaPlayerItem.setVisible(false);
+            }else {
+                mediaPlayerItem.setVisible(true);
+            }
+        }
+    }
+
+    private void bindMediaPlayerService(Intent intent) {
+
+        mMediaPlayerServiceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
+                mMediaPlayerService = binder.getService();
+                updateActionBarIcons( mMenu);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mMediaPlayerService = null;
+            }
+        };
+
+        bindService(intent, mMediaPlayerServiceConnection, Context.BIND_AUTO_CREATE);
     }
 }

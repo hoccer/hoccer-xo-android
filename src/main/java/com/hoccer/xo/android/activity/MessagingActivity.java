@@ -1,14 +1,12 @@
 package com.hoccer.xo.android.activity;
 
+import android.content.*;
 import android.support.v4.app.FragmentManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.IntentFilter;
 import android.widget.PopupMenu;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
-import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.clipboard.Clipboard;
 import com.hoccer.xo.android.fragment.CompositionFragment;
@@ -18,14 +16,13 @@ import com.hoccer.xo.android.gesture.MotionInterpreter;
 import com.hoccer.xo.release.R;
 
 import android.app.ActionBar;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.sql.SQLException;
 
-public class MessagingActivity extends XoActivity implements IXoContactListener {
+public class MessagingActivity extends XoActionbarActivity implements IXoContactListener {
 
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 

@@ -51,6 +51,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mReceiver;
+    private AudioListManager mAudioListManager;
 
     public class MediaPlayerBinder extends Binder {
         public MediaPlayerService getService() {
@@ -66,6 +67,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mAudioListManager = AudioListManager.get(getApplicationContext());
 
         createBroadcastReceiver();
         createPlayStateTogglePendingIntent();
@@ -296,7 +298,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        stop();
+        if (mAudioListManager.hasNext()) {
+            String path = mAudioListManager.next().getContentDataUrl();
+            start(path);
+        } else {
+            stop();
+        }
     }
 
     public boolean isPaused() {

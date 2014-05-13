@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.*;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.GroupProfileFragment;
 import com.hoccer.xo.android.fragment.StatusFragment;
@@ -15,7 +16,7 @@ import java.sql.SQLException;
 /**
  * Activity wrapping a group profile fragment
  */
-public class GroupProfileActivity extends XoActivity {
+public class GroupProfileActivity extends XoActionbarActivity {
 
     /* use this extra to open in "group creation" mode */
     public static final String EXTRA_CLIENT_CREATE_GROUP = "clientCreateGroup";

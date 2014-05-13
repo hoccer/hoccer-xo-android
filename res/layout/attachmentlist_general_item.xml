@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/music_viewer_selector"
+                android:padding="5dp">
+
+    <LinearLayout android:id="@+id/thumbnail"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+
+                  android:padding="3dip"
+                  android:layout_alignParentLeft="true"
+                  android:layout_marginRight="5dip">
+
+        <ImageView
+                android:id="@+id/list_image"
+                android:layout_width="60dip"
+                android:layout_height="60dip"
+                android:src="@drawable/ab_texture_tile_appbasetheme_gray"/>
+
+    </LinearLayout>
+
+    <TextView
+            android:id="@+id/songTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/thumbnail"
+            android:layout_toRightOf="@+id/thumbnail"
+            android:text="Title"
+            android:textColor="#040404"
+            android:textSize="15dip"
+            android:textStyle="bold"/>
+
+    <TextView
+            android:id="@+id/songArtist"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/songTitle"
+            android:textColor="#343434"
+            android:textSize="10dip"
+            android:layout_marginTop="1dip"
+            android:layout_toRightOf="@+id/thumbnail"
+            android:text="Artist" />
+
+    <ImageButton
+            android:id="@+id/attachmentListPlayPauseButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@null"
+            android:scaleX="0.5"
+            android:scaleY="0.5"
+            android:src="@drawable/ic_dark_play"/>
+</RelativeLayout>

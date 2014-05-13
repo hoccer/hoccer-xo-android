@@ -2,10 +2,13 @@ package com.hoccer.xo.android.content.audio;
 
 import android.content.*;
 import android.os.IBinder;
+import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import org.apache.log4j.Logger;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,13 +20,11 @@ public class AudioListManager implements Iterator<TalkClientDownload> {
     private static final Logger LOG = Logger.getLogger(AudioListManager.class);
 
     private final Context mContext;
+    private final XoClientDatabase mDatabase;
 
-    private List<TalkClientDownload> audioAttachmentList = new ArrayList<TalkClientDownload>();
+    private List<TalkClientDownload> mAudioAttachmentList = new ArrayList<TalkClientDownload>();
 
     private int currentIndex = 0;
-
-    private MediaPlayerService mMediaPlayerService;
-    private ServiceConnection mConnection;
 
     public static synchronized AudioListManager get(Context applicationContext) {
         if (INSTANCE == null) {
@@ -35,50 +36,25 @@ public class AudioListManager implements Iterator<TalkClientDownload> {
     private AudioListManager(Context applicationContext) {
         mContext = applicationContext;
 
-        Intent intent = new Intent(mContext, MediaPlayerService.class);
-        mContext.startService(intent);
-        bindService(intent);
-        createBroadcastReceiver();
-    }
+        mDatabase = new XoClientDatabase(
+                AndroidTalkDatabase.getInstance(applicationContext));
+        try {
+            mDatabase.initialize();
+        } catch (SQLException e) {
+            LOG.error("sql error", e);
+        }
 
-    private void bindService(Intent intent) {
-
-        mConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
-                mMediaPlayerService = binder.getService();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mMediaPlayerService = null;
-            }
-        };
-
-        mContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    private void createBroadcastReceiver() {
-        BroadcastReceiver receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(MediaPlayerService.PLAYSTATE_CHANGED_ACTION)) {
-                    if (mMediaPlayerService.isStopped() && hasNext()) {
-                        String path = next().getContentDataUrl();
-                        mMediaPlayerService.start(path);
-                    }
-                }
-            }
-        };
-        IntentFilter filter = new IntentFilter(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
-        mContext.registerReceiver(receiver, filter);
+        try {
+            mAudioAttachmentList = mDatabase.findClientDownloadByMediaType("audio");
+        } catch (SQLException e) {
+            LOG.error("SQL query failed: " + e);
+        }
     }
 
     @Override
     public boolean hasNext() {
-        if (!audioAttachmentList.isEmpty()) {
-            if (currentIndex + 1 < audioAttachmentList.size()) {
+        if (!mAudioAttachmentList.isEmpty()) {
+            if (currentIndex + 1 < mAudioAttachmentList.size()) {
                 return true;
             }
         }
@@ -87,22 +63,14 @@ public class AudioListManager implements Iterator<TalkClientDownload> {
 
     @Override
     public TalkClientDownload next() {
-        return audioAttachmentList.get(++currentIndex);
+        return mAudioAttachmentList.get(++currentIndex);
     }
 
     @Override
     public void remove() {
     }
 
-    public void setAudioAttachmentList(List<TalkClientDownload> audioAttachmentList) {
-        this.audioAttachmentList = audioAttachmentList;
-    }
-
-    public void playNext() {
-        if (mMediaPlayerService != null) {
-            if (hasNext()) {
-                mMediaPlayerService.start(next().getContentDataUrl());
-            }
-        }
+    public List<TalkClientDownload> getAudioList() {
+        return mAudioAttachmentList;
     }
 }

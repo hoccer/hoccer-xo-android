@@ -12,13 +12,14 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import com.hoccer.xo.android.adapter.ContactsPageAdapter;
+import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.error.EnvironmentUpdaterException;
 import com.hoccer.xo.android.fragment.NearbyContactsFragment;
 import com.hoccer.xo.android.nearby.EnvironmentUpdater;
 import com.hoccer.xo.release.R;
 
-public class ContactsActivity extends XoActivity {
+public class ContactsActivity extends XoActionbarActivity {
 
     private SharedPreferences mPreferences;
     private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;

@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentManager;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.model.TalkRelationship;
+import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.SingleProfileFragment;
 import com.hoccer.xo.android.fragment.StatusFragment;
@@ -20,7 +21,7 @@ import java.sql.SQLException;
 /**
  * Activity wrapping a single profile fragment
  */
-public class SingleProfileActivity extends XoActivity
+public class SingleProfileActivity extends XoActionbarActivity
         implements IXoContactListener {
 
     /* use this extra to open in "client registration" mode */
