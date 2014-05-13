@@ -14,6 +14,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 import com.hoccer.talk.client.IXoAlertListener;
 import com.hoccer.talk.client.XoClient;
+import com.hoccer.talk.client.XoClientConfiguration;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
@@ -516,8 +517,8 @@ public abstract class XoActivity extends FragmentActivity {
             if (barcode != null) {
                 LOG.debug("scanned barcode: " + barcode.getContents());
                 String code = barcode.getContents();
-                if (code.startsWith("hxo://")) {
-                    mBarcodeToken = code.replace("hxo://", "");
+                if (code.startsWith(XoClientConfiguration.HXO_URL_SCHEME)) {
+                    mBarcodeToken = code.replace(XoClientConfiguration.HXO_URL_SCHEME, "");
                 }
             }
             return;
@@ -693,7 +694,7 @@ public abstract class XoActivity extends FragmentActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mBarcodeService.shareText("hxo://" + token);
+                        mBarcodeService.shareText(XoClientConfiguration.HXO_URL_SCHEME + token);
                     }
                 });
             }
@@ -707,7 +708,7 @@ public abstract class XoActivity extends FragmentActivity {
             TalkClientContact self = mDatabase.findSelfContact(false);
 
             String message = String
-                    .format(getString(R.string.sms_invitation_text), token, self.getName());
+                    .format(getString(R.string.sms_invitation_text), XoClientConfiguration.HXO_URL_SCHEME, token, self.getName());
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //At least KitKat
                 String defaultSmsPackageName = Telephony.Sms

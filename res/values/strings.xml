@@ -228,8 +228,8 @@
     <string name="error_avatar_selection">The image you\'ve selected is not suitable as Avatar.
     </string>
     <string name="sms_invitation_text">Hey! I\'m now using the free app Hoccer XO for secure
-        chatting. Download it now: http://hoccer.com/ Then add me as a contact: hxo://%1$s
-        \nxo %1$s
+        chatting. Download it now: http://hoccer.com/ Then add me as a contact: %1$s%2$s
+        \nxo %3$s
     </string>
     <string name="export_credentials_dialog_title">Export credentials</string>
     <string name="export_credentials_success">Successfully saved your credentials.</string>

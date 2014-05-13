@@ -219,8 +219,8 @@
     <string name="contact_item_receive_attachment">%1$s Datei erhalten</string>
     <string name="error_avatar_selection">Sie können dieses Bild nicht als Avatar setzen.
     </string>
-    <string name="sms_invitation_text">Hey! Ich nutze die Gratis-App HoccerXO zum sicheren Chatten! Jetzt herunterladen: http://hoccer.com/ Dann mich als Kontakt hinzufügen: hxo://%1$s
-        \nxo %2$s
+    <string name="sms_invitation_text">Hey! Ich nutze die Gratis-App HoccerXO zum sicheren Chatten! Jetzt herunterladen: http://hoccer.com/ Dann mich als Kontakt hinzufügen: %1$s%2$s
+        \nxo %3$s
     </string>
     <string name="export_credentials_dialog_title">Zugangsdaten exportieren</string>
     <string name="export_credentials_success">Zugangsdaten erfolgreich exportiert.</string>
