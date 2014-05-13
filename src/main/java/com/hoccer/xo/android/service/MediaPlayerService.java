@@ -27,9 +27,9 @@ import org.apache.log4j.Logger;
 public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
     public static final int MUSIC_PLAYER_NOTIFICATION_ID = 1;
-    public static final String PLAYSTATE_CHANGED_ACTION = "com.hoccer.xo.android.content.audio.playStateChangedAction";
+    public static final String PLAYSTATE_CHANGED_ACTION = "com.hoccer.xo.android.content.audio.PLAYSTATE_CHANGED_ACTION";
 
-    private static final String UPDATE_PLAYSTATE_ACTION = "com.hoccer.xo.android.content.audio.updatePlayStateAction";
+    private static final String UPDATE_PLAYSTATE_ACTION = "com.hoccer.xo.android.content.audio.UPDATE_PLAYSTATE_ACTION";
     private static final Logger LOG = Logger.getLogger(MediaPlayerService.class);
 
     private AudioManager mAudioManager;
