@@ -117,6 +117,4 @@ public class MediaMetaData {
 
         return metaData;
     }
-
-
 }

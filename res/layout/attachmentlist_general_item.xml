@@ -18,7 +18,7 @@
                 android:id="@+id/list_image"
                 android:layout_width="60dip"
                 android:layout_height="60dip"
-                android:src="@drawable/ab_texture_tile_appbasetheme_gray"/>
+                android:src="@drawable/cover_art_fallback"/>
 
     </LinearLayout>
 

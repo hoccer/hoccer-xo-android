@@ -54,12 +54,16 @@ public class AttachmentListAdapter extends XoAdapter {
         }
 
         // this is for AUDIO only. TODO: create for other media formats
+        if (mContentMediaType != null) {
+            if (mContentMediaType.equalsIgnoreCase(ContentMediaType.AUDIO)) {
 
-        String titleName = ( mAttachmentMetaData.get(position).getTitle() != null ) ? mAttachmentMetaData.get(position).getTitle() : "Unknown Title";
-        String artistName = ( mAttachmentMetaData.get(position).getArtist() != null ) ? mAttachmentMetaData.get(position).getArtist() : "Unknown Artist";
+                String titleName = (mAttachmentMetaData.get(position).getTitle() != null) ? mAttachmentMetaData.get(position).getTitle() : "Unknown Title";
+                String artistName = (mAttachmentMetaData.get(position).getArtist() != null) ? mAttachmentMetaData.get(position).getArtist() : "Unknown Artist";
 
-        ((TextView) attachmentView.findViewById(R.id.attachmentlist_title_name)).setText(titleName);
-        ((TextView) attachmentView.findViewById(R.id.attachmentList_artist_name)).setText(artistName);
+                ((TextView) attachmentView.findViewById(R.id.attachmentlist_title_name)).setText(titleName);
+                ((TextView) attachmentView.findViewById(R.id.attachmentList_artist_name)).setText(artistName);
+            }
+        }
         return attachmentView;
     }
 
