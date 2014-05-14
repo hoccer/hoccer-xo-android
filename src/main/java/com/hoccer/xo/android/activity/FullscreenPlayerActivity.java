@@ -96,18 +96,18 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
             }
         });
 
-        mButtonNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playNextTrack();
-            }
-        });
-
         mButtonPrevious.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                mMediaPlayerService.setSeekPosition(0);
+                playPrevTrack();
+            }
+        });
+
+        mButtonNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playNextTrack();
             }
         });
 
@@ -129,6 +129,7 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
             }
         });
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -279,6 +280,12 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
         };
         IntentFilter filter = new IntentFilter(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, filter);
+    }
+
+    private void playPrevTrack() {
+        if(mAudioListManager.hasPrevious()){
+            mMediaPlayerService.start(mAudioListManager.previous().getContentDataUrl());
+        }
     }
 
     private void playNextTrack() {
