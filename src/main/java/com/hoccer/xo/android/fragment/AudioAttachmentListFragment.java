@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
     private final static Logger LOG = Logger.getLogger(AudioAttachmentListFragment.class);
     private ServiceConnection mConnection;
     private AttachmentListAdapter mAttachmentListAdapter;
+    private AttachmentListObserver mAttachmentListObserver;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,18 +64,19 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 getXoActivity().showFullscreenPlayer();
             }
         });
+        mAttachmentListObserver = new AttachmentListObserver();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        AudioListManager.get(getActivity()).registerObserver(mAttachmentListAdapter.getAttachmentListObserver());
+        AudioListManager.get(getActivity()).registerObserver(mAttachmentListObserver);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        AudioListManager.get(getActivity()).unregisterObserver(mAttachmentListAdapter.getAttachmentListObserver());
+        AudioListManager.get(getActivity()).unregisterObserver(mAttachmentListObserver);
     }
 
     @Override
@@ -98,5 +101,19 @@ public class AudioAttachmentListFragment extends XoListFragment {
         };
 
         getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void loadAttachmentList() {
+        final List<TalkClientDownload> audioAttachmentList = AudioListManager.get(getActivity()).getAudioList();
+        mAttachmentListAdapter.setAttachmentList(audioAttachmentList);
+    }
+
+
+    class AttachmentListObserver extends DataSetObserver {
+        @Override
+        public void onChanged() {
+            super.onChanged();
+            loadAttachmentList();
+        }
     }
 }

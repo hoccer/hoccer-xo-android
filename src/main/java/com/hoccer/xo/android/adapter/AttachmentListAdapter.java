@@ -23,16 +23,12 @@ public class AttachmentListAdapter extends XoAdapter {
     private List<MediaMetaData> mAttachmentMetaData;
     private int mViewResourceId;
     private int mTextViewId;
-    private AttachmentListObserver mAttachmentListObserver;
-
     public AttachmentListAdapter(XoActivity pXoContext, List<TalkClientDownload> pAttachments, int pViewResourceId, int pTextViewId, String pContentMediaType){
         super(pXoContext);
 
         mAttachments = pAttachments;
         mViewResourceId = pViewResourceId;
         mTextViewId = pTextViewId;
-
-        mAttachmentListObserver = new AttachmentListObserver();
 
         if (pContentMediaType.equalsIgnoreCase(ContentMediaType.AUDIO) || pContentMediaType.equalsIgnoreCase(ContentMediaType.VIDEO)) {
             fetchMetaDataFromAttachmentList();
@@ -66,9 +62,15 @@ public class AttachmentListAdapter extends XoAdapter {
         return attachmentView;
     }
 
-    public AttachmentListObserver getAttachmentListObserver() {
-        return mAttachmentListObserver;
+    public void setAttachmentList(List<TalkClientDownload> pAttachments) {
+        mAttachments = null;
+        mAttachmentMetaData = null;
+        this.notifyDataSetInvalidated();
+        mAttachments = pAttachments;
+        fetchMetaDataFromAttachmentList();
+        this.notifyDataSetChanged();
     }
+
 
     private String getDisplayName(int pPosition) {
         String displayName;
@@ -85,12 +87,5 @@ public class AttachmentListAdapter extends XoAdapter {
         mAttachmentMetaData = MediaMetaData.factorMetaDataForFileList(filePaths);
     }
 
-    class AttachmentListObserver extends DataSetObserver{
-        @Override
-        public void onChanged() {
-            super.onChanged();
-
-        }
-    }
 
 }
