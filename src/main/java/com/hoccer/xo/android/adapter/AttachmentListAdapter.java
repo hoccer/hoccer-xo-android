@@ -23,16 +23,14 @@ public class AttachmentListAdapter extends XoAdapter {
     private List<MediaMetaData> mAttachmentMetaData;
     private int mViewResourceId;
     private int mTextViewId;
-    public AttachmentListAdapter(XoActivity pXoContext, List<TalkClientDownload> pAttachments, int pViewResourceId, int pTextViewId, String pContentMediaType){
+    private String mContentMediaType;
+
+    public AttachmentListAdapter(XoActivity pXoContext, int pViewResourceId, int pTextViewId){
         super(pXoContext);
 
-        mAttachments = pAttachments;
         mViewResourceId = pViewResourceId;
         mTextViewId = pTextViewId;
 
-        if (pContentMediaType.equalsIgnoreCase(ContentMediaType.AUDIO) || pContentMediaType.equalsIgnoreCase(ContentMediaType.VIDEO)) {
-            fetchMetaDataFromAttachmentList();
-        }
     }
 
     @Override
@@ -62,12 +60,26 @@ public class AttachmentListAdapter extends XoAdapter {
         return attachmentView;
     }
 
+    @Override
+    public boolean isActive() {
+        return super.isActive();
+    }
+
+    public void setContentMediaType(String pContentMediaType) {
+        mContentMediaType = pContentMediaType;
+    }
+
     public void setAttachmentList(List<TalkClientDownload> pAttachments) {
         mAttachments = null;
         mAttachmentMetaData = null;
         this.notifyDataSetInvalidated();
         mAttachments = pAttachments;
-        fetchMetaDataFromAttachmentList();
+
+        if (mContentMediaType != null) {
+            if (mContentMediaType.equalsIgnoreCase(ContentMediaType.AUDIO) || mContentMediaType.equalsIgnoreCase(ContentMediaType.VIDEO)) {
+                fetchMetaDataFromAttachmentList();
+            }
+        }
         this.notifyDataSetChanged();
     }
 

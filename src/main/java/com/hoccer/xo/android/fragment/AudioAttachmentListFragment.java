@@ -49,9 +49,9 @@ public class AudioAttachmentListFragment extends XoListFragment {
         bindService(intent);
 
         final List<TalkClientDownload> audioAttachmentList = AudioListManager.get(getActivity()).getAudioList();
-        mAttachmentListAdapter = new AttachmentListAdapter(getXoActivity(),
-                audioAttachmentList, R.layout.attachmentlist_general_item, R.id.songTitle, ContentMediaType.AUDIO);
-
+        mAttachmentListAdapter = new AttachmentListAdapter(getXoActivity(), R.layout.attachmentlist_general_item, R.id.songTitle);
+        mAttachmentListAdapter.setContentMediaType(ContentMediaType.AUDIO);
+        loadAttachmentList();
         setListAdapter(mAttachmentListAdapter);
 
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -104,8 +104,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
     }
 
     private void loadAttachmentList() {
-        final List<TalkClientDownload> audioAttachmentList = AudioListManager.get(getActivity()).getAudioList();
-        mAttachmentListAdapter.setAttachmentList(audioAttachmentList);
+        mAttachmentListAdapter.setAttachmentList(AudioListManager.get(getActivity()).getAudioList());
     }
 
 
