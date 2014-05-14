@@ -16,8 +16,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
-public class AudioListManager extends Observable<DataSetObserver> implements Iterator<TalkClientDownload>, IXoTransferListener {
+public class AudioListManager extends Observable<DataSetObserver> implements ListIterator<TalkClientDownload>, IXoTransferListener {
 
     private static AudioListManager INSTANCE = null;
 
@@ -58,9 +59,9 @@ public class AudioListManager extends Observable<DataSetObserver> implements Ite
     }
 
     @Override
-    public boolean hasNext() {
-        if (!mAudioList.isEmpty()) {
-            if (currentIndex + 1 < mAudioList.size()) {
+    public boolean hasPrevious() {
+        if (!mAudioList.isEmpty()){
+            if (previousIndex() >= 0) {
                 return true;
             }
         }
@@ -68,12 +69,48 @@ public class AudioListManager extends Observable<DataSetObserver> implements Ite
     }
 
     @Override
+    public boolean hasNext() {
+        if (!mAudioList.isEmpty()) {
+            if (nextIndex() < mAudioList.size()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public TalkClientDownload previous() {
+        return mAudioList.get(--currentIndex);
+    }
+
+    @Override
     public TalkClientDownload next() {
         return mAudioList.get(++currentIndex);
     }
 
+
+    @Override
+    public int previousIndex() {
+        return currentIndex - 1;
+    }
+
+    @Override
+    public int nextIndex() {
+        return currentIndex + 1;
+    }
+
     @Override
     public void remove() {
+    }
+
+    @Override
+    public void set(TalkClientDownload talkClientDownload) {
+
+    }
+
+    @Override
+    public void add(TalkClientDownload talkClientDownload) {
+
     }
 
     public List<TalkClientDownload> getAudioList() {
