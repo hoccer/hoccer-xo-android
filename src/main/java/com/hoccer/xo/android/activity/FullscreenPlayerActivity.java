@@ -112,7 +112,6 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
         });
 
         mButtonRepeat.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
 
@@ -121,7 +120,6 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
         });
 
         mButtonShuffle.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
 
@@ -193,18 +191,7 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
                 MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
                 mMediaPlayerService = binder.getService();
 
-                updatePlayPauseView();
-
-                mTempFilePath = mMediaPlayerService.getCurrentMediaFilePath();
-
-                String artistName = (mMediaPlayerService.getMediaMetaData().getArtist() == null) ? "" : mMediaPlayerService.getMediaMetaData().getArtist();
-                String trackName = (mMediaPlayerService.getMediaMetaData().getTitle() == null) ? "" : mMediaPlayerService.getMediaMetaData().getTitle();
-
-                String labelText = (artistName.equals("") && trackName.equals("")) ? mTempFilePath : (artistName + "\n" + trackName);
-
-                mSongTitleLabel.setText(labelText);
-                mTotalDuration = mMediaPlayerService.getTotalDuration();
-                mSongTotalDurationLabel.setText("" + milliSecondsToTimer(mTotalDuration));
+                updateView();
             }
 
             @Override
@@ -250,6 +237,22 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
         return percentage.intValue();
     }
 
+    private void updateView() {
+
+        mTempFilePath = mMediaPlayerService.getCurrentMediaFilePath();
+
+        String artistName = (mMediaPlayerService.getMediaMetaData().getArtist() == null) ? "" : mMediaPlayerService.getMediaMetaData().getArtist();
+        String trackName = (mMediaPlayerService.getMediaMetaData().getTitle() == null) ? "" : mMediaPlayerService.getMediaMetaData().getTitle();
+
+        String labelText = (artistName.equals("") && trackName.equals("")) ? mTempFilePath : (artistName + "\n" + trackName);
+
+        mSongTitleLabel.setText(labelText);
+        mTotalDuration = mMediaPlayerService.getTotalDuration();
+        mSongTotalDurationLabel.setText("" + milliSecondsToTimer(mTotalDuration));
+
+        updatePlayPauseView();
+    }
+
     private void updatePlayPauseView() {
         if (mMediaPlayerService != null) {
             if (!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
@@ -276,10 +279,13 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
                 if (intent.getAction().equals(MediaPlayerService.PLAYSTATE_CHANGED_ACTION)) {
                     updatePlayPauseView();
                 }
+                if (intent.getAction().equals(MediaPlayerService.TRACK_CHANGED_ACTION)) {
+                    updateView();
+                }
             }
         };
-        IntentFilter filter = new IntentFilter(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, filter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, new IntentFilter(MediaPlayerService.PLAYSTATE_CHANGED_ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, new IntentFilter(MediaPlayerService.TRACK_CHANGED_ACTION));
     }
 
     private void playPrevTrack() {

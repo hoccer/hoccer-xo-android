@@ -28,6 +28,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     public static final int MUSIC_PLAYER_NOTIFICATION_ID = 1;
     public static final String PLAYSTATE_CHANGED_ACTION = "com.hoccer.xo.android.content.audio.PLAYSTATE_CHANGED_ACTION";
+    public static final String TRACK_CHANGED_ACTION = "com.hoccer.xo.android.content.audio.TRACK_CHANGED_ACTION";
+
 
     private static final String UPDATE_PLAYSTATE_ACTION = "com.hoccer.xo.android.content.audio.UPDATE_PLAYSTATE_ACTION";
     private static final Logger LOG = Logger.getLogger(MediaPlayerService.class);
@@ -236,9 +238,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
                 setCurrentMediaFilePath(mTempMediaFilePath);
                 resetFileNameAndMetaData();
                 createNotification();
+                broadcastTrackChanged();
             }
             updateNotification();
-            broadcastPlayState();
+            broadcastPlayStateChanged();
         } else {
             LOG.debug("Audio focus request not granted");
         }
@@ -249,7 +252,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         setPaused(true);
         setStopped(false);
         updateNotification();
-        broadcastPlayState();
+        broadcastPlayStateChanged();
     }
 
     public void stop() {
@@ -259,7 +262,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         setPaused(false);
         setStopped(true);
         removeNotification();
-        broadcastPlayState();
+        broadcastPlayStateChanged();
     }
 
     public void setSeekPosition(int position) {
@@ -345,8 +348,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         return mBinder;
     }
 
-    private void broadcastPlayState() {
+    private void broadcastPlayStateChanged() {
         Intent intent = new Intent(PLAYSTATE_CHANGED_ACTION);
+        mLocalBroadcastManager.sendBroadcast(intent);
+    }
+
+    private void broadcastTrackChanged() {
+        Intent intent = new Intent(TRACK_CHANGED_ACTION);
         mLocalBroadcastManager.sendBroadcast(intent);
     }
 
