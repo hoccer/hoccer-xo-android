@@ -3,6 +3,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:descendantFocusability="blocksDescendants"
                 android:background="@drawable/music_viewer_selector"
                 android:padding="5dp">
 

@@ -72,7 +72,13 @@ public class AttachmentListAdapter extends XoAdapter {
     public void setAttachmentList(List<TalkClientDownload> pAttachments) {
         mAttachments = null;
         mAttachmentMetaData = null;
-        this.notifyDataSetInvalidated();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetInvalidated();
+            }
+        });
+
         mAttachments = pAttachments;
 
         if (mContentMediaType != null) {
@@ -80,7 +86,13 @@ public class AttachmentListAdapter extends XoAdapter {
                 fetchMetaDataFromAttachmentList();
             }
         }
-        this.notifyDataSetChanged();
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
 
