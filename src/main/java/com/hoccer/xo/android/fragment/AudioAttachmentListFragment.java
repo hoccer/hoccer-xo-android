@@ -20,7 +20,6 @@ import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class AudioAttachmentListFragment extends XoListFragment {
@@ -49,9 +48,11 @@ public class AudioAttachmentListFragment extends XoListFragment {
         bindService(intent);
 
         final List<TalkClientDownload> audioAttachmentList = AudioListManager.get(getActivity()).getAudioList();
-        mAttachmentListAdapter = new AttachmentListAdapter(getXoActivity(), R.layout.attachmentlist_general_item, R.id.songTitle);
+
+        mAttachmentListAdapter = new AttachmentListAdapter(getXoActivity());
         mAttachmentListAdapter.setContentMediaType(ContentMediaType.AUDIO);
         loadAttachmentList();
+
         setListAdapter(mAttachmentListAdapter);
 
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -106,7 +107,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
     private void loadAttachmentList() {
         mAttachmentListAdapter.setAttachmentList(AudioListManager.get(getActivity()).getAudioList());
     }
-
 
     class AttachmentListObserver extends DataSetObserver {
         @Override

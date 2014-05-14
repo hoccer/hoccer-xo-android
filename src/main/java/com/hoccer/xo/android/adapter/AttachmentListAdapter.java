@@ -10,6 +10,7 @@ import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.MediaMetaData;
+import com.hoccer.xo.release.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,16 +22,11 @@ public class AttachmentListAdapter extends XoAdapter {
 
     private List<TalkClientDownload> mAttachments;
     private List<MediaMetaData> mAttachmentMetaData;
-    private int mViewResourceId;
-    private int mTextViewId;
+
     private String mContentMediaType;
 
-    public AttachmentListAdapter(XoActivity pXoContext, int pViewResourceId, int pTextViewId){
+    public AttachmentListAdapter(XoActivity pXoContext){
         super(pXoContext);
-
-        mViewResourceId = pViewResourceId;
-        mTextViewId = pTextViewId;
-
     }
 
     @Override
@@ -54,9 +50,20 @@ public class AttachmentListAdapter extends XoAdapter {
         if (convertView != null) {
             attachmentView = convertView;
         } else {
-            attachmentView = mInflater.inflate(mViewResourceId, null);
+            attachmentView = mInflater.inflate(R.layout.attachmentlist_general_item, null);
         }
-        ((TextView) attachmentView.findViewById(mTextViewId)).setText(getDisplayName(position));
+
+        // this is for AUDIO only. TODO: create for other media formats
+        if (mContentMediaType != null) {
+            if (mContentMediaType.equalsIgnoreCase(ContentMediaType.AUDIO)) {
+
+                String titleName = (mAttachmentMetaData.get(position).getTitle() != null) ? mAttachmentMetaData.get(position).getTitle() : "Unknown Title";
+                String artistName = (mAttachmentMetaData.get(position).getArtist() != null) ? mAttachmentMetaData.get(position).getArtist() : "Unknown Artist";
+
+                ((TextView) attachmentView.findViewById(R.id.attachmentlist_title_name)).setText(titleName);
+                ((TextView) attachmentView.findViewById(R.id.attachmentList_artist_name)).setText(artistName);
+            }
+        }
         return attachmentView;
     }
 
