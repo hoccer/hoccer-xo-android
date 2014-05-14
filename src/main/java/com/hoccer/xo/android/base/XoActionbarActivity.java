@@ -69,12 +69,7 @@ public abstract class XoActionbarActivity extends XoActivity {
 
     private void openFullScreenPlayer(){
         Intent resultIntent = new Intent(this, FullscreenPlayerActivity.class);
-
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this)
-                .addParentStack(FullscreenPlayerActivity.class)
-                .addNextIntent(resultIntent);
-
-        stackBuilder.startActivities();
+        startActivity(resultIntent);
     }
 
     private void createMediaPlayerBroadcastReceiver() {
