@@ -23,29 +23,29 @@
     </LinearLayout>
 
     <TextView
-            android:id="@+id/songTitle"
+            android:id="@+id/attachmentlist_title_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/thumbnail"
             android:layout_toRightOf="@+id/thumbnail"
-            android:text="Title"
+            android:text="Unknown Title"
             android:textColor="#040404"
             android:textSize="15dip"
             android:textStyle="bold"/>
 
     <TextView
-            android:id="@+id/songArtist"
+            android:id="@+id/attachmentList_artist_name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/songTitle"
+            android:layout_below="@id/attachmentlist_title_name"
             android:textColor="#343434"
             android:textSize="10dip"
             android:layout_marginTop="1dip"
             android:layout_toRightOf="@+id/thumbnail"
-            android:text="Artist" />
+            android:text="Uknown Artist" />
 
     <ImageButton
-            android:id="@+id/attachmentListPlayPauseButton"
+            android:id="@+id/attachment_list_playpause_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"

@@ -15,7 +15,7 @@
 
         <!-- Song Title -->
         <TextView
-                android:id="@+id/songTitle"
+                android:id="@+id/attachmentlist_title_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
