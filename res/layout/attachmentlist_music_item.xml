@@ -45,14 +45,14 @@
             android:layout_toRightOf="@+id/attachmentlist_item_thumbnail_layout"
             android:text="Uknown Artist" />
 
-    <ImageButton
+    <ImageView
             android:id="@+id/attachmentlist_item_playpause_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:visibility="gone"
             android:background="@null"
-            android:scaleX="0.5"
-            android:scaleY="0.5"
-            android:src="@drawable/ic_dark_play"/>
+            android:scaleX="0.75"
+            android:scaleY="0.75"
+            android:src="@drawable/ic_light_av_play"/>
 </RelativeLayout>
