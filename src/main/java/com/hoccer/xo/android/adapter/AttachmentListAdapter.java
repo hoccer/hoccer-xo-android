@@ -6,7 +6,7 @@ import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
-import com.hoccer.xo.android.content.MediaMetaData;
+import com.hoccer.xo.android.content.MediaItem;
 import com.hoccer.xo.android.view.AttachmentAudioView;
 
 import java.util.ArrayList;
@@ -15,11 +15,11 @@ import java.util.List;
 public class AttachmentListAdapter extends XoAdapter {
 
     private List<TalkClientDownload> mAttachments;
-    private List<MediaMetaData> mAttachmentMetaData;
+    private List<MediaItem> mMediaItems;
 
     private String mContentMediaType;
 
-    public AttachmentListAdapter(XoActivity pXoContext){
+    public AttachmentListAdapter(XoActivity pXoContext) {
         super(pXoContext);
     }
 
@@ -47,7 +47,7 @@ public class AttachmentListAdapter extends XoAdapter {
             // this is for AUDIO only. TODO: create for different media formats when necessary
             //        if (mContentMediaType != null) {
             //            if (mContentMediaType.equalsIgnoreCase(ContentMediaType.AUDIO)) {
-            attachmentView = new AttachmentAudioView(mActivity, mInflater, mAttachmentMetaData.get(position));
+            attachmentView = new AttachmentAudioView(mActivity, mInflater, mMediaItems.get(position));
             //        }
             //    }
         }
@@ -65,7 +65,7 @@ public class AttachmentListAdapter extends XoAdapter {
 
     public void setAttachmentList(List<TalkClientDownload> pAttachments) {
         mAttachments = null;
-        mAttachmentMetaData = null;
+        mMediaItems = new ArrayList<MediaItem>();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -93,8 +93,8 @@ public class AttachmentListAdapter extends XoAdapter {
         ArrayList<String> filePaths = new ArrayList<String>();
         for (TalkClientDownload attachment : mAttachments) {
             filePaths.add(attachment.getDataFile());
+            mMediaItems.add(MediaItem.create(attachment.getDataFile()));
         }
-        mAttachmentMetaData = MediaMetaData.create(filePaths);
     }
 
 }

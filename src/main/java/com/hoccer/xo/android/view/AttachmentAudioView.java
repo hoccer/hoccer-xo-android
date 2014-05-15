@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.hoccer.xo.android.content.MediaItem;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
@@ -19,22 +20,22 @@ import org.apache.log4j.Logger;
 public class AttachmentAudioView extends LinearLayout implements View.OnClickListener{
 
     private Context mContext;
-    private MediaMetaData mItemData;
+    private MediaItem mMediaItem;
     private ServiceConnection mConnection;
     private BroadcastReceiver mReceiver;
     private MediaPlayerService mMediaPlayerService;
 
     private static final Logger LOG = Logger.getLogger(AttachmentAudioView.class);
 
-    public AttachmentAudioView(Context context, LayoutInflater layoutInflater, MediaMetaData itemData) {
+    public AttachmentAudioView(Context context, LayoutInflater layoutInflater, MediaItem mediaItem) {
         super(context);
-        initialize(context, layoutInflater, itemData);
+        initialize(context, layoutInflater, mediaItem);
     }
 
-    private void initialize(Context context, LayoutInflater layoutInflater, MediaMetaData itemData) {
+    private void initialize(Context context, LayoutInflater layoutInflater, MediaItem mediaItem) {
 
         mContext = context;
-        mItemData = itemData;
+        mMediaItem = mediaItem;
 
         addView(inflate(mContext, R.layout.attachmentlist_music_item, null));
 
@@ -42,9 +43,9 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
         mContext.startService(intent);
         bindService(intent);
 
-        String fileName = mItemData.getFilePath();
-        String titleName = mItemData.getTitle();
-        String artistName = mItemData.getArtist();
+        String fileName = mMediaItem.getFilePath();
+        String titleName = mMediaItem.getMetaData().getTitle();
+        String artistName = mMediaItem.getMetaData().getArtist();
 
         String verifiedFileName = (fileName != null) ? fileName : "Unknown Title";
         String verifiedTitleName = (titleName != null) ? titleName : verifiedFileName.substring( (Environment.getExternalStorageDirectory().getAbsolutePath() + R.string.app_name).length() + 1, (verifiedFileName.length() - 5) );
@@ -55,7 +56,7 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
 
         ImageView coverView = ((ImageView) findViewById(R.id.attachmentlist_item_image));
 
-        byte[] cover = mItemData.getArtwork();
+        byte[] cover = MediaMetaData.getArtwork(mediaItem.getFilePath());
 
         if( cover != null ) {
             Bitmap coverBitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
@@ -85,7 +86,7 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
 
     public boolean isActive() {
         if (isBound()) {
-            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && (("file://" + mItemData.getFilePath()).equals(mMediaPlayerService.getCurrentMediaFilePath()));
+            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && (("file://" + mMediaItem.getFilePath()).equals(mMediaPlayerService.getCurrentMediaFilePath()));
         } else {
             return false;
         }
