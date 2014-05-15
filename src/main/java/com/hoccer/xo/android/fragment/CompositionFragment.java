@@ -180,7 +180,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     private boolean isSendMessagePossible() {
-        return (mContact.isGroup() && mContact.getGroupMemberships().size() > 1);
+        return !(mContact.isGroup() && mContact.getGroupMemberships().size() == 1);
     }
 
     private void sendComposedMessage() {
