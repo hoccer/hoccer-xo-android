@@ -32,6 +32,8 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     private List<TalkClientContact> mNearbyContacts = new ArrayList<TalkClientContact>();
 
+    private OnItemCountChangedListener mOnItemAddedListener;
+
     public NearbyContactsAdapter(XoClientDatabase db, XoActivity xoActivity) {
         super();
         mDatabase = db;
@@ -63,6 +65,10 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         return convertView;
     }
 
+    public void setOnItemAddedListener(OnItemCountChangedListener listener) {
+        mOnItemAddedListener = listener;
+    }
+
     public void registerListeners() {
         mXoActivity.getXoClient().registerContactListener(this);
         mXoActivity.getXoClient().registerTransferListener(this);
@@ -77,12 +83,16 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     public void retrieveDataFromDb() {
         try {
+            int currentItemCount = mNearbyContacts.size();
             mNearbyContacts = mDatabase.findAllNearbyContacts();
             for (TalkClientContact contact : mNearbyContacts) {
                 TalkClientDownload avatarDownload = contact.getAvatarDownload();
                 if (avatarDownload != null) {
                     mDatabase.refreshClientDownload(avatarDownload);
                 }
+            }
+            if(currentItemCount != mNearbyContacts.size()) {
+                mOnItemAddedListener.onItemCountChanged(mNearbyContacts.size());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -272,5 +282,9 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
     @Override
     public void onUploadStateChanged(TalkClientUpload upload) {
 
+    }
+
+    public interface OnItemCountChangedListener {
+        public void onItemCountChanged(int count);
     }
 }
