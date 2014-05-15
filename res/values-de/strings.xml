@@ -39,10 +39,9 @@
     </string>
 
     <!-- Nearby location request -->
-    <string name="nearby_enable_location_service">To use this feature you need to enable location service
-        (GPS or Network location). Do you want to enable it?</string>
-    <string name="nearby_yes">Yes</string>
-    <string name="nearby_no">No</string>
+    <string name="nearby_enable_location_service">Um diese Funktion nutzen zu können musst Du Ortungsdienste aktivieren. (GPS oder Netzwerkposition). Willst Du es aktivieren?</string>
+    <string name="nearby_yes">Ja</string>
+    <string name="nearby_no">Nein</string>
 
     <!-- Contact list items -->
     <string name="contact_name_new_client">Neuer Kontakt</string>
@@ -52,6 +51,8 @@
 
     <!-- Composition fragment -->
     <string name="composition_text_hint">Nachricht eingeben</string>
+    <string name="composition_alert_empty_group_title">Nachricht kann nicht gesendet werden</string>
+    <string name="composition_alert_empty_group_text">Du kannst keine Nachrichten an die Gruppe verschicken, weil sie außer Dir keine Mitglieder hat. Du kannst aber deine Freunde in die Gruppe einladen.</string>
 
     <!-- Messaging fragment -->
     <string name="messaging_loading">Lädt...</string>
@@ -200,13 +201,17 @@
     </string>
 
     <!-- Preferences -->
-    <string name="preference_keysize_summary">RSA Schlüssel</string>
+    <string name="preference_keysize_summary">RSA Schlüssel mit gewählter Schlüssellänge erneuern</string>
     <string name="preference_keysize_title">RSA Schlüssellänge</string>
     <string name="category">Kategorie</string>
     <string name="pref_auto_downloads_mobile">Im mobilen Netz</string>
     <string name="pref_auto_download_wifi">Im WLAN Netz</string>
     <string name="pref_auto_download">Automatischer Download</string>
+    <string name="pref_credentials">Zugangsdaten</string>
+    <string name="pref_export_credentials">Zugangsdaten exportieren</string>
+    <string name="pref_import_credentials">Zugangsdaten importieren</string>
     <string name="pref_legal_information">Rechtliches</string>
+    <string name="pref_encryption">Verschlüsselung</string>
     <string name="profile_compare_key_description">Für ein Extra an Sicherheit vergleiche diesen Fingerabdruck mit dem Fingerabdruck den Deine Freunde in deiner Kontaktkarte sehen
     </string>
     <string name="pref_please_wait">Bitte warten...</string>
@@ -215,9 +220,20 @@
     <string name="contact_item_receive_attachment">%1$s Datei erhalten</string>
     <string name="error_avatar_selection">Sie können dieses Bild nicht als Avatar setzen.
     </string>
-    <string name="sms_invitation_text">Hey! Ich nutze die Gratis-App HoccerXO zum sicheren Chatten! Jetzt herunterladen: http://hoccer.com/ Dann mich als Kontakt hinzufügen: hxo://%1$s
-        \nxo %2$s
+    <string name="sms_invitation_text">Hey! Ich nutze die Gratis-App HoccerXO zum sicheren Chatten! Jetzt herunterladen: http://hoccer.com/ Dann mich als Kontakt hinzufügen: %1$s%2$s
+        \nxo %3$s
     </string>
+    <string name="export_credentials_dialog_title">Zugangsdaten exportieren</string>
+    <string name="export_credentials_success">Zugangsdaten erfolgreich exportiert.</string>
+    <string name="export_credentials_failure">Es ist ein Fehler beim exportieren der Zugangsdaten aufgetreten.</string>
+
+    <string name="import_credentials_dialog_title">Zugangsdaten importieren</string>
+    <string name="import_credentials_success">Zugangsdaten erfolgreich importiert.\nBitte starten Sie die App neu.</string>
+    <string name="import_credentials_failure">Es ist ein Fehler beim importieren der Zugangsdaten aufgetreten.</string>
+
+    <string name="enter_password">Passwort:</string>
+    <string name="no_password">Bitte geben Sie ein Passwort ein.</string>
+    <string name="cant_find_credentials">Kann die Datei "credentials.json" mit den Zugangsdaten nicht finden.</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>
@@ -232,8 +248,8 @@
     </string-array>
 
     <string-array name="tab_names">
-        <item>CONVERSATIONS</item>
-        <item>NEARBY</item>
+        <item>CHATS</item>
+        <item>IN DER NÄHE</item>
     </string-array>
 
 </resources>

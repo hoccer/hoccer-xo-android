@@ -92,7 +92,7 @@ public class ContactsActivity extends XoActivity {
 
     }
 
-    private void checkIfGpsIsTurnedOn() {
+    private boolean checkIfGpsIsTurnedOn() {
         final LocationManager manager = (LocationManager)getSystemService(getBaseContext().LOCATION_SERVICE);
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !manager.isProviderEnabled( LocationManager.NETWORK_PROVIDER)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -112,20 +112,24 @@ public class ContactsActivity extends XoActivity {
                     });
             AlertDialog alert = builder.create();
             alert.show();
+
+            return false;
         }
+        return true;
     }
 
     private void refreshEnvironmentUpdater() {
         int position = mViewPager.getCurrentItem();
         Fragment fragment = mAdapter.getItem(position);
         if (fragment instanceof NearbyContactsFragment) {
-            checkIfGpsIsTurnedOn();
             if (mEnvironmentUpdatesEnabled) {
                 if (!mEnvironmentUpdater.isEnabled()) {
-                    try {
-                        mEnvironmentUpdater.startEnvironmentTracking();
-                    } catch (EnvironmentUpdaterException e) {
-                        LOG.error("Error when starting EnvironmentUpdater: ", e);
+                    if (checkIfGpsIsTurnedOn()) {
+                        try {
+                            mEnvironmentUpdater.startEnvironmentTracking();
+                        } catch (EnvironmentUpdaterException e) {
+                            LOG.error("Error when starting EnvironmentUpdater: ", e);
+                        }
                     }
                 }
             }

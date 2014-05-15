@@ -47,7 +47,7 @@ public class VideoSelector implements IContentSelector {
                 MediaStore.Video.Media.SIZE,
                 MediaStore.Video.Media.WIDTH,
                 MediaStore.Video.Media.HEIGHT,
-                MediaStore.Video.Media.DISPLAY_NAME
+                MediaStore.Video.Media.TITLE
         };
 
         Cursor cursor = context.getContentResolver().query(

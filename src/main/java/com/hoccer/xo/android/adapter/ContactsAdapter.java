@@ -52,7 +52,6 @@ public abstract class ContactsAdapter extends XoAdapter
 
     List<TalkClientSmsToken> mSmsTokens = new ArrayList<TalkClientSmsToken>();
     List<TalkClientContact> mClientContacts = new ArrayList<TalkClientContact>();
-    List<TalkClientContact> mGroupContacts = new ArrayList<TalkClientContact>();
 
     public Filter getFilter() {
         return mFilter;
@@ -104,16 +103,12 @@ public abstract class ContactsAdapter extends XoAdapter
                 }
 
                 List<TalkClientContact> newClients = mDatabase.findAllClientContacts();
-                List<TalkClientContact> newGroups = mDatabase.findAllGroupContacts();
-
-                LOG.debug("found " + newClients.size() + " friends " + newGroups.size() + " groups");
+                LOG.debug("found " + newClients.size() + " contacts");
 
                 if(mFilter != null) {
                     newClients = filter(newClients, mFilter);
-                    newGroups = filter(newGroups, mFilter);
                 }
-
-                LOG.debug("filtered " + newClients.size() + " friends " + newGroups.size() + " groups");
+                LOG.debug("filtered " + newClients.size() + " contacts");
 
                 for(TalkClientContact contact: newClients) {
                     TalkClientDownload avatarDownload = contact.getAvatarDownload();
@@ -121,15 +116,8 @@ public abstract class ContactsAdapter extends XoAdapter
                         mDatabase.refreshClientDownload(avatarDownload);
                     }
                 }
-                for(TalkClientContact contact: newGroups) {
-                    TalkClientDownload avatarDownload = contact.getAvatarDownload();
-                    if(avatarDownload != null) {
-                        mDatabase.refreshClientDownload(avatarDownload);
-                    }
-                }
 
                 mClientContacts = newClients;
-                mGroupContacts = newGroups;
                 mSmsTokens = newTokens;
             } catch (SQLException e) {
                 LOG.error("SQL error", e);
@@ -247,7 +235,6 @@ public abstract class ContactsAdapter extends XoAdapter
         int count = 0;
         count += mSmsTokens.size();
         count += mClientContacts.size();
-        count += mGroupContacts.size();
         return count;
     }
 
@@ -267,12 +254,6 @@ public abstract class ContactsAdapter extends XoAdapter
                 return mClientContacts.get(clientPos);
             }
             offset += mClientContacts.size();
-        }
-        if(!mGroupContacts.isEmpty()) {
-            int groupPos = position - offset;
-            if(groupPos >= 0 && groupPos < mGroupContacts.size()) {
-                return mGroupContacts.get(groupPos);
-            }
         }
         return "";
     }
@@ -294,12 +275,6 @@ public abstract class ContactsAdapter extends XoAdapter
             }
             offset += mClientContacts.size();
         }
-        if(!mGroupContacts.isEmpty()) {
-            int groupPos = position - offset;
-            if(groupPos >= 0 && groupPos < mGroupContacts.size()) {
-                return VIEW_TYPE_GROUP;
-            }
-        }
         return VIEW_TYPE_SEPARATOR;
     }
 
@@ -311,6 +286,13 @@ public abstract class ContactsAdapter extends XoAdapter
         }
         if(item instanceof TalkClientSmsToken) {
             return ITEM_ID_TOKENS_BASE + ((TalkClientSmsToken)item).getSmsTokenId();
+        }
+        int offset = 0;
+        if(!mSmsTokens.isEmpty()) {
+            offset += mSmsTokens.size();
+        }
+        if(!mClientContacts.isEmpty()) {
+            offset += mClientContacts.size();
         }
         return ITEM_ID_UNKNOWN;
     }
