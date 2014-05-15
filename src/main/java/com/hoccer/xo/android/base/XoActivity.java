@@ -4,6 +4,7 @@ import android.app.*;
 import android.content.*;
 import android.graphics.drawable.ColorDrawable;
 import android.os.*;
+import android.support.v4.app.FragmentActivity;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
@@ -13,6 +14,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 import com.hoccer.talk.client.IXoAlertListener;
 import com.hoccer.talk.client.XoClient;
+import com.hoccer.talk.client.XoClientConfiguration;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
@@ -63,7 +65,7 @@ import java.util.concurrent.TimeUnit;
  * These activites continually keep the background service which
  * we use for connection retention alive by calling it via RPC.
  */
-public abstract class XoActivity extends Activity {
+public abstract class XoActivity extends FragmentActivity {
 
     public final static int REQUEST_SELECT_AVATAR = 23;
 
@@ -321,7 +323,7 @@ public abstract class XoActivity extends Activity {
                 String ourName = getApplicationContext().getPackageName().toString();
                 if (!services.get(0).topActivity.getPackageName().toString().equalsIgnoreCase(ourName)
                         || !mScreenListener.isScreenOn()) {
-                    getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_OFFLINE);
+                    getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_BACKGROUND);
                 }
             }
         };
@@ -401,6 +403,8 @@ public abstract class XoActivity extends Activity {
                     e.printStackTrace();
                 }
                 break;
+            case R.id.menu_kill:
+                this.finish();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -513,8 +517,8 @@ public abstract class XoActivity extends Activity {
             if (barcode != null) {
                 LOG.debug("scanned barcode: " + barcode.getContents());
                 String code = barcode.getContents();
-                if (code.startsWith("hxo://")) {
-                    mBarcodeToken = code.replace("hxo://", "");
+                if (code.startsWith(XoClientConfiguration.HXO_URL_SCHEME)) {
+                    mBarcodeToken = code.replace(XoClientConfiguration.HXO_URL_SCHEME, "");
                 }
             }
             return;
@@ -690,7 +694,7 @@ public abstract class XoActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mBarcodeService.shareText("hxo://" + token);
+                        mBarcodeService.shareText(XoClientConfiguration.HXO_URL_SCHEME + token);
                     }
                 });
             }
@@ -704,7 +708,7 @@ public abstract class XoActivity extends Activity {
             TalkClientContact self = mDatabase.findSelfContact(false);
 
             String message = String
-                    .format(getString(R.string.sms_invitation_text), token, self.getName());
+                    .format(getString(R.string.sms_invitation_text), XoClientConfiguration.HXO_URL_SCHEME, token, self.getName());
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //At least KitKat
                 String defaultSmsPackageName = Telephony.Sms

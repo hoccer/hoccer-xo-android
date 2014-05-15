@@ -18,19 +18,19 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-            android:title="Legal Information">
+            android:title="@string/pref_credentials">
         <Preference
-                android:title="@string/menu_about">
-            <intent android:action="com.hoccer.xo.ABOUT"/>
+                android:title="@string/pref_export_credentials"
+                android:key="preference_export">
         </Preference>
         <Preference
-                android:title="@string/menu_licenses">
-            <intent android:action="com.hoccer.xo.LICENSES"/>
+                android:title="@string/pref_import_credentials"
+                android:key="preference_import">
         </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory
-            android:title="Encryption">
+            android:title="@string/pref_encryption">
 
         <ListPreference
                 android:key="preference_keysize"
@@ -40,6 +40,18 @@
                 android:title="@string/preference_keysize_title"
                 android:defaultValue="2048"/>
 
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            android:title="@string/pref_legal_information">
+        <Preference
+                android:title="@string/menu_about">
+            <intent android:action="com.hoccer.xo.ABOUT"/>
+        </Preference>
+        <Preference
+                android:title="@string/menu_licenses">
+            <intent android:action="com.hoccer.xo.LICENSES"/>
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -69,9 +81,27 @@
 
         <EditTextPreference
                 android:key="preference_server_uri"
-                android:title="Server URI"
+                android:title="Enter Server URI"
                 />
 
+        <ListPreference
+                android:key="preference_server_uri"
+                android:entries="@array/servers"
+                android:entryValues="@array/servers"
+                android:title="Select Server URI"
+                android:defaultValue="wss://server.talk.hoccer.de/"/>
+
+        <ListPreference
+                android:key="preference_database"
+                android:entries="@array/databases"
+                android:entryValues="@array/database_values"
+                android:title="@string/preference_database_title"
+                android:defaultValue="hoccer-talk.db"/>
+
+        <CheckBoxPreference
+                android:key="preference_environment_update"
+                android:title="Enable environment updates"
+                android:defaultValue="true"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

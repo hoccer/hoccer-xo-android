@@ -4,12 +4,42 @@
         <item>@string/dialog_attachment_choose_reselect_option</item>
         <item>@string/dialog_attachment_choose_discard_option</item>
     </string-array>
+
+    <string-array name="databases">
+        <item name="1">hoccer-talk.db</item>
+        <item name="2">hoccer-talk-1.db</item>
+        <item name="3">hoccer-talk-2.db</item>
+        <item name="4">hoccer-talk-3.db</item>
+    </string-array>
+
+    <string-array name="database_values">
+        <item name="1">hoccer-talk.db</item>
+        <item name="2">hoccer-talk-1.db</item>
+        <item name="3">hoccer-talk-2.db</item>
+        <item name="4">hoccer-talk-3.db</item>
+    </string-array>
+
+    <string-array name="servers">
+        <item name="1">wss://server.talk.hoccer.de/</item>
+        <item name="2">wss://test1.talk.hoccer.de/</item>
+        <item name="3">ws://test1.talk.hoccer.de/</item>
+        <item name="4">ws://192.168.2.146:8080/</item>
+    </string-array>
+
+    <string-array name="server_values">
+        <item name="1">wss://server.talk.hoccer.de/</item>
+        <item name="2">hoccer-talk-1.db</item>
+        <item name="3">hoccer-talk-2.db</item>
+        <item name="4">hoccer-talk-3.db</item>
+    </string-array>
+
     <string-array name="keysizes">
         <item name="1024">1024 Bit</item>
         <item name="2048">2048 Bit</item>
         <item name="3072">3072 Bit</item>
         <item name="4096">4096 Bit</item>
     </string-array>
+
     <string-array name="keysize_values">
         <item name="1024">1024</item>
         <item name="2048">2048</item>

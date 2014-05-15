@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.activity;
 
+import android.support.v4.app.FragmentManager;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.model.TalkRelationship;
@@ -9,7 +10,6 @@ import com.hoccer.xo.android.fragment.StatusFragment;
 import com.whitelabel.gw.release.R;
 
 import android.app.ActionBar;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -56,7 +56,7 @@ public class SingleProfileActivity extends XoActivity
 
         mActionBar = getActionBar();
 
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         mSingleProfileFragment = (SingleProfileFragment) fragmentManager
                 .findFragmentById(R.id.activity_single_profile_fragment);
         mStatusFragment = (StatusFragment) fragmentManager
@@ -96,13 +96,20 @@ public class SingleProfileActivity extends XoActivity
             menu.findItem(R.id.menu_profile_unblock).setVisible(false);
             menu.findItem(R.id.menu_profile_delete).setVisible(false);
         } else {
-            TalkRelationship relationship = contact.getClientRelationship();
-            if (relationship == null || relationship.isBlocked()) {
+            if (contact.isNearby()) {
+                menu.findItem(R.id.menu_profile_edit).setVisible(false);
+                menu.findItem(R.id.menu_profile_delete).setVisible(false);
                 menu.findItem(R.id.menu_profile_block).setVisible(false);
-                menu.findItem(R.id.menu_profile_unblock).setVisible(true);
-            } else {
-                menu.findItem(R.id.menu_profile_block).setVisible(true);
                 menu.findItem(R.id.menu_profile_unblock).setVisible(false);
+            } else {
+                TalkRelationship relationship = contact.getClientRelationship();
+                if (relationship == null || relationship.isBlocked()) {
+                    menu.findItem(R.id.menu_profile_block).setVisible(false);
+                    menu.findItem(R.id.menu_profile_unblock).setVisible(true);
+                } else {
+                    menu.findItem(R.id.menu_profile_block).setVisible(true);
+                    menu.findItem(R.id.menu_profile_unblock).setVisible(false);
+                }
             }
         }
 

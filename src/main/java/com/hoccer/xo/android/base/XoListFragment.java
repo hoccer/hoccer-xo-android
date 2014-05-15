@@ -7,7 +7,7 @@ import com.hoccer.xo.android.service.IXoClientService;
 import org.apache.log4j.Logger;
 
 import android.app.Activity;
-import android.app.ListFragment;
+import android.support.v4.app.ListFragment;
 
 import java.io.File;
 

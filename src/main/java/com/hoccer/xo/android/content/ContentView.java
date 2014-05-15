@@ -26,6 +26,9 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 
 /**
  * Content view
@@ -90,8 +93,10 @@ public class ContentView extends LinearLayout implements View.OnClickListener, V
             } else {
                 updateFooter(ContentState.SELECTED);
                 mContentWrapper.setVisibility(View.VISIBLE);
-                mContentChild.setEnabled(true);
-                mContentChild.invalidate();
+                if (mContentChild != null) {
+                    mContentChild.setEnabled(true);
+                    mContentChild.invalidate();
+                }
                 mWaitUntilOperationIsFinished = false;
             }
         }
@@ -263,10 +268,20 @@ public class ContentView extends LinearLayout implements View.OnClickListener, V
         boolean cacheChanged = hasViewCacheChanged(contentViewCache);
         ContentViewCache<?> oldViewCache = mViewCache;
 
+
+        boolean contentAvailable = true;
+        try {
+            isValidContent(content);
+        } catch (FileNotFoundException e) {
+            LOG.warn(e.getMessage());
+            contentAvailable = false;
+        }
+
         // remember the new object
         mContent = content;
         mViewCache = contentViewCache;
         mPreviousContentState = state;
+
 
         // description
         mContentDescription.setText(mRegistry.getContentDescription(content));
@@ -280,30 +295,45 @@ public class ContentView extends LinearLayout implements View.OnClickListener, V
         }
 
         removeChildViewIfContentHasChanged(contentChanged, stateChanged);
-        try {
-            updateContentView(cacheChanged, oldViewCache, activity, content, message);
-        } catch (NullPointerException exception) {
-            LOG.error("probably received an unkown media-type", exception);
+        if(contentAvailable) {
+            try {
+                updateContentView(cacheChanged, oldViewCache, activity, content, message);
+            } catch (NullPointerException exception) {
+                LOG.error("probably received an unkown media-type", exception);
+                return;
+            }
+            if (cacheChanged || contentChanged || stateChanged) {
+                boolean isLightTheme = message != null ? message.isIncoming() : true;
+                mViewCache.updateView(mContentChild, this, content, isLightTheme);
+            }
+
+            if(mContentChild != null) {
+                mContentChild.setEnabled(!footerVisible);
+                if (footerVisible) {
+                    mContentWrapper.setVisibility(View.INVISIBLE);
+                } else {
+                    mContentWrapper.setVisibility(View.VISIBLE);
+                }
+            this.setOnLongClickListener(this);
+            }
+        } else {
+            mContentWrapper.setVisibility(View.INVISIBLE);
+            this.setOnLongClickListener(null);
+        }
+    }
+
+    private void isValidContent(IContentObject content) throws FileNotFoundException {
+        String dataUrl = content.getContentDataUrl();
+        if(dataUrl == null || dataUrl.length() == 0) {
             return;
         }
-        if(cacheChanged || contentChanged || stateChanged){
-            boolean isLightTheme = message != null ? message.isIncoming() : true;
-            mViewCache.updateView(mContentChild, this, content, isLightTheme);
+        if(dataUrl.startsWith("file://")) {
+            dataUrl = dataUrl.replaceFirst("file://", "");
         }
-//        int visibility = isInEditMode() ? GONE : VISIBLE;
-//        mContentWrapper.setVisibility(visibility);
-
-        // disable content child when we are showing the footer
-        if(mContentChild != null) {
-            mContentChild.setEnabled(!footerVisible);
-            if (footerVisible) {
-                mContentWrapper.setVisibility(View.INVISIBLE);
-            } else {
-                mContentWrapper.setVisibility(View.VISIBLE);
-            }
+        File file = new File(dataUrl);
+        if(!file.exists()) {
+            throw new FileNotFoundException("attachment file not found: " + dataUrl);
         }
-
-        this.setOnLongClickListener(this);
     }
 
     private void updateContentView(boolean viewCacheChanged, ContentViewCache<?> oldViewCache,

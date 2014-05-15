@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import com.hoccer.talk.client.XoClientConfiguration;
 import com.hoccer.xo.android.service.XoClientService;
 import org.apache.log4j.Logger;
 
@@ -21,7 +22,7 @@ public class SmsReceiver extends BroadcastReceiver {
     public static final String EXTRA_SMS_BODY       = "com.hoccer.talk.android.SMS_BODY";
     public static final String EXTRA_SMS_URL_RECEIVED = "com.hoccer.talk.android.SMS_URL_RECEIVED";
 
-    private static final String URL_PATTERN_SOURCE = ".*(hxo://[a-zA-Z0-9]*).*";
+    private static final String URL_PATTERN_SOURCE = ".*(" + XoClientConfiguration.HXO_URL_SCHEME + "[a-zA-Z0-9]*).*";
     private static final Pattern URL_PATTERN = Pattern.compile(URL_PATTERN_SOURCE, Pattern.DOTALL);
 
     @Override
@@ -62,7 +63,7 @@ public class SmsReceiver extends BroadcastReceiver {
      */
     private boolean handleMessage(Context context, String sender, String body) {
         // do a simple string check first
-        if(body.contains("hxo://")) {
+        if(body.contains(XoClientConfiguration.HXO_URL_SCHEME)) {
             // regex-match the URL
             Matcher matcher = URL_PATTERN.matcher(body);
             if(matcher.matches() && matcher.groupCount() > 0) {

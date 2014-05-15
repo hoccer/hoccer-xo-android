@@ -24,7 +24,6 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.UUID;
 
 /**
  * Fragment for display and editing of group profiles.
@@ -60,7 +59,6 @@ public class GroupProfileFragment extends XoFragment
     public void onCreate(Bundle savedInstanceState) {
         LOG.debug("onCreate()");
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -129,6 +127,7 @@ public class GroupProfileFragment extends XoFragment
             mGroupMembersList.setAdapter(mGroupMemberAdapter);
         }
         mGroupMemberAdapter.requestReload();
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -176,16 +175,17 @@ public class GroupProfileFragment extends XoFragment
             editGroup.setVisible(false);
 
         } else {
-
-            if (mGroup.isEditable()) {
-                editGroup.setVisible(true);
-            } else {
-                editGroup.setVisible(false);
-                if (mGroup.isGroupInvited()) {
-                    rejectInvitation.setVisible(true);
-                    joinGroup.setVisible(true);
-                } else if (mGroup.isGroupJoined()) {
-                    leaveGroup.setVisible(true);
+            if (!mGroup.getGroupPresence().isTypeNearby()) {
+                if (mGroup.isEditable()) {
+                    editGroup.setVisible(true);
+                } else {
+                    editGroup.setVisible(false);
+                    if (mGroup.isGroupInvited()) {
+                        rejectInvitation.setVisible(true);
+                        joinGroup.setVisible(true);
+                    } else if (mGroup.isGroupJoined()) {
+                        leaveGroup.setVisible(true);
+                    }
                 }
             }
         }
@@ -358,11 +358,9 @@ public class GroupProfileFragment extends XoFragment
         mMode = Mode.CREATE_GROUP;
         LOG.debug("createGroup()");
 
-        String groupTag = UUID.randomUUID().toString();
-        mGroup = new TalkClientContact(TalkClientContact.TYPE_GROUP);
-        mGroup.updateGroupTag(groupTag);
+        mGroup = TalkClientContact.createGroupContact();
         TalkGroup groupPresence = new TalkGroup();
-        groupPresence.setGroupTag(groupTag);
+        groupPresence.setGroupTag(mGroup.getGroupTag());
         mGroup.updateGroupPresence(groupPresence);
         update(mGroup);
     }

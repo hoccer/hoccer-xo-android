@@ -1,9 +1,9 @@
 package com.hoccer.xo.android.activity;
 
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
@@ -36,7 +36,7 @@ public class ClipboardPreviewActivity extends XoActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         mClipboardPreviewFragment = (ClipboardPreviewFragment) fragmentManager.findFragmentById(R.id.activity_clipboard_preview_fragment);
 
         Intent intent = getIntent();
