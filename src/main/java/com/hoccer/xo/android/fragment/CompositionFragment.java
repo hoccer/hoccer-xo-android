@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.fragment;
 
+import android.app.Dialog;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
@@ -107,6 +108,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             }
         };
         mTextEdit.addTextChangedListener(mTextWatcher);
+
     }
 
     @Override
@@ -177,8 +179,17 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         mAttachment = null;
     }
 
+    private boolean isSendMessagePossible() {
+        return (mContact.isGroup() && mContact.getGroupMemberships().size() > 1);
+    }
+
     private void sendComposedMessage() {
         if (mContact == null) {
+            return;
+        }
+
+        if (!isSendMessagePossible()) {
+            showAlertSendMessageNotPossible();
             return;
         }
 
@@ -195,6 +206,21 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         getXoClient()
                 .requestDelivery(getXoClient().composeClientMessage(mContact, messageText, upload));
         clearComposedMessage();
+    }
+
+    private void showAlertSendMessageNotPossible() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
+        builder.setTitle(R.string.composition_alert_empty_group_title);
+        builder.setMessage(R.string.composition_alert_empty_group_text);
+        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                dialog.dismiss();
+            }
+        });
+
+        Dialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override

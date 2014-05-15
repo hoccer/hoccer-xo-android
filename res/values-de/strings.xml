@@ -39,10 +39,9 @@
     </string>
 
     <!-- Nearby location request -->
-    <string name="nearby_enable_location_service">To use this feature you need to enable location service
-        (GPS or Network location). Do you want to enable it?</string>
-    <string name="nearby_yes">Yes</string>
-    <string name="nearby_no">No</string>
+    <string name="nearby_enable_location_service">Um diese Funktion nutzen zu können musst Du Ortungsdienste aktivieren. (GPS oder Netzwerkposition). Willst Du es aktivieren?</string>
+    <string name="nearby_yes">Ja</string>
+    <string name="nearby_no">Nein</string>
 
     <!-- Contact list items -->
     <string name="contact_name_new_client">Neuer Kontakt</string>
@@ -52,6 +51,8 @@
 
     <!-- Composition fragment -->
     <string name="composition_text_hint">Nachricht eingeben</string>
+    <string name="composition_alert_empty_group_title">Nachricht kann nicht gesendet werden</string>
+    <string name="composition_alert_empty_group_text">Du kannst keine Nachrichten an die Gruppe verschicken, weil sie außer Dir keine Mitglieder hat. Du kannst aber deine Freunde in die Gruppe einladen.</string>
 
     <!-- Messaging fragment -->
     <string name="messaging_loading">Lädt...</string>
@@ -247,8 +248,8 @@
     </string-array>
 
     <string-array name="tab_names">
-        <item>CONVERSATIONS</item>
-        <item>NEARBY</item>
+        <item>CHATS</item>
+        <item>IN DER NÄHE</item>
     </string-array>
 
 </resources>
