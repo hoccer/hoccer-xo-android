@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.content.data;
 
+import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
@@ -75,6 +76,7 @@ public class DataSelector implements IContentSelector {
         String filePath = cursor.getString(dataIndex);
         int nameIndex = cursor.getColumnIndex(filePathColumn[1]);
         String displayName = cursor.getString(nameIndex);
+        displayName = displayName.substring(0, displayName.lastIndexOf("."));
         int mimeIndex = cursor.getColumnIndex(filePathColumn[2]);
         String mimeType = cursor.getString(mimeIndex);
         int sizeIndex = cursor.getColumnIndex(filePathColumn[3]);
@@ -83,8 +85,7 @@ public class DataSelector implements IContentSelector {
         cursor.close();
 
         if (filePath == null) {
-            KitKatPath k = new KitKatPath(context, uri);
-            filePath = k.getPath();
+            filePath = getKitKatPath(context, uri);
             if (filePath == null) {
                 return null;
             }
@@ -103,7 +104,9 @@ public class DataSelector implements IContentSelector {
         File f = new File(uri.getPath());
         String filePath = f.getPath();
         SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);
-        contentObject.setFileName(f.getName());
+        String fileName = f.getName();
+        fileName = fileName.substring(0, fileName.lastIndexOf("."));
+        contentObject.setFileName(fileName);
         contentObject.setContentMediaType("data");
         contentObject.setContentType("");
         contentObject.setContentLength((int)f.length());
@@ -111,70 +114,56 @@ public class DataSelector implements IContentSelector {
         return contentObject;
     }
 
-    private class KitKatPath {
-        private Context mContext;
-        private Uri mUri;
-
-        public  KitKatPath(Context context, Uri uri) {
-            mContext = context;
-            mUri = uri;
-        }
-
-
-        public String getPath() {
-            //check here to KITKAT or new version
-            final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-            if (!isKitKat) {
-                return null;
-            }
-            // DocumentProvider
-            if (DocumentsContract.isDocumentUri(mContext, mUri)) {
-                // ExternalStorageProvider
-                if (isExternalStorageDocument(mUri)) {
-                    final String docId = DocumentsContract.getDocumentId(mUri);
-                    final String[] split = docId.split(":");
-                    final String type = split[0];
-
-                    if ("primary".equalsIgnoreCase(type)) {
-                        return Environment.getExternalStorageDirectory() + "/" + split[1];
-                    }
-                } else if (isDownloadsDocument(mUri)) {
-                    final String id = DocumentsContract.getDocumentId(mUri);
-                    final Uri contentUri = ContentUris.withAppendedId(
-                            Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-                    return getDataColumn(mContext, contentUri, null, null);
-                }
-            }
+    @SuppressLint("NewApi")
+    private String getKitKatPath(Context context, Uri uri) {
+        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+        if (!isKitKat) {
             return null;
         }
-
-
-        public String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
-            Cursor cursor = null;
-            final String column = "_data";
-            final String[] projection = {
-                    column
-            };
-            try {
-                cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
-                        null);
-                if (cursor != null && cursor.moveToFirst()) {
-                    final int index = cursor.getColumnIndexOrThrow(column);
-                    return cursor.getString(index);
+        if (DocumentsContract.isDocumentUri(context, uri)) {
+            if (isExternalStorageDocument(uri)) {
+                final String docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+                if ("primary".equalsIgnoreCase(type)) {
+                    return Environment.getExternalStorageDirectory() + "/" + split[1];
                 }
-            } finally {
-                if (cursor != null)
-                    cursor.close();
+            } else if (isDownloadsDocument(uri)) {
+                final String id = DocumentsContract.getDocumentId(uri);
+                final Uri contentUri = ContentUris.withAppendedId(
+                        Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                return getDataColumn(context, contentUri, null, null);
             }
-            return null;
         }
+        return null;
+    }
 
-        public boolean isExternalStorageDocument(Uri uri) {
-            return "com.android.externalstorage.documents".equals(uri.getAuthority());
-        }
 
-        public boolean isDownloadsDocument(Uri uri) {
-            return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+    private String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
+        Cursor cursor = null;
+        final String column = "_data";
+        final String[] projection = {
+                column
+        };
+        try {
+            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+                    null);
+            if (cursor != null && cursor.moveToFirst()) {
+                final int index = cursor.getColumnIndexOrThrow(column);
+                return cursor.getString(index);
+            }
+        } finally {
+            if (cursor != null)
+                cursor.close();
         }
+        return null;
+    }
+
+    private boolean isExternalStorageDocument(Uri uri) {
+        return "com.android.externalstorage.documents".equals(uri.getAuthority());
+    }
+
+    private boolean isDownloadsDocument(Uri uri) {
+        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
     }
 }

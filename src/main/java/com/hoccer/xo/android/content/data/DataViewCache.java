@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,14 +14,10 @@ import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.release.R;
-import org.apache.log4j.Logger;
 
 import java.net.URLConnection;
 
 public class DataViewCache extends ContentViewCache<View> {
-
-    private static final Logger LOG = Logger.getLogger(DataViewCache.class);
-
     ObjectMapper mJsonMapper;
 
     public DataViewCache() {
@@ -43,28 +38,34 @@ public class DataViewCache extends ContentViewCache<View> {
     @Override
     protected void updateViewInternal(final View view, ContentView contentView, final IContentObject contentObject, boolean isLightTheme) {
         if(contentObject.isContentAvailable()) {
-            ImageButton openMapButton = (ImageButton) view.findViewById(R.id.ib_content_open);
-            int imageResource = isLightTheme ? R.drawable.ic_dark_video
-                    : R.drawable.ic_light_video;
-            openMapButton.setImageResource(imageResource);
+            ImageButton openDocButton = (ImageButton) view.findViewById(R.id.ib_content_open);
+            int imageResource = isLightTheme ? R.drawable.ic_dark_data
+                    : R.drawable.ic_light_data;
+            openDocButton.setImageResource(imageResource);
             TextView title = (TextView) view.findViewById(R.id.tv_doc_title);
-                title.setText(title.getText() + ": " + contentObject.getFileName());
-                openMapButton.setOnClickListener(new View.OnClickListener() {
+                String fileName = contentObject.getFileName();
+                if (contentObject.getContentDataUrl() != null) {
+                    String extension = contentObject.getContentDataUrl().substring(
+                            contentObject.getContentDataUrl().lastIndexOf("."));
+                    fileName = fileName + extension;
+                }
+                title.setText(fileName);
+                openDocButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(contentObject.isContentAvailable()) {
+                        if (contentObject.isContentAvailable()) {
                             String url = contentObject.getContentUrl();
-                            if(url == null) {
+                            if (url == null) {
                                 url = contentObject.getContentDataUrl();
                             }
-                            if(url != null) {
+                            if (url != null) {
                                 Intent intent = new Intent(Intent.ACTION_VIEW);
                                 String type = URLConnection.guessContentTypeFromName(url);
                                 Uri data = Uri.parse(url);
                                 intent.setDataAndType(data, type);
                                 try {
                                     view.getContext().startActivity(intent);
-                                } catch(ActivityNotFoundException exception) {
+                                } catch (ActivityNotFoundException exception) {
                                     // TODO: tell the user there is no app installd which can handle the file
                                     // for now we use a Toast!
                                     Toast.makeText(view.getContext(),
@@ -74,7 +75,7 @@ public class DataViewCache extends ContentViewCache<View> {
                             }
                         }
                     }
-            });
+                });
             int textColor = isLightTheme ? Color.BLACK : Color.WHITE;
             TextView description = (TextView) view.findViewById(R.id.tv_doc_description);
             title.setTextColor(textColor);
