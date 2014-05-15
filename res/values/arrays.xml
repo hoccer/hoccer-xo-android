@@ -24,6 +24,7 @@
         <item name="2">wss://test1.talk.hoccer.de/</item>
         <item name="3">ws://test1.talk.hoccer.de/</item>
         <item name="4">ws://192.168.2.146:8080/</item>
+        <item name="5">wss://whitelabel-test1.talk.hoccer.de:8443/</item>
     </string-array>
 
     <string-array name="server_values">
