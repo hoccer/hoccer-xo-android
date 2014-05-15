@@ -2,6 +2,7 @@ package com.hoccer.xo.android.fragment;
 
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.adapter.NearbyContactsAdapter;
+import com.hoccer.xo.android.adapter.OnItemCountChangedListener;
 import com.hoccer.xo.android.base.XoListFragment;
 
 import com.whitelabel.gw.release.R;
@@ -43,10 +44,10 @@ public class NearbyContactsFragment extends XoListFragment {
         mNearbyAdapter = new NearbyContactsAdapter(getXoDatabase(), getXoActivity());
         mNearbyAdapter.retrieveDataFromDb();
         mNearbyAdapter.registerListeners();
-        mNearbyAdapter.setOnItemAddedListener(new NearbyContactsAdapter.OnItemCountChangedListener() {
+        mNearbyAdapter.setOnItemCountChangedListener(new OnItemCountChangedListener() {
             @Override
             public void onItemCountChanged(int count) {
-                if(count > 0) {
+                if (count > 0) {
                     hidePlaceholder();
                 } else if (count < 1) {
                     showPlaceholder();
