@@ -24,13 +24,11 @@ import java.sql.SQLException;
  * This currently shows only contact data but should also be able to show
  * recent conversations for use as a "conversations" view.
  */
-public class ContactsFragment extends XoListFragment implements View.OnClickListener {
+public class ContactsFragment extends XoListFragment {
 
     private static final Logger LOG = Logger.getLogger(ContactsFragment.class);
 
     private ContactsAdapter mAdapter;
-
-    private Button mAddUserButton;
 
     private ListView mContactList;
 
@@ -39,10 +37,6 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
             Bundle savedInstanceState) {
         LOG.debug("onCreateView()");
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
-
-        mAddUserButton = (Button) view.findViewById(R.id.contacts_pairing);
-        mAddUserButton.setOnClickListener(this);
-
         mContactList = (ListView) view.findViewById(android.R.id.list);
 
         return view;
@@ -103,14 +97,6 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (v == mAddUserButton) {
-            LOG.debug("onClick(addUserButton)");
-            getXoActivity().showPairing();
         }
     }
 
