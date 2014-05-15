@@ -311,11 +311,9 @@ public class ContentView extends LinearLayout implements View.OnClickListener, V
     private void updateContentView(boolean viewCacheChanged, ContentViewCache<?> oldViewCache,
             Activity activity,
             IContentObject object, TalkClientMessage message) {
-        LOG.error("updateContentView-----------------------------------------------------------");
         if(viewCacheChanged || mContentChild == null) {
             // remove old
             if(mContentChild != null) {
-                LOG.error("removing stuff-----------------------------------------------------------");
                 View v = mContentChild;
                 mContentChild = null;
                 mContentWrapper.removeView(v);

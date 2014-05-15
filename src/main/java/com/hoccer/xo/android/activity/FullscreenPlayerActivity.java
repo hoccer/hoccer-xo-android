@@ -70,7 +70,7 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
         mButtonRepeat = (ImageButton) findViewById(R.id.btnRepeat);
         mButtonShuffle = (ImageButton) findViewById(R.id.btnShuffle);
         mSongProgressBar = (SeekBar) findViewById(R.id.songProgressBar);
-        mSongTitleLabel = (TextView) findViewById(R.id.attachmentlist_title_name);
+        mSongTitleLabel = (TextView) findViewById(R.id.attachmentlist_item_title_name);
         mSongCurrentDurationLabel = (TextView) findViewById(R.id.songCurrentDurationLabel);
         mSongTotalDurationLabel = (TextView) findViewById(R.id.songTotalDurationLabel);
 

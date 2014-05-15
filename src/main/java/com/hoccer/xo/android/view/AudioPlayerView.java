@@ -63,14 +63,6 @@ public class AudioPlayerView
         mPlayPauseButton.setOnClickListener(this);
     }
 
-    private void showPauseButton() {
-        mPlayPauseButton.setImageResource(R.drawable.ic_dark_pause);
-    }
-
-    private void showPlayButton() {
-        mPlayPauseButton.setImageResource(R.drawable.ic_dark_play);
-    }
-
     private void pausePlaying() {
         if (isBound()) {
             mMediaPlayerService.pause();
@@ -96,11 +88,7 @@ public class AudioPlayerView
     }
 
     public void updatePlayPauseView() {
-        if (isActive()) {
-            showPauseButton();
-        } else {
-            showPlayButton();
-        }
+        mPlayPauseButton.setImageResource((isActive()) ? R.drawable.ic_dark_pause : R.drawable.ic_dark_play);
     }
 
     public boolean isActive() {

@@ -1,12 +1,10 @@
 package com.hoccer.xo.android.service;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
@@ -24,6 +22,8 @@ import com.hoccer.xo.android.content.audio.AudioListManager;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
+
+import java.util.List;
 
 public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
@@ -64,6 +64,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             return MediaPlayerService.this;
         }
     }
+
     @Override
     public void onCreate() {
 
@@ -77,6 +78,61 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         createBroadcastReceiver();
         createPlayStateTogglePendingIntent();
         registerPlayStateToggleIntentFilter();
+
+        createAppFocusTracker();
+    }
+
+    private void createAppFocusTracker(){
+
+        new Thread(new Runnable() {
+            public void run() {
+                while( true) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if ( isApplicationKilled(getApplicationContext())){
+                        stopSelf();
+                    }
+                    else {
+                        if (isApplicationSentToBackground(getApplicationContext())) {
+                            if (!isPaused() && !isStopped()) {
+                                createNotification();
+                                updateNotification();
+                            }
+                        } else {
+                            removeNotification();
+                        }
+                    }
+                }
+            }
+        }).start();
+    }
+
+    private boolean isApplicationKilled(Context context){
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List <ActivityManager.RecentTaskInfo > runningTasks = am.getRecentTasks(1000, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+        for( int i = 0; i < runningTasks.size(); ++i){
+            ActivityManager.RecentTaskInfo info = runningTasks.get(i);
+            if ( info.baseIntent.getComponent().getPackageName().equalsIgnoreCase(getApplication().getPackageName())){
+                return false;
+            }
+        }
+            return true;
+    }
+
+    public boolean isApplicationSentToBackground(Context context) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
+        if (!tasks.isEmpty()) {
+            ComponentName topActivity = tasks.get(0).topActivity;
+            if (!topActivity.getPackageName().equals(context.getPackageName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void createBroadcastReceiver() {
@@ -140,7 +196,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     private void createNotification() {
-
         Intent resultIntent = new Intent(this, FullscreenPlayerActivity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this)
@@ -266,10 +321,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             if (!resumable) {
                 setCurrentMediaFilePath(mTempMediaFilePath);
                 resetFileNameAndMetaData();
-                createNotification();
                 broadcastTrackChanged();
             }
-            updateNotification();
+            if ( isNotificationActive()){
+                updateNotification();
+            }
             broadcastPlayStateChanged();
         } else {
             LOG.debug("Audio focus request not granted");
@@ -299,7 +355,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mMediaPlayer.pause();
         setPaused(true);
         setStopped(false);
-        updateNotification();
+        if ( isNotificationActive()) {
+            updateNotification();
+        }
         broadcastPlayStateChanged();
     }
 
@@ -310,9 +368,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             mMediaPlayer = null;
             setPaused(false);
             setStopped(true);
-            removeNotification();
+			if ( isNotificationActive()) {
+            	removeNotification();
+			}
             broadcastPlayStateChanged();
         }
+    }
+
+    private boolean isNotificationActive(){
+        return isApplicationSentToBackground(this);
     }
 
     public void setSeekPosition(int position) {

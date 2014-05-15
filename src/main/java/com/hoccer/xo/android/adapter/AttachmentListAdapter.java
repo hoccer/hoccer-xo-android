@@ -2,20 +2,16 @@ package com.hoccer.xo.android.adapter;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.MediaMetaData;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.android.view.AttachmentAudioView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by nico on 09/05/2014.
- */
 public class AttachmentListAdapter extends XoAdapter {
 
     private List<TalkClientDownload> mAttachments;
@@ -48,19 +44,12 @@ public class AttachmentListAdapter extends XoAdapter {
         if (convertView != null) {
             attachmentView = convertView;
         } else {
-            attachmentView = mInflater.inflate(R.layout.attachmentlist_general_item, null);
-        }
-
-        // this is for AUDIO only. TODO: create for other media formats
-        if (mContentMediaType != null) {
-            if (mContentMediaType.equalsIgnoreCase(ContentMediaType.AUDIO)) {
-
-                String titleName = (mAttachmentMetaData.get(position).getTitle() != null) ? mAttachmentMetaData.get(position).getTitle() : "Unknown Title";
-                String artistName = (mAttachmentMetaData.get(position).getArtist() != null) ? mAttachmentMetaData.get(position).getArtist() : "Unknown Artist";
-
-                ((TextView) attachmentView.findViewById(R.id.attachmentlist_title_name)).setText(titleName);
-                ((TextView) attachmentView.findViewById(R.id.attachmentList_artist_name)).setText(artistName);
-            }
+            // this is for AUDIO only. TODO: create for different media formats when necessary
+            //        if (mContentMediaType != null) {
+            //            if (mContentMediaType.equalsIgnoreCase(ContentMediaType.AUDIO)) {
+            attachmentView = new AttachmentAudioView(mActivity, mInflater, mAttachmentMetaData.get(position));
+            //        }
+            //    }
         }
         return attachmentView;
     }
@@ -100,14 +89,6 @@ public class AttachmentListAdapter extends XoAdapter {
         });
     }
 
-
-    private String getDisplayName(int pPosition) {
-        String displayName;
-        TalkClientDownload attachment = mAttachments.get(pPosition);
-        displayName = attachment.getFileName();
-        return displayName;
-    }
-
     private void fetchMetaDataFromAttachmentList() {
         ArrayList<String> filePaths = new ArrayList<String>();
         for (TalkClientDownload attachment : mAttachments) {
@@ -115,6 +96,5 @@ public class AttachmentListAdapter extends XoAdapter {
         }
         mAttachmentMetaData = MediaMetaData.create(filePaths);
     }
-
 
 }
