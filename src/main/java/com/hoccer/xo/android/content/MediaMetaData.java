@@ -33,6 +33,10 @@ public class MediaMetaData {
         return mArtist;
     }
 
+    public String getFilePath() {
+        return mFilePath;
+    }
+
     public String getAlbumTitle() {
         return mAlbumTitle;
     }

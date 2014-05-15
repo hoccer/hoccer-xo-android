@@ -1,7 +1,5 @@
 package com.hoccer.xo.android.adapter;
 
-import android.database.DataSetObserver;
-import android.database.Observable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -11,6 +9,7 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.release.R;
+import android.os.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,11 +56,16 @@ public class AttachmentListAdapter extends XoAdapter {
         if (mContentMediaType != null) {
             if (mContentMediaType.equalsIgnoreCase(ContentMediaType.AUDIO)) {
 
-                String titleName = (mAttachmentMetaData.get(position).getTitle() != null) ? mAttachmentMetaData.get(position).getTitle() : "Unknown Title";
-                String artistName = (mAttachmentMetaData.get(position).getArtist() != null) ? mAttachmentMetaData.get(position).getArtist() : "Unknown Artist";
+                String fileName = mAttachmentMetaData.get(position).getFilePath();
+                String titleName = mAttachmentMetaData.get(position).getTitle();
+                String artistName = mAttachmentMetaData.get(position).getArtist();
 
-                ((TextView) attachmentView.findViewById(R.id.attachmentlist_title_name)).setText(titleName);
-                ((TextView) attachmentView.findViewById(R.id.attachmentList_artist_name)).setText(artistName);
+                String verifiedFileName = (fileName != null) ? fileName : "Unknown Title";
+                String verifiedTitleName = (titleName != null) ? titleName : verifiedFileName.substring( (Environment.getExternalStorageDirectory().getAbsolutePath() + R.string.app_name).length() + 1, (verifiedFileName.length() - 5) );
+                String verifiedArtistName = (artistName != null) ? artistName : "Unknown Artist";
+
+                ((TextView) attachmentView.findViewById(R.id.attachmentlist_title_name)).setText(verifiedTitleName);
+                ((TextView) attachmentView.findViewById(R.id.attachmentList_artist_name)).setText(verifiedArtistName);
             }
         }
         return attachmentView;
