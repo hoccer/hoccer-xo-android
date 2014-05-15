@@ -11,7 +11,7 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.adapter.NearbyContactsAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
 
-import com.hoccer.xo.release.R;
+import com.whitelabel.gw.release.R;
 import org.apache.log4j.Logger;
 
 import android.os.Bundle;
