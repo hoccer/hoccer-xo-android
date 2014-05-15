@@ -12,6 +12,7 @@ import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.talk.model.TalkClient;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
@@ -363,7 +364,7 @@ public abstract class XoActivity extends FragmentActivity {
         }
 
         public boolean isScreenOn() {
-            return  wasScreenOn;
+            return wasScreenOn;
         }
 
     }
@@ -407,9 +408,6 @@ public abstract class XoActivity extends FragmentActivity {
                 break;
             case R.id.menu_settings:
                 showPreferences();
-                break;
-            case R.id.menu_audio_attachment_list:
-                showAudioAttachmentList();
                 break;
             case R.id.menu_reconnect:
                 try {
@@ -667,9 +665,12 @@ public abstract class XoActivity extends FragmentActivity {
         startActivity(new Intent(this, PairingActivity.class));
     }
 
-    public void showAudioAttachmentList() {
-        LOG.debug("showAudioAttachmentList()");
-        startActivity(new Intent(this, AudioAttachmentListActivity.class));
+    public void showAudioAttachmentList(TalkClientContact contact) {
+        LOG.debug("showAudioAttachmentList(" + contact.getClientContactId() + ")");
+        Intent intent = new Intent(this, AudioAttachmentListActivity.class);
+        intent.putExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID,
+                contact.getClientContactId());
+        startActivity(intent);
     }
 
     public void showFullscreenPlayer() {

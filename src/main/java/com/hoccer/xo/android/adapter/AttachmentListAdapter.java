@@ -1,7 +1,5 @@
 package com.hoccer.xo.android.adapter;
 
-import android.database.DataSetObserver;
-import android.database.Observable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -115,7 +113,7 @@ public class AttachmentListAdapter extends XoAdapter {
         for (TalkClientDownload attachment : mAttachments) {
             filePaths.add(attachment.getDataFile());
         }
-        mAttachmentMetaData = MediaMetaData.factorMetaDataForFileList(filePaths);
+        mAttachmentMetaData = MediaMetaData.create(filePaths);
     }
 
 

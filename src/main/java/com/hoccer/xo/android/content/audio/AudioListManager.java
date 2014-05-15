@@ -52,11 +52,13 @@ public class AudioListManager extends Observable<DataSetObserver> implements Lis
         try {
             mAudioList = mDatabase.findClientDownloadByMediaType(ContentMediaType.AUDIO);
         } catch (SQLException e) {
-            LOG.error("SQL query failed: " + e);
+            LOG.error("SQL query failed: " + e.getLocalizedMessage());
         }
 
         XoApplication.getXoClient().registerTransferListener(this);
     }
+
+
 
     @Override
     public boolean hasPrevious() {
@@ -111,6 +113,10 @@ public class AudioListManager extends Observable<DataSetObserver> implements Lis
     @Override
     public void add(TalkClientDownload talkClientDownload) {
 
+    }
+
+    public void setAudioList(List<TalkClientDownload> audioList) {
+        this.mAudioList = audioList;
     }
 
     public List<TalkClientDownload> getAudioList() {

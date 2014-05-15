@@ -90,7 +90,7 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
                     mMediaPlayerService.pause();
                     mButtonPlay.setImageResource(R.drawable.ic_dark_play);
                 } else {
-                    mMediaPlayerService.start(mTempFilePath);
+                    mMediaPlayerService.start();
                     mButtonPlay.setImageResource(R.drawable.ic_dark_pause);
                 }
             }
@@ -289,15 +289,11 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
     }
 
     private void playPrevTrack() {
-        if(mAudioListManager.hasPrevious()){
-            mMediaPlayerService.start(mAudioListManager.previous().getContentDataUrl());
-        }
+        mMediaPlayerService.playPrevious();
     }
 
     private void playNextTrack() {
-        if(mAudioListManager.hasNext()){
-            mMediaPlayerService.start(mAudioListManager.next().getContentDataUrl());
-        }
+        mMediaPlayerService.playNext();
     }
 
 }

@@ -6,14 +6,10 @@ import org.apache.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by nico on 13/05/2014.
- */
 public class MediaMetaData {
 
     private static final Logger LOG = Logger.getLogger(MediaMetaData.class);
 
-    private String mFilePath = null;
     private String mTitle = null;
     private String mArtist = null;
     private String mAlbumTitle = null;
@@ -21,8 +17,7 @@ public class MediaMetaData {
     private boolean mHasAudio = false;
     private boolean mHasVideo = false;
 
-    public MediaMetaData(String pFilePath) {
-        mFilePath = pFilePath;
+    private MediaMetaData() {
     }
 
     public String getTitle() {
@@ -49,13 +44,6 @@ public class MediaMetaData {
         return mHasVideo;
     }
 
-    public byte[] getArtwork() {
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(mFilePath);
-
-        return retriever.getEmbeddedPicture();
-    }
-
     private void setTitle(String pTitle) {
         this.mTitle = pTitle;
     }
@@ -80,41 +68,43 @@ public class MediaMetaData {
         mHasVideo = pHasVideo;
     }
 
-    public static MediaMetaData factorMetaDataForFile(String pMediaFilePath) throws IllegalArgumentException {
+    public static MediaMetaData create(String pMediaFilePath) throws IllegalArgumentException {
+
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
 
-        return retrieveMetaDataFromFile(retriever, pMediaFilePath);
+        MediaMetaData metaData = new MediaMetaData();
+
+        retriever.setDataSource(pMediaFilePath);
+        metaData.setTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
+        metaData.setArtist(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
+        metaData.setAlbumTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
+        metaData.setMimeType(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE));
+
+        if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO) != null) {
+            metaData.setHasAudio(true);
+        }
+
+        if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO) != null) {
+            metaData.setHasVideo(true);
+        }
+
+        return metaData;
     }
 
-    public static List<MediaMetaData> factorMetaDataForFileList(List<String> pMediaFilePathList) throws IllegalArgumentException {
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+    public static List<MediaMetaData> create(List<String> pMediaFilePathList) throws IllegalArgumentException {
         ArrayList<MediaMetaData> metaDataList = new ArrayList<MediaMetaData>();
 
         for (String mediaFilePath : pMediaFilePathList) {
-            metaDataList.add(retrieveMetaDataFromFile(retriever, mediaFilePath));
+            metaDataList.add(create(mediaFilePath));
         }
 
         return metaDataList;
     }
 
+    public static byte[] getArtwork(String filePath) {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(filePath);
 
-    private static MediaMetaData retrieveMetaDataFromFile(MediaMetadataRetriever pRetriever, String pMediaFilePath) {
-        MediaMetaData metaData = new MediaMetaData(pMediaFilePath);
-
-        pRetriever.setDataSource(pMediaFilePath);
-        metaData.setTitle(pRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
-        metaData.setArtist(pRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
-        metaData.setAlbumTitle(pRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
-        metaData.setMimeType(pRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE));
-
-        if (pRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO) != null) {
-            metaData.setHasAudio(true);
-        }
-
-        if (pRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO) != null) {
-            metaData.setHasVideo(true);
-        }
-
-        return metaData;
+        return retriever.getEmbeddedPicture();
     }
 }

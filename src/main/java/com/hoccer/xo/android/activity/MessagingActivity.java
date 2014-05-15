@@ -145,6 +145,10 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
                     showContactProfile(mContact);
                 }
                 break;
+            case R.id.menu_audio_attachment_list:
+                if(mContact != null) {
+                    showAudioAttachmentList(mContact);
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }

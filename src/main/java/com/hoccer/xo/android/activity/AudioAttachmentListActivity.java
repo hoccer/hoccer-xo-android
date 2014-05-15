@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import com.hoccer.xo.android.base.XoActionbarActivity;
@@ -9,6 +10,7 @@ import com.hoccer.xo.release.R;
 
 public class AudioAttachmentListActivity extends XoActionbarActivity {
 
+    public static final String EXTRA_CLIENT_CONTACT_ID = "com.hoccer.xo.android.activity.EXTRA_CLIENT_CONTACT_ID";
     private AudioAttachmentListFragment mAudioAttachmentListFragment;
 
     @Override
@@ -27,6 +29,8 @@ public class AudioAttachmentListActivity extends XoActionbarActivity {
 
         enableUpNavigation();
         mAudioAttachmentListFragment = (AudioAttachmentListFragment) getSupportFragmentManager().findFragmentById(R.id.audio_attachment_list_fragment);
+
+
     }
 
     @Override

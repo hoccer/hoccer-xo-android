@@ -21,6 +21,7 @@ import android.widget.RemoteViews;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.content.audio.AudioListManager;
+import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -55,13 +56,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mReceiver;
     private AudioListManager mAudioListManager;
+    private MediaPlaylist mCurrentPlaylist;
 
     public class MediaPlayerBinder extends Binder {
+
         public MediaPlayerService getService() {
             return MediaPlayerService.this;
         }
     }
-
     @Override
     public void onCreate() {
 
@@ -207,25 +209,52 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         String path = Uri.parse(mCurrentMediaFilePath).getPath();
         mFileName = extractFileName(path);
         try {
-            mMediaMetaData = MediaMetaData.factorMetaDataForFile(path);
+            mMediaMetaData = MediaMetaData.create(path);
         } catch (IllegalArgumentException e) {
             LOG.error(e);
         }
     }
 
-    private boolean isResumable(String mediaFilePath) {
-        return isPaused() && isSamePath(mediaFilePath);
+    private boolean isResumable(MediaPlaylist playlist) {
+        return isPaused() && !playlistChanged(playlist) && !pathChanged(playlist.current().getFilePath());
     }
 
-    public void start(String mediaFilePath) {
-        if (isResumable(mediaFilePath)) {
-            play(true);
+    public void start(){
+        if(mCurrentPlaylist != null){
+            start(mCurrentPlaylist);
+        } else {
+            LOG.error("No playlist available!");
+        }
+    }
+
+    public void start(MediaPlaylist playlist) {
+        if (isResumable(playlist)) {
+            resume();
         } else {
             if (mMediaPlayer == null) {
                 createMediaPlayer();
             }
-            resetAndPrepareMediaPlayer(mediaFilePath);
+            if (playlistChanged(playlist)) {
+                setCurrentPlaylist(playlist);
+            }
+            resetAndPrepareMediaPlayer(playlist.current().getFilePath());
         }
+    }
+
+    private boolean playlistChanged(MediaPlaylist playlist) {
+        return mCurrentPlaylist != playlist;
+    }
+
+    private boolean pathChanged(String mediaFilePath) {
+        return !mCurrentMediaFilePath.equals(mediaFilePath);
+    }
+
+    public void setCurrentPlaylist(MediaPlaylist playlist) {
+        mCurrentPlaylist = playlist;
+    }
+
+    public void resume() {
+        play(true);
     }
 
     public void play(boolean resumable) {
@@ -247,6 +276,25 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         }
     }
 
+    public void playNext() {
+        if (mCurrentPlaylist.hasNext()) {
+            String path = mCurrentPlaylist.next().getFilePath();
+            resetAndPrepareMediaPlayer(path);
+        } else {
+            mCurrentPlaylist.setCurrentIndex(0);
+            stop();
+        }
+    }
+
+    public void playPrevious() {
+        if (mCurrentPlaylist.hasPrevious()) {
+            String path = mCurrentPlaylist.previous().getFilePath();
+            resetAndPrepareMediaPlayer(path);
+        } else {
+            stop();
+        }
+    }
+
     public void pause() {
         mMediaPlayer.pause();
         setPaused(true);
@@ -256,13 +304,15 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     public void stop() {
-        mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
-        mMediaPlayer.release();
-        mMediaPlayer = null;
-        setPaused(false);
-        setStopped(true);
-        removeNotification();
-        broadcastPlayStateChanged();
+        if(mMediaPlayer != null){
+            mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+            setPaused(false);
+            setStopped(true);
+            removeNotification();
+            broadcastPlayStateChanged();
+        }
     }
 
     public void setSeekPosition(int position) {
@@ -274,10 +324,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private void removeNotification() {
         stopForeground(true);
-    }
-
-    private boolean isSamePath(String mediaFilePath) {
-        return mCurrentMediaFilePath.equals(mediaFilePath);
     }
 
     private void setPaused(boolean paused) {
@@ -302,12 +348,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        if (mAudioListManager.hasNext()) {
-            String path = mAudioListManager.next().getContentDataUrl();
-            start(path);
-        } else {
-            stop();
-        }
+        playNext();
     }
 
     public boolean isPaused() {

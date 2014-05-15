@@ -6,22 +6,30 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.content.MediaItem;
+import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 public class AudioPlayerView
         extends LinearLayout
-        implements View.OnClickListener{
+        implements View.OnClickListener {
 
     private final static Logger LOG = Logger.getLogger(AudioPlayerView.class);
 
     private MediaPlayerService mMediaPlayerService;
     private ImageButton mPlayPauseButton;
-    private String mMediaFilePath;
     private BroadcastReceiver mReceiver;
     private Context mContext;
     private ServiceConnection mConnection;
+    private IContentObject contentObject;
+    private MediaPlaylist playlist;
+
+    public void setContentObject(IContentObject contentObject) {
+        this.contentObject = contentObject;
+    }
 
     public AudioPlayerView(Context context) {
         super(context);
@@ -30,11 +38,10 @@ public class AudioPlayerView
 
     private void initialize(Context context) {
         addView(inflate(context, R.layout.content_audio, null));
-
         mContext = context;
     }
 
-    private void bindService(Intent intent){
+    private void bindService(Intent intent) {
 
         mConnection = new ServiceConnection() {
             @Override
@@ -72,7 +79,10 @@ public class AudioPlayerView
 
     private void startPlaying() {
         if (isBound()) {
-            mMediaPlayerService.start(mMediaFilePath);
+            if (playlist == null) {
+                playlist = MediaPlaylist.create(contentObject.getContentDataUrl());
+            }
+            mMediaPlayerService.start(playlist);
         }
     }
 
@@ -85,10 +95,6 @@ public class AudioPlayerView
         }
     }
 
-    public void setFile(String path) {
-        mMediaFilePath = path;
-    }
-
     public void updatePlayPauseView() {
         if (isActive()) {
             showPauseButton();
@@ -98,8 +104,8 @@ public class AudioPlayerView
     }
 
     public boolean isActive() {
-        if (mMediaFilePath != null && isBound()) {
-            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && mMediaFilePath.equals(mMediaPlayerService.getCurrentMediaFilePath());
+        if (contentObject != null && isBound()) {
+            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && contentObject.getContentDataUrl().equals(mMediaPlayerService.getCurrentMediaFilePath());
         } else {
             return false;
         }
