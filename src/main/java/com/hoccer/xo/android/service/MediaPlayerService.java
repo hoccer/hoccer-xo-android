@@ -1,12 +1,10 @@
 package com.hoccer.xo.android.service;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
@@ -23,6 +21,8 @@ import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.content.audio.AudioListManager;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
+
+import java.util.List;
 
 public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
@@ -75,6 +75,96 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         createBroadcastReceiver();
         createPlayStateTogglePendingIntent();
         registerPlayStateToggleIntentFilter();
+    }
+
+    /*public void callAsynchronousTask() {
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        try {
+                            NotificationHandler performBackgroundTask = new NotificationHandler();
+                            performBackgroundTask.execute();
+                        } catch (Exception e) {
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(doAsynchronousTask, 0, 1000);
+    }*/
+
+    private void createAppFocusTracker(){
+
+        /*Executor executor = anExecutor;
+        executor.execute(new RunnableTask1());
+        executor.execute(new RunnableTask2());*/
+
+        new Thread(new Runnable() {
+            public void run() {
+                while( true) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if ( isApplicationSentToBackground(getApplicationContext())){
+                        if ( !isPaused() && !isStopped()) {
+                            createNotification();
+                            updateNotification();
+                        }
+                    }else{
+                        removeNotification();
+                    }
+
+                }
+            }
+        }).start();
+    }
+
+    /*private class NotificationHandler extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            boolean result = isApplicationSentToBackground(getApplicationContext());
+            LOG.error( "BLUBBER: doInBackground, " + result);
+
+            return false;
+        }
+    }*/
+
+    public boolean isApplicationSentToBackground(Context context) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
+        if (!tasks.isEmpty()) {
+            ComponentName topActivity = tasks.get(0).topActivity;
+            if (!topActivity.getPackageName().equals(context.getPackageName())) {
+                LOG.error("BG");
+
+                boolean found = false;
+                List <ActivityManager.RecentTaskInfo > runningTasks = am.getRecentTasks(1000, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+                for( int i = 0; i < runningTasks.size(); ++i){
+                    ActivityManager.RecentTaskInfo info = runningTasks.get(i);
+                    if ( info.baseIntent.getComponent().getPackageName().equalsIgnoreCase(getApplication().getPackageName())){
+                        LOG.error("FOUND HOCCER");
+                        found = true;
+                    }
+                }
+                if ( !found) {
+                    LOG.error("NOPE");
+                    stopSelf();
+                }
+
+                return true;
+            }
+        }
+        LOG.error("FRONT");
+        return false;
     }
 
     private void createBroadcastReceiver() {
@@ -237,10 +327,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             if (!resumable) {
                 setCurrentMediaFilePath(mTempMediaFilePath);
                 resetFileNameAndMetaData();
-                createNotification();
                 broadcastTrackChanged();
+                //callAsynchronousTask();
+                createAppFocusTracker();
             }
-            updateNotification();
             broadcastPlayStateChanged();
         } else {
             LOG.debug("Audio focus request not granted");
