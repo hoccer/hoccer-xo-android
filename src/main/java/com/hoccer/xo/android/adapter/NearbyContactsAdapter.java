@@ -28,17 +28,16 @@ import java.util.List;
 public class NearbyContactsAdapter extends BaseAdapter implements IXoContactListener, IXoMessageListener, IXoTransferListener {
     private XoClientDatabase mDatabase;
     private XoActivity mXoActivity;
-    private Logger LOG = null;
+    private Logger LOG = Logger.getLogger(NearbyContactsAdapter.class);
 
     private List<TalkClientContact> mNearbyContacts = new ArrayList<TalkClientContact>();
 
-    private OnItemCountChangedListener mOnItemAddedListener;
+    private OnItemCountChangedListener mOnItemCountChangedListener;
 
     public NearbyContactsAdapter(XoClientDatabase db, XoActivity xoActivity) {
         super();
         mDatabase = db;
         mXoActivity = xoActivity;
-        LOG = Logger.getLogger(getClass());
     }
 
     @Override
@@ -65,8 +64,8 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         return convertView;
     }
 
-    public void setOnItemAddedListener(OnItemCountChangedListener listener) {
-        mOnItemAddedListener = listener;
+    public void setOnItemCountChangedListener(OnItemCountChangedListener listener) {
+        mOnItemCountChangedListener = listener;
     }
 
     public void registerListeners() {
@@ -91,8 +90,8 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
                     mDatabase.refreshClientDownload(avatarDownload);
                 }
             }
-            if(currentItemCount != mNearbyContacts.size()) {
-                mOnItemAddedListener.onItemCountChanged(mNearbyContacts.size());
+            if(mOnItemCountChangedListener != null && currentItemCount != mNearbyContacts.size()) {
+                mOnItemCountChangedListener.onItemCountChanged(mNearbyContacts.size());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -110,6 +109,9 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
         nameView.setText(contact.getName());
         avatarView.setContact(contact);
+        if(contact.getAvatar() == null) {
+            avatarView.setAvatarImage("drawable://" + R.drawable.avatar_default_location);
+        }
 
         typeView.setText("");
         lastMessageText.setText("");
@@ -282,9 +284,5 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
     @Override
     public void onUploadStateChanged(TalkClientUpload upload) {
 
-    }
-
-    public interface OnItemCountChangedListener {
-        public void onItemCountChanged(int count);
     }
 }
