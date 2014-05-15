@@ -2,21 +2,15 @@ package com.hoccer.xo.android.adapter;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.MediaMetaData;
-import com.hoccer.xo.release.R;
-import android.os.Environment;
+import com.hoccer.xo.android.view.AttachmentAudioView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 public class AttachmentListAdapter extends XoAdapter {
 
@@ -50,33 +44,12 @@ public class AttachmentListAdapter extends XoAdapter {
         if (convertView != null) {
             attachmentView = convertView;
         } else {
-            attachmentView = mInflater.inflate(R.layout.attachmentlist_music_item, null);
-        }
-
-        // this is for AUDIO only. TODO: create for different media formats when necessary
-        if (mContentMediaType != null) {
-            if (mContentMediaType.equalsIgnoreCase(ContentMediaType.AUDIO)) {
-
-                String fileName = mAttachmentMetaData.get(position).getFilePath();
-                String titleName = mAttachmentMetaData.get(position).getTitle();
-                String artistName = mAttachmentMetaData.get(position).getArtist();
-
-                String verifiedFileName = (fileName != null) ? fileName : "Unknown Title";
-                String verifiedTitleName = (titleName != null) ? titleName : verifiedFileName.substring( (Environment.getExternalStorageDirectory().getAbsolutePath() + R.string.app_name).length() + 1, (verifiedFileName.length() - 5) );
-                String verifiedArtistName = (artistName != null) ? artistName : "Unknown Artist";
-
-                ((TextView) attachmentView.findViewById(R.id.attachmentlist_item_title_name)).setText(verifiedTitleName);
-                ((TextView) attachmentView.findViewById(R.id.attachmentlist_item_artist_name)).setText(verifiedArtistName);
-
-                ImageView coverView = ((ImageView) attachmentView.findViewById(R.id.attachmentlist_item_image));
-
-                byte[] cover = mAttachmentMetaData.get(position).getArtwork();
-
-                if( cover != null ) {
-                    Bitmap coverBitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
-                    coverView.setImageBitmap(coverBitmap);
-                }
-            }
+            // this is for AUDIO only. TODO: create for different media formats when necessary
+            //        if (mContentMediaType != null) {
+            //            if (mContentMediaType.equalsIgnoreCase(ContentMediaType.AUDIO)) {
+            attachmentView = new AttachmentAudioView(mActivity, mInflater, mAttachmentMetaData.get(position));
+            //        }
+            //    }
         }
         return attachmentView;
     }
@@ -123,4 +96,5 @@ public class AttachmentListAdapter extends XoAdapter {
         }
         mAttachmentMetaData = MediaMetaData.factorMetaDataForFileList(filePaths);
     }
+
 }
