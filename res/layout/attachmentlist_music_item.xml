@@ -54,5 +54,5 @@
             android:background="@null"
             android:scaleX="0.75"
             android:scaleY="0.75"
-            android:src="@drawable/ic_light_av_play"/>
+            android:src="@drawable/ic_playing"/>
 </RelativeLayout>
