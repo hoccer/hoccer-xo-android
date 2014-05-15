@@ -77,8 +77,7 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     public void retrieveDataFromDb() {
         try {
-            mNearbyContacts = mDatabase.findAllNearbyGroupContacts();
-            mNearbyContacts.addAll(mDatabase.findAllNearbyClientContacts());
+            mNearbyContacts = mDatabase.findAllNearbyContacts();
             for (TalkClientContact contact : mNearbyContacts) {
                 TalkClientDownload avatarDownload = contact.getAvatarDownload();
                 if (avatarDownload != null) {
