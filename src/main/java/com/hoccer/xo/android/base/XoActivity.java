@@ -403,8 +403,6 @@ public abstract class XoActivity extends FragmentActivity {
                     e.printStackTrace();
                 }
                 break;
-            case R.id.menu_kill:
-                this.finish();
             default:
                 return super.onOptionsItemSelected(item);
         }
