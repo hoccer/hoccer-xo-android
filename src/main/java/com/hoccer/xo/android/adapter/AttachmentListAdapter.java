@@ -2,6 +2,7 @@ package com.hoccer.xo.android.adapter;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
@@ -14,9 +15,9 @@ import android.os.Environment;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by nico on 09/05/2014.
- */
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 public class AttachmentListAdapter extends XoAdapter {
 
     private List<TalkClientDownload> mAttachments;
@@ -49,10 +50,10 @@ public class AttachmentListAdapter extends XoAdapter {
         if (convertView != null) {
             attachmentView = convertView;
         } else {
-            attachmentView = mInflater.inflate(R.layout.attachmentlist_general_item, null);
+            attachmentView = mInflater.inflate(R.layout.attachmentlist_music_item, null);
         }
 
-        // this is for AUDIO only. TODO: create for other media formats
+        // this is for AUDIO only. TODO: create for different media formats when necessary
         if (mContentMediaType != null) {
             if (mContentMediaType.equalsIgnoreCase(ContentMediaType.AUDIO)) {
 
@@ -64,8 +65,17 @@ public class AttachmentListAdapter extends XoAdapter {
                 String verifiedTitleName = (titleName != null) ? titleName : verifiedFileName.substring( (Environment.getExternalStorageDirectory().getAbsolutePath() + R.string.app_name).length() + 1, (verifiedFileName.length() - 5) );
                 String verifiedArtistName = (artistName != null) ? artistName : "Unknown Artist";
 
-                ((TextView) attachmentView.findViewById(R.id.attachmentlist_title_name)).setText(verifiedTitleName);
-                ((TextView) attachmentView.findViewById(R.id.attachmentList_artist_name)).setText(verifiedArtistName);
+                ((TextView) attachmentView.findViewById(R.id.attachmentlist_item_title_name)).setText(verifiedTitleName);
+                ((TextView) attachmentView.findViewById(R.id.attachmentlist_item_artist_name)).setText(verifiedArtistName);
+
+                ImageView coverView = ((ImageView) attachmentView.findViewById(R.id.attachmentlist_item_image));
+
+                byte[] cover = mAttachmentMetaData.get(position).getArtwork();
+
+                if( cover != null ) {
+                    Bitmap coverBitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
+                    coverView.setImageBitmap(coverBitmap);
+                }
             }
         }
         return attachmentView;
@@ -106,14 +116,6 @@ public class AttachmentListAdapter extends XoAdapter {
         });
     }
 
-
-    private String getDisplayName(int pPosition) {
-        String displayName;
-        TalkClientDownload attachment = mAttachments.get(pPosition);
-        displayName = attachment.getFileName();
-        return displayName;
-    }
-
     private void fetchMetaDataFromAttachmentList() {
         ArrayList<String> filePaths = new ArrayList<String>();
         for (TalkClientDownload attachment : mAttachments) {
@@ -121,6 +123,4 @@ public class AttachmentListAdapter extends XoAdapter {
         }
         mAttachmentMetaData = MediaMetaData.factorMetaDataForFileList(filePaths);
     }
-
-
 }
