@@ -75,6 +75,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         createBroadcastReceiver();
         createPlayStateTogglePendingIntent();
         registerPlayStateToggleIntentFilter();
+
+        createAppFocusTracker();
     }
 
     private void createAppFocusTracker(){
@@ -88,18 +90,34 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
                         e.printStackTrace();
                     }
 
-                    if ( isApplicationSentToBackground(getApplicationContext())){
-                        if ( !isPaused() && !isStopped()) {
-                            createNotification();
-                            updateNotification();
-                        }
-                    }else{
-                        removeNotification();
+                    if ( isApplicationKilled(getApplicationContext())){
+                        stopSelf();
                     }
-
+                    else {
+                        if (isApplicationSentToBackground(getApplicationContext())) {
+                            if (!isPaused() && !isStopped()) {
+                                createNotification();
+                                updateNotification();
+                            }
+                        } else {
+                            removeNotification();
+                        }
+                    }
                 }
             }
         }).start();
+    }
+
+    private boolean isApplicationKilled(Context context){
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List <ActivityManager.RecentTaskInfo > runningTasks = am.getRecentTasks(1000, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+        for( int i = 0; i < runningTasks.size(); ++i){
+            ActivityManager.RecentTaskInfo info = runningTasks.get(i);
+            if ( info.baseIntent.getComponent().getPackageName().equalsIgnoreCase(getApplication().getPackageName())){
+                return false;
+            }
+        }
+            return true;
     }
 
     public boolean isApplicationSentToBackground(Context context) {
@@ -108,20 +126,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         if (!tasks.isEmpty()) {
             ComponentName topActivity = tasks.get(0).topActivity;
             if (!topActivity.getPackageName().equals(context.getPackageName())) {
-                LOG.error("BG");
-
-                boolean found = false;
-                List <ActivityManager.RecentTaskInfo > runningTasks = am.getRecentTasks(1000, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
-                for( int i = 0; i < runningTasks.size(); ++i){
-                    ActivityManager.RecentTaskInfo info = runningTasks.get(i);
-                    if ( info.baseIntent.getComponent().getPackageName().equalsIgnoreCase(getApplication().getPackageName())){
-                        found = true;
-                    }
-                }
-                if ( !found) {
-                    stopSelf();
-                }
-
                 return true;
             }
         }
@@ -189,7 +193,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     private void createNotification() {
-
         Intent resultIntent = new Intent(this, FullscreenPlayerActivity.class);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this)
@@ -289,8 +292,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
                 setCurrentMediaFilePath(mTempMediaFilePath);
                 resetFileNameAndMetaData();
                 broadcastTrackChanged();
-                //callAsynchronousTask();
-                createAppFocusTracker();
+            }
+            if ( isNotificationActive()){
+                updateNotification();
             }
             broadcastPlayStateChanged();
         } else {
@@ -302,7 +306,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mMediaPlayer.pause();
         setPaused(true);
         setStopped(false);
-        updateNotification();
+        if ( isNotificationActive()) {
+            updateNotification();
+        }
         broadcastPlayStateChanged();
     }
 
@@ -312,8 +318,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mMediaPlayer = null;
         setPaused(false);
         setStopped(true);
-        removeNotification();
+        if ( isNotificationActive()) {
+            removeNotification();
+        }
         broadcastPlayStateChanged();
+    }
+
+    private boolean isNotificationActive(){
+        return isApplicationSentToBackground(this);
     }
 
     public void setSeekPosition(int position) {
