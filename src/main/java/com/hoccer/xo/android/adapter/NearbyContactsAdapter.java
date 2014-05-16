@@ -109,9 +109,6 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
         nameView.setText(contact.getName());
         avatarView.setContact(contact);
-        if(contact.getAvatar() == null) {
-            avatarView.setAvatarImage("drawable://" + R.drawable.avatar_default_location);
-        }
 
         typeView.setText("");
         lastMessageText.setText("");

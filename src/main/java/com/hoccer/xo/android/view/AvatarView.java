@@ -12,6 +12,7 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -90,12 +91,23 @@ public class AvatarView extends LinearLayout implements IXoContactListener {
 
         if (avatarUri == null) {
             if (mContact.isGroup()) {
-                avatarUri = "drawable://" + R.drawable.avatar_default_group;
+                if(mContact.getGroupPresence().isTypeNearby()) {
+                    avatarUri = "drawable://" + R.drawable.avatar_default_location;
+                } else {
+                    avatarUri = "drawable://" + R.drawable.avatar_default_group;
+                }
             } else {
                 avatarUri = "drawable://" + R.drawable.avatar_default_contact;
             }
         }
         setAvatarImage(avatarUri);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        updateAvatar();
+        updatePresence();
     }
 
     /**
