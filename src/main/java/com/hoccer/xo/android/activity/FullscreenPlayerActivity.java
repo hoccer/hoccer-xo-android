@@ -10,7 +10,6 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.content.audio.AudioListManager;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -39,7 +38,6 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
     private ServiceConnection mServiceConnection;
 
     private final static Logger LOG = Logger.getLogger(FullscreenPlayerActivity.class);
-    private AudioListManager mAudioListManager;
 
 
     @Override
@@ -55,8 +53,6 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mAudioListManager = AudioListManager.get(getApplicationContext());
 
         Intent intent = new Intent(this, MediaPlayerService.class);
         startService(intent);

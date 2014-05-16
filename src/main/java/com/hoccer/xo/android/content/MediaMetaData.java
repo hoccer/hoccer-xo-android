@@ -1,6 +1,7 @@
 package com.hoccer.xo.android.content;
 
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -102,8 +103,14 @@ public class MediaMetaData {
     }
 
     public static byte[] getArtwork(String filePath) {
+        String path = Uri.parse(filePath).getPath();
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(filePath);
+        try {
+            retriever.setDataSource(path);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return null;
+        }
 
         return retriever.getEmbeddedPicture();
     }
