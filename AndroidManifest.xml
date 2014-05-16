@@ -71,7 +71,7 @@
             android:name="com.hoccer.xo.android.XoApplication"
             android:allowBackup="false"
             android:icon="@drawable/gw_icon100x100"
-            android:label="Hoccer Wings"
+            android:label="Wings"
             android:theme="@style/AppTheme">
 
         <!-- Google Play Services -->
