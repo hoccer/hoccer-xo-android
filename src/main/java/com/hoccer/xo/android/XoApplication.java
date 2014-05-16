@@ -1,11 +1,7 @@
 package com.hoccer.xo.android;
 
-import android.app.AlertDialog;
 import android.app.Application;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Environment;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -16,7 +12,6 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.error.EnvironmentUpdaterException;
 import com.hoccer.xo.android.nearby.EnvironmentUpdater;
-import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
