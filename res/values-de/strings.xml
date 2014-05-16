@@ -235,8 +235,8 @@
     <string name="no_password">Bitte geben Sie ein Passwort ein.</string>
     <string name="cant_find_credentials">Kann die Datei "credentials.json" mit den Zugangsdaten nicht finden.</string>
 
-    <string name="placeholder_conversations_text">Invite friends to chat with!</string>
-    <string name="placeholder_nearby_text">Waiting for others nearby...</string>
+    <string name="placeholder_conversations_text">Lade deine Freunde zum Chatten ein!</string>
+    <string name="placeholder_nearby_text">Warten auf andere Nearby-Nutzer...</string>
     <string name="actionbar_default_title">Hoccer</string>
 
     <string-array name="preference_log_level_names">
