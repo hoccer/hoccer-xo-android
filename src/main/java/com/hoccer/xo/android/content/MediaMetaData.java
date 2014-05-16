@@ -1,6 +1,8 @@
 package com.hoccer.xo.android.content;
 
 import android.media.MediaMetadataRetriever;
+import android.os.Environment;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -25,12 +27,12 @@ public class MediaMetaData {
         mFilePath = pFilePath;
     }
 
-    public String getTitle() {
-        return mTitle;
+    public String getTitle(String appPath) {
+        return (mTitle != null) ? mTitle : mFilePath.substring( (Environment.getExternalStorageDirectory().getAbsolutePath() + appPath).length() + 2, (mFilePath.length() - 5) );
     }
 
     public String getArtist() {
-        return mArtist;
+        return (mArtist != null) ? mArtist : "Unknown Artist";
     }
 
     public String getFilePath() {

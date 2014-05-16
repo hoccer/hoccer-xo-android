@@ -47,7 +47,7 @@ public class AttachmentListAdapter extends XoAdapter {
             // this is for AUDIO only. TODO: create for different media formats when necessary
             //        if (mContentMediaType != null) {
             //            if (mContentMediaType.equalsIgnoreCase(ContentMediaType.AUDIO)) {
-            attachmentView = new AttachmentAudioView(mActivity, mInflater, mAttachmentMetaData.get(position));
+            attachmentView = new AttachmentAudioView(mActivity, position, mAttachmentMetaData.get(position));
             //        }
             //    }
         }

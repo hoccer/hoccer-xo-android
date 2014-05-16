@@ -1,12 +1,15 @@
 package com.hoccer.xo.android.activity;
 
 import android.content.*;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.hoccer.xo.android.base.XoActivity;
@@ -25,9 +28,12 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
     private ImageButton mButtonShuffle;
     private SeekBar mSongProgressBar;
     private TextView mSongTitleLabel;
+    private TextView mSongArtistLabel;
     private TextView mSongCurrentDurationLabel;
     private TextView mSongTotalDurationLabel;
+    private TextView mTitleNumberLabel;
     private long mTotalDuration = 0;
+    private ImageView mArtworkView;
 
     private MediaPlayerService mMediaPlayerService;
     private BroadcastReceiver mBroadcastReceiver;
@@ -40,7 +46,6 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
 
     private final static Logger LOG = Logger.getLogger(FullscreenPlayerActivity.class);
     private AudioListManager mAudioListManager;
-
 
     @Override
     protected int getLayoutResource() {
@@ -71,8 +76,11 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
         mButtonShuffle = (ImageButton) findViewById(R.id.btnShuffle);
         mSongProgressBar = (SeekBar) findViewById(R.id.songProgressBar);
         mSongTitleLabel = (TextView) findViewById(R.id.attachmentlist_item_title_name);
+        mSongArtistLabel = (TextView) findViewById(R.id.attachmentlist_item_artist_name);
         mSongCurrentDurationLabel = (TextView) findViewById(R.id.songCurrentDurationLabel);
         mSongTotalDurationLabel = (TextView) findViewById(R.id.songTotalDurationLabel);
+        mTitleNumberLabel = (TextView) findViewById(R.id.attachmentlist_item_number);
+        mArtworkView = (ImageView) findViewById(R.id.artwork_view);
 
         mSongProgressBar.setOnSeekBarChangeListener(this);
 
@@ -88,10 +96,10 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
             public void onClick(View view) {
                 if (!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
                     mMediaPlayerService.pause();
-                    mButtonPlay.setImageResource(R.drawable.ic_dark_play);
+                    mButtonPlay.setImageResource(R.drawable.ic_player_play);
                 } else {
                     mMediaPlayerService.start(mTempFilePath);
-                    mButtonPlay.setImageResource(R.drawable.ic_dark_pause);
+                    mButtonPlay.setImageResource(R.drawable.ic_player_pause);
                 }
             }
         });
@@ -118,6 +126,7 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
                 LOG.error("------------------------- Repeat onClick");
             }
         });
+
 
         mButtonShuffle.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -241,25 +250,28 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
 
         mTempFilePath = mMediaPlayerService.getCurrentMediaFilePath();
 
-        String artistName = (mMediaPlayerService.getMediaMetaData().getArtist() == null) ? "" : mMediaPlayerService.getMediaMetaData().getArtist();
-        String trackName = (mMediaPlayerService.getMediaMetaData().getTitle() == null) ? "" : mMediaPlayerService.getMediaMetaData().getTitle();
+        String artistName = mMediaPlayerService.getMediaMetaData().getArtist();
+        String trackName = mMediaPlayerService.getMediaMetaData().getTitle(getResources().getString(R.string.app_name));
 
-        String labelText = (artistName.equals("") && trackName.equals("")) ? mTempFilePath : (artistName + "\n" + trackName);
-
-        mSongTitleLabel.setText(labelText);
+        mSongTitleLabel.setText(trackName);
+        mSongArtistLabel.setText(artistName);
         mTotalDuration = mMediaPlayerService.getTotalDuration();
         mSongTotalDurationLabel.setText("" + milliSecondsToTimer(mTotalDuration));
+        mTitleNumberLabel.setText( (mAudioListManager.previousIndex() + 1) + "  " + getResources().getString(R.string.track_number_filler) + "  " + mAudioListManager.getAudioList().size());
+
+        byte[] cover = mMediaPlayerService.getMediaMetaData().getArtwork();
+
+        if( cover != null ) {
+            Bitmap coverBitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
+            mArtworkView.setImageBitmap(coverBitmap);
+        }
 
         updatePlayPauseView();
     }
 
     private void updatePlayPauseView() {
         if (mMediaPlayerService != null) {
-            if (!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
-                mButtonPlay.setImageResource(R.drawable.ic_dark_pause);
-            } else {
-                mButtonPlay.setImageResource(R.drawable.ic_dark_play);
-            }
+            mButtonPlay.setImageResource((!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) ? R.drawable.ic_player_pause : R.drawable.ic_player_play);
         }
     }
 

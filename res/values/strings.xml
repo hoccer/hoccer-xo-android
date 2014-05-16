@@ -128,6 +128,9 @@
     <string name="client_state_connecting">Connecting</string>
     <string name="client_state_unknown">Unknown</string>
 
+    <!-- FullscreenPlayer -->
+    <string name="track_number_filler">of</string>
+
     <!-- Attachment type selection dialog -->
     <string name="selectattachment_title">Select attachment</string>
 

@@ -23,18 +23,20 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
     private ServiceConnection mConnection;
     private BroadcastReceiver mReceiver;
     private MediaPlayerService mMediaPlayerService;
+    private int mPosition;
 
     private static final Logger LOG = Logger.getLogger(AttachmentAudioView.class);
 
-    public AttachmentAudioView(Context context, LayoutInflater layoutInflater, MediaMetaData itemData) {
+    public AttachmentAudioView(Context context, int position, MediaMetaData itemData) {
         super(context);
-        initialize(context, layoutInflater, itemData);
+        initialize(context, position, itemData);
     }
 
-    private void initialize(Context context, LayoutInflater layoutInflater, MediaMetaData itemData) {
+    private void initialize(Context context, int position, MediaMetaData itemData) {
 
         mContext = context;
         mItemData = itemData;
+        mPosition = position;
 
         addView(inflate(mContext, R.layout.attachmentlist_music_item, null));
 
@@ -42,16 +44,11 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
         mContext.startService(intent);
         bindService(intent);
 
-        String fileName = mItemData.getFilePath();
-        String titleName = mItemData.getTitle();
+        String titleName = mItemData.getTitle(getResources().getString(R.string.app_name));
         String artistName = mItemData.getArtist();
 
-        String verifiedFileName = (fileName != null) ? fileName : "Unknown Title";
-        String verifiedTitleName = (titleName != null) ? titleName : verifiedFileName.substring( (Environment.getExternalStorageDirectory().getAbsolutePath() + R.string.app_name).length() + 1, (verifiedFileName.length() - 5) );
-        String verifiedArtistName = (artistName != null) ? artistName : "Unknown Artist";
-
-        ((TextView) findViewById(R.id.attachmentlist_item_title_name)).setText(verifiedTitleName);
-        ((TextView) findViewById(R.id.attachmentlist_item_artist_name)).setText(verifiedArtistName);
+        ((TextView) findViewById(R.id.attachmentlist_item_title_name)).setText(titleName);
+        ((TextView) findViewById(R.id.attachmentlist_item_artist_name)).setText(artistName);
 
         ImageView coverView = ((ImageView) findViewById(R.id.attachmentlist_item_image));
 

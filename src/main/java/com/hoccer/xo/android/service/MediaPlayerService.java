@@ -223,7 +223,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private void updateMetaDataView(RemoteViews views) {
         String title = getString(R.string.unknown_title);
         String artist = getString(R.string.unkown_artist);
-        String metaDataTitle = mMediaMetaData.getTitle();
+        String metaDataTitle = mMediaMetaData.getTitle(getResources().getString(R.string.app_name));
         String metaDataArtist = mMediaMetaData.getArtist();
         boolean metaDataAvailable = false;
         if (metaDataTitle != null && !metaDataTitle.isEmpty()) {
