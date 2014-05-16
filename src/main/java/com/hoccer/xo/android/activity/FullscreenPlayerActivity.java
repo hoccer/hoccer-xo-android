@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.content.audio.AudioListManager;
+import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -45,7 +45,6 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
     private ServiceConnection mServiceConnection;
 
     private final static Logger LOG = Logger.getLogger(FullscreenPlayerActivity.class);
-    private AudioListManager mAudioListManager;
 
     @Override
     protected int getLayoutResource() {
@@ -60,8 +59,6 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mAudioListManager = AudioListManager.get(getApplicationContext());
 
         Intent intent = new Intent(this, MediaPlayerService.class);
         startService(intent);
@@ -98,7 +95,7 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
                     mMediaPlayerService.pause();
                     mButtonPlay.setImageResource(R.drawable.ic_player_play);
                 } else {
-                    mMediaPlayerService.start(mTempFilePath);
+                    mMediaPlayerService.start();
                     mButtonPlay.setImageResource(R.drawable.ic_player_pause);
                 }
             }
@@ -257,9 +254,10 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
         mSongArtistLabel.setText(artistName);
         mTotalDuration = mMediaPlayerService.getTotalDuration();
         mSongTotalDurationLabel.setText("" + milliSecondsToTimer(mTotalDuration));
-        mTitleNumberLabel.setText( (mAudioListManager.previousIndex() + 1) + "  " + getResources().getString(R.string.track_number_filler) + "  " + mAudioListManager.getAudioList().size());
+        // TODO: track no. from current playlist
+        mTitleNumberLabel.setText("");
 
-        byte[] cover = mMediaPlayerService.getMediaMetaData().getArtwork();
+        byte[] cover = MediaMetaData.getArtwork(mTempFilePath);
 
         if( cover != null ) {
             Bitmap coverBitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
@@ -301,15 +299,11 @@ public class FullscreenPlayerActivity extends XoActivity implements SeekBar.OnSe
     }
 
     private void playPrevTrack() {
-        if(mAudioListManager.hasPrevious()){
-            mMediaPlayerService.start(mAudioListManager.previous().getContentDataUrl());
-        }
+        mMediaPlayerService.playPrevious();
     }
 
     private void playNextTrack() {
-        if(mAudioListManager.hasNext()){
-            mMediaPlayerService.start(mAudioListManager.next().getContentDataUrl());
-        }
+        mMediaPlayerService.playNext();
     }
 
 }

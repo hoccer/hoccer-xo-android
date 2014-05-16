@@ -16,9 +16,10 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.RemoteViews;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.content.MediaMetaData;
-import com.hoccer.xo.android.content.audio.AudioListManager;
+import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -54,9 +55,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mReceiver;
-    private AudioListManager mAudioListManager;
+    private MediaPlaylist mCurrentPlaylist;
 
     public class MediaPlayerBinder extends Binder {
+
         public MediaPlayerService getService() {
             return MediaPlayerService.this;
         }
@@ -70,13 +72,18 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
 
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        mAudioListManager = AudioListManager.get(getApplicationContext());
 
         createBroadcastReceiver();
         createPlayStateTogglePendingIntent();
         registerPlayStateToggleIntentFilter();
 
         createAppFocusTracker();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterPlaylistTransferListener();
     }
 
     private void createAppFocusTracker(){
@@ -261,34 +268,73 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         String path = Uri.parse(mCurrentMediaFilePath).getPath();
         mFileName = extractFileName(path);
         try {
-            mMediaMetaData = MediaMetaData.factorMetaDataForFile(path);
+            mMediaMetaData = MediaMetaData.create(path);
         } catch (IllegalArgumentException e) {
             LOG.error(e);
         }
     }
 
-    private boolean isResumable(String mediaFilePath) {
-        return isPaused() && isSamePath(mediaFilePath);
+    private boolean isResumable(MediaPlaylist playlist) {
+        return isPaused() && !playlistChanged(playlist) && !pathChanged(playlist.current().getFilePath());
     }
 
-    public void start(String mediaFilePath) {
-        if (isResumable(mediaFilePath)) {
-            play(true);
+    public void start(MediaPlaylist playlist) {
+
+        if (isResumable(playlist)) {
+            resume();
         } else {
             if (mMediaPlayer == null) {
                 createMediaPlayer();
             }
-            resetAndPrepareMediaPlayer(mediaFilePath);
+            if (playlistChanged(playlist)) {
+                setCurrentPlaylist(playlist);
+            }
+            resetAndPrepareMediaPlayer(playlist.current().getFilePath());
+        }
+
+    }
+
+    public void start(){
+        if(mCurrentPlaylist != null){
+            start(mCurrentPlaylist);
+        } else {
+            LOG.error("No playlist available!");
         }
     }
 
-    public void play(boolean resumable) {
+    public void start(MediaPlaylist playlist, int position) {
+        playlist.setCurrentIndex(position);
+        start(playlist);
+    }
+
+    private boolean playlistChanged(MediaPlaylist playlist) {
+        return mCurrentPlaylist != playlist;
+    }
+
+    private boolean pathChanged(String mediaFilePath) {
+        return !mCurrentMediaFilePath.equals(mediaFilePath);
+    }
+
+    public void setCurrentPlaylist(MediaPlaylist playlist) {
+        unregisterPlaylistTransferListener();
+
+        if (playlist.isUpdatable()) {
+            XoApplication.getXoClient().registerTransferListener(playlist);
+        }
+        mCurrentPlaylist = playlist;
+    }
+
+    public void resume() {
+        play(true);
+    }
+
+    public void play(boolean canResume) {
         int result = mAudioManager.requestAudioFocus(mAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             mMediaPlayer.start();
             setPaused(false);
             setStopped(false);
-            if (!resumable) {
+            if (!canResume) {
                 setCurrentMediaFilePath(mTempMediaFilePath);
                 resetFileNameAndMetaData();
                 broadcastTrackChanged();
@@ -299,6 +345,25 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             broadcastPlayStateChanged();
         } else {
             LOG.debug("Audio focus request not granted");
+        }
+    }
+
+    public void playNext() {
+        if (mCurrentPlaylist.hasNext()) {
+            String path = mCurrentPlaylist.next().getFilePath();
+            resetAndPrepareMediaPlayer(path);
+        } else {
+            mCurrentPlaylist.setCurrentIndex(0);
+            stop();
+        }
+    }
+
+    public void playPrevious() {
+        if (mCurrentPlaylist.hasPrevious()) {
+            String path = mCurrentPlaylist.previous().getFilePath();
+            resetAndPrepareMediaPlayer(path);
+        } else {
+            stop();
         }
     }
 
@@ -313,15 +378,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     public void stop() {
-        mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
-        mMediaPlayer.release();
-        mMediaPlayer = null;
-        setPaused(false);
-        setStopped(true);
-        if ( isNotificationActive()) {
-            removeNotification();
+        if(mMediaPlayer != null){
+            mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+            setPaused(false);
+            setStopped(true);
+			if ( isNotificationActive()) {
+            	removeNotification();
+			}
+            broadcastPlayStateChanged();
         }
-        broadcastPlayStateChanged();
     }
 
     private boolean isNotificationActive(){
@@ -337,10 +404,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private void removeNotification() {
         stopForeground(true);
-    }
-
-    private boolean isSamePath(String mediaFilePath) {
-        return mCurrentMediaFilePath.equals(mediaFilePath);
     }
 
     private void setPaused(boolean paused) {
@@ -365,12 +428,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        if (mAudioListManager.hasNext()) {
-            String path = mAudioListManager.next().getContentDataUrl();
-            start(path);
-        } else {
-            stop();
-        }
+        playNext();
     }
 
     public boolean isPaused() {
@@ -428,5 +486,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     public MediaMetaData getMediaMetaData() {
         return mMediaMetaData;
+    }
+
+    private void unregisterPlaylistTransferListener(){
+        if (mCurrentPlaylist != null && mCurrentPlaylist.isUpdatable()) {
+            XoApplication.getXoClient().unregisterTransferListener(mCurrentPlaylist);
+        }
     }
 }
