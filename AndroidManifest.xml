@@ -71,6 +71,7 @@
             android:name="com.hoccer.xo.android.XoApplication"
             android:allowBackup="false"
             android:icon="@drawable/ic_launcher"
+            android:logo="@drawable/ic_launcher_plain"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
 
