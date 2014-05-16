@@ -203,6 +203,16 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
     }
 
     @Override
+    protected void applicationWillEnterBackground() {
+        super.applicationWillEnterBackground();
+        if (mContact.isGroup() && mContact.getGroupPresence().isTypeNearby()) {
+            finish();
+        } else if (mContact.isClient() && mContact.isNearby()) {
+            finish();
+        }
+    }
+
+    @Override
     public void onContactAdded(TalkClientContact contact) {
         // we don't care
     }

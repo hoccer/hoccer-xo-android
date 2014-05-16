@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.adapter.ContactsPageAdapter;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.error.EnvironmentUpdaterException;
@@ -64,6 +65,8 @@ public class ContactsActivity extends XoActivity {
                 mActionBar.addTab(mActionBar.newTab().setText(tabName).setTabListener(new ConversationsTabListener()));
             }
 
+            mEnvironmentUpdater = XoApplication.getEnvironmentUpdater();
+
             mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
@@ -75,9 +78,7 @@ public class ContactsActivity extends XoActivity {
                 }
             };
             mPreferences.registerOnSharedPreferenceChangeListener(mPreferencesListener);
-
             mEnvironmentUpdatesEnabled = mPreferences.getBoolean("preference_environment_update", true);
-            mEnvironmentUpdater = new EnvironmentUpdater(this);
         }
     }
 
@@ -92,6 +93,20 @@ public class ContactsActivity extends XoActivity {
 
     }
 
+    private void refreshEnvironmentUpdater() {
+        int position = mViewPager.getCurrentItem();
+        Fragment fragment = mAdapter.getItem(position);
+        if (fragment instanceof NearbyContactsFragment) {
+            if (mEnvironmentUpdatesEnabled) {
+                if (checkIfGpsIsTurnedOn()) {
+                    XoApplication.startNearbySession();
+                }
+            }
+        } else {
+            XoApplication.stopNearbySession();
+        }
+    }
+
     private boolean checkIfGpsIsTurnedOn() {
         final LocationManager manager = (LocationManager)getSystemService(getBaseContext().LOCATION_SERVICE);
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !manager.isProviderEnabled( LocationManager.NETWORK_PROVIDER)) {
@@ -100,44 +115,22 @@ public class ContactsActivity extends XoActivity {
                     .setCancelable(false)
                     .setPositiveButton(getResources().getString(R.string.nearby_yes),
                             new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                        }
-                    })
+                                public void onClick(DialogInterface dialog, int id) {
+                                    startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                                }
+                            })
                     .setNegativeButton(getResources().getString(R.string.nearby_no),
                             new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
             AlertDialog alert = builder.create();
             alert.show();
 
             return false;
         }
         return true;
-    }
-
-    private void refreshEnvironmentUpdater() {
-        int position = mViewPager.getCurrentItem();
-        Fragment fragment = mAdapter.getItem(position);
-        if (fragment instanceof NearbyContactsFragment) {
-            if (mEnvironmentUpdatesEnabled) {
-                if (!mEnvironmentUpdater.isEnabled()) {
-                    if (checkIfGpsIsTurnedOn()) {
-                        try {
-                            mEnvironmentUpdater.startEnvironmentTracking();
-                        } catch (EnvironmentUpdaterException e) {
-                            LOG.error("Error when starting EnvironmentUpdater: ", e);
-                        }
-                    }
-                }
-            }
-        } else {
-            if (mEnvironmentUpdater.isEnabled()) {
-                mEnvironmentUpdater.stopEnvironmentTracking();
-            }
-        }
     }
 
     private class ConversationsPageListener implements ViewPager.OnPageChangeListener {

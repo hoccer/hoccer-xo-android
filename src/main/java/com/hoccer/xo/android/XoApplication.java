@@ -1,7 +1,11 @@
 package com.hoccer.xo.android;
 
+import android.app.AlertDialog;
 import android.app.Application;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Environment;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -9,6 +13,10 @@ import com.hoccer.talk.client.IXoClientHost;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.talk.model.TalkPresence;
+import com.hoccer.xo.android.error.EnvironmentUpdaterException;
+import com.hoccer.xo.android.nearby.EnvironmentUpdater;
+import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -43,6 +51,9 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
     private static XoClient CLIENT = null;
     /** global xo sound pool for system sounds (initialized in onCreate) */
     private static XoSoundPool SOUND_POOL = null;
+
+    public static EnvironmentUpdater ENVIRONMENT_UPDATER = null;
+
     /** root of user-visible storage (initialized in onCreate) */
     private static File EXTERNAL_STORAGE = null;
     /** root of app-private storage (initialized in onCreate) */
@@ -62,6 +73,11 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
     public static XoSoundPool getXoSoundPool() {
         return SOUND_POOL;
     }
+
+    public static EnvironmentUpdater getEnvironmentUpdater() {
+        return ENVIRONMENT_UPDATER;
+    }
+
     /**
      * @return user-visible storage directory
      */
@@ -248,6 +264,8 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
 
         // create sound pool instance
         SOUND_POOL = new XoSoundPool(this);
+
+        ENVIRONMENT_UPDATER = new EnvironmentUpdater(this);
     }
 
     @Override
@@ -320,4 +338,49 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
             CLIENT.initialize(CLIENT_HOST);
         }
     }
+
+    private static boolean hasCurrentRunningNearbySession;
+
+    public static void startNearbySession() {
+        if (!ENVIRONMENT_UPDATER.isEnabled()) {
+            try {
+                ENVIRONMENT_UPDATER.startEnvironmentTracking();
+                hasCurrentRunningNearbySession = true;
+            } catch (EnvironmentUpdaterException e) {
+                LOG.error("Error when starting EnvironmentUpdater: ", e);
+            }
+        }
+    }
+
+    public static void suspendNearbySession() {
+        if (ENVIRONMENT_UPDATER.isEnabled()) {
+            ENVIRONMENT_UPDATER.stopEnvironmentTracking();
+        }
+    }
+
+    public static void stopNearbySession() {
+        if (hasCurrentRunningNearbySession) {
+            suspendNearbySession();
+            hasCurrentRunningNearbySession = false;
+        }
+    }
+
+    public static void enterBackgroundMode() {
+        // set presence to inactive
+        getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_BACKGROUND);
+
+        // suspend nearby environment
+        suspendNearbySession();
+    }
+
+    public static void enterForegroundMode() {
+
+        // set presence to active
+        getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_ONLINE);
+
+        if (hasCurrentRunningNearbySession) {
+            startNearbySession();
+        }
+    }
+
 }

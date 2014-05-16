@@ -18,7 +18,6 @@ import com.hoccer.talk.client.XoClientConfiguration;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
-import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.XoSoundPool;
@@ -54,7 +53,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -134,6 +132,8 @@ public abstract class XoActivity extends FragmentActivity {
     private ScreenReceiver mScreenListener;
     private XoAlertListener mAlertListener;
 
+
+
     public XoActivity() {
         LOG = Logger.getLogger(getClass());
     }
@@ -165,6 +165,73 @@ public abstract class XoActivity extends FragmentActivity {
     public void unregisterXoFragment(IXoFragment fragment) {
         mTalkFragments.remove(fragment);
     }
+
+
+    // Application background/foreground observation
+    public static boolean isAppInBackground = false;
+    public static boolean isWindowFocused = false;
+    public static boolean isMenuOpened = false;
+    public static boolean isBackPressed = false;
+
+    protected void applicationWillEnterForeground() {
+        isAppInBackground = false;
+        ((XoApplication)getApplication()).enterForegroundMode();
+    }
+
+    protected void applicationWillEnterBackground() {
+        isAppInBackground = true;
+        ((XoApplication)getApplication()).enterBackgroundMode();
+    }
+
+    @Override
+    protected void onStart() {
+        LOG.info("onStart()");
+        if (isAppInBackground) {
+            applicationWillEnterForeground();
+        }
+        super.onStart();
+    }
+
+
+    @Override
+    protected void onStop() {
+        LOG.info("onStop ");
+        super.onStop();
+        if (!isWindowFocused) {
+            applicationWillEnterBackground();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!(this instanceof ContactsActivity)) {
+            isBackPressed = true;
+        }
+        LOG.info("onBackPressed " + isBackPressed + "" + this.getLocalClassName());
+        super.onBackPressed();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        isWindowFocused = hasFocus;
+        if (isBackPressed && !hasFocus) {
+            isBackPressed = false;
+            isWindowFocused = true;
+        }
+        super.onWindowFocusChanged(hasFocus);
+    }
+
+    /*@Override
+    public boolean onMenuItemSelected(int featureId, android.view.MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+        return true;
+    }*/
+
+    //--------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,7 +281,6 @@ public abstract class XoActivity extends FragmentActivity {
         mServiceConnection = new MainServiceConnection();
         bindService(serviceIntent, mServiceConnection, BIND_IMPORTANT);
         checkKeys();
-        getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_ONLINE);
 
         getXoClient().registerAlertListener(mAlertListener);
     }
@@ -308,26 +374,8 @@ public abstract class XoActivity extends FragmentActivity {
             unbindService(mServiceConnection);
             mServiceConnection = null;
         }
-        checkIfAppInForeground();
 
         getXoClient().unregisterAlertListener(mAlertListener);
-    }
-
-    public void checkIfAppInForeground() {
-        Handler checkState = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                ActivityManager activityManager = (ActivityManager) getApplicationContext().
-                        getSystemService(Context.ACTIVITY_SERVICE);
-                List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
-                String ourName = getApplicationContext().getPackageName().toString();
-                if (!services.get(0).topActivity.getPackageName().toString().equalsIgnoreCase(ourName)
-                        || !mScreenListener.isScreenOn()) {
-                    getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_BACKGROUND);
-                }
-            }
-        };
-        checkState.sendEmptyMessageDelayed(0, 1000);
     }
 
     @Override
