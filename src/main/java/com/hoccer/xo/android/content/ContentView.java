@@ -327,12 +327,15 @@ public class ContentView extends LinearLayout implements View.OnClickListener, V
         if(dataUrl == null || dataUrl.length() == 0) {
             return;
         }
+
+        // Only check for the existence of attachments that can actually be stored on the file system ( no content:// etc.)
         if(dataUrl.startsWith("file://")) {
             dataUrl = dataUrl.replaceFirst("file://", "");
-        }
-        File file = new File(dataUrl);
-        if(!file.exists()) {
-            throw new FileNotFoundException("attachment file not found: " + dataUrl);
+
+            File file = new File(dataUrl);
+            if (!file.exists()) {
+                throw new FileNotFoundException("attachment file not found: " + dataUrl);
+            }
         }
     }
 
