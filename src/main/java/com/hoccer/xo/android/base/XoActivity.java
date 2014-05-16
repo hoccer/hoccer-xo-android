@@ -174,18 +174,19 @@ public abstract class XoActivity extends FragmentActivity {
     public static boolean isBackPressed = false;
 
     protected void applicationWillEnterForeground() {
+        LOG.info("Application will enter foreground.");
         isAppInBackground = false;
         ((XoApplication)getApplication()).enterForegroundMode();
     }
 
     protected void applicationWillEnterBackground() {
+        LOG.info("Application will enter background.");
         isAppInBackground = true;
         ((XoApplication)getApplication()).enterBackgroundMode();
     }
 
     @Override
     protected void onStart() {
-        LOG.info("onStart()");
         if (isAppInBackground) {
             applicationWillEnterForeground();
         }
@@ -195,7 +196,6 @@ public abstract class XoActivity extends FragmentActivity {
 
     @Override
     protected void onStop() {
-        LOG.info("onStop ");
         super.onStop();
         if (!isWindowFocused) {
             applicationWillEnterBackground();
@@ -207,7 +207,6 @@ public abstract class XoActivity extends FragmentActivity {
         if (!(this instanceof ContactsActivity)) {
             isBackPressed = true;
         }
-        LOG.info("onBackPressed " + isBackPressed + "" + this.getLocalClassName());
         super.onBackPressed();
     }
 
