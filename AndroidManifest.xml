@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.hoccer.xo.release"
 
-          android:versionCode="25"
+          android:versionCode="26"
           android:versionName="2.0.0">
 
     <!-- We run on 4.0 (14) and up, we use features from up to 4.2 (17) -->
