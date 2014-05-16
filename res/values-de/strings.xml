@@ -237,6 +237,7 @@
 
     <string name="placeholder_conversations_text">Invite friends to chat with!</string>
     <string name="placeholder_nearby_text">Waiting for others nearby...</string>
+    <string name="actionbar_default_title">Hoccer</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>
