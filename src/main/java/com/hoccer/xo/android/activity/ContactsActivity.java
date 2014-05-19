@@ -3,6 +3,7 @@ package com.hoccer.xo.android.activity;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,14 +22,9 @@ import com.hoccer.xo.release.R;
 
 public class ContactsActivity extends XoActivity {
 
-    private SharedPreferences mPreferences;
-    private SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener;
-
     private ViewPager mViewPager;
     private ActionBar mActionBar;
     private ContactsPageAdapter mAdapter;
-
-    private EnvironmentUpdater mEnvironmentUpdater;
 
     private boolean mEnvironmentUpdatesEnabled;
     private boolean mNoUserInput = false;
@@ -65,10 +61,8 @@ public class ContactsActivity extends XoActivity {
                 mActionBar.addTab(mActionBar.newTab().setText(tabName).setTabListener(new ConversationsTabListener()));
             }
 
-            mEnvironmentUpdater = XoApplication.getEnvironmentUpdater();
-
-            mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences.OnSharedPreferenceChangeListener mPreferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                     if (key.equals("preference_environment_update")) {
@@ -108,7 +102,7 @@ public class ContactsActivity extends XoActivity {
     }
 
     private boolean checkIfGpsIsTurnedOn() {
-        final LocationManager manager = (LocationManager)getSystemService(getBaseContext().LOCATION_SERVICE);
+        final LocationManager manager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !manager.isProviderEnabled( LocationManager.NETWORK_PROVIDER)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(getResources().getString(R.string.nearby_enable_location_service))

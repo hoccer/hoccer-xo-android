@@ -172,22 +172,34 @@ public abstract class XoActivity extends FragmentActivity {
     public static boolean isWindowFocused = false;
     public static boolean isMenuOpened = false;
     public static boolean isBackPressed = false;
+    public static boolean isBackgroundActive = false;
 
     protected void applicationWillEnterForeground() {
         LOG.info("Application will enter foreground.");
         isAppInBackground = false;
-        ((XoApplication)getApplication()).enterForegroundMode();
+        isBackgroundActive = false;
+        XoApplication.enterForegroundMode();
     }
 
     protected void applicationWillEnterBackground() {
         LOG.info("Application will enter background.");
         isAppInBackground = true;
-        ((XoApplication)getApplication()).enterBackgroundMode();
+        XoApplication.enterBackgroundMode();
+    }
+
+    protected void applicationWillEnterBackgroundActive() {
+        LOG.info("Application will enter background active.");
+        isAppInBackground = false;
+        XoApplication.enterBackgroundActiveMode();
+    }
+
+    protected void setBackgroundActive() {
+        isBackgroundActive = true;
     }
 
     @Override
     protected void onStart() {
-        if (isAppInBackground) {
+        if (isAppInBackground || isBackgroundActive) {
             applicationWillEnterForeground();
         }
         super.onStart();
@@ -198,7 +210,11 @@ public abstract class XoActivity extends FragmentActivity {
     protected void onStop() {
         super.onStop();
         if (!isWindowFocused) {
-            applicationWillEnterBackground();
+            if (isBackgroundActive) {
+                applicationWillEnterBackgroundActive();
+            } else {
+                applicationWillEnterBackground();
+            }
         }
     }
 
@@ -720,6 +736,9 @@ public abstract class XoActivity extends FragmentActivity {
 
     public void selectAttachment() {
         LOG.debug("selectAttachment()");
+
+        setBackgroundActive();
+
         mAttachmentSelection = ContentRegistry.get(this)
                 .selectAttachment(this, REQUEST_SELECT_ATTACHMENT);
     }

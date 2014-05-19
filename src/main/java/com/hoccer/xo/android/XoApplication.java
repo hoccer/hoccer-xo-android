@@ -334,8 +334,15 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
         }
     }
 
+    /**
+     * Set to true if a nearby session is currently running.
+     */
     private static boolean hasCurrentRunningNearbySession;
 
+    /**
+     * Starts a nearby session if not yet started.
+     * Sets hasCurrentRunningNearbySession = true.
+     */
     public static void startNearbySession() {
         if (!ENVIRONMENT_UPDATER.isEnabled()) {
             try {
@@ -347,12 +354,21 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
         }
     }
 
+    /**
+     * Stops current nearby session if running.
+     * Sets hasCurrentRunningNearbySession = true.
+     */
     public static void suspendNearbySession() {
         if (ENVIRONMENT_UPDATER.isEnabled()) {
+            hasCurrentRunningNearbySession = true;
             ENVIRONMENT_UPDATER.stopEnvironmentTracking();
         }
     }
 
+    /**
+     * Stops current nearby session if running.
+     * Sets hasCurrentRunningNearbySession = false.
+     */
     public static void stopNearbySession() {
         if (hasCurrentRunningNearbySession) {
             suspendNearbySession();
@@ -366,16 +382,23 @@ public class XoApplication extends Application implements Thread.UncaughtExcepti
 
         // suspend nearby environment
         suspendNearbySession();
+
+        LOG.info("Entered background mode");
     }
 
     public static void enterForegroundMode() {
-
         // set presence to active
         getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_ONLINE);
 
+        // wake up suspended nearby session
         if (hasCurrentRunningNearbySession) {
             startNearbySession();
         }
+
+        LOG.info("Entered foreground mode");
     }
 
+    public static void enterBackgroundActiveMode() {
+        LOG.info("Entered background active mode");
+    }
 }
