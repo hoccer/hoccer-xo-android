@@ -5,7 +5,7 @@
                 android:background="@drawable/music_fullscreen_gradient_bg">
 
     <LinearLayout
-            android:id="@+id/attachmentlist_item_number_layout"
+            android:id="@+id/ll_player_playlist_track_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -13,7 +13,7 @@
             android:paddingRight="5dp">
 
         <TextView
-                android:id="@+id/attachmentlist_item_number"
+                android:id="@+id/tv_player_playlist_track"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -27,14 +27,14 @@
     </LinearLayout>
 
     <LinearLayout
-            android:id="@+id/songThumbnail"
+            android:id="@+id/ll_player_artwork_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/attachmentlist_item_number_layout"
+            android:layout_below="@id/ll_player_playlist_track_container"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:gravity="center">
-        <ImageView android:id="@+id/artwork_view"
+        <ImageView android:id="@+id/iv_player_artwork"
                    android:layout_width="fill_parent"
                    android:layout_height="300dp"
                    android:alpha="0.4"
@@ -42,31 +42,49 @@
     </LinearLayout>
 
     <LinearLayout
-            android:id="@+id/player_header_bg"
+            android:id="@+id/ll_player_track_description"
             android:layout_width="fill_parent"
             android:layout_height="65dip"
-            android:layout_below="@id/songThumbnail"
+            android:layout_below="@id/ll_player_artwork_container"
             android:orientation="vertical"
             android:paddingLeft="5dp"
             android:paddingRight="5dp">
 
         <TextView
-                android:id="@+id/attachmentlist_item_title_name"
+                android:id="@+id/tv_player_track_title"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-
                 android:textColor="#ffffffff"
                 android:textSize="20dp"
                 android:text="Unknown Title"
-                android:gravity="center_horizontal"/>
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:duplicateParentState="true"
+                android:gravity="center_horizontal">
+            <requestFocus
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:duplicateParentState="true" />
+                </TextView>
         <TextView
-                android:id="@+id/attachmentlist_item_artist_name"
+                android:id="@+id/tv_player_track_artist"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="#aaaaaaaa"
                 android:textSize="16dp"
                 android:text="Uknown Artist"
+                android:lines="1"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
                 android:gravity="center_horizontal"/>"
 
     </LinearLayout>
@@ -79,7 +97,7 @@
             android:gravity="center">
 
         <ImageButton
-                android:id="@+id/btnRepeat"
+                android:id="@+id/bt_player_repeat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_player_repeat"
@@ -87,7 +105,7 @@
                 android:background="@null"/>
 
         <ImageButton
-                android:id="@+id/btnShuffle"
+                android:id="@+id/bt_player_shuffle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_player_shuffle"
@@ -97,7 +115,7 @@
 
     <!-- Player Footer -->
     <LinearLayout
-            android:id="@+id/player_footer_bg"
+            android:id="@+id/ll_player_controls"
             android:layout_width="fill_parent"
             android:layout_height="100dp"
             android:layout_alignParentBottom="true"
@@ -115,7 +133,7 @@
 
             <!-- Previous Button -->
             <ImageButton
-                    android:id="@+id/btnPrevious"
+                    android:id="@+id/bt_player_skip_back"
                     android:src="@drawable/ic_player_prev"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -124,14 +142,14 @@
 
             <!-- Play Button -->
             <ImageButton
-                    android:id="@+id/btnPlay"
+                    android:id="@+id/bt_player_play"
                     android:src="@drawable/ic_player_pause"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@null"/>
             <!-- Next Button -->
             <ImageButton
-                    android:id="@+id/btnNext"
+                    android:id="@+id/bt_player_skip_forward"
                     android:src="@drawable/ic_player_next"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -141,10 +159,10 @@
     </LinearLayout>
 
     <LinearLayout
-            android:id="@+id/seekbar_layout"
+            android:id="@+id/ll_player_seekbar_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/player_header_bg"
+            android:layout_below="@id/ll_player_track_description"
             android:gravity="center">
 
         <LinearLayout
@@ -156,7 +174,7 @@
                 android:paddingRight="10dp">
 
             <TextView
-                    android:id="@+id/songCurrentDurationLabel"
+                    android:id="@+id/tv_player_current_time"
                     android:src="@drawable/ic_player_prev"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -164,14 +182,14 @@
                     android:background="@null"/>
 
             <SeekBar
-                    android:id="@+id/songProgressBar"
+                    android:id="@+id/pb_player_seek_bar"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"/>
 
             <TextView
-                    android:id="@+id/songTotalDurationLabel"
+                    android:id="@+id/tv_player_total_duration"
                     android:src="@drawable/ic_player_next"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
