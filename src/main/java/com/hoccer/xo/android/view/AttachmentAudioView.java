@@ -111,6 +111,14 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
     }
 
     @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mContext.unbindService(mConnection);
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mReceiver);
+        mReceiver = null;
+    }
+
+    @Override
     public void onClick(View v) {
     }
 
