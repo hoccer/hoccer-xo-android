@@ -186,7 +186,9 @@
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:paddingLeft="20dp"
-                    android:paddingRight="20dp"/>
+                    android:paddingRight="20dp"
+                    android:thumb="@drawable/seekbar_player_control"
+                    android:progressDrawable="@drawable/seekbar_progress"/>
 
             <TextView
                     android:id="@+id/tv_player_total_duration"
