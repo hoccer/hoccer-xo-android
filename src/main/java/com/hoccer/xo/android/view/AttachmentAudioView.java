@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,13 +15,17 @@ import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
-public class AttachmentAudioView extends LinearLayout implements View.OnClickListener{
+public class AttachmentAudioView extends LinearLayout implements View.OnClickListener {
 
     private Context mContext;
     private MediaItem mMediaItem;
     private ServiceConnection mConnection;
     private BroadcastReceiver mReceiver;
     private MediaPlayerService mMediaPlayerService;
+
+    private TextView mTitleTextView;
+    private TextView mArtistTextView;
+    private ImageView mArtworkImageView;
 
     private static final Logger LOG = Logger.getLogger(AttachmentAudioView.class);
 
@@ -42,23 +45,29 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
         mContext.startService(intent);
         bindService(intent);
 
-        String titleName = mMediaItem.getMetaData().getTitle(mMediaItem.getFilePath());
-        String artistName = mMediaItem.getMetaData().getArtist();
+        mTitleTextView = ((TextView) findViewById(R.id.attachmentlist_item_title_name));
+        mArtistTextView = ((TextView) findViewById(R.id.attachmentlist_item_artist_name));
+        mArtworkImageView = ((ImageView) findViewById(R.id.attachmentlist_item_image));
+    }
 
-        ((TextView) findViewById(R.id.attachmentlist_item_title_name)).setText(titleName);
-        ((TextView) findViewById(R.id.attachmentlist_item_artist_name)).setText(artistName);
+    public void setTitleTextView(String titleName) {
+        mTitleTextView.setText(titleName);
+    }
 
-        ImageView coverView = ((ImageView) findViewById(R.id.attachmentlist_item_image));
+    public void setArtistTextView(String artistName) {
+        mArtistTextView.setText(artistName);
+    }
 
-        byte[] cover = MediaMetaData.getArtwork(mediaItem.getFilePath());
-
-        if( cover != null ) {
+    public void setArtworkImageView(byte[] cover) {
+        if (cover != null) {
             Bitmap coverBitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
-            coverView.setImageBitmap(coverBitmap);
+            mArtworkImageView.setImageBitmap(coverBitmap);
+        } else {
+            mArtworkImageView.setImageResource(R.drawable.cover_art_fallback);
         }
     }
 
-    private void bindService(Intent intent){
+    private void bindService(Intent intent) {
 
         mConnection = new ServiceConnection() {
             @Override
@@ -86,7 +95,7 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
         }
     }
 
-    private void updatePlayPauseView(){
+    private void updatePlayPauseView() {
         findViewById(R.id.attachmentlist_item_playpause_button).setVisibility((isActive()) ? View.VISIBLE : View.GONE);
     }
 
@@ -102,7 +111,16 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
     }
 
     @Override
-    public void onClick(View v) {}
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mContext.unbindService(mConnection);
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mReceiver);
+        mReceiver = null;
+    }
+
+    @Override
+    public void onClick(View v) {
+    }
 
     private void createBroadcastReceiver() {
         mReceiver = new BroadcastReceiver() {
