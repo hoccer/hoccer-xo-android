@@ -4,27 +4,46 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/music_fullscreen_gradient_bg">
 
-    <LinearLayout
+    <RelativeLayout
             android:id="@+id/ll_player_playlist_track_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp">
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="10dp">
 
         <TextView
-                android:id="@+id/tv_player_playlist_track"
+                android:id="@+id/tv_player_current_track_no"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:textColor="@android:color/white"
-                android:textSize="16dp"
-                android:paddingLeft="10dp"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                android:text="28/46"
-                android:layout_marginTop="10dp"/>"
+                android:text="28"/>"
 
-    </LinearLayout>
+        <TextView
+                android:id="@+id/tv_player_playlist_track_divider"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:layout_toRightOf="@id/tv_player_current_track_no"
+                android:layout_marginLeft="5dp"
+                android:textSize="16dp"
+                android:text="@string/media_player_playlist_track_divider"/>
+
+        <TextView
+                android:id="@+id/tv_player_playlist_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tv_player_playlist_track_divider"
+                android:textColor="@android:color/white"
+                android:layout_marginLeft="5dp"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="46"/>"
+
+    </RelativeLayout>
 
     <LinearLayout
             android:id="@+id/ll_player_artwork_container"
@@ -88,40 +107,30 @@
             android:layout_alignParentBottom="true"
             android:gravity="center">
 
-        <ImageButton
-                android:id="@+id/bt_player_repeat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_player_repeat"
-                android:layout_marginLeft="5dp"
-                android:background="@null"/>
+
+
+
+    </LinearLayout>
+
+    <!-- Player Footer -->
+    <LinearLayout
+            android:id="@+id/ll_player_controls"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_alignParentBottom="false"
+            android:layout_below="@+id/ll_player_seekbar_container"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
 
         <ImageButton
                 android:id="@+id/bt_player_shuffle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_player_shuffle"
-                android:layout_marginLeft="5dp"
+                android:layout_marginRight="20dp"
                 android:background="@null"/>
-    </LinearLayout>
-
-    <!-- Player Footer -->
-    <LinearLayout
-            android:id="@+id/ll_player_controls"
-            android:layout_width="fill_parent"
-            android:layout_height="100dp"
-            android:layout_alignParentBottom="true"
-            android:gravity="center">
-
-        <!-- Player Buttons -->
-        <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp">
-
 
             <!-- Previous Button -->
             <ImageButton
@@ -129,7 +138,7 @@
                     android:src="@drawable/ic_player_prev"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="30dp"
+                    android:layout_marginRight="25dp"
                     android:background="@null"/>
 
             <!-- Play Button -->
@@ -145,9 +154,16 @@
                     android:src="@drawable/ic_player_next"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
+                    android:layout_marginLeft="25dp"
                     android:background="@null"/>
-        </LinearLayout>
+        <ImageButton
+                android:id="@+id/bt_player_repeat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_player_repeat"
+                android:layout_marginLeft="20dp"
+                android:background="@null"/>
+
     </LinearLayout>
 
     <LinearLayout

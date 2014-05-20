@@ -75,6 +75,13 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
     public View getView(int position, View convertView, ViewGroup parent) {
 
         MediaItem mediaItem = MediaItem.create(mAttachments.get(position).getContentDataUrl());
+        if (mediaItem == null) {
+            mAttachments.remove(position);
+            if (mAttachments.size() <= position) {
+                return null;
+            }
+            return getView(position, convertView, parent);
+        }
 
         AttachmentAudioView audioRowView;
 

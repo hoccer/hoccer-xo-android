@@ -211,6 +211,7 @@
     <!-- Media Player -->
     <string name="media_meta_data_unknown_title">Unknown title</string>
     <string name="media_meta_data_unknown_artist">Unknown artist</string>
+    <string name="media_player_playlist_track_divider">of</string>
 
     <!-- Preferences -->
     <string name="preference_keysize_summary">Renew RSA key with selected size</string>

@@ -8,18 +8,15 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
@@ -31,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by nico on 19/05/2014.
  */
-public class FullscreenPlayerFragment extends XoFragment implements SeekBar.OnSeekBarChangeListener {
+public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeekBarChangeListener {
 
     static final Logger LOG = Logger.getLogger(FullscreenPlayerFragment.class);
 
@@ -46,6 +43,7 @@ public class FullscreenPlayerFragment extends XoFragment implements SeekBar.OnSe
     private TextView mCurrentTimeLabel;
     private TextView mTotalDurationLabel;
     private TextView mPlaylistIndexLabel;
+    private TextView mPlaylistSizeLabel;
     private ImageView mArtworkView;
 
     private MediaPlayerService mMediaPlayerService;
@@ -57,18 +55,7 @@ public class FullscreenPlayerFragment extends XoFragment implements SeekBar.OnSe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int colorFrom = getResources().getColor(R.color.xo_media_player_secondary_text);
-        int colorTo = getResources().getColor(R.color.xo_app_main_color);
-        mBlinkAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        mBlinkAnimation.setDuration(500);
-        mBlinkAnimation.setRepeatMode(Animation.REVERSE);
-        mBlinkAnimation.setRepeatCount(Animation.INFINITE);
-        mBlinkAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                mCurrentTimeLabel.setTextColor((Integer) animation.getAnimatedValue() );
-            }
-        });
+        setupBlinkAnimation();
     }
 
     @Override
@@ -90,7 +77,8 @@ public class FullscreenPlayerFragment extends XoFragment implements SeekBar.OnSe
         mTrackArtistLabel = (TextView) getView().findViewById(R.id.tv_player_track_artist);
         mCurrentTimeLabel = (TextView) getView().findViewById(R.id.tv_player_current_time);
         mTotalDurationLabel = (TextView) getView().findViewById(R.id.tv_player_total_duration);
-        mPlaylistIndexLabel = (TextView) getView().findViewById(R.id.tv_player_playlist_track);
+        mPlaylistIndexLabel = (TextView) getView().findViewById(R.id.tv_player_current_track_no);
+        mPlaylistSizeLabel = (TextView) getView().findViewById(R.id.tv_player_playlist_size);
         mArtworkView = (ImageView) getView().findViewById(R.id.iv_player_artwork);
 
         mTrackProgressBar.setOnSeekBarChangeListener(this);
@@ -148,6 +136,68 @@ public class FullscreenPlayerFragment extends XoFragment implements SeekBar.OnSe
         mTimeProgressHandler.postDelayed(mUpdateTimeTask, 100);
     }
 
+    public void updatePlayState() {
+        if (mMediaPlayerService != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mBlinkAnimation.cancel();
+                    if (mMediaPlayerService.isPaused() || mMediaPlayerService.isStopped()) {
+                        mPlayButton.setImageResource(R.drawable.ic_player_play);
+                        mBlinkAnimation.start();
+                    } else {
+                        mPlayButton.setImageResource(R.drawable.ic_player_pause);
+                        mCurrentTimeLabel.setTextColor(getResources().getColor(R.color.xo_media_player_secondary_text));
+                    }
+                }
+            });
+        }
+    }
+
+    public void updateTrackData() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                String trackArtist = mMediaPlayerService.getMediaMetaData().getArtist();
+                String trackTitle = mMediaPlayerService.getMediaMetaData().getTitle();
+
+                if (trackTitle == null || trackTitle.isEmpty()) {
+                    File file = new File(mMediaPlayerService.getCurrentMediaFilePath());
+                    trackTitle = file.getName();
+                }
+
+                mTrackTitleLabel.setText(trackTitle);
+                if (trackArtist == null || trackArtist.isEmpty()) {
+                    trackArtist = getActivity().getResources().getString(R.string.media_meta_data_unknown_artist);
+                }
+                mTrackArtistLabel.setText(trackArtist);
+                int totalDuration = mMediaPlayerService.getTotalDuration();
+                mTrackProgressBar.setMax(totalDuration);
+
+                mTotalDurationLabel.setText(stringFromTimeStamp(totalDuration));
+                mPlaylistIndexLabel.setText(Integer.toString(mMediaPlayerService.getCurrentPlaylist().getCurrentIndex() + 1));
+                mPlaylistSizeLabel.setText(Integer.toString(mMediaPlayerService.getCurrentPlaylist().size()));
+
+                byte[] cover = MediaMetaData.getArtwork(mMediaPlayerService.getCurrentMediaFilePath());
+
+                if (cover != null) {
+                    Bitmap coverBitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
+                    mArtworkView.setImageBitmap(coverBitmap);
+                } else {
+                    mArtworkView.setImageResource(R.drawable.media_cover_art_default);
+                }
+
+                updatePlayState();
+            }
+        });
+
+        if (mUpdateTimeTask == null) {
+            mUpdateTimeTask = new UpdateTimeTask();
+        }
+
+        mTimeProgressHandler.postDelayed(mUpdateTimeTask, 100);
+    }
+
     private void setupViewListeners() {
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,7 +234,7 @@ public class FullscreenPlayerFragment extends XoFragment implements SeekBar.OnSe
     }
 
     private void enableViewComponents(final boolean enable) {
-        runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mPlayButton.setEnabled(enable);
@@ -197,66 +247,19 @@ public class FullscreenPlayerFragment extends XoFragment implements SeekBar.OnSe
 
     }
 
-    public void updatePlayState() {
-        if (mMediaPlayerService != null) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mBlinkAnimation.cancel();
-                    if (mMediaPlayerService.isPaused() || mMediaPlayerService.isStopped()) {
-                        mPlayButton.setImageResource(R.drawable.ic_player_play);
-                        mBlinkAnimation.start();
-                    } else {
-                        mPlayButton.setImageResource(R.drawable.ic_player_pause);
-                        mCurrentTimeLabel.setTextColor(getResources().getColor(R.color.xo_media_player_secondary_text));
-                    }
-                }
-            });
-        }
-    }
-
-    public void updateTrackData() {
-        runOnUiThread(new Runnable() {
+    private void setupBlinkAnimation() {
+        int colorFrom = getResources().getColor(R.color.xo_media_player_secondary_text);
+        int colorTo = getResources().getColor(R.color.xo_app_main_color);
+        mBlinkAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        mBlinkAnimation.setDuration(500);
+        mBlinkAnimation.setRepeatMode(Animation.REVERSE);
+        mBlinkAnimation.setRepeatCount(Animation.INFINITE);
+        mBlinkAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
-            public void run() {
-                String trackArtist = mMediaPlayerService.getMediaMetaData().getArtist();
-                String trackTitle = mMediaPlayerService.getMediaMetaData().getTitle();
-
-                if (trackTitle == null || trackTitle.isEmpty()) {
-                    File file = new File(mMediaPlayerService.getCurrentMediaFilePath());
-                    trackTitle = file.getName();
-                }
-
-                mTrackTitleLabel.setText(trackTitle);
-                if (trackArtist == null || trackArtist.isEmpty()) {
-                    trackArtist = getActivity().getResources().getString(R.string.media_meta_data_unknown_artist);
-                }
-                mTrackArtistLabel.setText(trackArtist);
-                int totalDuration = mMediaPlayerService.getTotalDuration();
-                mTrackProgressBar.setMax(totalDuration);
-
-                mTotalDurationLabel.setText(stringFromTimeStamp(totalDuration));
-                // TODO: track no. from current playlist
-                mPlaylistIndexLabel.setText(String.format("%d/%d", mMediaPlayerService.getCurrentPlaylist().getCurrentIndex()+1, mMediaPlayerService.getCurrentPlaylist().size()));
-
-                byte[] cover = MediaMetaData.getArtwork(mMediaPlayerService.getCurrentMediaFilePath());
-
-                if( cover != null ) {
-                    Bitmap coverBitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
-                    mArtworkView.setImageBitmap(coverBitmap);
-                } else {
-                    mArtworkView.setImageResource(R.drawable.media_cover_art_default);
-                }
-
-                updatePlayState();
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mCurrentTimeLabel.setTextColor((Integer) animation.getAnimatedValue() );
             }
         });
-
-        if (mUpdateTimeTask == null) {
-            mUpdateTimeTask = new UpdateTimeTask();
-        }
-
-        mTimeProgressHandler.postDelayed(mUpdateTimeTask, 100);
     }
 
     private String stringFromTimeStamp(int timeInMillis) {
@@ -275,7 +278,7 @@ public class FullscreenPlayerFragment extends XoFragment implements SeekBar.OnSe
         @Override
         public void run() {
             try {
-                runOnUiThread(new Runnable() {
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         int currentDuration = mMediaPlayerService.getCurrentPosition();

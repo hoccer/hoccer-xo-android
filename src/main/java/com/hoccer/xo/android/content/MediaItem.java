@@ -24,6 +24,9 @@ public class MediaItem {
     }
 
     public static MediaItem create(String mediaFilePath) {
+        if (mediaFilePath == null || mediaFilePath.isEmpty()) {
+            return null;
+        }
         MediaItem mi = new MediaItem();
         mi.setFilePath(mediaFilePath);
 

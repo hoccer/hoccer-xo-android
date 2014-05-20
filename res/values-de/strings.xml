@@ -206,6 +206,7 @@
     <!-- Media Player -->
     <string name="media_meta_data_unknown_title">Unbekannter Titel</string>
     <string name="media_meta_data_unknown_artist">Unbekannter Interpret</string>
+    <string name="media_player_playlist_track_divider">von</string>
 
     <!-- Preferences -->
     <string name="preference_keysize_summary">RSA Schlüssel</string>

@@ -144,6 +144,7 @@
                 android:screenOrientation="portrait"
                 android:parentActivityName="com.hoccer.xo.android.activity.AudioAttachmentListActivity"
                 android:windowSoftInputMode="stateHidden"
+                android:theme="@android:style/Theme.Black.NoTitleBar"
                 android:exported="true">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
