@@ -1,19 +1,34 @@
 package com.hoccer.xo.android.base;
 
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ActivityManager;
+import android.app.TaskStackBuilder;
 import android.content.*;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.*;
+import android.provider.MediaStore;
+import android.provider.Telephony;
 import android.support.v4.app.FragmentActivity;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
+import android.view.*;
+import android.widget.TextView;
+import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
+import com.hoccer.talk.client.IXoAlertListener;
 import com.hoccer.talk.client.XoClient;
+import com.hoccer.talk.client.XoClientConfiguration;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
-import com.hoccer.talk.model.TalkClient;
-import com.hoccer.talk.model.TalkPresence;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.XoSoundPool;
@@ -23,53 +38,20 @@ import com.hoccer.xo.android.adapter.RichContactsAdapter;
 import com.hoccer.xo.android.content.ContentRegistry;
 import com.hoccer.xo.android.content.ContentSelection;
 import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.content.image.ImageSelector;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.IXoClientService;
 import com.hoccer.xo.android.service.XoClientService;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
-
 import net.hockeyapp.android.CrashManager;
-
 import org.apache.log4j.Logger;
-
-import android.annotation.SuppressLint;
-import android.app.ActionBar;
-import android.app.TaskStackBuilder;
-import android.content.ComponentName;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.RemoteException;
-import android.provider.MediaStore;
-import android.provider.Telephony;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -77,10 +59,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Base class for our activities
- * <p/>
- * All our activities inherit from SherlockFragmentActivity
- * to maintain a common look and feel in the whole application.
- * <p/>
  * These activites continually keep the background service which
  * we use for connection retention alive by calling it via RPC.
  */
@@ -151,6 +129,9 @@ public abstract class XoActivity extends FragmentActivity {
     private Handler mDialogDismisser;
     private Dialog mDialog;
     private ScreenReceiver mScreenListener;
+    private XoAlertListener mAlertListener;
+
+
 
     public XoActivity() {
         LOG = Logger.getLogger(getClass());
@@ -184,6 +165,88 @@ public abstract class XoActivity extends FragmentActivity {
         mTalkFragments.remove(fragment);
     }
 
+
+    // Application background/foreground observation
+    public static boolean isAppInBackground = false;
+    public static boolean isWindowFocused = false;
+    public static boolean isMenuOpened = false;
+    public static boolean isBackPressed = false;
+    public static boolean isBackgroundActive = false;
+
+    protected void applicationWillEnterForeground() {
+        LOG.info("Application will enter foreground.");
+        isAppInBackground = false;
+        isBackgroundActive = false;
+        XoApplication.enterForegroundMode();
+    }
+
+    protected void applicationWillEnterBackground() {
+        LOG.info("Application will enter background.");
+        isAppInBackground = true;
+        XoApplication.enterBackgroundMode();
+    }
+
+    protected void applicationWillEnterBackgroundActive() {
+        LOG.info("Application will enter background active.");
+        isAppInBackground = false;
+        XoApplication.enterBackgroundActiveMode();
+    }
+
+    protected void setBackgroundActive() {
+        isBackgroundActive = true;
+    }
+
+    @Override
+    protected void onStart() {
+        if (isAppInBackground || isBackgroundActive) {
+            applicationWillEnterForeground();
+        }
+        super.onStart();
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (!isWindowFocused) {
+            if (isBackgroundActive) {
+                applicationWillEnterBackgroundActive();
+            } else {
+                applicationWillEnterBackground();
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!(this instanceof ContactsActivity)) {
+            isBackPressed = true;
+        }
+        super.onBackPressed();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        isWindowFocused = hasFocus;
+        if (isBackPressed && !hasFocus) {
+            isBackPressed = false;
+            isWindowFocused = true;
+        }
+        super.onWindowFocusChanged(hasFocus);
+    }
+
+    /*@Override
+    public boolean onMenuItemSelected(int featureId, android.view.MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+        return true;
+    }*/
+
+    //--------
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         LOG.debug("onCreate()");
@@ -213,6 +276,8 @@ public abstract class XoActivity extends FragmentActivity {
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         mScreenListener = new ScreenReceiver();
         registerReceiver(mScreenListener, filter);
+
+        mAlertListener = new XoAlertListener(this);
     }
 
     @Override
@@ -230,8 +295,8 @@ public abstract class XoActivity extends FragmentActivity {
         mServiceConnection = new MainServiceConnection();
         bindService(serviceIntent, mServiceConnection, BIND_IMPORTANT);
         checkKeys();
-        getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_ONLINE);
 
+        getXoClient().registerAlertListener(mAlertListener);
     }
 
     private void checkForCrashesIfEnabled() {
@@ -323,24 +388,8 @@ public abstract class XoActivity extends FragmentActivity {
             unbindService(mServiceConnection);
             mServiceConnection = null;
         }
-        checkIfAppInForeground();
-    }
 
-    public void checkIfAppInForeground() {
-        Handler checkState = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                ActivityManager activityManager = (ActivityManager) getApplicationContext().
-                        getSystemService(Context.ACTIVITY_SERVICE);
-                List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
-                String ourName = getApplicationContext().getPackageName().toString();
-                if (!services.get(0).topActivity.getPackageName().toString().equalsIgnoreCase(ourName)
-                        || !mScreenListener.isScreenOn()) {
-                    getXoClient().setClientConnectionStatus(TalkPresence.CONN_STATUS_BACKGROUND);
-                }
-            }
-        };
-        checkState.sendEmptyMessageDelayed(0, 1000);
+        getXoClient().unregisterAlertListener(mAlertListener);
     }
 
     @Override
@@ -416,8 +465,6 @@ public abstract class XoActivity extends FragmentActivity {
                     e.printStackTrace();
                 }
                 break;
-            case R.id.menu_kill:
-                this.finish();
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -530,8 +577,8 @@ public abstract class XoActivity extends FragmentActivity {
             if (barcode != null) {
                 LOG.debug("scanned barcode: " + barcode.getContents());
                 String code = barcode.getContents();
-                if (code.startsWith("hxo://")) {
-                    mBarcodeToken = code.replace("hxo://", "");
+                if (code.startsWith(XoClientConfiguration.HXO_URL_SCHEME)) {
+                    mBarcodeToken = code.replace(XoClientConfiguration.HXO_URL_SCHEME, "");
                 }
             }
             return;
@@ -578,20 +625,21 @@ public abstract class XoActivity extends FragmentActivity {
     private void scheduleKeepAlive() {
         shutdownKeepAlive();
         mKeepAliveTimer = mBackgroundExecutor.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                if (mService != null) {
-                    try {
-                        mService.keepAlive();
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        },
+                                                                      @Override
+                                                                      public void run() {
+                                                                          if (mService != null) {
+                                                                              try {
+                                                                                  mService.keepAlive();
+                                                                              } catch (RemoteException e) {
+                                                                                  e.printStackTrace();
+                                                                              }
+                                                                          }
+                                                                      }
+                                                                  },
                 XoConfiguration.SERVICE_KEEPALIVE_PING_DELAY,
                 XoConfiguration.SERVICE_KEEPALIVE_PING_INTERVAL,
-                TimeUnit.SECONDS);
+                TimeUnit.SECONDS
+        );
     }
 
     /**
@@ -706,6 +754,9 @@ public abstract class XoActivity extends FragmentActivity {
 
     public void selectAttachment() {
         LOG.debug("selectAttachment()");
+
+        setBackgroundActive();
+
         mAttachmentSelection = ContentRegistry.get(this)
                 .selectAttachment(this, REQUEST_SELECT_ATTACHMENT);
     }
@@ -725,7 +776,7 @@ public abstract class XoActivity extends FragmentActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mBarcodeService.shareText("hxo://" + token);
+                        mBarcodeService.shareText(XoClientConfiguration.HXO_URL_SCHEME + token);
                     }
                 });
             }
@@ -739,7 +790,7 @@ public abstract class XoActivity extends FragmentActivity {
             TalkClientContact self = mDatabase.findSelfContact(false);
 
             String message = String
-                    .format(getString(R.string.sms_invitation_text), token, self.getName());
+                    .format(getString(R.string.sms_invitation_text), XoClientConfiguration.HXO_URL_SCHEME, token, self.getName());
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //At least KitKat
                 String defaultSmsPackageName = Telephony.Sms
@@ -808,6 +859,74 @@ public abstract class XoActivity extends FragmentActivity {
             for (IXoFragment fragment : mTalkFragments) {
                 fragment.onServiceDisconnected();
             }
+        }
+    }
+
+    /**
+     * This class is an implementation of IXoAlertListener which displays alerts inside an AlertDialog.
+     * Links and other data inside the message text are tappable.
+     */
+    public class XoAlertListener implements IXoAlertListener {
+
+        private Context mContext;
+
+        XoAlertListener(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        public void onInternalAlert(String title, String message) {
+            final String alertTitle = title;
+            final String alertMessage = message;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    displayAlert(alertTitle, alertMessage);
+                }
+            });
+        }
+
+        @Override
+        public void onAlertMessageReceived(String message) {
+            final String alertMessage = message;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    displayAlert(null, alertMessage);
+                }
+            });
+        }
+
+        /**
+         * Displays an AlertDialog from a given title and message string.
+         * The displayed message text is interactive: links etc. can be tapped.
+         *
+         * @param title   The given alert title
+         * @param message The given alert message
+         */
+        private void displayAlert(String title, String message) {
+
+            // Scan for urls other information
+            final SpannableString interactiveMessage = new SpannableString(message);
+            Linkify.addLinks(interactiveMessage, Linkify.ALL);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+            if (title != null) {
+                builder.setTitle(title);
+            }
+            builder.setMessage(interactiveMessage);
+            builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int index) {
+                    dialog.dismiss();
+                }
+            });
+
+            Dialog dialog = builder.create();
+            dialog.show();
+
+            // Make message interactive
+            ((TextView) dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
         }
     }
 

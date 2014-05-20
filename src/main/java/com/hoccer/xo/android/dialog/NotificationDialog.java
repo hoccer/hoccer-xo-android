@@ -1,13 +1,12 @@
 package com.hoccer.xo.android.dialog;
 
-import org.apache.log4j.Logger;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.TextView;
+import org.apache.log4j.Logger;
 
 
 public class NotificationDialog extends DialogFragment {

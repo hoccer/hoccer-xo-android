@@ -1,5 +1,11 @@
 package com.hoccer.xo.android.content.image;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.TypedValue;
+import android.view.View;
+import android.widget.ImageView;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.ContentView;
@@ -11,15 +17,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
-
 import org.apache.log4j.Logger;
-
-import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.util.TypedValue;
-import android.view.View;
-import android.widget.ImageView;
 
 import java.util.WeakHashMap;
 

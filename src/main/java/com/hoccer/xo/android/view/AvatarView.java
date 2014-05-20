@@ -1,5 +1,12 @@
 package com.hoccer.xo.android.view;
 
+import android.content.Context;
+import android.content.res.TypedArray;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
@@ -9,14 +16,6 @@ import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
-
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 /**
  * A view holding an AspectImageView and a presence indicator.
@@ -85,17 +84,31 @@ public class AvatarView extends LinearLayout implements IXoContactListener {
     }
 
     private void updateAvatar() {
+        if(mContact == null) {
+            return;
+        }
         IContentObject avatar = mContact.getAvatar();
         String avatarUri = avatar == null ? null : avatar.getContentDataUrl();
 
         if (avatarUri == null) {
             if (mContact.isGroup()) {
-                avatarUri = "drawable://" + R.drawable.avatar_default_group;
+                if(mContact.getGroupPresence().isTypeNearby()) {
+                    avatarUri = "drawable://" + R.drawable.avatar_default_location;
+                } else {
+                    avatarUri = "drawable://" + R.drawable.avatar_default_group;
+                }
             } else {
                 avatarUri = "drawable://" + R.drawable.avatar_default_contact;
             }
         }
         setAvatarImage(avatarUri);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        updateAvatar();
+        updatePresence();
     }
 
     /**

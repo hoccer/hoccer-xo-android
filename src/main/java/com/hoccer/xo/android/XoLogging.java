@@ -3,11 +3,7 @@ package com.hoccer.xo.android;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Layout;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.RollingFileAppender;
+import org.apache.log4j.*;
 import org.apache.log4j.spi.LoggingEvent;
 
 import java.io.File;

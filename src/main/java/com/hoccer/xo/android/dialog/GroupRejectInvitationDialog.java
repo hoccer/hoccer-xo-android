@@ -1,16 +1,14 @@
 package com.hoccer.xo.android.dialog;
 
-import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.release.R;
-
-import org.apache.log4j.Logger;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.release.R;
+import org.apache.log4j.Logger;
 
 public class GroupRejectInvitationDialog extends DialogFragment {
 

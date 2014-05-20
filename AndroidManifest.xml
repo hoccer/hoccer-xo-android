@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.hoccer.xo.release"
-          android:versionCode="22"
+
+          android:versionCode="27"
           android:versionName="2.0.0">
 
     <!-- We run on 4.0 (14) and up, we use features from up to 4.2 (17) -->
@@ -70,6 +71,7 @@
             android:name="com.hoccer.xo.android.XoApplication"
             android:allowBackup="false"
             android:icon="@drawable/ic_launcher"
+            android:logo="@drawable/ic_launcher_plain"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
 
@@ -78,20 +80,20 @@
                 android:name="com.google.android.gms.version"
                 android:value="@integer/google_play_services_version"/>
 
-        <!--API key for Google Maps Android API v2 for release certificate-->
-        <!--<meta-data-->
-        <!--android:name="com.google.android.maps.v2.API_KEY"-->
-        <!--android:value="AIzaSyBDd2wBF1gH9UcU2KcAPXXKI9G6HQattkM"/>-->
-
-        <!-- API key for Google Maps Android API v2 based on debug certificate -->
+        <!--API key for Google Maps Android API v2 for RELEASE certificate-->
         <meta-data
-                android:name="com.google.android.maps.v2.API_KEY"
-                android:value="AIzaSyC9hBvAarkQ9ktS0rWZ5Row-MXRatv8Dj0"/>
+        android:name="com.google.android.maps.v2.API_KEY"
+        android:value="AIzaSyBDd2wBF1gH9UcU2KcAPXXKI9G6HQattkM"/>
+
+        <!-- API key for Google Maps Android API v2 based on DEBUG certificate -->
+        <!--<meta-data-->
+                <!--android:name="com.google.android.maps.v2.API_KEY"-->
+                <!--android:value="AIzaSyC9hBvAarkQ9ktS0rWZ5Row-MXRatv8Dj0"/>-->
 
         <!-- Contact list - our main activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.ContactsActivity"
-                android:label="@string/app_name"
+                android:label="@string/actionbar_default_title"
                 android:configChanges="keyboardHidden|orientation|screenSize"
                 android:screenOrientation="portrait">
             <!-- Show in launcher -->
@@ -104,19 +106,15 @@
         <!-- Messaging activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.MessagingActivity"
-                android:label="@string/app_name"
-                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
+                android:label="@string/actionbar_default_title"
                 android:windowSoftInputMode="stateHidden"
                 android:configChanges="keyboardHidden|orientation|screenSize">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
         </activity>
 
         <!-- Clipboard activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.ClipboardPreviewActivity"
-                android:label="Hoccer XO"
+                android:label="@string/actionbar_default_title"
                 android:parentActivityName="com.hoccer.xo.android.activity.MessagingActivity"
                 android:windowSoftInputMode="stateHidden">
             <meta-data
@@ -154,7 +152,7 @@
         <!-- Single Profile activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.SingleProfileActivity"
-                android:label="@string/app_name"
+                android:label="@string/actionbar_default_title"
                 android:screenOrientation="portrait"
                 android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:windowSoftInputMode="stateHidden">
@@ -166,7 +164,7 @@
         <!-- Group Profile activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.GroupProfileActivity"
-                android:label="@string/app_name"
+                android:label="@string/actionbar_default_title"
                 android:screenOrientation="portrait"
                 android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:windowSoftInputMode="stateHidden">
@@ -178,12 +176,8 @@
         <!-- Pairing activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.PairingActivity"
-                android:label="@string/app_name"
-                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
+                android:label="@string/actionbar_default_title"
                 android:screenOrientation="portrait">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
             <action android:name="android.intent.action.VIEW"/>
             <category android:name="android.intent.category.BROWSABLE"/>
             <data android:scheme="hxo"/>
@@ -192,7 +186,7 @@
         <!-- Preference activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.XoPreferenceActivity"
-                android:label="@string/app_name"
+                android:label="@string/actionbar_default_title"
                 android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:screenOrientation="portrait">
             <meta-data
@@ -203,7 +197,7 @@
         <!-- About activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.AboutActivity"
-                android:label="@string/app_name"
+                android:label="@string/actionbar_default_title"
                 android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:screenOrientation="portrait">
             <intent-filter>
@@ -218,7 +212,7 @@
         <!-- Licenses activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.LicensesActivity"
-                android:label="@string/app_name"
+                android:label="@string/actionbar_default_title"
                 android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:screenOrientation="portrait">
             <intent-filter>

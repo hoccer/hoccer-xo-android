@@ -1,16 +1,15 @@
 package com.hoccer.xo.android.fragment;
 
-import com.hoccer.talk.client.IXoStateListener;
-import com.hoccer.talk.client.XoClient;
-import com.hoccer.xo.android.base.XoFragment;
-import com.hoccer.xo.release.R;
-
-import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.hoccer.talk.client.IXoStateListener;
+import com.hoccer.talk.client.XoClient;
+import com.hoccer.xo.android.base.XoFragment;
+import com.hoccer.xo.release.R;
 
 /**
  * Mix-in fragment for showing client status

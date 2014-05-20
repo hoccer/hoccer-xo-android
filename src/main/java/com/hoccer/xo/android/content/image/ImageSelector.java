@@ -1,25 +1,20 @@
 package com.hoccer.xo.android.content.image;
 
-import android.graphics.drawable.Drawable;
-import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.android.content.IContentSelector;
-import com.hoccer.xo.android.content.SelectedContent;
-
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
+import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.content.IContentSelector;
+import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 
 public class ImageSelector implements IContentSelector {
@@ -167,6 +162,13 @@ public class ImageSelector implements IContentSelector {
 
         if (filePath == null) {
             filePath = selectedContent.toString();
+        }
+
+        File file = new File(filePath);
+        int fileLength = (int) file.length();
+        if (fileSize != fileLength) {
+            LOG.debug("file size from ContentDB is not actual Filesize. We use the real one.");
+            fileSize = fileLength;
         }
 
         SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);

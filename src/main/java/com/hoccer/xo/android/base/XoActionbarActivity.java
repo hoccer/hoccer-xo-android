@@ -1,13 +1,11 @@
 package com.hoccer.xo.android.base;
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.*;
-import android.os.*;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuItem;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;

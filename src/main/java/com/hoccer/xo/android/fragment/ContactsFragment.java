@@ -1,20 +1,20 @@
 package com.hoccer.xo.android.fragment;
 
-import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.xo.android.XoDialogs;
-import com.hoccer.xo.android.adapter.ContactsAdapter;
-import com.hoccer.xo.android.base.XoListFragment;
-import com.hoccer.xo.release.R;
-
-import org.apache.log4j.Logger;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.xo.android.XoDialogs;
+import com.hoccer.xo.android.adapter.ContactsAdapter;
+import com.hoccer.xo.android.adapter.OnItemCountChangedListener;
+import com.hoccer.xo.android.base.XoListFragment;
+import com.hoccer.xo.release.R;
+import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
 
@@ -24,27 +24,26 @@ import java.sql.SQLException;
  * This currently shows only contact data but should also be able to show
  * recent conversations for use as a "conversations" view.
  */
-public class ContactsFragment extends XoListFragment implements View.OnClickListener {
+public class ContactsFragment extends XoListFragment implements OnItemCountChangedListener {
 
     private static final Logger LOG = Logger.getLogger(ContactsFragment.class);
 
     private ContactsAdapter mAdapter;
 
-    private Button mAddUserButton;
-
     private ListView mContactList;
+
+    private TextView mPlaceholderText;
+
+    private ImageView mPlaceholderImage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         LOG.debug("onCreateView()");
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
-
-        mAddUserButton = (Button) view.findViewById(R.id.contacts_pairing);
-        mAddUserButton.setOnClickListener(this);
-
         mContactList = (ListView) view.findViewById(android.R.id.list);
-
+        mPlaceholderImage = (ImageView) view.findViewById(R.id.iv_contacts_placeholder);
+        mPlaceholderText = (TextView) view.findViewById(R.id.tv_contacts_placeholder);
         return view;
     }
 
@@ -77,9 +76,11 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
 
             mAdapter.requestReload();
             mContactList.setAdapter(mAdapter);
+            mAdapter.setOnItemCountChangedListener(this);
         }
         mAdapter.requestReload(); // XXX fix contact adapter and only do this on new adapter
         mAdapter.onResume();
+        onItemCountChanged(mAdapter.getCount());
     }
 
     @Override
@@ -107,14 +108,6 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
     }
 
     @Override
-    public void onClick(View v) {
-        if (v == mAddUserButton) {
-            LOG.debug("onClick(addUserButton)");
-            getXoActivity().showPairing();
-        }
-    }
-
-    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         if (l == mContactList) {
@@ -133,5 +126,24 @@ public class ContactsFragment extends XoListFragment implements View.OnClickList
                 XoDialogs.showTokenDialog(getXoActivity(), token);
             }
         }
+    }
+
+    @Override
+    public void onItemCountChanged(int count) {
+        if(count > 0) {
+            hidePlaceholder();
+        } else if (count < 1) {
+            showPlaceholder();
+        }
+    }
+
+    private void showPlaceholder() {
+        mPlaceholderImage.setVisibility(View.VISIBLE);
+        mPlaceholderText.setVisibility(View.VISIBLE);
+    }
+
+    private void hidePlaceholder() {
+        mPlaceholderImage.setVisibility(View.GONE);
+        mPlaceholderText.setVisibility(View.GONE);
     }
 }

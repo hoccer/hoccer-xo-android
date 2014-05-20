@@ -1,20 +1,12 @@
 package com.hoccer.xo.android.activity;
 
-import android.content.*;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.TextView;
-import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.fragment.FullscreenPlayerFragment;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;

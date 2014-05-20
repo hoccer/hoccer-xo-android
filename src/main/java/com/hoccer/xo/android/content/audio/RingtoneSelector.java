@@ -7,8 +7,8 @@ import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.provider.MediaStore;
-import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
+import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 

@@ -2,7 +2,6 @@ package com.hoccer.xo.android.adapter;
 
 import android.view.View;
 import android.widget.CheckedTextView;
-import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.android.base.XoActivity;

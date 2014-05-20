@@ -1,17 +1,15 @@
 package com.hoccer.xo.android.gesture;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-
+import com.hoccer.xo.android.gesture.Gestures.Transaction;
 import org.apache.log4j.Logger;
 
-import com.hoccer.xo.android.gesture.Gestures.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MotionInterpreter implements SensorEventListener {
 

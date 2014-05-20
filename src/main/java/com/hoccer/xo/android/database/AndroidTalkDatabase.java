@@ -5,13 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import com.hoccer.talk.client.IXoClientDatabaseBackend;
 import com.hoccer.talk.client.XoClientDatabase;
-import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.client.model.TalkClientDownload;
-import com.hoccer.talk.client.model.TalkClientMembership;
-import com.hoccer.talk.client.model.TalkClientMessage;
-import com.hoccer.talk.client.model.TalkClientSelf;
-import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.talk.client.model.*;
 import com.hoccer.talk.model.*;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
@@ -28,7 +22,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
     //private static final String DATABASE_NAME = "hoccer-talk.db";
     private static String DATABASE_NAME = "hoccer-talk.db";
 
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 14;
 
     private static AndroidTalkDatabase INSTANCE = null;
 
@@ -158,8 +152,21 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
                 Dao<TalkClientContact, Integer> talkClientContacts = getDao(TalkClientContact.class);
                 talkClientContacts.executeRaw("ALTER TABLE `clientContact` ADD COLUMN `isNearby` BOOLEAN");
             }
+            if (oldVersion < 14) {
+                renameFilecacheUris(db);
+            }
         } catch (SQLException e) {
             LOG.error("sql error upgrading database", e);
+        }
+    }
+
+    private void renameFilecacheUris(SQLiteDatabase db) {
+        try {
+            XoClientDatabase database = new XoClientDatabase(this);
+            database.initialize();
+            database.migrateAllFilecacheUris();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

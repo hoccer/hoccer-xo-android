@@ -3,6 +3,7 @@ package com.hoccer.xo.android.content;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

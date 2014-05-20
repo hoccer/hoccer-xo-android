@@ -2,7 +2,6 @@ package com.hoccer.xo.android.adapter;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
@@ -18,7 +17,6 @@ import com.hoccer.xo.android.view.AttachmentAudioView;
 import com.hoccer.xo.release.R;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AttachmentListAdapter extends XoAdapter implements IXoTransferListener {

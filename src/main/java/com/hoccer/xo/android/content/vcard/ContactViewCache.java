@@ -1,10 +1,9 @@
 package com.hoccer.xo.android.content.vcard;
 
+import android.app.Activity;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
-
-import android.app.Activity;
 
 public class ContactViewCache extends ContentViewCache<ContactView> {
 
