@@ -209,8 +209,8 @@
     </string>
 
     <!-- Media Player -->
-    <string name="unknown_title">Unknown title</string>
-    <string name="unkown_artist">Unknown artist</string>
+    <string name="media_meta_data_unknown_title">Unknown title</string>
+    <string name="media_meta_data_unknown_artist">Unknown artist</string>
 
     <!-- Preferences -->
     <string name="preference_keysize_summary">Renew RSA key with selected size</string>

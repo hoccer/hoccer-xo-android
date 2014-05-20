@@ -228,9 +228,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     private void updateMetaDataView(RemoteViews views) {
-        String title = getString(R.string.unknown_title);
-        String artist = getString(R.string.unkown_artist);
-        String metaDataTitle = mMediaMetaData.getTitle(getResources().getString(R.string.app_name));
+        String title = getString(R.string.media_meta_data_unknown_title);
+        String artist = getString(R.string.media_meta_data_unknown_artist);
+        String metaDataTitle = mMediaMetaData.getTitle();
         String metaDataArtist = mMediaMetaData.getArtist();
         boolean metaDataAvailable = false;
         if (metaDataTitle != null && !metaDataTitle.isEmpty()) {
@@ -322,6 +322,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             XoApplication.getXoClient().registerTransferListener(playlist);
         }
         mCurrentPlaylist = playlist;
+    }
+
+    public MediaPlaylist getCurrentPlaylist() {
+        return mCurrentPlaylist;
     }
 
     public void resume() {

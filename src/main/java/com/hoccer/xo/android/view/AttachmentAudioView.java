@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.hoccer.xo.android.content.MediaItem;
-import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -63,7 +62,7 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
             Bitmap coverBitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
             mArtworkImageView.setImageBitmap(coverBitmap);
         } else {
-            mArtworkImageView.setImageResource(R.drawable.cover_art_fallback);
+            mArtworkImageView.setImageResource(R.drawable.media_cover_art_default);
         }
     }
 

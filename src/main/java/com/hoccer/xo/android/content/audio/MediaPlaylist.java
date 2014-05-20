@@ -65,6 +65,9 @@ public class MediaPlaylist implements ListIterator<MediaItem>, IXoTransferListen
         mConversationContactId = pConversationContactId;
     }
 
+    public int size() {
+        return mPlaylistItems.size();
+    }
 
     @Override
     public boolean hasPrevious() {

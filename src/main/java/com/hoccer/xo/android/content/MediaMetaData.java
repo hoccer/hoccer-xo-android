@@ -21,13 +21,20 @@ public class MediaMetaData {
     private MediaMetaData() {
     }
 
-    public String getTitle(String filePath) {
-        File file = new File(filePath);
-        return (mTitle != null) ? mTitle : file.getName();
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public String getTitleOrFilename(String pFilePath) {
+        if (mTitle == null || mTitle.isEmpty()) {
+            File file = new File(pFilePath);
+            return file.getName();
+        }
+        return mTitle;
     }
 
     public String getArtist() {
-        return (mArtist != null) ? mArtist : "Unknown Artist";
+        return mArtist;
     }
 
     public String getAlbumTitle() {

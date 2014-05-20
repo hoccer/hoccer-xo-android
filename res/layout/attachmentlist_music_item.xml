@@ -19,7 +19,7 @@
                 android:id="@+id/attachmentlist_item_image"
                 android:layout_width="60dip"
                 android:layout_height="60dip"
-                android:src="@drawable/cover_art_fallback"/>
+                android:src="@drawable/media_cover_art_default"/>
 
     </LinearLayout>
 

@@ -38,7 +38,7 @@
                    android:layout_width="fill_parent"
                    android:layout_height="300dp"
                    android:alpha="0.4"
-                   android:src="@drawable/cover_art_fallback"/>
+                   android:src="@drawable/media_cover_art_default"/>
     </LinearLayout>
 
     <LinearLayout
@@ -188,7 +188,7 @@
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
                     android:thumb="@drawable/seekbar_player_control"
-                    android:progressDrawable="@drawable/seekbar_progress"/>
+                    android:progressDrawable="@drawable/progress_horizontal_appbasetheme"/>
 
             <TextView
                     android:id="@+id/tv_player_total_duration"

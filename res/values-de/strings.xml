@@ -204,8 +204,8 @@
     </string>
 
     <!-- Media Player -->
-    <string name="unknown_title">Unbekannter Titel</string>
-    <string name="unkown_artist">Unbekannter Künstler</string>
+    <string name="media_meta_data_unknown_title">Unbekannter Titel</string>
+    <string name="media_meta_data_unknown_artist">Unbekannter Interpret</string>
 
     <!-- Preferences -->
     <string name="preference_keysize_summary">RSA Schlüssel</string>

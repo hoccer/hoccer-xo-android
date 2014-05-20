@@ -19,6 +19,7 @@ import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -187,26 +188,33 @@ public class FullscreenPlayerFragment extends XoFragment implements SeekBar.OnSe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                String filePath = mMediaPlayerService.getCurrentMediaFilePath();
+                String trackArtist = mMediaPlayerService.getMediaMetaData().getArtist();
+                String trackTitle = mMediaPlayerService.getMediaMetaData().getTitle();
 
-                String artistName = mMediaPlayerService.getMediaMetaData().getArtist();
-                String trackName = mMediaPlayerService.getMediaMetaData().getTitle(filePath);
+                if (trackTitle == null || trackTitle.isEmpty()) {
+                    File file = new File(mMediaPlayerService.getCurrentMediaFilePath());
+                    trackTitle = file.getName();
+                }
 
-                mTrackTitleLabel.setText(trackName);
-                //mTrackTitleLabel.setSelected(true);
-                mTrackArtistLabel.setText(artistName);
+                mTrackTitleLabel.setText(trackTitle);
+                if (trackArtist == null || trackArtist.isEmpty()) {
+                    trackArtist = getActivity().getResources().getString(R.string.media_meta_data_unknown_artist);
+                }
+                mTrackArtistLabel.setText(trackArtist);
                 int totalDuration = mMediaPlayerService.getTotalDuration();
                 mTrackProgressBar.setMax(totalDuration);
 
                 mTotalDurationLabel.setText(stringFromTimeStamp(totalDuration));
                 // TODO: track no. from current playlist
-                mPlaylistIndexLabel.setText("");
+                mPlaylistIndexLabel.setText(String.format("%d/%d", mMediaPlayerService.getCurrentPlaylist().getCurrentIndex()+1, mMediaPlayerService.getCurrentPlaylist().size()));
 
-                byte[] cover = MediaMetaData.getArtwork(filePath);
+                byte[] cover = MediaMetaData.getArtwork(mMediaPlayerService.getCurrentMediaFilePath());
 
                 if( cover != null ) {
                     Bitmap coverBitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
                     mArtworkView.setImageBitmap(coverBitmap);
+                } else {
+                    mArtworkView.setImageResource(R.drawable.media_cover_art_default);
                 }
 
                 updatePlayState();

@@ -85,8 +85,12 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
         }
 
         audioRowView.setArtworkImageView(MediaMetaData.getArtwork(mediaItem.getFilePath()));
-        audioRowView.setTitleTextView(mediaItem.getMetaData().getTitle(mediaItem.getFilePath()));
-        audioRowView.setArtistTextView(mediaItem.getMetaData().getArtist());
+        audioRowView.setTitleTextView(mediaItem.getMetaData().getTitleOrFilename(mediaItem.getFilePath()));
+        String artist = mediaItem.getMetaData().getArtist();
+        if (artist == null || artist.isEmpty()){
+            artist = parent.getResources().getString(R.string.media_meta_data_unknown_artist);
+        }
+        audioRowView.setArtistTextView(artist);
 
         return audioRowView;
     }
