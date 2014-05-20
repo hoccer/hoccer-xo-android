@@ -169,6 +169,13 @@ public class ImageSelector implements IContentSelector {
             filePath = selectedContent.toString();
         }
 
+        File file = new File(filePath);
+        int fileLength = (int) file.length();
+        if (fileSize != fileLength) {
+            LOG.debug("file size from ContentDB is not actual Filesize. We use the real one.");
+            fileSize = fileLength;
+        }
+
         SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);
         contentObject.setFileName(fileName);
         contentObject.setContentType(mimeType);
