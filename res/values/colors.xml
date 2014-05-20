@@ -12,4 +12,5 @@
     <color name="xo_tab_color">#ffffff</color>
     <color name="xo_content_horizontal_divider">#d1d6e4</color>
     <color name="xo_menu_text">#ffffff</color>
+    <color name="xo_media_player_secondary_text">#aaaaaaaa</color>
 </resources>

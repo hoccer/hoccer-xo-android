@@ -17,7 +17,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="#ffffffff"
+                android:textColor="@android:color/white"
                 android:textSize="16dp"
                 android:paddingLeft="10dp"
                 android:textStyle="bold"
@@ -37,7 +37,6 @@
         <ImageView android:id="@+id/iv_player_artwork"
                    android:layout_width="fill_parent"
                    android:layout_height="300dp"
-                   android:alpha="0.4"
                    android:src="@drawable/media_cover_art_default"/>
     </LinearLayout>
 
@@ -54,17 +53,12 @@
                 android:id="@+id/tv_player_track_title"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#ffffffff"
+                android:textColor="@android:color/white"
                 android:textSize="20dp"
-                android:text="Unknown Title"
+                android:text="@string/media_meta_data_unknown_title"
                 android:singleLine="true"
-                android:ellipsize="marquee"
+                android:ellipsize="end"
                 android:fadingEdge="horizontal"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:duplicateParentState="true"
                 android:gravity="center_horizontal">
             <requestFocus
                     android:focusable="true"
@@ -76,15 +70,13 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="#aaaaaaaa"
+                android:textColor="@color/xo_media_player_secondary_text"
                 android:textSize="16dp"
-                android:text="Uknown Artist"
+                android:text="@string/media_meta_data_unknown_artist"
                 android:lines="1"
                 android:singleLine="true"
-                android:ellipsize="marquee"
+                android:ellipsize="end"
                 android:fadingEdge="horizontal"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
                 android:gravity="center_horizontal"/>"
 
     </LinearLayout>
@@ -178,7 +170,7 @@
                     android:src="@drawable/ic_player_prev"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#aaaaaaaa"
+                    android:textColor="@color/xo_media_player_secondary_text"
                     android:background="@null"/>
 
             <SeekBar
@@ -195,7 +187,7 @@
                     android:src="@drawable/ic_player_next"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#aaaaaaaa"
+                    android:textColor="@color/xo_media_player_secondary_text"
                     android:background="@null"/>
         </LinearLayout>
 

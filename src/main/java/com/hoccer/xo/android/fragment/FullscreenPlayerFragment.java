@@ -1,5 +1,7 @@
 package com.hoccer.xo.android.fragment;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.*;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +11,10 @@ import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -46,6 +52,24 @@ public class FullscreenPlayerFragment extends XoFragment implements SeekBar.OnSe
     private ServiceConnection mServiceConnection;
     private Handler mTimeProgressHandler = new Handler();
     private Runnable mUpdateTimeTask;
+    private ValueAnimator mBlinkAnimation;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        int colorFrom = getResources().getColor(R.color.xo_media_player_secondary_text);
+        int colorTo = getResources().getColor(R.color.xo_app_main_color);
+        mBlinkAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        mBlinkAnimation.setDuration(500);
+        mBlinkAnimation.setRepeatMode(Animation.REVERSE);
+        mBlinkAnimation.setRepeatCount(Animation.INFINITE);
+        mBlinkAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mCurrentTimeLabel.setTextColor((Integer) animation.getAnimatedValue() );
+            }
+        });
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -178,7 +202,14 @@ public class FullscreenPlayerFragment extends XoFragment implements SeekBar.OnSe
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mPlayButton.setImageResource((!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) ? R.drawable.ic_player_pause : R.drawable.ic_player_play);
+                    mBlinkAnimation.cancel();
+                    if (mMediaPlayerService.isPaused() || mMediaPlayerService.isStopped()) {
+                        mPlayButton.setImageResource(R.drawable.ic_player_play);
+                        mBlinkAnimation.start();
+                    } else {
+                        mPlayButton.setImageResource(R.drawable.ic_player_pause);
+                        mCurrentTimeLabel.setTextColor(getResources().getColor(R.color.xo_media_player_secondary_text));
+                    }
                 }
             });
         }
