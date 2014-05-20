@@ -130,9 +130,6 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
                 uploads.executeRaw("ALTER TABLE `clientUpload` ADD COLUMN `fileName` VARCHAR;");
             }
             if (oldVersion < 13) {
-                renameFilecacheUris(db);
-            }
-            if (oldVersion < 14) {
                 Dao<TalkGroup, Integer> talkGroups = getDao(TalkGroup.class);
                 talkGroups.executeRaw("ALTER TABLE `group` ADD COLUMN `keyDate` DATE");
                 talkGroups.executeRaw("ALTER TABLE `group` ADD COLUMN `groupType` VARCHAR");
@@ -160,6 +157,9 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
 
                 Dao<TalkClientContact, Integer> talkClientContacts = getDao(TalkClientContact.class);
                 talkClientContacts.executeRaw("ALTER TABLE `clientContact` ADD COLUMN `isNearby` BOOLEAN");
+            }
+            if (oldVersion < 14) {
+                renameFilecacheUris(db);
             }
         } catch (SQLException e) {
             LOG.error("sql error upgrading database", e);

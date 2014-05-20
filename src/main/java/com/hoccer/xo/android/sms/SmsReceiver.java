@@ -27,7 +27,7 @@ public class SmsReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction() == ACTION_SMS_RECEIVED) {
+        if (intent.getAction().equals(ACTION_SMS_RECEIVED)) {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
                 boolean abort = false;

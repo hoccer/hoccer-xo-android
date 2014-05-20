@@ -71,6 +71,7 @@
             android:name="com.hoccer.xo.android.XoApplication"
             android:allowBackup="false"
             android:icon="@drawable/gw_icon100x100"
+            android:logo="@drawable/gw_icon100x100"
             android:label="Wings"
             android:theme="@style/AppTheme">
 
@@ -81,8 +82,8 @@
 
         <!--API key for Google Maps Android API v2 for release certificate-->
         <!--<meta-data-->
-        <!--android:name="com.google.android.maps.v2.API_KEY"-->
-        <!--android:value="AIzaSyBDd2wBF1gH9UcU2KcAPXXKI9G6HQattkM"/>-->
+                <!--android:name="com.google.android.maps.v2.API_KEY"-->
+                <!--android:value="AIzaSyC9hBvAarkQ9ktS0rWZ5Row-MXRatv8Dj0"/>-->
 
         <!-- API key for Google Maps Android API v2 based on debug certificate -->
         <meta-data
