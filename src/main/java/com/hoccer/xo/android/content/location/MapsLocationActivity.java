@@ -68,19 +68,8 @@ public class MapsLocationActivity extends XoActivity
     }
 
     @Override
-    protected void applicationWillEnterBackground() {
-
-    }
-
-    @Override
-    protected void applicationWillEnterForeground() {
-
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-        
         // get the map fragment
         if(mMapFragment == null) {
             mMapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.maps_location_map);

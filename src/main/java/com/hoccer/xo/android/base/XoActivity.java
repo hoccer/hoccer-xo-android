@@ -731,9 +731,6 @@ public abstract class XoActivity extends FragmentActivity {
 
     public void selectAvatar() {
         LOG.debug("selectAvatar()");
-
-        setBackgroundActive();
-
         mAvatarSelection = ContentRegistry.get(this).selectAvatar(this, REQUEST_SELECT_AVATAR);
     }
 
