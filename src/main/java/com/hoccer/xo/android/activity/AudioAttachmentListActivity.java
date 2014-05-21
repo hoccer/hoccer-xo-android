@@ -1,10 +1,8 @@
 package com.hoccer.xo.android.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import com.hoccer.xo.android.base.XoActionbarActivity;
-import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.AudioAttachmentListFragment;
 import com.hoccer.xo.release.R;
 

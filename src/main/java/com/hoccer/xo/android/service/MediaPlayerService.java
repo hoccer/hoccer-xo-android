@@ -228,9 +228,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     private void updateMetaDataView(RemoteViews views) {
-        String title = getString(R.string.unknown_title);
-        String artist = getString(R.string.unkown_artist);
-        String metaDataTitle = mMediaMetaData.getTitle(getResources().getString(R.string.app_name));
+        String title = getString(R.string.media_meta_data_unknown_title);
+        String artist = getString(R.string.media_meta_data_unknown_artist);
+        String metaDataTitle = mMediaMetaData.getTitle();
         String metaDataArtist = mMediaMetaData.getArtist();
         boolean metaDataAvailable = false;
         if (metaDataTitle != null && !metaDataTitle.isEmpty()) {
@@ -324,6 +324,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mCurrentPlaylist = playlist;
     }
 
+    public MediaPlaylist getCurrentPlaylist() {
+        return mCurrentPlaylist;
+    }
+
     public void resume() {
         play(true);
     }
@@ -396,10 +400,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     public void setSeekPosition(int position) {
-        long totalDuration = getTotalDuration();
-        int currentPosition = progressToTimer(position, (int) totalDuration);
-
-        mMediaPlayer.seekTo(currentPosition);
+        mMediaPlayer.seekTo(position);
     }
 
     private void removeNotification() {
@@ -439,11 +440,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         return stopped;
     }
 
-    public long getTotalDuration() {
+    public int getTotalDuration() {
         return (isStopped()) ? 0 : mMediaPlayer.getDuration();
     }
 
-    public long getCurrentPosition() {
+    public int getCurrentPosition() {
         return (isStopped()) ? 0 : mMediaPlayer.getCurrentPosition();
     }
 
@@ -453,15 +454,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     private void setCurrentMediaFilePath(String currentMediaFilePath) {
         mCurrentMediaFilePath = currentMediaFilePath;
-    }
-
-    private int progressToTimer(int progress, int totalDuration) {
-        int currentDuration = 0;
-        totalDuration = (int) (totalDuration / 1000);
-        currentDuration = (int) ((((double) progress) / 100) * totalDuration);
-
-        // return current duration in milliseconds
-        return currentDuration * 1000;
     }
 
     @Override

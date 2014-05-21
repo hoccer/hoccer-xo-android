@@ -1,18 +1,5 @@
 package com.hoccer.xo.android.content.location;
 
-import com.google.android.gms.maps.model.LatLng;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hoccer.talk.content.IContentObject;
-import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.ContentViewCache;
-import com.hoccer.xo.android.content.SelectedContent;
-import com.hoccer.xo.release.R;
-
-import org.apache.log4j.Logger;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -20,6 +7,16 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.gms.maps.model.LatLng;
+import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.content.ContentView;
+import com.hoccer.xo.android.content.ContentViewCache;
+import com.hoccer.xo.android.content.SelectedContent;
+import com.hoccer.xo.release.R;
+import org.apache.log4j.Logger;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

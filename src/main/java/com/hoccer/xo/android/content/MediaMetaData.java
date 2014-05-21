@@ -3,6 +3,7 @@ package com.hoccer.xo.android.content;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +22,20 @@ public class MediaMetaData {
     private MediaMetaData() {
     }
 
-    public String getTitle(String filePath) {
-        File file = new File(filePath);
-        return (mTitle != null) ? mTitle : file.getName();
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public String getTitleOrFilename(String pFilePath) {
+        if (mTitle == null || mTitle.isEmpty()) {
+            File file = new File(pFilePath);
+            return file.getName();
+        }
+        return mTitle;
     }
 
     public String getArtist() {
-        return (mArtist != null) ? mArtist : "Unknown Artist";
+        return mArtist;
     }
 
     public String getAlbumTitle() {

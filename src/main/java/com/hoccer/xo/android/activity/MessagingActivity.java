@@ -1,7 +1,14 @@
 package com.hoccer.xo.android.activity;
 
-import android.content.*;
+import android.app.ActionBar;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.PopupMenu;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -14,11 +21,6 @@ import com.hoccer.xo.android.fragment.MessagingFragment;
 import com.hoccer.xo.android.gesture.Gestures;
 import com.hoccer.xo.android.gesture.MotionInterpreter;
 import com.hoccer.xo.release.R;
-
-import android.app.ActionBar;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import java.sql.SQLException;
 
@@ -201,6 +203,16 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
         }
         // invalidate menu so that profile buttons get disabled/enabled
         invalidateOptionsMenu();
+    }
+
+    @Override
+    protected void applicationWillEnterBackground() {
+        super.applicationWillEnterBackground();
+        if (mContact.isGroup() && mContact.getGroupPresence().isTypeNearby()) {
+            finish();
+        } else if (mContact.isClient() && mContact.isNearby()) {
+            finish();
+        }
     }
 
     @Override

@@ -1,20 +1,18 @@
 package com.hoccer.xo.android.fragment;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.adapter.NearbyContactsAdapter;
+import com.hoccer.xo.android.adapter.OnItemCountChangedListener;
 import com.hoccer.xo.android.base.XoListFragment;
-
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
-
-import android.os.Bundle;
 
 
 public class NearbyContactsFragment extends XoListFragment {
@@ -22,17 +20,19 @@ public class NearbyContactsFragment extends XoListFragment {
 
     private NearbyContactsAdapter mNearbyAdapter;
     private ListView mContactList;
-    private Button mAddContactButton;
-    private TextView mNoContactsTextView;
+
+    private ImageView mPlaceholderImage;
+
+    private TextView mPlaceholderText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         mContactList = (ListView) view.findViewById(android.R.id.list);
-        mAddContactButton = (Button) view.findViewById(R.id.contacts_pairing);
-        mNoContactsTextView = (TextView) view.findViewById(R.id.txt_no_contacts);
-        mAddContactButton.setVisibility(View.GONE);
-        mNoContactsTextView.setVisibility(View.GONE);
+        mPlaceholderImage = (ImageView) view.findViewById(R.id.iv_contacts_placeholder);
+        mPlaceholderImage.setImageResource(R.drawable.placeholder_nearby);
+        mPlaceholderText = (TextView) view.findViewById(R.id.tv_contacts_placeholder);
+        mPlaceholderText.setText(R.string.placeholder_nearby_text);
         return view;
     }
 
@@ -42,6 +42,16 @@ public class NearbyContactsFragment extends XoListFragment {
         mNearbyAdapter = new NearbyContactsAdapter(getXoDatabase(), getXoActivity());
         mNearbyAdapter.retrieveDataFromDb();
         mNearbyAdapter.registerListeners();
+        mNearbyAdapter.setOnItemCountChangedListener(new OnItemCountChangedListener() {
+            @Override
+            public void onItemCountChanged(int count) {
+                if (count > 0) {
+                    hidePlaceholder();
+                } else if (count < 1) {
+                    showPlaceholder();
+                }
+            }
+        });
     }
 
     @Override
@@ -57,8 +67,18 @@ public class NearbyContactsFragment extends XoListFragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         mNearbyAdapter.unregisterListeners();
+        super.onDestroy();
+    }
+
+    private void showPlaceholder() {
+        mPlaceholderImage.setVisibility(View.VISIBLE);
+        mPlaceholderText.setVisibility(View.VISIBLE);
+    }
+
+    private void hidePlaceholder() {
+        mPlaceholderImage.setVisibility(View.GONE);
+        mPlaceholderText.setVisibility(View.GONE);
     }
 
     @Override

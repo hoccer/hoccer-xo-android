@@ -53,6 +53,8 @@
 
     <!-- Composition fragment -->
     <string name="composition_text_hint">Type message</string>
+    <string name="composition_alert_empty_group_title">Can Not Send Message</string>
+    <string name="composition_alert_empty_group_text">You can not send a message to this group because there are no members except you. Please invite friends to this group.</string>
 
     <!-- Messaging fragment -->
     <string name="messaging_loading">Loading...</string>
@@ -209,8 +211,9 @@
     </string>
 
     <!-- Media Player -->
-    <string name="unknown_title">Unknown title</string>
-    <string name="unkown_artist">Unknown artist</string>
+    <string name="media_meta_data_unknown_title">Unknown title</string>
+    <string name="media_meta_data_unknown_artist">Unknown artist</string>
+    <string name="media_player_playlist_track_divider">of</string>
 
     <!-- Preferences -->
     <string name="preference_keysize_summary">Renew RSA key with selected size</string>
@@ -219,7 +222,11 @@
     <string name="pref_auto_downloads_mobile">On mobile networks</string>
     <string name="pref_auto_download_wifi">On wireless networks</string>
     <string name="pref_auto_download">Automatic downloads</string>
+    <string name="pref_credentials">Credentials</string>
+    <string name="pref_export_credentials">Export credentials</string>
+    <string name="pref_import_credentials">Import credentials</string>
     <string name="pref_legal_information">Legal Information</string>
+    <string name="pref_encryption">Encryption</string>
     <string name="pref_crash_report">Send report after app crashed</string>
     <string name="pref_crash_report_switcher">Enable reporting</string>
     <string name="pref_please_wait">Please wait...</string>
@@ -232,9 +239,20 @@
     <string name="error_avatar_selection">The image you\'ve selected is not suitable as Avatar.
     </string>
     <string name="sms_invitation_text">Hey! I\'m now using the free app Hoccer XO for secure
-        chatting. Download it now: http://hoccer.com/ Then add me as a contact: hxo://%1$s
-        \nxo %1$s
+        chatting. Download it now: http://hoccer.com/ Then add me as a contact: %1$s%2$s
+        \nxo %3$s
     </string>
+    <string name="export_credentials_dialog_title">Export credentials</string>
+    <string name="export_credentials_success">Successfully saved your credentials.</string>
+    <string name="export_credentials_failure">Error while saving your credentials.</string>
+
+    <string name="import_credentials_dialog_title">Import credentials</string>
+    <string name="import_credentials_success">Successfully imported your credentials.\nPlease restart the app.</string>
+    <string name="import_credentials_failure">Error while importing your credentials.</string>
+
+    <string name="enter_password">Passwort:</string>
+    <string name="no_password">Please enter a Password.</string>
+    <string name="cant_find_credentials">Can\'t find "credentials.json" on your device.</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>
@@ -249,10 +267,13 @@
     </string-array>
 
     <string-array name="tab_names">
-        <item>CONVERSATIONS</item>
+        <item>CHATS</item>
         <item>NEARBY</item>
     </string-array>
 
     <string name="preference_database_title">Local Database</string>
+    <string name="placeholder_conversations_text">Invite friends to chat with!</string>
+    <string name="placeholder_nearby_text">Waiting for others nearby...</string>
+    <string name="actionbar_default_title">Hoccer</string>
 
 </resources>

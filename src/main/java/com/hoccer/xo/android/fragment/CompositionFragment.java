@@ -1,5 +1,16 @@
 package com.hoccer.xo.android.fragment;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.*;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
@@ -9,22 +20,6 @@ import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.gesture.Gestures;
 import com.hoccer.xo.android.gesture.MotionGestureListener;
 import com.hoccer.xo.release.R;
-
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 public class CompositionFragment extends XoFragment implements View.OnClickListener,
         View.OnLongClickListener, MotionGestureListener {
@@ -107,6 +102,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             }
         };
         mTextEdit.addTextChangedListener(mTextWatcher);
+
     }
 
     @Override
@@ -177,8 +173,17 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         mAttachment = null;
     }
 
+    private boolean isSendMessagePossible() {
+        return !(mContact.isGroup() && mContact.getGroupMemberships().size() == 1);
+    }
+
     private void sendComposedMessage() {
         if (mContact == null) {
+            return;
+        }
+
+        if (!isSendMessagePossible()) {
+            showAlertSendMessageNotPossible();
             return;
         }
 
@@ -195,6 +200,21 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         getXoClient()
                 .requestDelivery(getXoClient().composeClientMessage(mContact, messageText, upload));
         clearComposedMessage();
+    }
+
+    private void showAlertSendMessageNotPossible() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
+        builder.setTitle(R.string.composition_alert_empty_group_title);
+        builder.setMessage(R.string.composition_alert_empty_group_text);
+        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                dialog.dismiss();
+            }
+        });
+
+        Dialog dialog = builder.create();
+        dialog.show();
     }
 
     @Override

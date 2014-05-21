@@ -3,12 +3,13 @@ package com.hoccer.xo.android.content.audio;
 /**
  * Created by alexw on 06.05.14.
  */
+
+import android.util.Log;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import android.util.Log;
 
 public class MusicLoader {
         private ArrayList<HashMap<String, String>> songsList = new ArrayList<HashMap<String, String>>();

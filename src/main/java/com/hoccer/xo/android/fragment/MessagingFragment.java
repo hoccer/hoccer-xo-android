@@ -1,5 +1,12 @@
 package com.hoccer.xo.android.fragment;
 
+import android.animation.Animator;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.*;
+import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.adapter.ConversationAdapter;
 import com.hoccer.xo.android.base.XoAdapter;
@@ -7,21 +14,7 @@ import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.android.view.OnOverscrollListener;
 import com.hoccer.xo.android.view.OverscrollListView;
 import com.hoccer.xo.release.R;
-
 import org.apache.log4j.Logger;
-
-import android.animation.Animator;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.TextView;
 
 /**
  * Fragment for conversations

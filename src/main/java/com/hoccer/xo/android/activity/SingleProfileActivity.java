@@ -1,20 +1,18 @@
 package com.hoccer.xo.android.activity;
 
+import android.app.ActionBar;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.Menu;
+import android.view.View;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.model.TalkRelationship;
 import com.hoccer.xo.android.base.XoActionbarActivity;
-import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.SingleProfileFragment;
 import com.hoccer.xo.android.fragment.StatusFragment;
 import com.hoccer.xo.release.R;
-
-import android.app.ActionBar;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.View;
 
 import java.sql.SQLException;
 
@@ -104,7 +102,7 @@ public class SingleProfileActivity extends XoActionbarActivity
                 menu.findItem(R.id.menu_profile_unblock).setVisible(false);
             } else {
                 TalkRelationship relationship = contact.getClientRelationship();
-                if (relationship == null || relationship.isBlocked()) {
+                if (relationship == null || relationship.isBlocked()) { // todo != null correct
                     menu.findItem(R.id.menu_profile_block).setVisible(false);
                     menu.findItem(R.id.menu_profile_unblock).setVisible(true);
                 } else {

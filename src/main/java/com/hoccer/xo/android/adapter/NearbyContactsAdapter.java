@@ -28,15 +28,16 @@ import java.util.List;
 public class NearbyContactsAdapter extends BaseAdapter implements IXoContactListener, IXoMessageListener, IXoTransferListener {
     private XoClientDatabase mDatabase;
     private XoActivity mXoActivity;
-    private Logger LOG = null;
+    private Logger LOG = Logger.getLogger(NearbyContactsAdapter.class);
 
     private List<TalkClientContact> mNearbyContacts = new ArrayList<TalkClientContact>();
+
+    private OnItemCountChangedListener mOnItemCountChangedListener;
 
     public NearbyContactsAdapter(XoClientDatabase db, XoActivity xoActivity) {
         super();
         mDatabase = db;
         mXoActivity = xoActivity;
-        LOG = Logger.getLogger(getClass());
     }
 
     @Override
@@ -63,6 +64,10 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         return convertView;
     }
 
+    public void setOnItemCountChangedListener(OnItemCountChangedListener listener) {
+        mOnItemCountChangedListener = listener;
+    }
+
     public void registerListeners() {
         mXoActivity.getXoClient().registerContactListener(this);
         mXoActivity.getXoClient().registerTransferListener(this);
@@ -77,13 +82,16 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     public void retrieveDataFromDb() {
         try {
-            mNearbyContacts = mDatabase.findAllNearbyGroupContacts();
-            mNearbyContacts.addAll(mDatabase.findAllNearbyClientContacts());
+            int currentItemCount = mNearbyContacts.size();
+            mNearbyContacts = mDatabase.findAllNearbyContacts();
             for (TalkClientContact contact : mNearbyContacts) {
                 TalkClientDownload avatarDownload = contact.getAvatarDownload();
                 if (avatarDownload != null) {
                     mDatabase.refreshClientDownload(avatarDownload);
                 }
+            }
+            if(mOnItemCountChangedListener != null && currentItemCount != mNearbyContacts.size()) {
+                mOnItemCountChangedListener.onItemCountChanged(mNearbyContacts.size());
             }
         } catch (SQLException e) {
             e.printStackTrace();

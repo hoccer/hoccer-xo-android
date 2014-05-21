@@ -12,13 +12,13 @@ import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
-//import com.hoccer.xo.android.content.audio.ButtonAudioViewCache;
 import com.hoccer.xo.android.content.audio.AudioViewCache;
 import com.hoccer.xo.android.content.audio.MusicSelector;
 import com.hoccer.xo.android.content.clipboard.ClipboardSelector;
 import com.hoccer.xo.android.content.data.DataViewCache;
-import com.hoccer.xo.android.content.image.*;
+import com.hoccer.xo.android.content.image.ImageSelector;
 import com.hoccer.xo.android.content.image.ImageViewCache;
+import com.hoccer.xo.android.content.image.VideoSelector;
 import com.hoccer.xo.android.content.image.VideoViewCache;
 import com.hoccer.xo.android.content.location.LocationViewCache;
 import com.hoccer.xo.android.content.location.MapsLocationSelector;
@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+//import com.hoccer.xo.android.content.audio.ButtonAudioViewCache;
 
 /**
  * Content registry
@@ -159,7 +161,7 @@ public class ContentRegistry {
 
     public static String humanReadableByteCount(long bytes, boolean si) {
         int unit = si ? 1000 : 1024;
-        if (bytes < unit) return bytes + " B";
+        if (bytes < unit) { return bytes + " B"; }
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);

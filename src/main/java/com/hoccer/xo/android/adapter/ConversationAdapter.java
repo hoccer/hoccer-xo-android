@@ -1,5 +1,9 @@
 package com.hoccer.xo.android.adapter;
 
+import android.text.format.DateUtils;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 import com.hoccer.talk.client.IXoMessageListener;
 import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -14,12 +18,6 @@ import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.IContentViewListener;
 import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
-
-import android.text.format.DateUtils;
-import android.text.method.LinkMovementMethod;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.sql.SQLException;
 import java.util.Date;

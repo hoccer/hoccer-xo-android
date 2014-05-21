@@ -1,13 +1,5 @@
 package com.hoccer.xo.android.adapter;
 
-import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.client.model.TalkClientDownload;
-import com.hoccer.talk.client.model.TalkClientMessage;
-import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.view.AvatarView;
-import com.hoccer.xo.release.R;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -15,6 +7,13 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.TextView;
+import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientMessage;
+import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.view.AvatarView;
+import com.hoccer.xo.release.R;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;

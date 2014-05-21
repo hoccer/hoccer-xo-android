@@ -1,10 +1,5 @@
 package com.hoccer.xo.android.content.audio;
 
-import com.hoccer.talk.content.IContentObject;
-import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.ContentViewCache;
-import com.hoccer.xo.release.R;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,6 +7,10 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.content.ContentView;
+import com.hoccer.xo.android.content.ContentViewCache;
+import com.hoccer.xo.release.R;
 
 import java.io.File;
 

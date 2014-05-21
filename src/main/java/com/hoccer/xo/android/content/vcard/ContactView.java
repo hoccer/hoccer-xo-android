@@ -1,12 +1,5 @@
 package com.hoccer.xo.android.content.vcard;
 
-import com.hoccer.talk.content.ContentDisposition;
-import com.hoccer.talk.content.IContentObject;
-import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.release.R;
-
-import org.apache.log4j.Logger;
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -17,6 +10,13 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.hoccer.talk.content.ContentDisposition;
+import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.release.R;
+import ezvcard.Ezvcard;
+import ezvcard.VCard;
+import org.apache.log4j.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -24,9 +24,6 @@ import java.io.InputStream;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-
-import ezvcard.Ezvcard;
-import ezvcard.VCard;
 
 public class ContactView extends RelativeLayout implements View.OnClickListener {
 
