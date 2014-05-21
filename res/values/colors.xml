@@ -13,4 +13,6 @@
     <color name="xo_content_horizontal_divider">#d1d6e4</color>
     <color name="xo_menu_text">#ffffff</color>
     <color name="xo_media_player_secondary_text">#aaaaaaaa</color>
+    <color name="xo_audio_attachment_item_title_text">#040404</color>
+    <color name="xo_audio_attachment_item_artist_text">#343434</color>
 </resources>

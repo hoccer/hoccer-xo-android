@@ -6,7 +6,7 @@
                 android:padding="10dp">
     <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="match_parent"
             android:id="@+id/hoccer_music_image"
             android:src="@drawable/ic_notification_music"
             android:layout_gravity="center"
@@ -17,7 +17,7 @@
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="match_parent"
             android:layout_toRightOf="@+id/hoccer_music_image"
             android:gravity="center_vertical"
             android:visibility="gone"
@@ -34,7 +34,7 @@
                 android:id="@+id/media_metadata_artist_text"/>
     </LinearLayout>
     <TextView android:layout_width="wrap_content"
-              android:layout_height="fill_parent"
+              android:layout_height="match_parent"
               android:textAppearance="?android:attr/textAppearanceMedium"
               android:layout_toRightOf="@id/hoccer_music_image"
               android:gravity="center"

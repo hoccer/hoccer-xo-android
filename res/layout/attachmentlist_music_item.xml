@@ -1,58 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:descendantFocusability="blocksDescendants"
                 android:background="@drawable/music_viewer_selector"
                 android:padding="5dp">
 
-    <LinearLayout android:id="@+id/attachmentlist_item_thumbnail_layout"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
+    <ImageView
+            android:id="@+id/item_thumbnail_layout"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/media_cover_art_default"
+            android:layout_marginRight="5dp"
+            />
 
-                  android:padding="3dip"
-                  android:layout_alignParentLeft="true"
-                  android:layout_marginRight="5dip">
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="vertical"
+                  android:layout_toRightOf="@+id/item_thumbnail_layout"
+                  android:layout_centerVertical="true">
 
-        <ImageView
-                android:id="@+id/attachmentlist_item_image"
-                android:layout_width="60dip"
-                android:layout_height="60dip"
-                android:src="@drawable/media_cover_art_default"/>
-
+        <TextView
+                android:id="@+id/attachmentlist_item_title_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/media_meta_data_unknown_title"
+                android:textColor="@color/xo_audio_attachment_item_title_text"
+                android:textSize="15dip"
+                android:textStyle="bold"/>
+        <TextView
+                android:id="@+id/attachmentlist_item_artist_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/xo_audio_attachment_item_artist_text"
+                android:textSize="10dip"
+                android:layout_marginTop="1dip"
+                android:text="@string/media_meta_data_unknown_artist"/>
     </LinearLayout>
 
-    <TextView
-            android:id="@+id/attachmentlist_item_title_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/attachmentlist_item_thumbnail_layout"
-            android:layout_toRightOf="@+id/attachmentlist_item_thumbnail_layout"
-            android:text="Unknown Title"
-            android:textColor="#040404"
-            android:textSize="15dip"
-            android:textStyle="bold"/>
-
-    <TextView
-            android:id="@+id/attachmentlist_item_artist_name"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/attachmentlist_item_title_name"
-            android:textColor="#343434"
-            android:textSize="10dip"
-            android:layout_marginTop="1dip"
-            android:layout_toRightOf="@+id/attachmentlist_item_thumbnail_layout"
-            android:text="Uknown Artist" />
 
     <ImageView
             android:id="@+id/attachmentlist_item_playpause_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:visibility="gone"
             android:background="@null"
-            android:scaleX="0.75"
-            android:scaleY="0.75"
             android:src="@drawable/ic_playing"/>
+
+
 </RelativeLayout>

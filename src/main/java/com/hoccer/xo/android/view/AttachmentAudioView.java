@@ -40,13 +40,9 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
 
         addView(inflate(mContext, R.layout.attachmentlist_music_item, null));
 
-        Intent intent = new Intent(mContext, MediaPlayerService.class);
-        mContext.startService(intent);
-        bindService(intent);
-
         mTitleTextView = ((TextView) findViewById(R.id.attachmentlist_item_title_name));
         mArtistTextView = ((TextView) findViewById(R.id.attachmentlist_item_artist_name));
-        mArtworkImageView = ((ImageView) findViewById(R.id.attachmentlist_item_image));
+        mArtworkImageView = ((ImageView) findViewById(R.id.item_thumbnail_layout));
     }
 
     public void setTitleTextView(String titleName) {
@@ -88,14 +84,19 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
 
     public boolean isActive() {
         if (isBound()) {
-            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && (("file://" + mMediaItem.getFilePath()).equals(mMediaPlayerService.getCurrentMediaFilePath()));
+            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && ((mMediaItem.getFilePath()).equals(mMediaPlayerService.getCurrentMediaFilePath()));
         } else {
             return false;
         }
     }
 
     private void updatePlayPauseView() {
-        findViewById(R.id.attachmentlist_item_playpause_button).setVisibility((isActive()) ? View.VISIBLE : View.GONE);
+        View view = findViewById(R.id.attachmentlist_item_playpause_button);
+        if (isActive()) {
+            view.setVisibility(View.VISIBLE);
+        } else {
+            view.setVisibility(View.GONE);
+        }
     }
 
     @Override
