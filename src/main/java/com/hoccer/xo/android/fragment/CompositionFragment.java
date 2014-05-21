@@ -5,6 +5,7 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoConfiguration;
+import com.hoccer.xo.android.adapter.EmojiGridAdapter;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.gesture.Gestures;
@@ -23,7 +24,9 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -43,6 +46,8 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     private String mLastMessage = null;
 
     private ImageButton mAddAttachmentButton;
+
+    private GridView mEmojiGrid;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,7 +82,19 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
         mAddAttachmentButton = (ImageButton) v
                 .findViewById(R.id.btn_messaging_composer_add_attachment);
-        mAddAttachmentButton.setOnClickListener(new AddAttachmentOnClickListener());
+        mAddAttachmentButton.setOnClickListener(this);
+
+        ImageButton emojiButton = (ImageButton) v.findViewById(R.id.btn_messaging_composer_emoji);
+        emojiButton.setOnClickListener(this);
+
+        mEmojiGrid = (GridView) v.findViewById(R.id.gv_emojis);
+        mEmojiGrid.setAdapter(new EmojiGridAdapter());
+        mEmojiGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                mTextEdit.append((String) adapterView.getItemAtPosition(position));
+            }
+        });
 
         return v;
     }
@@ -122,7 +139,22 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        sendComposedMessage();
+        switch(v.getId()) {
+            case R.id.btn_messaging_composer_send:
+                sendComposedMessage();
+                break;
+            case R.id.btn_messaging_composer_emoji:
+                triggerEmojiSelectionView();
+                break;
+            case R.id.btn_messaging_composer_add_attachment:
+                getXoActivity().selectAttachment();
+                break;
+        }
+
+    }
+
+    private void triggerEmojiSelectionView() {
+        mEmojiGrid.setVisibility(mEmojiGrid.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -174,7 +206,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     private void clearAttachment() {
-        mAddAttachmentButton.setOnClickListener(new AddAttachmentOnClickListener());
+        mAddAttachmentButton.setOnClickListener(this);
         mAddAttachmentButton.setImageResource(R.drawable.ic_light_content_attachment);
         mAttachment = null;
     }
@@ -245,14 +277,6 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         if (isComposed()) {
             getXoSoundPool().playThrowSound();
             sendComposedMessage();
-        }
-    }
-
-    private class AddAttachmentOnClickListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            getXoActivity().selectAttachment();
         }
     }
 
