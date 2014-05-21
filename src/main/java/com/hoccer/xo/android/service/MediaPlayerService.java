@@ -83,6 +83,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     @Override
     public void onDestroy() {
         super.onDestroy();
+        stop();
         unregisterPlaylistTransferListener();
     }
 
