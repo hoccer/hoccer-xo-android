@@ -3,6 +3,7 @@ package com.hoccer.xo.android.content.vcard;
 import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
 
 import org.apache.log4j.Logger;
@@ -32,7 +33,7 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
 
     private static final Logger LOG = Logger.getLogger(ContactView.class);
 
-    Activity mActivity;
+    XoActivity mActivity;
 
     RelativeLayout mRoot;
 
@@ -62,7 +63,7 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
     }
 
     private void initialize(Activity activity) {
-        mActivity = activity;
+        mActivity = (XoActivity)activity;
         mRoot = (RelativeLayout) inflate(activity, R.layout.content_vcard, null);
         mRoot.setVisibility(INVISIBLE);
         addView(mRoot);
@@ -123,14 +124,14 @@ public class ContactView extends RelativeLayout implements View.OnClickListener 
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.parse(mContent.getContentDataUrl()),
                         mContent.getContentType());
-                mActivity.startActivity(intent);
+                mActivity.startExternalActivity(intent);
             }
         }
         if (v == mShowButton) {
             LOG.debug("onClick(showButton)");
             if (isContentShowable()) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mContent.getContentUrl()));
-                mActivity.startActivity(intent);
+                mActivity.startExternalActivity(intent);
             }
         }
     }
