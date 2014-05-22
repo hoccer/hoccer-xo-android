@@ -57,8 +57,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                MediaPlaylist playlist = MediaPlaylist.create(mAttachmentListAdapter.getAttachments());
-                playlist.setConversationContactId(mAttachmentListAdapter.getConversationContactId());
+                MediaPlaylist playlist = new MediaPlaylist(mAttachmentListAdapter.getAttachments(), mAttachmentListAdapter.getConversationContactId());
                 mMediaPlayerService.start(playlist, position);
                 getXoActivity().showFullscreenPlayer();
             }

@@ -71,7 +71,7 @@ public class AudioPlayerView
     private void startPlaying() {
         if (isBound()) {
             if (playlist == null) {
-                playlist = MediaPlaylist.create(contentObject.getContentDataUrl());
+                playlist = new MediaPlaylist(contentObject.getContentDataUrl());
             }
             mMediaPlayerService.start(playlist);
         }

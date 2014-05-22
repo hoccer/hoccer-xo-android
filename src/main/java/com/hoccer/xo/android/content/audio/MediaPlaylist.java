@@ -22,23 +22,15 @@ public class MediaPlaylist implements ListIterator<MediaItem>, IXoTransferListen
     private int mCurrentIndex = 0;
     private boolean mIsUpdatable = true;
 
-    private MediaPlaylist() {
+    public MediaPlaylist(String mediaFilePath) {
+        mPlaylistItems.add(MediaItem.create(mediaFilePath));
     }
 
-    public static MediaPlaylist create(String mediaFilePath) {
+    public MediaPlaylist(List<TalkClientDownload> mAudioAttachmentList, int conversationContactId) {
 
-        MediaPlaylist pl = new MediaPlaylist();
-        pl.mPlaylistItems.add(MediaItem.create(mediaFilePath));
-        return pl;
-    }
-
-    public static MediaPlaylist create(List<TalkClientDownload> mAudioAttachmentList) {
-
-        MediaPlaylist pl = new MediaPlaylist();
         for (TalkClientDownload tcd : mAudioAttachmentList) {
-            pl.mPlaylistItems.add(MediaItem.create(tcd.getContentDataUrl()));
+            mPlaylistItems.add(MediaItem.create(tcd.getContentDataUrl()));
         }
-        return pl;
     }
 
     public int getCurrentIndex() {
@@ -59,10 +51,6 @@ public class MediaPlaylist implements ListIterator<MediaItem>, IXoTransferListen
 
     public void setUpdatable(boolean isUpdatable) {
         mIsUpdatable = isUpdatable;
-    }
-
-    public void setConversationContactId(int pConversationContactId) {
-        mConversationContactId = pConversationContactId;
     }
 
     public int size() {
