@@ -15,9 +15,16 @@ import java.util.ListIterator;
 
 public class MediaPlaylist implements ListIterator<MediaItem>, IXoTransferListener {
 
+
+    public static enum RepeatMode {
+        REPEAT_TRACK, REPEAT_ALL, NO_REPEAT;
+    }
+
     public static final int UNDEFINED_CONTACT_ID = -1;
 
     private List<MediaItem> mPlaylistItems = new ArrayList<MediaItem>();
+
+    private RepeatMode mRepeatMode = RepeatMode.NO_REPEAT;
     private int mConversationContactId = UNDEFINED_CONTACT_ID;
     private int mCurrentIndex = 0;
     private boolean mIsUpdatable = true;
@@ -69,6 +76,14 @@ public class MediaPlaylist implements ListIterator<MediaItem>, IXoTransferListen
         return mPlaylistItems.size();
     }
 
+    public RepeatMode getRepeatMode() {
+        return mRepeatMode;
+    }
+
+    public void setRepeatMode(RepeatMode repeatMode) {
+        this.mRepeatMode = repeatMode;
+    }
+
     @Override
     public boolean hasPrevious() {
         if (!mPlaylistItems.isEmpty()) {
@@ -91,9 +106,9 @@ public class MediaPlaylist implements ListIterator<MediaItem>, IXoTransferListen
 
     @Override
     public MediaItem previous() {
-        if ( mCurrentIndex == 0){
+        if (mCurrentIndex == 0) {
             mCurrentIndex = mPlaylistItems.size() - 1;
-        }else{
+        } else {
             --mCurrentIndex;
         }
         return mPlaylistItems.get(mCurrentIndex);
@@ -101,14 +116,28 @@ public class MediaPlaylist implements ListIterator<MediaItem>, IXoTransferListen
 
     @Override
     public MediaItem next() {
-        if ( mCurrentIndex == mPlaylistItems.size() - 1){
+        if (mCurrentIndex == mPlaylistItems.size() - 1) {
             mCurrentIndex = 0;
-        }else {
+        } else {
             ++mCurrentIndex;
         }
         return mPlaylistItems.get(mCurrentIndex);
     }
 
+    public MediaItem nextByRepeatMode() {
+        switch (mRepeatMode) {
+            case NO_REPEAT:
+                if (hasNext()) {
+                    return mPlaylistItems.get(++mCurrentIndex);
+                }
+            case REPEAT_ALL:
+                return next();
+            case REPEAT_TRACK:
+                return current();
+            default:
+                return null;
+        }
+    }
 
     @Override
     public int previousIndex() {
@@ -164,7 +193,7 @@ public class MediaPlaylist implements ListIterator<MediaItem>, IXoTransferListen
             e.printStackTrace();
         }
 
-        if(download.getContentMediaType().equals(ContentMediaType.AUDIO)){
+        if (download.getContentMediaType().equals(ContentMediaType.AUDIO)) {
             if (mConversationContactId == contactId) {
                 MediaItem newItem = MediaItem.create(download.getContentDataUrl());
                 mPlaylistItems.add(newItem);

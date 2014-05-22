@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -21,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.hoccer.xo.android.content.MediaMetaData;
+import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -213,19 +215,34 @@ public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeek
             @Override
             public void onClick(View view) {
 
-                mMediaPlayerService.playPrevious(true);
+                mMediaPlayerService.skipBackwards();
             }
         });
         mSkipForwardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                mMediaPlayerService.playNext(true);
+                mMediaPlayerService.skipForward();
             }
         });
         mRepeatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                MediaPlaylist.RepeatMode repeatMode = mMediaPlayerService.getCurrentPlaylist().getRepeatMode();
+                MediaPlaylist playlist = mMediaPlayerService.getCurrentPlaylist();
+
+                switch (repeatMode) {
+                    case NO_REPEAT:
+                        playlist.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_TRACK);
+                        mRepeatButton.setBackgroundColor(Color.GREEN);
+                    case REPEAT_TRACK:
+                        playlist.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_ALL);
+                        mRepeatButton.setBackgroundColor(Color.BLUE);
+                    case REPEAT_ALL:
+                        playlist.setRepeatMode(MediaPlaylist.RepeatMode.NO_REPEAT);
+                        mRepeatButton.setBackgroundColor(Color.TRANSPARENT);
+                }
+
             }
         });
         mShuffleButton.setOnClickListener(new View.OnClickListener() {
