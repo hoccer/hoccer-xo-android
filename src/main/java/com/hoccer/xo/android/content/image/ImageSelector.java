@@ -155,17 +155,18 @@ public class ImageSelector implements IContentSelector {
         int mimeTypeIndex = cursor.getColumnIndex(MediaStore.Images.Media.MIME_TYPE);
         int dataIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
         int sizeIndex = cursor.getColumnIndex(MediaStore.Images.Media.SIZE);
-        int widthIndex = cursor.getColumnIndex(MediaStore.Images.Media.WIDTH);
-        int heightIndex = cursor.getColumnIndex(MediaStore.Images.Media.HEIGHT);
+        // int widthIndex = cursor.getColumnIndex(MediaStore.Images.Media.WIDTH);
+        // int heightIndex = cursor.getColumnIndex(MediaStore.Images.Media.HEIGHT);
         int fileNameIndex = cursor.getColumnIndex(MediaStore.Images.Media.TITLE);
         int orientationIndex = cursor.getColumnIndex(MediaStore.Images.Media.ORIENTATION);
 
         String mimeType = cursor.getString(mimeTypeIndex);
         String filePath = cursor.getString(dataIndex);
-        int fileSize = cursor.getInt(sizeIndex);
-        int fileWidth = cursor.getInt(widthIndex);
-        int fileHeight = cursor.getInt(heightIndex);
         String fileName = cursor.getString(fileNameIndex);
+
+        int fileSize = cursor.getInt(sizeIndex);
+        int fileWidth = 0; // cursor.getInt(widthIndex);
+        int fileHeight = 0; // cursor.getInt(heightIndex);
         int orientation = cursor.getInt(orientationIndex);
         double aspectRatio;
 
@@ -177,10 +178,10 @@ public class ImageSelector implements IContentSelector {
 
         // Validating file size
         File file = new File(filePath);
-        int fileLength = (int) file.length();
-        if (fileSize != fileLength) {
+        int realFileSize = (int) file.length();
+        if (fileSize != realFileSize) {
             LOG.debug("File size from content database is not actual file size. Reading file size from actual file.");
-            fileSize = fileLength;
+            fileSize = realFileSize;
         }
 
         // Validating image measurements
