@@ -79,12 +79,22 @@ public class MediaPlaylist implements ListIterator<MediaItem>, IXoTransferListen
 
     @Override
     public MediaItem previous() {
-        return mPlaylistItems.get(--mCurrentIndex);
+        if ( mCurrentIndex == 0){
+            mCurrentIndex = mPlaylistItems.size() - 1;
+        }else{
+            --mCurrentIndex;
+        }
+        return mPlaylistItems.get(mCurrentIndex);
     }
 
     @Override
     public MediaItem next() {
-        return mPlaylistItems.get(++mCurrentIndex);
+        if ( mCurrentIndex == mPlaylistItems.size() - 1){
+            mCurrentIndex = 0;
+        }else {
+            ++mCurrentIndex;
+        }
+        return mPlaylistItems.get(mCurrentIndex);
     }
 
 

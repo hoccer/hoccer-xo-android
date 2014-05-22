@@ -2,16 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/music_fullscreen_gradient_bg">
+                android:background="@drawable/view_player_bg"
+                android:padding="8dp">
 
     <RelativeLayout
             android:id="@+id/ll_player_playlist_track_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="10dp">
+            android:layout_marginLeft="8dp">
 
         <TextView
                 android:id="@+id/tv_player_current_track_no"
@@ -45,52 +44,40 @@
 
     </RelativeLayout>
 
-    <LinearLayout
-            android:id="@+id/ll_player_artwork_container"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/ll_player_playlist_track_container"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:gravity="center">
-        <ImageView android:id="@+id/iv_player_artwork"
-                   android:layout_width="fill_parent"
-                   android:layout_height="300dp"
-                   android:src="@drawable/media_cover_art_default"/>
-    </LinearLayout>
+    <ImageView android:id="@+id/iv_player_artwork"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_below="@id/ll_player_playlist_track_container"
+               android:src="@drawable/media_cover_art_default"
+               android:gravity="center" android:layout_marginLeft="8dp" android:layout_marginRight="8dp"
+               android:layout_marginTop="8dp"/>
 
     <LinearLayout
             android:id="@+id/ll_player_track_description"
-            android:layout_width="fill_parent"
-            android:layout_height="65dip"
-            android:layout_below="@id/ll_player_artwork_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_player_artwork"
             android:orientation="vertical"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp">
+            android:layout_margin="8dp">
 
         <TextView
                 android:id="@+id/tv_player_track_title"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:text="@string/media_meta_data_unknown_title"
                 android:singleLine="true"
                 android:ellipsize="end"
                 android:fadingEdge="horizontal"
-                android:gravity="center_horizontal">
-            <requestFocus
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:duplicateParentState="true" />
-                </TextView>
+                android:gravity="center_horizontal"/>
         <TextView
                 android:id="@+id/tv_player_track_artist"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textColor="@color/xo_media_player_secondary_text"
-                android:textSize="16dp"
+                android:textSize="14sp"
                 android:text="@string/media_meta_data_unknown_artist"
                 android:lines="1"
                 android:singleLine="true"
@@ -100,114 +87,121 @@
 
     </LinearLayout>
 
-    <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="100dp"
-            android:orientation="vertical"
-            android:layout_alignParentBottom="true"
+    <RelativeLayout
+            android:id="@+id/ll_player_seekbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ll_player_track_description"
+            android:orientation="horizontal"
+            android:layout_margin="8dp"
             android:gravity="center">
 
 
+        <TextView
+                android:id="@+id/tv_player_current_time"
+                android:src="@drawable/ic_player_prev_default"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/xo_media_player_secondary_text"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:textSize="18sp"
+                android:text="0:00"
+                android:background="@null"/>
+
+        <SeekBar
+                android:id="@+id/pb_player_seek_bar"
+                android:layout_width="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_height="22dp"
+                android:layout_marginLeft="@dimen/media_player_layout_margin"
+                android:layout_marginRight="@dimen/media_player_layout_margin"
+                android:layout_toRightOf="@+id/tv_player_current_time"
+                android:layout_toLeftOf="@+id/tv_player_total_duration"
+                android:paddingLeft="@dimen/media_player_layout_margin"
+                android:paddingRight="@dimen/media_player_layout_margin"
+                android:thumb="@drawable/seekbar_player_control"
+                android:progressDrawable="@drawable/progress_horizontal_appbasetheme"/>
+
+        <TextView
+                android:id="@+id/tv_player_total_duration"
+                android:src="@drawable/ic_player_next_default"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="@color/xo_media_player_secondary_text"
+                android:textSize="18sp"
+                android:text="0:00"
+                android:layout_alignParentRight="true"
+                android:background="@null"/>
 
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <!-- Player Footer -->
-    <LinearLayout
+    <RelativeLayout
             android:id="@+id/ll_player_controls"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_alignParentBottom="false"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/ll_player_seekbar_container"
+            android:padding="@dimen/media_player_layout_margin"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp">
+            android:layout_alignParentBottom="true"
+            android:gravity="center">
 
-        <ImageButton
+        <ToggleButton
                 android:id="@+id/bt_player_shuffle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_player_shuffle"
                 android:layout_marginRight="20dp"
-                android:background="@null"/>
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:textOn=""
+                android:textOff=""
+                android:background="@drawable/btn_player_shuffle"/>
 
             <!-- Previous Button -->
             <ImageButton
                     android:id="@+id/bt_player_skip_back"
-                    android:src="@drawable/ic_player_prev"
+                    android:src="@drawable/ic_player_prev_default"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="25dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/bt_player_play"
                     android:background="@null"/>
 
             <!-- Play Button -->
-            <ImageButton
+            <ToggleButton
                     android:id="@+id/bt_player_play"
-                    android:src="@drawable/ic_player_pause"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@null"/>
+                    android:layout_height="72dp"
+                    android:background="@drawable/btn_player_play"
+                    android:text=""
+                    android:textOff=""
+                    android:textOn=""
+                    android:layout_centerInParent="true"/>
             <!-- Next Button -->
             <ImageButton
                     android:id="@+id/bt_player_skip_forward"
-                    android:src="@drawable/ic_player_next"
+                    android:src="@drawable/ic_player_next_default"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="25dp"
+                    android:layout_toRightOf="@+id/bt_player_play"
+                    android:layout_centerVertical="true"
                     android:background="@null"/>
         <ImageButton
                 android:id="@+id/bt_player_repeat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_player_repeat"
+                android:src="@drawable/ic_player_repeat_all_default"
                 android:layout_marginLeft="20dp"
-                android:background="@null"/>
+                android:background="@null"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
-    <LinearLayout
-            android:id="@+id/ll_player_seekbar_container"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/ll_player_track_description"
-            android:gravity="center">
-
-        <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp">
-
-            <TextView
-                    android:id="@+id/tv_player_current_time"
-                    android:src="@drawable/ic_player_prev"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/xo_media_player_secondary_text"
-                    android:background="@null"/>
-
-            <SeekBar
-                    android:id="@+id/pb_player_seek_bar"
-                    android:layout_width="250dp"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
-                    android:thumb="@drawable/seekbar_player_control"
-                    android:progressDrawable="@drawable/progress_horizontal_appbasetheme"/>
-
-            <TextView
-                    android:id="@+id/tv_player_total_duration"
-                    android:src="@drawable/ic_player_next"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/xo_media_player_secondary_text"
-                    android:background="@null"/>
-        </LinearLayout>
-
-
-    </LinearLayout>
 
 </RelativeLayout>
