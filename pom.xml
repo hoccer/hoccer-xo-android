@@ -59,13 +59,6 @@
             <version>${universal.image.loader.version}</version>
         </dependency>
 
-        <!-- ZXing barcode integration -->
-        <dependency>
-            <groupId>com.google.zxing</groupId>
-            <artifactId>android-integration</artifactId>
-            <version>${zxing.version}</version>
-        </dependency>
-
         <!-- Talk client library -->
         <dependency>
           <groupId>hoccer</groupId>
@@ -130,6 +123,20 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- ZXing barcode core-->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+
+        <!-- Zbar scanner-->
+        <dependency>
+            <groupId>inter.nal.barcodescanner</groupId>
+            <artifactId>zbar</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -163,7 +170,7 @@
                     <assetsDirectory>${project.basedir}/assets</assetsDirectory>
                     <resourceDirectory>${project.basedir}/res</resourceDirectory>
                     <resourceOverlayDirectory>${project.build.directory}/generated-resources</resourceOverlayDirectory>
-                    <nativeLibrariesDirectory>${project.basedir}/src/main/native</nativeLibrariesDirectory>
+                    <nativeLibrariesDirectory>${project.basedir}/libs</nativeLibrariesDirectory>
                     <extractDuplicates>true</extractDuplicates>
                     <sdk>
                         <platform>19</platform>

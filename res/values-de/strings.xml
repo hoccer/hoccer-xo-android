@@ -71,8 +71,12 @@
     <string name="pairing_token_generating">Erzeugen...</string>
     <string name="pairing_token_send_sms">Einladen via SMS</string>
     <string name="pairing_success">Kontakt wurde erfolgreich hinzugefügt</string>
+    <string name="paired_with">You successfully paired with </string>
+    <string name="pairing_incorrect_code">Incorrect code, please try again.</string>
     <string name="pairing_failure">Der Kontakt konnte nicht hinzugefügt werden</string>
     <string name="pairing_failure_description">Der eingegebene Code ist ungültig.</string>
+    <string name="pairing_scanner">QR scanner</string>
+    <string name="pairing_generator">QR identifier</string>
 
     <!-- Profile fragment -->
     <string name="profile_avatar_set_button">Mein Bild ändern</string>

@@ -60,6 +60,7 @@
     <!-- Wifi-Scanning for location grouping -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <!-- Declare permission for controlling our own push package -->
     <permission
@@ -198,6 +199,19 @@
         <activity
                 android:name="com.hoccer.xo.android.content.location.MapsLocationActivity"
                 android:label="@string/selectlocation_title">
+        </activity>
+
+
+        <!-- Test Qr generator activity -->
+        <activity
+                android:name="com.hoccer.xo.android.activity.QrCodeGeneratingActivity"
+                android:label="@string/pairing_generator">
+        </activity>
+
+        <!-- Test Qr scanner activity -->
+        <activity android:name="com.hoccer.xo.android.activity.QrScannerActivity"
+                  android:label="@string/pairing_scanner"
+                  android:screenOrientation="portrait">
         </activity>
 
         <!-- Connection and delivery service -->

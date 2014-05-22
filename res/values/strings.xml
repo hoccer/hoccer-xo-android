@@ -72,8 +72,12 @@
     <string name="pairing_token_generating">Generating...</string>
     <string name="pairing_token_send_sms">Send via SMS</string>
     <string name="pairing_success">Pairing succeeded</string>
+    <string name="paired_with">You successfully paired with </string>
+    <string name="pairing_incorrect_code">Incorrect code, please try again.</string>
     <string name="pairing_failure">Pairing failed</string>
     <string name="pairing_failure_description">The code you have entered is invalid.</string>
+    <string name="pairing_scanner">QR scanner</string>
+    <string name="pairing_generator">QR identifier</string>
 
     <!-- Profile fragment -->
     <string name="profile_avatar_set_button">Change my image</string>
