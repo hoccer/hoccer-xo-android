@@ -46,15 +46,13 @@ public class ImageSelector implements IContentSelector {
 
     @Override
     public Intent createSelectionIntent(Context context) {
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
         return intent;
     }
 
     public Intent createCropIntent(Context context, Uri data) {
-        Intent intent = new Intent("com.android.camera.action.CROP",
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent intent = new Intent("com.android.camera.action.CROP", android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
         intent.setDataAndType(data, "image/*");
         intent.putExtra("crop", "true");
@@ -84,10 +82,8 @@ public class ImageSelector implements IContentSelector {
 
     private SelectedContent createFromPicasa(final Context context, Intent intent) {
         Uri selectedContent = intent.getData();
-        final String[] filePathColumn = {MediaStore.MediaColumns.DATA,
-                MediaStore.MediaColumns.DISPLAY_NAME};
-        Cursor cursor = context.getContentResolver()
-                .query(selectedContent, filePathColumn, null, null, null);
+        final String[] filePathColumn = {MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DISPLAY_NAME, MediaStore.Images.Media.ORIENTATION};
+        Cursor cursor = context.getContentResolver().query(selectedContent, filePathColumn, null, null, null);
 
         if (cursor != null) {
             cursor.moveToFirst();
@@ -101,13 +97,24 @@ public class ImageSelector implements IContentSelector {
 
                     bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(imageFile));
 
+                    int fileWidth = bmp.getWidth();
+                    int fileHeight = bmp.getHeight();
+                    int orientation = 0;
+                    double aspectRatio = (double) bmp.getWidth() / (double) bmp.getHeight();
+
+                    int orientationIndex = cursor.getColumnIndex(MediaStore.Images.Media.ORIENTATION);
+                    if (orientationIndex != -1) {
+                        orientation = cursor.getInt(orientationIndex);
+                        aspectRatio = calculateAspectRatio(fileWidth, fileHeight, orientation);
+                    }
+                    LOG.debug("Aspect ratio: " + fileWidth + " x " + fileHeight + " @ " + aspectRatio + " / " + orientation + "°");
+
                     SelectedContent contentObject = new SelectedContent(intent, "file://" + imageFile.getAbsolutePath());
                     contentObject.setFileName(displayName);
                     contentObject.setContentType("image/jpeg");
                     contentObject.setContentMediaType("image");
                     contentObject.setContentLength((int) imageFile.length());
-                    contentObject.setContentAspectRatio(
-                            ((float) bmp.getWidth()) / ((float) bmp.getHeight()));
+                    contentObject.setContentAspectRatio(aspectRatio);
                     return contentObject;
                 } catch (FileNotFoundException e) {
                     LOG.error("Error while creating image from Picasa: ", e);
@@ -143,25 +150,29 @@ public class ImageSelector implements IContentSelector {
                 MediaStore.Images.Media.SIZE,
                 MediaStore.Images.Media.WIDTH,
                 MediaStore.Images.Media.HEIGHT,
-                MediaStore.Images.Media.TITLE
+                MediaStore.Images.Media.TITLE,
+                MediaStore.Images.Media.ORIENTATION
         };
 
-        Cursor cursor = context.getContentResolver().query(
-                selectedContent, filePathColumn, null, null, null);
+        Cursor cursor = context.getContentResolver().query(selectedContent, filePathColumn, null, null, null);
         cursor.moveToFirst();
 
-        int mimeTypeIndex = cursor.getColumnIndex(filePathColumn[0]);
+        int mimeTypeIndex = cursor.getColumnIndex(MediaStore.Images.Media.MIME_TYPE);
+        int dataIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+        int sizeIndex = cursor.getColumnIndex(MediaStore.Images.Media.SIZE);
+        int widthIndex = cursor.getColumnIndex(MediaStore.Images.Media.WIDTH);
+        int heightIndex = cursor.getColumnIndex(MediaStore.Images.Media.HEIGHT);
+        int fileNameIndex = cursor.getColumnIndex(MediaStore.Images.Media.TITLE);
+        int orientationIndex = cursor.getColumnIndex(MediaStore.Images.Media.ORIENTATION);
+
         String mimeType = cursor.getString(mimeTypeIndex);
-        int dataIndex = cursor.getColumnIndex(filePathColumn[1]);
         String filePath = cursor.getString(dataIndex);
-        int sizeIndex = cursor.getColumnIndex(filePathColumn[2]);
         int fileSize = cursor.getInt(sizeIndex);
-        int widthIndex = cursor.getColumnIndex(filePathColumn[3]);
         int fileWidth = cursor.getInt(widthIndex);
-        int heightIndex = cursor.getColumnIndex(filePathColumn[4]);
         int fileHeight = cursor.getInt(heightIndex);
-        int fileNameIndex = cursor.getColumnIndex(filePathColumn[5]);
         String fileName = cursor.getString(fileNameIndex);
+        int orientation = cursor.getInt(orientationIndex);
+        double aspectRatio;
 
         cursor.close();
 
@@ -169,32 +180,53 @@ public class ImageSelector implements IContentSelector {
             filePath = selectedContent.toString();
         }
 
+        // Validating file size
         File file = new File(filePath);
         int fileLength = (int) file.length();
         if (fileSize != fileLength) {
-            LOG.debug("file size from ContentDB is not actual Filesize. We use the real one.");
+            LOG.debug("File size from content database is not actual file size. Reading file size from actual file.");
             fileSize = fileLength;
         }
+
+        // Validating image measurements
+        if (fileWidth == 0 || fileHeight == 0) {
+            LOG.debug("Could not retrieve image measurements from content database. Will use values extracted from file instead.");
+
+            try {
+                Bitmap bmp = MediaStore.Images.Media.getBitmap(context.getContentResolver(), selectedContent);
+                fileWidth = bmp.getWidth();
+                fileHeight = bmp.getHeight();
+
+            } catch (IOException e) {
+                LOG.error("Error while creating image from file: " + filePath, e);
+
+                // safeguard
+                fileWidth = 1;
+                fileHeight = 1;
+            }
+        }
+
+        aspectRatio = calculateAspectRatio(fileWidth, fileHeight, orientation);
+
+        LOG.debug("Aspect ratio: " + fileWidth + " x " + fileHeight + " @ " + aspectRatio + " / " + orientation + "°");
 
         SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);
         contentObject.setFileName(fileName);
         contentObject.setContentType(mimeType);
         contentObject.setContentMediaType("image");
         contentObject.setContentLength(fileSize);
-        if (fileWidth > 0 && fileHeight > 0) {
-            contentObject.setContentAspectRatio(((float) fileWidth) / ((float) fileHeight));
-        } else {
-            try {
-                Bitmap bmp = MediaStore.Images.Media
-                        .getBitmap(context.getContentResolver(), selectedContent);
-                contentObject.setContentAspectRatio(
-                        ((float) bmp.getWidth()) / ((float) bmp.getHeight()));
-            } catch (IOException e) {
-                LOG.error("Error while creating image from file: ", e);
-            }
-        }
+        contentObject.setContentAspectRatio(aspectRatio);
         return contentObject;
     }
 
+    private double calculateAspectRatio(int fileWidth, int fileHeight, int orientation) {
+        double aspectRatio;
+        if (orientation == 0 || orientation == 180) {
+            aspectRatio = (double) fileWidth / (double) fileHeight;
+        } else {
+            aspectRatio = (double) fileHeight / (double) fileWidth;
+        }
+        return aspectRatio;
+    }
 
 }
