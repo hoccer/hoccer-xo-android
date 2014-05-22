@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.hoccer.xo.release"
 
-          android:versionCode="28"
+          android:versionCode="29"
           android:versionName="2.0.0">
 
     <!-- We run on 4.0 (14) and up, we use features from up to 4.2 (17) -->
@@ -82,13 +82,13 @@
 
         <!--API key for Google Maps Android API v2 for RELEASE certificate-->
         <meta-data
-        android:name="com.google.android.maps.v2.API_KEY"
-        android:value="AIzaSyBDd2wBF1gH9UcU2KcAPXXKI9G6HQattkM"/>
+                android:name="com.google.android.maps.v2.API_KEY"
+                android:value="AIzaSyBDd2wBF1gH9UcU2KcAPXXKI9G6HQattkM"/>
 
         <!-- API key for Google Maps Android API v2 based on DEBUG certificate -->
         <!--<meta-data-->
-                <!--android:name="com.google.android.maps.v2.API_KEY"-->
-                <!--android:value="AIzaSyC9hBvAarkQ9ktS0rWZ5Row-MXRatv8Dj0"/>-->
+        <!--android:name="com.google.android.maps.v2.API_KEY"-->
+        <!--android:value="AIzaSyC9hBvAarkQ9ktS0rWZ5Row-MXRatv8Dj0"/>-->
 
         <!-- Contact list - our main activity -->
         <activity
