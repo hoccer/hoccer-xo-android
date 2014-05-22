@@ -140,10 +140,10 @@ public class FullscreenPlayerFragment extends Fragment {
                 public void run() {
                     mBlinkAnimation.cancel();
                     if (mMediaPlayerService.isPaused() || mMediaPlayerService.isStopped()) {
-                        mPlayButton.setActivated(true);
+                        mPlayButton.setActivated(false);
                         mBlinkAnimation.start();
                     } else {
-                        mPlayButton.setActivated(false);
+                        mPlayButton.setActivated(true);
                         mCurrentTimeLabel.setTextColor(getResources().getColor(R.color.xo_media_player_secondary_text));
                     }
                 }
