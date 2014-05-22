@@ -11,6 +11,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -83,6 +84,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     @Override
     public void onDestroy() {
         super.onDestroy();
+        stop();
         unregisterPlaylistTransferListener();
     }
 
@@ -169,6 +171,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mMediaPlayer.setOnErrorListener(this);
         mMediaPlayer.setOnPreparedListener(this);
         mMediaPlayer.setOnCompletionListener(this);
+        mMediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
     }
 
     private OnAudioFocusChangeListener mAudioFocusChangeListener = new OnAudioFocusChangeListener() {
@@ -352,23 +355,38 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         }
     }
 
-    public void playNext() {
-        if (mCurrentPlaylist.hasNext()) {
-            String path = mCurrentPlaylist.next().getFilePath();
-            resetAndPrepareMediaPlayer(path);
-        } else {
-            mCurrentPlaylist.setCurrentIndex(0);
-            stop();
+    public void playNext( boolean looped) {
+        if( looped){
+            if (mCurrentPlaylist.size() > 0) {
+                String path = mCurrentPlaylist.next().getFilePath();
+                resetAndPrepareMediaPlayer(path);
+            }
+        }else{
+            if (mCurrentPlaylist.hasNext()) {
+                String path = mCurrentPlaylist.next().getFilePath();
+                resetAndPrepareMediaPlayer(path);
+            } else {
+                mCurrentPlaylist.setCurrentIndex(0);
+                stop();
+            }
         }
     }
 
-    public void playPrevious() {
-        if (mCurrentPlaylist.hasPrevious()) {
-            String path = mCurrentPlaylist.previous().getFilePath();
-            resetAndPrepareMediaPlayer(path);
-        } else {
-            stop();
+    public void playPrevious( boolean looped) {
+        if ( looped){
+            if (mCurrentPlaylist.size() > 0) {
+                String path = mCurrentPlaylist.previous().getFilePath();
+                resetAndPrepareMediaPlayer(path);
+            }
+        }else{
+            if (mCurrentPlaylist.hasPrevious()) {
+                String path = mCurrentPlaylist.previous().getFilePath();
+                resetAndPrepareMediaPlayer(path);
+            } else {
+                stop();
+            }
         }
+
     }
 
     public void pause() {
@@ -429,7 +447,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        playNext();
+        playNext(false);
     }
 
     public boolean isPaused() {

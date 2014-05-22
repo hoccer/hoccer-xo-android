@@ -27,9 +27,6 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by nico on 19/05/2014.
- */
 public class FullscreenPlayerFragment extends Fragment {
 
     static final Logger LOG = Logger.getLogger(FullscreenPlayerFragment.class);
@@ -301,10 +298,10 @@ public class FullscreenPlayerFragment extends Fragment {
                     }
                     break;
                 case R.id.bt_player_skip_back:
-                    mMediaPlayerService.playPrevious();
+                    mMediaPlayerService.playPrevious(true);
                     break;
                 case R.id.bt_player_skip_forward:
-                    mMediaPlayerService.playNext();
+                    mMediaPlayerService.playNext(true);
                     break;
                 case R.id.bt_player_repeat:
                     // TODO set playlist to repeat (all & single)
