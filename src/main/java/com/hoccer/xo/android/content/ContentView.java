@@ -20,6 +20,7 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.ContentState;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.image.ClickableImageView;
 import com.hoccer.xo.android.content.image.IClickableImageViewListener;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
@@ -166,8 +167,8 @@ public class ContentView extends LinearLayout implements View.OnClickListener, V
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(mContent.getContentDataUrl()), "image/*");
         try {
-            Activity activity = (Activity) view.getContext();
-            activity.startActivity(intent);
+            XoActivity activity = (XoActivity)view.getContext();
+            activity.startExternalActivity(intent);
         } catch (ClassCastException e) {
             e.printStackTrace();
         }

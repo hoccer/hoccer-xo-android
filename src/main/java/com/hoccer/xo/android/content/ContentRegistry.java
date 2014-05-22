@@ -214,7 +214,8 @@ public class ContentRegistry {
     public ContentSelection selectAvatar(Activity activity, int requestCode) {
         ContentSelection cs = new ContentSelection(activity, mAvatarSelector);
         Intent intent = mAvatarSelector.createSelectionIntent(activity);
-        activity.startActivityForResult(intent, requestCode);
+        XoActivity xoActivity = (XoActivity)activity;
+        xoActivity.startExternalActivityForResult(intent, requestCode);
         return cs;
     }
 
@@ -314,7 +315,8 @@ public class ContentRegistry {
                     xoActivity.clipBoardItemSelected(clipboardSelector.selectObjectFromClipboard(xoActivity));
                 } else {
                     Intent intent = (Intent) sel.get(KEY_INTENT);
-                    activity.startActivityForResult(intent, requestCode);
+                    XoActivity xoActivity = (XoActivity)activity;
+                    xoActivity.startExternalActivityForResult(intent, requestCode);
                 }
             }
         });

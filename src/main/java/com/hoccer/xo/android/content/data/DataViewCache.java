@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.release.R;
@@ -56,7 +57,8 @@ public class DataViewCache extends ContentViewCache<Button> {
                             Uri data = Uri.parse(url);
                             intent.setDataAndType(data, type);
                             try {
-                                view.getContext().startActivity(intent);
+                                XoActivity activity = (XoActivity)view.getContext();
+                                activity.startExternalActivity(intent);
                             } catch(ActivityNotFoundException exception) {
                                 // TODO: tell the user there is no app installd which can handle the file
                                 // for now we use a Toast!

@@ -125,50 +125,53 @@ public class ConversationAdapter extends XoAdapter
 
     private void performReload(final int version) {
         LOG.debug("performReload(" + version + ")");
-        try {
-            // refresh the conversation contact
-            mDatabase.refreshClientContact(mContact);
-            checkInterrupt();
 
-            long messagesToLoad = LOAD_MESSAGES;
-            if(mMessages != null && !mMessages.isEmpty()) {
-                messagesToLoad = mMessages.size();
-            }
+        if (mContact != null) {
 
-            final List<TalkClientMessage> messages = mDatabase
-                    .findMessagesByContactId(mContact.getClientContactId(), messagesToLoad, 0);
-            checkInterrupt();
-
-            // update related objects
-            for (TalkClientMessage message : messages) {
-                reloadRelated(message);
+            try {
+                // refresh the conversation contact
+                mDatabase.refreshClientContact(mContact);
                 checkInterrupt();
-            }
 
-            // log about it
-            LOG.debug("reload found " + messages.size() + " messages");
-
-            // update the ui
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (mVersion.compareAndSet(version, version + 1)) {
-                        LOG.debug("reload updates ui");
-                        mReloadHappened = true;
-                        mMessages = messages;
-                        reloadFinished();
-                        notifyDataSetChanged();
-                    } else {
-                        LOG.debug("reload has been superseded");
-                    }
+                long messagesToLoad = LOAD_MESSAGES;
+                if (mMessages != null && !mMessages.isEmpty()) {
+                    messagesToLoad = mMessages.size();
                 }
-            });
-        } catch (SQLException e) {
-            LOG.error("sql error", e);
-        } catch (InterruptedException e) {
-            LOG.trace("reload interrupted");
-        } catch (Throwable e) {
-            LOG.error("error reloading", e);
+
+                final List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId(), messagesToLoad, 0);
+                checkInterrupt();
+
+                // update related objects
+                for (TalkClientMessage message : messages) {
+                    reloadRelated(message);
+                    checkInterrupt();
+                }
+
+                // log about it
+                LOG.debug("reload found " + messages.size() + " messages");
+
+                // update the ui
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mVersion.compareAndSet(version, version + 1)) {
+                            LOG.debug("reload updates ui");
+                            mReloadHappened = true;
+                            mMessages = messages;
+                            reloadFinished();
+                            notifyDataSetChanged();
+                        } else {
+                            LOG.debug("reload has been superseded");
+                        }
+                    }
+                });
+            } catch (SQLException e) {
+                LOG.error("sql error", e);
+            } catch (InterruptedException e) {
+                LOG.trace("reload interrupted");
+            } catch (Throwable e) {
+                LOG.error("error reloading", e);
+            }
         }
         synchronized (ConversationAdapter.this) {
             mReloadFuture = null;

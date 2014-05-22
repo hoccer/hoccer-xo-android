@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.release.R;
@@ -55,7 +56,8 @@ public class VideoViewCache extends ContentViewCache<View> {
                     try {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(Uri.parse(url), "video/*");
-                    view.getContext().startActivity(intent);
+                        XoActivity activity = (XoActivity)view.getContext();
+                        activity.startExternalActivity(intent);
                     } catch(ActivityNotFoundException exception) {
                         Toast.makeText(view.getContext(), R.string.error_no_videoplayer,
                                 Toast.LENGTH_LONG).show();
