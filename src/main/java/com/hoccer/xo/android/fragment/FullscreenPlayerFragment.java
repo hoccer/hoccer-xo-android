@@ -12,14 +12,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.TextView;
+import android.widget.*;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
@@ -31,15 +30,16 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by nico on 19/05/2014.
  */
-public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeekBarChangeListener {
+public class FullscreenPlayerFragment extends Fragment {
 
     static final Logger LOG = Logger.getLogger(FullscreenPlayerFragment.class);
+    static final String LOG_TAG = "BAZINGA";
 
-    private ImageButton mPlayButton;
+    private ToggleButton mPlayButton;
     private ImageButton mSkipForwardButton;
     private ImageButton mSkipBackButton;
     private ImageButton mRepeatButton;
-    private ImageButton mShuffleButton;
+    private ToggleButton mShuffleButton;
     private SeekBar mTrackProgressBar;
     private TextView mTrackTitleLabel;
     private TextView mTrackArtistLabel;
@@ -68,13 +68,13 @@ public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeek
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mPlayButton = (ImageButton) getView().findViewById(R.id.bt_player_play);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mPlayButton = (ToggleButton) getView().findViewById(R.id.bt_player_play);
         mSkipForwardButton = (ImageButton) getView().findViewById(R.id.bt_player_skip_forward);
         mSkipBackButton = (ImageButton) getView().findViewById(R.id.bt_player_skip_back);
         mRepeatButton = (ImageButton) getView().findViewById(R.id.bt_player_repeat);
-        mShuffleButton = (ImageButton) getView().findViewById(R.id.bt_player_shuffle);
+        mShuffleButton = (ToggleButton) getView().findViewById(R.id.bt_player_shuffle);
         mTrackProgressBar = (SeekBar) getView().findViewById(R.id.pb_player_seek_bar);
         mTrackTitleLabel = (TextView) getView().findViewById(R.id.tv_player_track_title);
         mTrackArtistLabel = (TextView) getView().findViewById(R.id.tv_player_track_artist);
@@ -83,11 +83,15 @@ public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeek
         mPlaylistIndexLabel = (TextView) getView().findViewById(R.id.tv_player_current_track_no);
         mPlaylistSizeLabel = (TextView) getView().findViewById(R.id.tv_player_playlist_size);
         mArtworkView = (ImageView) getView().findViewById(R.id.iv_player_artwork);
-
-        mTrackProgressBar.setOnSeekBarChangeListener(this);
-
         mTrackProgressBar.setProgress(0);
         mTrackProgressBar.setMax(100);
+
+        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                resizeCoverArtView();
+            }
+        });
     }
 
     @Override
@@ -116,27 +120,20 @@ public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeek
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        //resizeCoverArtView();
+        if (mMediaPlayerService != null) {
+            updateTrackData();
+        }
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         getActivity().unbindService(mServiceConnection);
         mTimeProgressHandler.removeCallbacks(mUpdateTimeTask);
         mUpdateTimeTask = null;
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-        mTimeProgressHandler.removeCallbacks(mUpdateTimeTask);
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-        mMediaPlayerService.setSeekPosition(seekBar.getProgress());
-        mTimeProgressHandler.postDelayed(mUpdateTimeTask, 100);
     }
 
     public void updatePlayState() {
@@ -146,10 +143,10 @@ public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeek
                 public void run() {
                     mBlinkAnimation.cancel();
                     if (mMediaPlayerService.isPaused() || mMediaPlayerService.isStopped()) {
-                        mPlayButton.setImageResource(R.drawable.ic_player_play);
+                        mPlayButton.setActivated(true);
                         mBlinkAnimation.start();
                     } else {
-                        mPlayButton.setImageResource(R.drawable.ic_player_pause);
+                        mPlayButton.setActivated(false);
                         mCurrentTimeLabel.setTextColor(getResources().getColor(R.color.xo_media_player_secondary_text));
                     }
                 }
@@ -163,6 +160,9 @@ public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeek
             public void run() {
                 String trackArtist = mMediaPlayerService.getMediaMetaData().getArtist();
                 String trackTitle = mMediaPlayerService.getMediaMetaData().getTitle();
+                int totalDuration = mMediaPlayerService.getTotalDuration();
+                byte[] cover = MediaMetaData.getArtwork(mMediaPlayerService.getCurrentMediaFilePath());
+
 
                 if (trackTitle == null || trackTitle.isEmpty()) {
                     File file = new File(mMediaPlayerService.getCurrentMediaFilePath());
@@ -174,14 +174,12 @@ public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeek
                     trackArtist = getActivity().getResources().getString(R.string.media_meta_data_unknown_artist);
                 }
                 mTrackArtistLabel.setText(trackArtist);
-                int totalDuration = mMediaPlayerService.getTotalDuration();
                 mTrackProgressBar.setMax(totalDuration);
+                mTrackProgressBar.setProgress(mMediaPlayerService.getCurrentPosition());
 
                 mTotalDurationLabel.setText(stringFromTimeStamp(totalDuration));
                 mPlaylistIndexLabel.setText(Integer.toString(mMediaPlayerService.getCurrentPlaylist().getCurrentIndex() + 1));
                 mPlaylistSizeLabel.setText(Integer.toString(mMediaPlayerService.getCurrentPlaylist().size()));
-
-                byte[] cover = MediaMetaData.getArtwork(mMediaPlayerService.getCurrentMediaFilePath());
 
                 if (cover != null) {
                     Bitmap coverBitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
@@ -190,6 +188,7 @@ public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeek
                     mArtworkView.setImageResource(R.drawable.media_cover_art_default);
                 }
 
+                resizeCoverArtView();
                 updatePlayState();
             }
         });
@@ -202,38 +201,13 @@ public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeek
     }
 
     private void setupViewListeners() {
-        mPlayButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
-                    mMediaPlayerService.pause();
-                } else {
-                    mMediaPlayerService.start();
-                }
-            }
-        });
-        mSkipBackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMediaPlayerService.playPrevious();
-            }
-        });
-        mSkipForwardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMediaPlayerService.playNext();
-            }
-        });
-        mRepeatButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
-        mShuffleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
+        OnPlayerInteractionListener listener = new OnPlayerInteractionListener();
+        mPlayButton.setOnClickListener(listener);
+        mTrackProgressBar.setOnSeekBarChangeListener(listener);
+        mSkipBackButton.setOnClickListener(listener);
+        mSkipForwardButton.setOnClickListener(listener);
+        mRepeatButton.setOnClickListener(listener);
+        mShuffleButton.setOnClickListener(listener);
     }
 
     private void enableViewComponents(final boolean enable) {
@@ -276,6 +250,22 @@ public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeek
         return String.format("%2d:%02d", minutes, seconds);
     }
 
+    private void resizeCoverArtView() {
+        int margin = getActivity().getResources().getDimensionPixelSize(R.dimen.media_player_layout_margin);
+        int measuredViewHeight = getView().getMeasuredWidth() - (margin * 4);
+        if (mArtworkView.getHeight() != measuredViewHeight) {
+            Log.d(LOG_TAG, "Current width: " + mArtworkView.getWidth() + " height: " + mArtworkView.getHeight());
+            Log.d(LOG_TAG, "ParentView width: " + getView().getMeasuredWidth());
+            RelativeLayout.LayoutParams coverArtLayoutParams = (RelativeLayout.LayoutParams) mArtworkView.getLayoutParams();
+
+            coverArtLayoutParams.height = measuredViewHeight;
+            coverArtLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            mArtworkView.setLayoutParams(coverArtLayoutParams);
+            Log.d(LOG_TAG, "New width: " + mArtworkView.getWidth() + " height: " + mArtworkView.getHeight());
+            Log.d(LOG_TAG, "getView() = " + getView());
+        }
+    }
+
     private class UpdateTimeTask implements Runnable {
 
         @Override
@@ -295,5 +285,51 @@ public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeek
                 LOG.error(e);
             }
         }
+    }
+
+    private class OnPlayerInteractionListener implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
+
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.bt_player_play:
+                    if (!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
+                        mMediaPlayerService.pause();
+                    } else {
+                        mMediaPlayerService.start();
+                    }
+                    break;
+                case R.id.bt_player_skip_back:
+                    mMediaPlayerService.playPrevious();
+                    break;
+                case R.id.bt_player_skip_forward:
+                    mMediaPlayerService.playNext();
+                    break;
+                case R.id.bt_player_repeat:
+                    // TODO set playlist to repeat (all & single)
+                    break;
+                case R.id.bt_player_shuffle:
+                    // TODO set playlist to shuffle
+                    break;
+            }
+        }
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            mMediaPlayerService.setSeekPosition(seekBar.getProgress());
+            mTimeProgressHandler.postDelayed(mUpdateTimeTask, 100);
+        }
+
     }
 }
