@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.activity.MessagingActivity;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.android.content.SelectedContent;
@@ -82,7 +84,8 @@ public class LocationViewCache extends ContentViewCache<View> {
                                 + ")";
                         Uri uri = Uri.parse(uriString);
                         Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
-                        view.getContext().startActivity(intent);
+                        XoActivity activity = (XoActivity)view.getContext();
+                        activity.startExternalActivity(intent);
                     }
                 }
             }
