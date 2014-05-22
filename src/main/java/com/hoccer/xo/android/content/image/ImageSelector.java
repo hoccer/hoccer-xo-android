@@ -209,7 +209,7 @@ public class ImageSelector implements IContentSelector {
 
         aspectRatio = calculateAspectRatio(fileWidth, fileHeight, orientation);
 
-        LOG.info("Aspect ratio: " + fileWidth + " x " + fileHeight + " @ " + aspectRatio + " / " + orientation + "°");
+        LOG.debug("Aspect ratio: " + fileWidth + " x " + fileHeight + " @ " + aspectRatio + " / " + orientation + "°");
 
         SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);
         contentObject.setFileName(fileName);
