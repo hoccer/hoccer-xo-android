@@ -355,23 +355,38 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         }
     }
 
-    public void playNext() {
-        if (mCurrentPlaylist.hasNext()) {
-            String path = mCurrentPlaylist.next().getFilePath();
-            resetAndPrepareMediaPlayer(path);
-        } else {
-            mCurrentPlaylist.setCurrentIndex(0);
-            stop();
+    public void playNext( boolean looped) {
+        if( looped){
+            if (mCurrentPlaylist.size() > 0) {
+                String path = mCurrentPlaylist.next().getFilePath();
+                resetAndPrepareMediaPlayer(path);
+            }
+        }else{
+            if (mCurrentPlaylist.hasNext()) {
+                String path = mCurrentPlaylist.next().getFilePath();
+                resetAndPrepareMediaPlayer(path);
+            } else {
+                mCurrentPlaylist.setCurrentIndex(0);
+                stop();
+            }
         }
     }
 
-    public void playPrevious() {
-        if (mCurrentPlaylist.hasPrevious()) {
-            String path = mCurrentPlaylist.previous().getFilePath();
-            resetAndPrepareMediaPlayer(path);
-        } else {
-            stop();
+    public void playPrevious( boolean looped) {
+        if ( looped){
+            if (mCurrentPlaylist.size() > 0) {
+                String path = mCurrentPlaylist.previous().getFilePath();
+                resetAndPrepareMediaPlayer(path);
+            }
+        }else{
+            if (mCurrentPlaylist.hasPrevious()) {
+                String path = mCurrentPlaylist.previous().getFilePath();
+                resetAndPrepareMediaPlayer(path);
+            } else {
+                stop();
+            }
         }
+
     }
 
     public void pause() {
@@ -432,7 +447,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        playNext();
+        playNext(false);
     }
 
     public boolean isPaused() {

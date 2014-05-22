@@ -28,9 +28,6 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by nico on 19/05/2014.
- */
 public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeekBarChangeListener {
 
     static final Logger LOG = Logger.getLogger(FullscreenPlayerFragment.class);
@@ -215,13 +212,15 @@ public class FullscreenPlayerFragment extends Fragment implements SeekBar.OnSeek
         mSkipBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMediaPlayerService.playPrevious();
+
+                mMediaPlayerService.playPrevious(true);
             }
         });
         mSkipForwardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMediaPlayerService.playNext();
+
+                mMediaPlayerService.playNext(true);
             }
         });
         mRepeatButton.setOnClickListener(new View.OnClickListener() {
