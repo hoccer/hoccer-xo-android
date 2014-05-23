@@ -4,11 +4,10 @@ import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.xo.android.content.MediaItem;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class MediaPlaylist implements ListIterator<MediaItem> {
+
 
     public static enum RepeatMode {
         REPEAT_TITLE, REPEAT_ALL, NO_REPEAT;
@@ -22,6 +21,7 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
     private RepeatMode mRepeatMode = RepeatMode.NO_REPEAT;
     private int mConversationContactId = UNDEFINED_CONTACT_ID;
     private int mCurrentIndex = 0;
+    private boolean shuffleActive = false;
 
     public MediaPlaylist(String mediaFilePath) {
         mPlaylistItems.add(MediaItem.create(mediaFilePath));
@@ -123,10 +123,9 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
     @Override
     public void set(MediaItem talkClientDownload) {
         int index = mPlaylistItems.indexOf(talkClientDownload);
-        if(index >= 0) {
+        if (index >= 0) {
             mCurrentIndex = index;
-        }
-        else {
+        } else {
             LOG.error("Try to set playlist to unknown item.");
         }
     }
@@ -146,5 +145,19 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
 
     public void setRepeatMode(RepeatMode repeatMode) {
         this.mRepeatMode = repeatMode;
+    }
+
+    public boolean isShuffleActive() {
+        return shuffleActive;
+    }
+
+    public void setShuffleActive(boolean shuffleActive) {
+        this.shuffleActive = shuffleActive;
+        shufflePlaylistItems();
+    }
+
+    private void shufflePlaylistItems() {
+        Random rnd = new Random(System.nanoTime());
+        Collections.shuffle(mPlaylistItems, rnd);
     }
 }
