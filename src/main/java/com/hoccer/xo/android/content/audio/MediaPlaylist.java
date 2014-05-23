@@ -17,6 +17,7 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
     private static final Logger LOG = Logger.getLogger(MediaPlaylist.class);
 
     private List<MediaItem> mPlaylistItems = new ArrayList<MediaItem>();
+    private List<MediaItem> mPlaylistItemsOriginalOrder;
 
     private RepeatMode mRepeatMode = RepeatMode.NO_REPEAT;
     private int mConversationContactId = UNDEFINED_CONTACT_ID;
@@ -153,10 +154,19 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
 
     public void setShuffleActive(boolean shuffleActive) {
         this.shuffleActive = shuffleActive;
-        shufflePlaylistItems();
+        if (this.shuffleActive) {
+            shufflePlaylistItems();
+        } else {
+            resetOriginalOrderOfPlaylistItems();
+        }
+    }
+
+    private void resetOriginalOrderOfPlaylistItems() {
+        mPlaylistItems = mPlaylistItemsOriginalOrder;
     }
 
     private void shufflePlaylistItems() {
+        mPlaylistItemsOriginalOrder = new ArrayList<MediaItem>(mPlaylistItems);
         Random rnd = new Random(System.nanoTime());
         Collections.shuffle(mPlaylistItems, rnd);
     }
