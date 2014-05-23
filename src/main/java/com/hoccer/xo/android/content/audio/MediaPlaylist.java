@@ -51,14 +51,6 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
         return mPlaylistItems.size();
     }
 
-    public RepeatMode getRepeatMode() {
-        return mRepeatMode;
-    }
-
-    public void setRepeatMode(RepeatMode repeatMode) {
-        this.mRepeatMode = repeatMode;
-    }
-
     @Override
     public boolean hasPrevious() {
         if (!mPlaylistItems.isEmpty()) {
