@@ -652,17 +652,17 @@ public abstract class XoActivity extends FragmentActivity {
     }
 
     public void scanBarcode() {
+        LOG.debug("showBarcode()");
+        Intent qrScanner = new Intent(this, QrScannerActivity.class);
+        startActivity(qrScanner);
+    }
+
+    public void showBarcode() {
         LOG.debug("scanBarcode()");
         String qrString = getBarcodeString();
         Intent qr = new Intent(this, QrCodeGeneratingActivity.class);
         qr.putExtra("QR", qrString);
         startActivity(qr);
-    }
-
-    public void showBarcode() {
-        LOG.debug("showBarcode()");
-        Intent qrScanner = new Intent(this, QrScannerActivity.class);
-        startActivity(qrScanner);
     }
 
     public String getBarcodeString() {
