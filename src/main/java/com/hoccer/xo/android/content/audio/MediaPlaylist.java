@@ -20,12 +20,10 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
     private int mCurrentIndex = 0;
     private boolean shuffleActive = false;
 
-    public int getCurrentIndex() {
-        return mCurrentIndex;
-    }
 
-    public void setCurrentIndex(int currentIndex) {
-        mCurrentIndex = currentIndex;
+    public void setCurrentTrackNumber(int trackNumber) {
+        mCurrentIndex = mPlaylistIndexes.indexOf(trackNumber);
+        resetPlaylistIndexes();
     }
 
     public int getCurrentTrackNumber() {
@@ -58,20 +56,18 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
 
     @Override
     public MediaItem previous() {
-        if (mCurrentIndex == 0) {
+        --mCurrentIndex;
+        if (mCurrentIndex < 0) {
             mCurrentIndex = mPlaylistIndexes.size() - 1;
-        } else {
-            --mCurrentIndex;
         }
         return mMediaItems.get(mPlaylistIndexes.get(mCurrentIndex));
     }
 
     @Override
     public MediaItem next() {
-        if (mCurrentIndex == mPlaylistIndexes.size() - 1) {
+        ++mCurrentIndex;
+        if (mCurrentIndex >= mPlaylistIndexes.size()) {
             mCurrentIndex = 0;
-        } else {
-            ++mCurrentIndex;
         }
         return mMediaItems.get(mPlaylistIndexes.get(mCurrentIndex));
     }
@@ -112,12 +108,7 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
 
     @Override
     public void set(MediaItem item) {
-        int index = mMediaItems.indexOf(item);
-        if (index >= 0) {
-            mCurrentIndex = index;
-        } else {
-            LOG.error("Try to set playlist to unknown item.");
-        }
+        LOG.error("Setting items at current position is not supported.");
     }
 
     @Override
@@ -157,11 +148,7 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
 
     public void setShuffleActive(boolean shuffleActive) {
         this.shuffleActive = shuffleActive;
-        if (this.shuffleActive) {
-            shufflePlaylistIndexes();
-        } else {
-            resetPlaylistIndexes();
-        }
+        resetPlaylistIndexes();
     }
 
     private void resetPlaylistIndexes() {
@@ -169,10 +156,17 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
         for (int i = 0; i < mMediaItems.size(); i++) {
             mPlaylistIndexes.add(i);
         }
-    }
+        if (shuffleActive) {
+            int currentTrackNumber = getCurrentTrackNumber();
+            Random rnd = new Random(System.nanoTime());
+            Collections.shuffle(mPlaylistIndexes, rnd);
 
-    private void shufflePlaylistIndexes() {
-        Random rnd = new Random(System.nanoTime());
-        Collections.shuffle(mPlaylistIndexes, rnd);
+            // move current index to first shuffle position
+            int shuffledIndex = mPlaylistIndexes.indexOf(currentTrackNumber);
+            int firstShuffledTrack = mPlaylistIndexes.get(0);
+            mPlaylistIndexes.set(0, currentTrackNumber);
+            mPlaylistIndexes.set(shuffledIndex, firstShuffledTrack);
+            mCurrentIndex = 0;
+        }
     }
 }
