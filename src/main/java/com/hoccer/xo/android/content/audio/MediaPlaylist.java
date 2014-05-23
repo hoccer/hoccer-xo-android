@@ -4,18 +4,25 @@ import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.xo.android.content.MediaItem;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class MediaPlaylist implements ListIterator<MediaItem> {
+
+
+    public static enum RepeatMode {
+        REPEAT_TITLE, REPEAT_ALL, NO_REPEAT;
+    }
 
     public static final int UNDEFINED_CONTACT_ID = -1;
     private static final Logger LOG = Logger.getLogger(MediaPlaylist.class);
 
     private List<MediaItem> mPlaylistItems = new ArrayList<MediaItem>();
+    private List<MediaItem> mPlaylistItemsOriginalOrder;
+
+    private RepeatMode mRepeatMode = RepeatMode.NO_REPEAT;
     private int mConversationContactId = UNDEFINED_CONTACT_ID;
     private int mCurrentIndex = 0;
+    private boolean shuffleActive = false;
 
     public MediaPlaylist(String mediaFilePath) {
         mPlaylistItems.add(MediaItem.create(mediaFilePath));
@@ -66,9 +73,9 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
 
     @Override
     public MediaItem previous() {
-        if ( mCurrentIndex == 0){
+        if (mCurrentIndex == 0) {
             mCurrentIndex = mPlaylistItems.size() - 1;
-        }else{
+        } else {
             --mCurrentIndex;
         }
         return mPlaylistItems.get(mCurrentIndex);
@@ -76,14 +83,28 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
 
     @Override
     public MediaItem next() {
-        if ( mCurrentIndex == mPlaylistItems.size() - 1){
+        if (mCurrentIndex == mPlaylistItems.size() - 1) {
             mCurrentIndex = 0;
-        }else {
+        } else {
             ++mCurrentIndex;
         }
         return mPlaylistItems.get(mCurrentIndex);
     }
 
+    public MediaItem nextByRepeatMode() {
+        switch (mRepeatMode) {
+            case NO_REPEAT:
+                if (hasNext()) {
+                    return mPlaylistItems.get(++mCurrentIndex);
+                }
+                break;
+            case REPEAT_ALL:
+                return next();
+            case REPEAT_TITLE:
+                return current();
+        }
+        return null;
+    }
 
     @Override
     public int previousIndex() {
@@ -103,10 +124,9 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
     @Override
     public void set(MediaItem talkClientDownload) {
         int index = mPlaylistItems.indexOf(talkClientDownload);
-        if(index >= 0) {
+        if (index >= 0) {
             mCurrentIndex = index;
-        }
-        else {
+        } else {
             LOG.error("Try to set playlist to unknown item.");
         }
     }
@@ -118,5 +138,36 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
 
     public MediaItem current() {
         return mPlaylistItems.get(mCurrentIndex);
+    }
+
+    public RepeatMode getRepeatMode() {
+        return mRepeatMode;
+    }
+
+    public void setRepeatMode(RepeatMode repeatMode) {
+        this.mRepeatMode = repeatMode;
+    }
+
+    public boolean isShuffleActive() {
+        return shuffleActive;
+    }
+
+    public void setShuffleActive(boolean shuffleActive) {
+        this.shuffleActive = shuffleActive;
+        if (this.shuffleActive) {
+            shufflePlaylistItems();
+        } else {
+            resetOriginalOrderOfPlaylistItems();
+        }
+    }
+
+    private void resetOriginalOrderOfPlaylistItems() {
+        mPlaylistItems = mPlaylistItemsOriginalOrder;
+    }
+
+    private void shufflePlaylistItems() {
+        mPlaylistItemsOriginalOrder = new ArrayList<MediaItem>(mPlaylistItems);
+        Random rnd = new Random(System.nanoTime());
+        Collections.shuffle(mPlaylistItems, rnd);
     }
 }

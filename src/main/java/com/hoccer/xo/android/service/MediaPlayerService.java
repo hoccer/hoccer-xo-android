@@ -17,8 +17,8 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.RemoteViews;
-import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
+import com.hoccer.xo.android.content.MediaItem;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.release.R;
@@ -87,21 +87,20 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         stop();
     }
 
-    private void createAppFocusTracker(){
+    private void createAppFocusTracker() {
 
         new Thread(new Runnable() {
             public void run() {
-                while( true) {
+                while (true) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
 
-                    if ( isApplicationKilled(getApplicationContext())){
+                    if (isApplicationKilled(getApplicationContext())) {
                         stopSelf();
-                    }
-                    else {
+                    } else {
                         if (isApplicationSentToBackground(getApplicationContext())) {
                             if (!isPaused() && !isStopped()) {
                                 createNotification();
@@ -116,16 +115,16 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         }).start();
     }
 
-    private boolean isApplicationKilled(Context context){
+    private boolean isApplicationKilled(Context context) {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        List <ActivityManager.RecentTaskInfo > runningTasks = am.getRecentTasks(1000, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
-        for( int i = 0; i < runningTasks.size(); ++i){
+        List<ActivityManager.RecentTaskInfo> runningTasks = am.getRecentTasks(1000, ActivityManager.RECENT_IGNORE_UNAVAILABLE);
+        for (int i = 0; i < runningTasks.size(); ++i) {
             ActivityManager.RecentTaskInfo info = runningTasks.get(i);
-            if ( info.baseIntent.getComponent().getPackageName().equalsIgnoreCase(getApplication().getPackageName())){
+            if (info.baseIntent.getComponent().getPackageName().equalsIgnoreCase(getApplication().getPackageName())) {
                 return false;
             }
         }
-            return true;
+        return true;
     }
 
     public boolean isApplicationSentToBackground(Context context) {
@@ -296,8 +295,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     }
 
-    public void start(){
-        if(mCurrentPlaylist != null){
+    public void start() {
+        if (mCurrentPlaylist != null) {
             start(mCurrentPlaylist);
         } else {
             LOG.error("No playlist available!");
@@ -340,7 +339,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
                 resetFileNameAndMetaData();
                 broadcastTrackChanged();
             }
-            if ( isNotificationActive()){
+            if (isNotificationActive()) {
                 updateNotification();
             }
             broadcastPlayStateChanged();
@@ -349,65 +348,54 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         }
     }
 
-    public void playNext( boolean looped) {
-        if( looped){
-            if (mCurrentPlaylist.size() > 0) {
-                String path = mCurrentPlaylist.next().getFilePath();
-                resetAndPrepareMediaPlayer(path);
-            }
-        }else{
-            if (mCurrentPlaylist.hasNext()) {
-                String path = mCurrentPlaylist.next().getFilePath();
-                resetAndPrepareMediaPlayer(path);
-            } else {
-                mCurrentPlaylist.setCurrentIndex(0);
-                stop();
-            }
+    private void playNext() {
+        MediaItem mediaItem = mCurrentPlaylist.nextByRepeatMode();
+        if (mediaItem != null) {
+            resetAndPrepareMediaPlayer(mediaItem.getFilePath());
+        } else {
+            stop();
         }
     }
 
-    public void playPrevious( boolean looped) {
-        if ( looped){
-            if (mCurrentPlaylist.size() > 0) {
-                String path = mCurrentPlaylist.previous().getFilePath();
-                resetAndPrepareMediaPlayer(path);
-            }
-        }else{
-            if (mCurrentPlaylist.hasPrevious()) {
-                String path = mCurrentPlaylist.previous().getFilePath();
-                resetAndPrepareMediaPlayer(path);
-            } else {
-                stop();
-            }
+    public void skipForward() {
+        if (mCurrentPlaylist.size() > 0) {
+            String path = mCurrentPlaylist.next().getFilePath();
+            resetAndPrepareMediaPlayer(path);
         }
+    }
 
+    public void skipBackwards() {
+        if (mCurrentPlaylist.size() > 0) {
+            String path = mCurrentPlaylist.previous().getFilePath();
+            resetAndPrepareMediaPlayer(path);
+        }
     }
 
     public void pause() {
         mMediaPlayer.pause();
         setPaused(true);
         setStopped(false);
-        if ( isNotificationActive()) {
+        if (isNotificationActive()) {
             updateNotification();
         }
         broadcastPlayStateChanged();
     }
 
     public void stop() {
-        if(mMediaPlayer != null){
+        if (mMediaPlayer != null) {
             mAudioManager.abandonAudioFocus(mAudioFocusChangeListener);
             mMediaPlayer.release();
             mMediaPlayer = null;
             setPaused(false);
             setStopped(true);
-			if ( isNotificationActive()) {
-            	removeNotification();
-			}
+            if (isNotificationActive()) {
+                removeNotification();
+            }
             broadcastPlayStateChanged();
         }
     }
 
-    private boolean isNotificationActive(){
+    private boolean isNotificationActive() {
         return isApplicationSentToBackground(this);
     }
 
@@ -441,7 +429,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        playNext(false);
+        playNext();
     }
 
     public boolean isPaused() {

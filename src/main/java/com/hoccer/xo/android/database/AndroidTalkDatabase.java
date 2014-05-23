@@ -22,7 +22,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
     //private static final String DATABASE_NAME = "hoccer-talk.db";
     private static String DATABASE_NAME = "hoccer-talk.db";
 
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 15;
 
     private static AndroidTalkDatabase INSTANCE = null;
 
@@ -152,7 +152,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
                 Dao<TalkClientContact, Integer> talkClientContacts = getDao(TalkClientContact.class);
                 talkClientContacts.executeRaw("ALTER TABLE `clientContact` ADD COLUMN `isNearby` BOOLEAN");
             }
-            if (oldVersion < 14) {
+            if (oldVersion < 15) {
                 renameFilecacheUris(db);
             }
         } catch (SQLException e) {

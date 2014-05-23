@@ -20,6 +20,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.widget.*;
 import com.hoccer.xo.android.content.MediaMetaData;
+import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -103,6 +104,8 @@ public class FullscreenPlayerFragment extends Fragment {
                     setupViewListeners();
                     enableViewComponents(true);
                     updateTrackData();
+                    refreshRepeatButton();
+                    refreshShuffleButton();
                 }
 
                 @Override
@@ -231,7 +234,7 @@ public class FullscreenPlayerFragment extends Fragment {
         mBlinkAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                mCurrentTimeLabel.setTextColor((Integer) animation.getAnimatedValue() );
+                mCurrentTimeLabel.setTextColor((Integer) animation.getAnimatedValue());
             }
         });
     }
@@ -298,16 +301,16 @@ public class FullscreenPlayerFragment extends Fragment {
                     }
                     break;
                 case R.id.bt_player_skip_back:
-                    mMediaPlayerService.playPrevious(true);
+                    mMediaPlayerService.skipBackwards();
                     break;
                 case R.id.bt_player_skip_forward:
-                    mMediaPlayerService.playNext(true);
+                    mMediaPlayerService.skipForward();
                     break;
                 case R.id.bt_player_repeat:
-                    // TODO set playlist to repeat (all & single)
+                    updateRepeatMode();
                     break;
                 case R.id.bt_player_shuffle:
-                    // TODO set playlist to shuffle
+                    updateShuffleState();
                     break;
             }
         }
@@ -328,5 +331,59 @@ public class FullscreenPlayerFragment extends Fragment {
             mTimeProgressHandler.postDelayed(mUpdateTimeTask, 100);
         }
 
+    }
+
+    private void refreshRepeatButton() {
+        MediaPlaylist.RepeatMode repeatMode = mMediaPlayerService.getCurrentPlaylist().getRepeatMode();
+        switch (repeatMode) {
+            case NO_REPEAT:
+                mRepeatButton.setImageResource(R.drawable.btn_player_repeat);
+                break;
+            case REPEAT_ALL:
+                mRepeatButton.setImageResource(R.drawable.btn_player_repeat_all);
+                break;
+            case REPEAT_TITLE:
+                mRepeatButton.setImageResource(R.drawable.btn_player_repeat_title);
+                break;
+        }
+    }
+
+    private void refreshShuffleButton() {
+        MediaPlaylist playlist = mMediaPlayerService.getCurrentPlaylist();
+        if (playlist.isShuffleActive()) {
+            mShuffleButton.setActivated(true);
+        } else {
+            mShuffleButton.setActivated(false);
+        }
+    }
+
+    private void updateRepeatMode() {
+        MediaPlaylist playlist = mMediaPlayerService.getCurrentPlaylist();
+        MediaPlaylist.RepeatMode repeatMode = playlist.getRepeatMode();
+        switch (repeatMode) {
+            case NO_REPEAT:
+                playlist.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_ALL);
+                mRepeatButton.setImageResource(R.drawable.btn_player_repeat_all);
+                break;
+            case REPEAT_ALL:
+                playlist.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_TITLE);
+                mRepeatButton.setImageResource(R.drawable.btn_player_repeat_title);
+                break;
+            case REPEAT_TITLE:
+                playlist.setRepeatMode(MediaPlaylist.RepeatMode.NO_REPEAT);
+                mRepeatButton.setImageResource(R.drawable.btn_player_repeat);
+                break;
+        }
+    }
+
+    private void updateShuffleState() {
+        MediaPlaylist playlist = mMediaPlayerService.getCurrentPlaylist();
+        if (playlist.isShuffleActive()) {
+            mShuffleButton.setActivated(false);
+            playlist.setShuffleActive(false);
+        } else {
+            mShuffleButton.setActivated(true);
+            playlist.setShuffleActive(true);
+        }
     }
 }
