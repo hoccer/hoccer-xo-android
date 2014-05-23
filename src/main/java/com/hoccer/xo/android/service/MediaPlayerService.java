@@ -423,6 +423,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         return (isStopped()) ? 0 : mPlaylist.getCurrentIndex();
     }
 
+    public int getCurrentProgress() { return mMediaPlayer.getCurrentPosition(); }
+
     public int getCurrentConversationContactId(){
         return mCurrentConversationContactId;
     }
@@ -431,7 +433,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     public void setMedia(MediaItem item){
         mPlaylist.clear();
-        mPlaylist.add(item);
+        mPlaylist.add(0, item);
         mPlaylistType = PlaylistType.SINGLE_MEDIA;
     }
 
