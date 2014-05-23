@@ -85,7 +85,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     public void onDestroy() {
         super.onDestroy();
         stop();
-        unregisterPlaylistTransferListener();
     }
 
     private void createAppFocusTracker() {
@@ -318,11 +317,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     public void setCurrentPlaylist(MediaPlaylist playlist) {
-        unregisterPlaylistTransferListener();
-
-        if (playlist.isUpdatable()) {
-            XoApplication.getXoClient().registerTransferListener(playlist);
-        }
         mCurrentPlaylist = playlist;
     }
 
@@ -485,11 +479,5 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     public MediaMetaData getMediaMetaData() {
         return mMediaMetaData;
-    }
-
-    private void unregisterPlaylistTransferListener() {
-        if (mCurrentPlaylist != null && mCurrentPlaylist.isUpdatable()) {
-            XoApplication.getXoClient().unregisterTransferListener(mCurrentPlaylist);
-        }
     }
 }

@@ -2,4 +2,5 @@
 <resources>
     <dimen name="xo_message_corner_radius">10dp</dimen>
     <dimen name="default_attachment_icon_dim">40dp</dimen>
+    <dimen name="media_player_layout_margin">8dp</dimen>
 </resources>
