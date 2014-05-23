@@ -180,7 +180,7 @@ public class FullscreenPlayerFragment extends Fragment {
                 mTrackProgressBar.setProgress(mMediaPlayerService.getCurrentPosition());
 
                 mTotalDurationLabel.setText(stringFromTimeStamp(totalDuration));
-                mPlaylistIndexLabel.setText(Integer.toString(mMediaPlayerService.getCurrentPosition() + 1));
+                mPlaylistIndexLabel.setText(Integer.toString(mMediaPlayerService.getCurrentTrackNumber() + 1));
                 mPlaylistSizeLabel.setText(Integer.toString(mMediaPlayerService.getMediaListSize()));
 
                 if (cover != null) {

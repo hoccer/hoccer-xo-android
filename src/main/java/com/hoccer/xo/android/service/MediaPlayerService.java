@@ -423,6 +423,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         return (isStopped()) ? 0 : mPlaylist.getCurrentIndex();
     }
 
+    public int getCurrentTrackNumber() {
+        return mPlaylist.getCurrentTrackNumber();
+    }
+
     public int getCurrentConversationContactId(){
         return mCurrentConversationContactId;
     }
