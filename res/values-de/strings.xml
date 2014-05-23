@@ -39,6 +39,10 @@
         Möchtest du die Einladung annehmen?
     </string>
 
+    <!-- AudioAttachmentList Fragment -->
+    <string name="audio_attachment_list_all">Alle</string>
+    <string name="audio_attachment_list_unknown">Unbekannt</string>
+
     <!-- Nearby location request -->
     <string name="nearby_enable_location_service">Um diese Funktion nutzen zu können musst Du Ortungsdienste aktivieren. (GPS oder Netzwerkposition). Willst Du es aktivieren?</string>
     <string name="nearby_yes">Ja</string>

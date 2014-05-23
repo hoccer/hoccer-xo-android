@@ -125,7 +125,7 @@
         <!-- MusicViewer activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.AudioAttachmentListActivity"
-                android:label="@string/app_name"
+                android:label="@string/audio_attachment_list_unknown"
                 android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:screenOrientation="portrait"
                 android:windowSoftInputMode="stateHidden"
