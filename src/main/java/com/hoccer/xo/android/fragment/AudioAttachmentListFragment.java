@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.fragment;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import android.content.ComponentName;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
@@ -48,9 +50,31 @@ public class AudioAttachmentListFragment extends XoListFragment {
         Intent contactIntent = getActivity().getIntent();
         int conversationContactId = ALL_CONTACTS_ID;
         if (contactIntent != null) {
+
+            String activityLabel = getString( R.string.audio_attachment_list_unknown);
+
             if (contactIntent.hasExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID)) {
                 conversationContactId = contactIntent.getIntExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID, ALL_CONTACTS_ID);
+
+                if ( conversationContactId == ALL_CONTACTS_ID) {
+                    activityLabel = getString( R.string.audio_attachment_list_all);
+                }else{
+                    TalkClientContact contact = null;
+                    try {
+                        contact = getXoActivity().getXoDatabase().findClientContactById(conversationContactId);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (contact != null) {
+                        activityLabel = contact.getName();
+                    }
+                }
+            }else{
+                activityLabel = getString( R.string.audio_attachment_list_all);
             }
+
+            getActivity().setTitle(activityLabel);
         }
 
         final int conversationContactIdFinal = conversationContactId;

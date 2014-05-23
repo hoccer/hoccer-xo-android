@@ -39,6 +39,10 @@
         Do you wish to accept?
     </string>
 
+    <!-- AudioAttachmentList Fragment -->
+    <string name="audio_attachment_list_all">All</string>
+    <string name="audio_attachment_list_unknown">Unknown</string>
+
     <!-- Nearby location request -->
     <string name="nearby_enable_location_service">This feature uses location service
         (GPS or Network location). Do you want to enable it?</string>
