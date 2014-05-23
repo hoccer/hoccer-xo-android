@@ -195,7 +195,7 @@
                 android:id="@+id/bt_player_repeat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_player_repeat_all_default"
+                android:src="@drawable/btn_player_repeat"
                 android:layout_marginLeft="20dp"
                 android:background="@null"
                 android:layout_centerVertical="true"
