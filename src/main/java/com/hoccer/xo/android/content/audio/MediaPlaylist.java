@@ -11,7 +11,7 @@ import java.util.ListIterator;
 public class MediaPlaylist implements ListIterator<MediaItem> {
 
     public static enum RepeatMode {
-        REPEAT_TRACK, REPEAT_ALL, NO_REPEAT;
+        REPEAT_TITLE, REPEAT_ALL, NO_REPEAT;
     }
 
     public static final int UNDEFINED_CONTACT_ID = -1;
@@ -96,13 +96,13 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
                 if (hasNext()) {
                     return mPlaylistItems.get(++mCurrentIndex);
                 }
+                break;
             case REPEAT_ALL:
                 return next();
-            case REPEAT_TRACK:
+            case REPEAT_TITLE:
                 return current();
-            default:
-                return null;
         }
+        return null;
     }
 
     @Override

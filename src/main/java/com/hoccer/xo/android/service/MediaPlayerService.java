@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.RemoteViews;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
+import com.hoccer.xo.android.content.MediaItem;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.release.R;
@@ -349,11 +350,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     private void playNext() {
-        if (mCurrentPlaylist.hasNext()) {
-            String path = mCurrentPlaylist.nextByRepeatMode().getFilePath();
-            resetAndPrepareMediaPlayer(path);
+        MediaItem mediaItem = mCurrentPlaylist.nextByRepeatMode();
+        if (mediaItem != null) {
+            resetAndPrepareMediaPlayer(mediaItem.getFilePath());
         } else {
-            mCurrentPlaylist.setCurrentIndex(0);
             stop();
         }
     }

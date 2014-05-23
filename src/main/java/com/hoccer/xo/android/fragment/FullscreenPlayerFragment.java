@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -105,6 +104,7 @@ public class FullscreenPlayerFragment extends Fragment {
                     setupViewListeners();
                     enableViewComponents(true);
                     updateTrackData();
+                    refreshRepeatButton();
                 }
 
                 @Override
@@ -233,7 +233,7 @@ public class FullscreenPlayerFragment extends Fragment {
         mBlinkAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                mCurrentTimeLabel.setTextColor((Integer) animation.getAnimatedValue() );
+                mCurrentTimeLabel.setTextColor((Integer) animation.getAnimatedValue());
             }
         });
     }
@@ -300,30 +300,16 @@ public class FullscreenPlayerFragment extends Fragment {
                     }
                     break;
                 case R.id.bt_player_skip_back:
-					mMediaPlayerService.skipBackwards();
+                    mMediaPlayerService.skipBackwards();
                     break;
                 case R.id.bt_player_skip_forward:
                     mMediaPlayerService.skipForward();
                     break;
                 case R.id.bt_player_repeat:
-                    MediaPlaylist.RepeatMode repeatMode = mMediaPlayerService.getCurrentPlaylist().getRepeatMode();
-                	MediaPlaylist playlist = mMediaPlayerService.getCurrentPlaylist();
-
-                	switch (repeatMode) {
-                    	case NO_REPEAT:
-                     	    playlist.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_TRACK);
-                        	mRepeatButton.setBackgroundColor(Color.GREEN);
-                    	case REPEAT_TRACK:
-                        	playlist.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_ALL);
-                        	mRepeatButton.setBackgroundColor(Color.BLUE);
-                    	case REPEAT_ALL:
-                        	playlist.setRepeatMode(MediaPlaylist.RepeatMode.NO_REPEAT);
-                        	mRepeatButton.setBackgroundColor(Color.TRANSPARENT);
-                	}
-
+                    updateRepeatButton();
                     break;
                 case R.id.bt_player_shuffle:
-                    // TODO set playlist to shuffle
+//                    mShuffleButton.setActivated(true);
                     break;
             }
         }
@@ -344,5 +330,39 @@ public class FullscreenPlayerFragment extends Fragment {
             mTimeProgressHandler.postDelayed(mUpdateTimeTask, 100);
         }
 
+    }
+
+    private void refreshRepeatButton() {
+        MediaPlaylist.RepeatMode repeatMode = mMediaPlayerService.getCurrentPlaylist().getRepeatMode();
+        switch (repeatMode) {
+            case NO_REPEAT:
+                mRepeatButton.setImageResource(R.drawable.btn_player_repeat);
+                break;
+            case REPEAT_ALL:
+                mRepeatButton.setImageResource(R.drawable.btn_player_repeat_all);
+                break;
+            case REPEAT_TITLE:
+                mRepeatButton.setImageResource(R.drawable.btn_player_repeat_title);
+                break;
+        }
+    }
+
+    private void updateRepeatButton() {
+        MediaPlaylist.RepeatMode repeatMode = mMediaPlayerService.getCurrentPlaylist().getRepeatMode();
+        MediaPlaylist playlist = mMediaPlayerService.getCurrentPlaylist();
+        switch (repeatMode) {
+            case NO_REPEAT:
+                playlist.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_ALL);
+                mRepeatButton.setImageResource(R.drawable.btn_player_repeat_all);
+                break;
+            case REPEAT_ALL:
+                playlist.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_TITLE);
+                mRepeatButton.setImageResource(R.drawable.btn_player_repeat_title);
+                break;
+            case REPEAT_TITLE:
+                playlist.setRepeatMode(MediaPlaylist.RepeatMode.NO_REPEAT);
+                mRepeatButton.setImageResource(R.drawable.btn_player_repeat);
+                break;
+        }
     }
 }
