@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.content.MediaItem;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
@@ -24,7 +25,6 @@ public class AudioPlayerView
     private Context mContext;
     private ServiceConnection mConnection;
     private IContentObject contentObject;
-    private MediaPlaylist playlist;
 
     public void setContentObject(IContentObject contentObject) {
         this.contentObject = contentObject;
@@ -70,10 +70,8 @@ public class AudioPlayerView
 
     private void startPlaying() {
         if (isBound()) {
-            if (playlist == null) {
-                playlist = new MediaPlaylist(contentObject.getContentDataUrl());
-            }
-            mMediaPlayerService.start(playlist);
+            mMediaPlayerService.setMedia(MediaItem.create(contentObject.getContentDataUrl()));
+            mMediaPlayerService.play(0);
         }
     }
 
@@ -92,7 +90,8 @@ public class AudioPlayerView
 
     public boolean isActive() {
         if (contentObject != null && isBound()) {
-            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && contentObject.getContentDataUrl().equals(mMediaPlayerService.getCurrentMediaFilePath());
+            MediaItem currentItem = mMediaPlayerService.getCurrentMediaItem();
+            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && contentObject.getContentDataUrl().equals(currentItem.getFilePath());
         } else {
             return false;
         }

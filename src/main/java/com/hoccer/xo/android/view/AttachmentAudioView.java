@@ -84,7 +84,8 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
 
     public boolean isActive() {
         if (isBound()) {
-            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && ((mMediaItem.getFilePath()).equals(mMediaPlayerService.getCurrentMediaFilePath()));
+            MediaItem currentItem = mMediaPlayerService.getCurrentMediaItem();
+            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && ((mMediaItem.getFilePath()).equals(currentItem.getFilePath()));
         } else {
             return false;
         }

@@ -1,5 +1,7 @@
 package com.hoccer.xo.android.fragment;
 
+import java.util.ArrayList;
+import java.util.List;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -10,12 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.activity.AudioAttachmentListActivity;
 import com.hoccer.xo.android.adapter.AttachmentListAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
-import com.hoccer.xo.android.content.audio.MediaPlaylist;
+import com.hoccer.xo.android.content.MediaItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -23,6 +26,8 @@ import org.apache.log4j.Logger;
 public class AudioAttachmentListFragment extends XoListFragment {
 
     private MediaPlayerService mMediaPlayerService;
+
+    private static final int ALL_CONTACTS_ID = -1;
 
     private final static Logger LOG = Logger.getLogger(AudioAttachmentListFragment.class);
     private ServiceConnection mConnection;
@@ -41,12 +46,14 @@ public class AudioAttachmentListFragment extends XoListFragment {
         super.onActivityCreated(savedInstanceState);
 
         Intent contactIntent = getActivity().getIntent();
-        int conversationContactId = MediaPlaylist.UNDEFINED_CONTACT_ID;
+        int conversationContactId = ALL_CONTACTS_ID;
         if (contactIntent != null) {
             if (contactIntent.hasExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID)) {
-                conversationContactId = contactIntent.getIntExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID, -1);
+                conversationContactId = contactIntent.getIntExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID, ALL_CONTACTS_ID);
             }
         }
+
+        final int conversationContactIdFinal = conversationContactId;
 
         mAttachmentListAdapter = new AttachmentListAdapter(getXoActivity(), ContentMediaType.AUDIO, conversationContactId);
         XoApplication.getXoClient().registerTransferListener(mAttachmentListAdapter);
@@ -54,11 +61,63 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
+            private void setMediaList(){
+                List<MediaItem> itemList = new ArrayList<MediaItem>();
+                for (TalkClientDownload tcd : mAttachmentListAdapter.getAttachments()) {
+                    itemList.add(MediaItem.create(tcd.getContentDataUrl()));
+                }
+                mMediaPlayerService.setMediaList(itemList, mAttachmentListAdapter.getConversationContactId());
+            }
+
+            private void updateMediaList(){
+                int numberOfMediaItemsToAdd = mAttachmentListAdapter.getCount() - mMediaPlayerService.getMediaListSize();
+
+                for (int i = 0; i < numberOfMediaItemsToAdd; ++i) {
+                    TalkClientDownload tcd = mAttachmentListAdapter.getItem(i);
+                    mMediaPlayerService.addMedia(MediaItem.create(tcd.getContentDataUrl()));
+                }
+            }
+
+            //TODO if files have been added the position of the currently playing song needs to be changed!
+
             @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                MediaPlaylist playlist = new MediaPlaylist(mAttachmentListAdapter.getAttachments(), mAttachmentListAdapter.getConversationContactId());
-                mMediaPlayerService.start(playlist, position);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                String newFilePath = mAttachmentListAdapter.getItem(position).getContentDataUrl();
+
+                String currentFilePath = "";
+                if ( mMediaPlayerService.getMediaListSize() > 0) {
+                    mMediaPlayerService.getCurrentMediaItem().getFilePath();
+                }
+                switch(mMediaPlayerService.getPlaylistType()) {
+                    case ALL_MEDIA: {
+                        if ( conversationContactIdFinal == ALL_CONTACTS_ID){
+                            if ( newFilePath == currentFilePath) {
+                                updateMediaList();
+                                break;
+                            }
+                        }
+
+                        setMediaList();
+                        mMediaPlayerService.play(position);
+                    } break;
+                    case CONVERSATION_MEDIA: {
+                        if ( conversationContactIdFinal == mMediaPlayerService.getCurrentConversationContactId()) {
+                            if (newFilePath == currentFilePath) {
+                                updateMediaList();
+                                break;
+                            }
+                        }
+
+                        setMediaList();
+                        mMediaPlayerService.play(position);
+                    } break;
+                    case SINGLE_MEDIA: {
+                        setMediaList();
+                        mMediaPlayerService.play(position);
+                    } break;
+                }
+
                 getXoActivity().showFullscreenPlayer();
             }
         });

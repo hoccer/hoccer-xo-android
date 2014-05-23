@@ -13,6 +13,7 @@ import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.MediaItem;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
+import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.android.view.AttachmentAudioView;
 import com.hoccer.xo.release.R;
 
@@ -25,14 +26,14 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
 
     private String mContentMediaType;
 
-    private int mConversationContactId = MediaPlaylist.UNDEFINED_CONTACT_ID;
+    private int mConversationContactId = MediaPlayerService.UNDEFINED_CONTACT_ID;
 
     public AttachmentListAdapter(XoActivity pXoContext) {
-        this(pXoContext, null, MediaPlaylist.UNDEFINED_CONTACT_ID);
+        this(pXoContext, null, MediaPlayerService.UNDEFINED_CONTACT_ID);
     }
 
     public AttachmentListAdapter(XoActivity pXoContext, String pContentMediaType) {
-        this(pXoContext, pContentMediaType, MediaPlaylist.UNDEFINED_CONTACT_ID);
+        this(pXoContext, pContentMediaType, MediaPlayerService.UNDEFINED_CONTACT_ID);
     }
 
     public AttachmentListAdapter(XoActivity pXoContext, int pConversationContactId) {
@@ -116,7 +117,7 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
     private void loadAttachmentList() {
         try {
             if (mContentMediaType != null) {
-                if (mConversationContactId != MediaPlaylist.UNDEFINED_CONTACT_ID) {
+                if (mConversationContactId != MediaPlayerService.UNDEFINED_CONTACT_ID) {
                     mAttachments = getXoClient().getDatabase().findClientDownloadByMediaTypeAndConversationContactId(ContentMediaType.AUDIO, mConversationContactId);
                 } else {
                     mAttachments = getXoClient().getDatabase().findClientDownloadByMediaType(mContentMediaType);
@@ -147,7 +148,7 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
 
     @Override
     public void onDownloadFinished(TalkClientDownload download) {
-        int contactId = MediaPlaylist.UNDEFINED_CONTACT_ID;
+        int contactId = MediaPlayerService.UNDEFINED_CONTACT_ID;
 
         try {
             TalkClientMessage message = XoApplication.getXoClient().getDatabase().findMessageByDownloadId(download.getClientDownloadId());
@@ -157,7 +158,7 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
         }
 
         if (download.getContentMediaType().equals(this.mContentMediaType)) {
-            if ((mConversationContactId == MediaPlaylist.UNDEFINED_CONTACT_ID) || (mConversationContactId == contactId)) {
+            if ((mConversationContactId == MediaPlayerService.UNDEFINED_CONTACT_ID) || (mConversationContactId == contactId)) {
                 mAttachments.add(0, download);
                 runOnUiThread(new Runnable() {
                     @Override
