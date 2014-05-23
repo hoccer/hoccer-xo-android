@@ -10,7 +10,6 @@ import java.util.ListIterator;
 
 public class MediaPlaylist implements ListIterator<MediaItem> {
 
-
     public static enum RepeatMode {
         REPEAT_TRACK, REPEAT_ALL, NO_REPEAT;
     }
@@ -139,5 +138,13 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
 
     public MediaItem current() {
         return mPlaylistItems.get(mCurrentIndex);
+    }
+
+    public RepeatMode getRepeatMode() {
+        return mRepeatMode;
+    }
+
+    public void setRepeatMode(RepeatMode repeatMode) {
+        this.mRepeatMode = repeatMode;
     }
 }

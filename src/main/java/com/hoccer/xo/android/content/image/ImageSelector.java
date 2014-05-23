@@ -163,8 +163,6 @@ public class ImageSelector implements IContentSelector {
         String mimeType = cursor.getString(mimeTypeIndex);
         String filePath = cursor.getString(dataIndex);
         String fileName = cursor.getString(fileNameIndex);
-        int orientation = cursor.getInt(orientationIndex);
-        double aspectRatio;
 
         int fileSize = cursor.getInt(sizeIndex);
         int fileWidth = 0; // cursor.getInt(widthIndex);
