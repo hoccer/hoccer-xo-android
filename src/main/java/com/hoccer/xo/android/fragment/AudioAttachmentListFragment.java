@@ -84,15 +84,20 @@ public class AudioAttachmentListFragment extends XoListFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 String newFilePath = mAttachmentListAdapter.getItem(position).getContentDataUrl();
-
                 String currentFilePath = "";
+
+                MediaItem currentItem = mMediaPlayerService.getCurrentMediaItem();
+                if(currentItem != null) {
+                    currentFilePath = currentItem.getFilePath();
+                }
+
                 if ( mMediaPlayerService.getMediaListSize() > 0) {
                     mMediaPlayerService.getCurrentMediaItem().getFilePath();
                 }
                 switch(mMediaPlayerService.getPlaylistType()) {
                     case ALL_MEDIA: {
                         if ( conversationContactIdFinal == ALL_CONTACTS_ID){
-                            if ( newFilePath == currentFilePath) {
+                            if ( newFilePath.equals(currentFilePath)) {
                                 updateMediaList();
                                 break;
                             }
