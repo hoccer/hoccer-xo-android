@@ -157,7 +157,7 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
         }
 
         if (download.getContentMediaType().equals(this.mContentMediaType)) {
-            if (mConversationContactId == contactId) {
+            if ((mConversationContactId == MediaPlaylist.UNDEFINED_CONTACT_ID) || (mConversationContactId == contactId)) {
                 mAttachments.add(0, download);
                 runOnUiThread(new Runnable() {
                     @Override
