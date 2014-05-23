@@ -276,9 +276,9 @@ public class FullscreenPlayerFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        int currentDuration = mMediaPlayerService.getCurrentPosition();
-                        mCurrentTimeLabel.setText(stringFromTimeStamp(currentDuration));
-                        mTrackProgressBar.setProgress(currentDuration);
+                        int currentProgress = mMediaPlayerService.getCurrentProgress();
+                        mCurrentTimeLabel.setText(stringFromTimeStamp(currentProgress));
+                        mTrackProgressBar.setProgress(currentProgress);
                     }
                 });
 
