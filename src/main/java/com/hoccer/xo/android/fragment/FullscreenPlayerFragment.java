@@ -299,7 +299,7 @@ public class FullscreenPlayerFragment extends Fragment {
                     if (!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
                         mMediaPlayerService.pause();
                     } else {
-                        mMediaPlayerService.play(true);
+                        mMediaPlayerService.play();
                     }
                     break;
                 case R.id.bt_player_skip_back:

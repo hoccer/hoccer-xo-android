@@ -26,9 +26,9 @@ import org.apache.log4j.Logger;
 
 import java.util.List;
 
-public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
+public class MediaPlayerService extends Service implements MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
-    public enum PlaylistType{
+    public enum PlaylistType {
         ALL_MEDIA,
         CONVERSATION_MEDIA,
         SINGLE_MEDIA;
@@ -155,7 +155,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(UPDATE_PLAYSTATE_ACTION)) {
                     if (isPaused()) {
-                        play(true);
+                        play(mPlaylist.current());
                     } else {
                         pause();
                     }
@@ -177,7 +177,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     private void createMediaPlayer() {
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setOnErrorListener(this);
-        mMediaPlayer.setOnPreparedListener(this);
         mMediaPlayer.setOnCompletionListener(this);
         mMediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
     }
@@ -285,31 +284,49 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         }
     }
 
-    public void play(int position){
-        mPlaylist.setCurrentIndex(position);
-
-        if (mMediaPlayer == null) {
-            createMediaPlayer();
-        }
-
-        if ( mPlaylist.current() != null) {
-            resetAndPrepareMediaPlayer(mPlaylist.current().getFilePath());
-        }else{
-            //TODO!!!!!!!!!!!
-        }
-    }
 
     public int getMediaListSize() {
         return mPlaylist.size();
     }
 
-    public void play(boolean canResume) {
+    public void play(int position) {
+        mPlaylist.setCurrentTrackNumber(position);
+        playNewTrack(mPlaylist.current());
+    }
+
+    public void play() {
+        if (isStopped()) {
+            mPlaylist.setCurrentTrackNumber(0);
+        }
+        play(mPlaylist.current());
+    }
+
+    public void play(final MediaItem mediaItem) {
+        if (mMediaPlayer == null) {
+            createMediaPlayerAndPlay(mediaItem);
+        } else {
+            startPlaying();
+        }
+    }
+
+    private void createMediaPlayerAndPlay(final MediaItem mediaItem) {
+        createMediaPlayer();
+        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                play(mediaItem);
+            }
+        });
+        resetAndPrepareMediaPlayer(mediaItem.getFilePath());
+    }
+
+    private void startPlaying() {
         int result = mAudioManager.requestAudioFocus(mAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             mMediaPlayer.start();
             setPaused(false);
             setStopped(false);
-            if (!canResume) {
+            if (!canResume()) {
                 mCurrentMediaFilePath = mTempMediaFilePath;
                 resetFileNameAndMetaData();
                 broadcastTrackChanged();
@@ -323,10 +340,22 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         }
     }
 
+    private boolean canResume() {
+        return isPaused();
+    }
+
+    private void playNewTrack(MediaItem mediaItem) {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
+        play(mediaItem);
+    }
+
     private void playNext() {
         MediaItem mediaItem = mPlaylist.nextByRepeatMode();
         if (mediaItem != null) {
-            resetAndPrepareMediaPlayer(mediaItem.getFilePath());
+            playNewTrack(mediaItem);
         } else {
             stop();
         }
@@ -334,15 +363,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
 
     public void skipForward() {
         if (mPlaylist.size() > 0) {
-            String path = mPlaylist.next().getFilePath();
-            resetAndPrepareMediaPlayer(path);
+            playNewTrack(mPlaylist.next());
         }
     }
 
     public void skipBackwards() {
         if (mPlaylist.size() > 0) {
-            String path = mPlaylist.previous().getFilePath();
-            resetAndPrepareMediaPlayer(path);
+            playNewTrack(mPlaylist.previous());
         }
     }
 
@@ -374,8 +401,19 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         return isApplicationSentToBackground(this);
     }
 
-    public void setSeekPosition(int position) {
-        mMediaPlayer.seekTo(position);
+    public void setSeekPosition(final int position) {
+        if (mMediaPlayer == null) {
+            createMediaPlayer();
+            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mMediaPlayer.seekTo(position);
+                }
+            });
+            resetAndPrepareMediaPlayer(mPlaylist.current().getFilePath());
+        } else {
+            mMediaPlayer.seekTo(position);
+        }
     }
 
     private void removeNotification() {
@@ -395,11 +433,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         LOG.debug("onError(" + what + "," + extra + ")");
         LOG.debug("onError(" + what + "," + extra + ")");
         return false;
-    }
-
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        play(false);
     }
 
     @Override
@@ -423,37 +456,42 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         return (isStopped()) ? 0 : mPlaylist.getCurrentTrackNumber();
     }
 
+
     public int getCurrentTrackNumber() {
         return mPlaylist.getCurrentTrackNumber();
     }
 
-    public int getCurrentProgress() { return mMediaPlayer.getCurrentPosition(); }
+    public int getCurrentProgress() {
+        return mMediaPlayer.getCurrentPosition();
+    }
 
-    public int getCurrentConversationContactId(){
+    public int getCurrentConversationContactId() {
         return mCurrentConversationContactId;
     }
 
-    public PlaylistType getPlaylistType(){ return mPlaylistType; }
+    public PlaylistType getPlaylistType() {
+        return mPlaylistType;
+    }
 
-    public void setMedia(MediaItem item){
+    public void setMedia(MediaItem item) {
         mPlaylist.clear();
         mPlaylist.add(0, item);
         mPlaylistType = PlaylistType.SINGLE_MEDIA;
     }
 
-    public void setMediaList(List<MediaItem> itemList, int conversationContactId){
+    public void setMediaList(List<MediaItem> itemList, int conversationContactId) {
         mPlaylist.clear();
         mPlaylist.addAll(itemList);
         mCurrentConversationContactId = conversationContactId;
 
-        if(conversationContactId == UNDEFINED_CONTACT_ID) {
+        if (conversationContactId == UNDEFINED_CONTACT_ID) {
             mPlaylistType = PlaylistType.ALL_MEDIA;
         } else {
             mPlaylistType = PlaylistType.CONVERSATION_MEDIA;
         }
     }
 
-    public void addMedia(MediaItem item){
+    public void addMedia(MediaItem item) {
         mPlaylist.add(0, item);
     }
 
