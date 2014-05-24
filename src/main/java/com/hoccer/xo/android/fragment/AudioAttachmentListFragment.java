@@ -115,9 +115,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
                     currentFilePath = currentItem.getFilePath();
                 }
 
-                if ( mMediaPlayerService.getMediaListSize() > 0) {
-                    mMediaPlayerService.getCurrentMediaItem().getFilePath();
-                }
                 switch(mMediaPlayerService.getPlaylistType()) {
                     case ALL_MEDIA: {
                         if ( conversationContactIdFinal == ALL_CONTACTS_ID){
