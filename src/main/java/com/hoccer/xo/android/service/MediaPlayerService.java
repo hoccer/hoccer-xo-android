@@ -8,7 +8,6 @@ import android.content.*;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -19,7 +18,6 @@ import android.view.View;
 import android.widget.RemoteViews;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.content.MediaItem;
-import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -60,8 +58,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
 
     private PendingIntent mPlayStateTogglePendingIntent;
     private final IBinder mBinder = new MediaPlayerBinder();
-    private MediaMetaData mMediaMetaData;
-    private CharSequence mFileName;
     private RemoteViews mNotificationViews;
 
     private LocalBroadcastManager mLocalBroadcastManager;
@@ -240,8 +236,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
     private void updateMetaDataView(RemoteViews views) {
         String title = getString(R.string.media_meta_data_unknown_title);
         String artist = getString(R.string.media_meta_data_unknown_artist);
-        String metaDataTitle = mMediaMetaData.getTitle();
-        String metaDataArtist = mMediaMetaData.getArtist();
+        MediaItem item = mPlaylist.current();
+        String metaDataTitle = item.getMetaData().getTitle();
+        String metaDataArtist = item.getMetaData().getArtist();
         boolean metaDataAvailable = false;
         if (metaDataTitle != null && !metaDataTitle.isEmpty()) {
             title = metaDataTitle;
@@ -259,7 +256,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         } else {
             views.setViewVisibility(R.id.filename_text, View.VISIBLE);
             views.setViewVisibility(R.id.media_metadata_layout, View.GONE);
-            views.setTextViewText(R.id.filename_text, mFileName);
+            views.setTextViewText(R.id.filename_text, item.getFileName());
         }
     }
 
@@ -273,17 +270,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
             LOG.error("setFile: exception setting data source", e);
         }
     }
-
-    private void resetFileNameAndMetaData() {
-        String path = Uri.parse(mCurrentMediaFilePath).getPath();
-        mFileName = extractFileName(path);
-        try {
-            mMediaMetaData = MediaMetaData.create(path);
-        } catch (IllegalArgumentException e) {
-            LOG.error(e);
-        }
-    }
-
 
     public int getMediaListSize() {
         return mPlaylist.size();
@@ -328,7 +314,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
             setStopped(false);
             if (!canResume()) {
                 mCurrentMediaFilePath = mTempMediaFilePath;
-                resetFileNameAndMetaData();
                 broadcastTrackChanged();
             }
             if (isNotificationActive()) {
@@ -524,11 +509,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
     private void broadcastTrackChanged() {
         Intent intent = new Intent(TRACK_CHANGED_ACTION);
         mLocalBroadcastManager.sendBroadcast(intent);
-    }
-
-    private String extractFileName(String path) {
-        String fileName = path.substring(path.lastIndexOf("/") + 1);
-        return fileName;
     }
 
     public MediaItem getCurrentMediaItem() {

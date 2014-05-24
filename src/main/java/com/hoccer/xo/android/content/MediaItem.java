@@ -4,23 +4,27 @@ import android.net.Uri;
 
 public class MediaItem {
 
-    private MediaMetaData metaData;
-    private String filePath;
+    private MediaMetaData mMetaData;
+    private String mFilePath;
 
     public String getFilePath() {
-        return filePath;
+        return mFilePath;
     }
 
     public void setFilePath(String filePath) {
-        this.filePath = filePath;
+        this.mFilePath = filePath;
+    }
+
+    public String getFileName() {
+        return mFilePath.substring(mFilePath.lastIndexOf("/") + 1);
     }
 
     public MediaMetaData getMetaData() {
-        return metaData;
+        return mMetaData;
     }
 
     public void setMetaData(MediaMetaData metaData) {
-        this.metaData = metaData;
+        this.mMetaData = metaData;
     }
 
     public static MediaItem create(String mediaFilePath) {
