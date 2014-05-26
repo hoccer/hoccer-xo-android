@@ -392,6 +392,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
+                    if (isStopped()){
+                        setStopped(false);
+                        setPaused(true);
+                    }
                     mMediaPlayer.seekTo(position);
                 }
             });

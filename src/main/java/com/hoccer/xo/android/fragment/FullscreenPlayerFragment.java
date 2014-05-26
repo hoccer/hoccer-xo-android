@@ -200,9 +200,9 @@ public class FullscreenPlayerFragment extends Fragment {
 
         if (mUpdateTimeTask == null) {
             mUpdateTimeTask = new UpdateTimeTask();
+            mTimeProgressHandler.post(mUpdateTimeTask);
         }
 
-        mTimeProgressHandler.postDelayed(mUpdateTimeTask, 100);
     }
 
     private void setupViewListeners() {
@@ -266,6 +266,22 @@ public class FullscreenPlayerFragment extends Fragment {
         }
     }
 
+    private void updateRepeatMode() {
+        switch (mMediaPlayerService.getRepeatMode()) {
+            case NO_REPEAT:
+                mMediaPlayerService.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_ALL);
+                break;
+            case REPEAT_ALL:
+                mMediaPlayerService.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_TITLE);
+                break;
+            case REPEAT_TITLE:
+                mMediaPlayerService.setRepeatMode(MediaPlaylist.RepeatMode.NO_REPEAT);
+                break;
+        }
+
+        updateRepeatButton();
+    }
+
     private void updateRepeatButton() {
         MediaPlaylist.RepeatMode repeatMode = mMediaPlayerService.getRepeatMode();
         final Drawable buttonStateDrawable;
@@ -291,21 +307,6 @@ public class FullscreenPlayerFragment extends Fragment {
         });
     }
 
-    private void updateRepeatMode() {
-        switch (mMediaPlayerService.getRepeatMode()) {
-            case NO_REPEAT:
-                mMediaPlayerService.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_ALL);
-                break;
-            case REPEAT_ALL:
-                mMediaPlayerService.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_TITLE);
-                break;
-            case REPEAT_TITLE:
-                mMediaPlayerService.setRepeatMode(MediaPlaylist.RepeatMode.NO_REPEAT);
-                break;
-        }
-
-        updateRepeatButton();
-    }
 
     private class OnPlayerInteractionListener implements SeekBar.OnSeekBarChangeListener, View.OnClickListener, ToggleButton.OnCheckedChangeListener {
 
@@ -340,7 +341,6 @@ public class FullscreenPlayerFragment extends Fragment {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             mMediaPlayerService.setSeekPosition(seekBar.getProgress());
-            mTimeProgressHandler.postDelayed(mUpdateTimeTask, 100);
         }
 
         @Override
@@ -387,7 +387,7 @@ public class FullscreenPlayerFragment extends Fragment {
                     }
                 });
 
-                mTimeProgressHandler.postDelayed(this, 100);
+                mTimeProgressHandler.postDelayed(this, 1000);
             } catch (Exception e) {
                 LOG.error(e);
             }
