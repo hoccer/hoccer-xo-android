@@ -3,6 +3,7 @@ package com.hoccer.xo.android.fragment;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -51,14 +52,14 @@ public class AudioAttachmentListFragment extends XoListFragment {
         int conversationContactId = ALL_CONTACTS_ID;
         if (contactIntent != null) {
 
-            String activityLabel = getString( R.string.audio_attachment_list_unknown);
+            String activityLabel = getString(R.string.audio_attachment_list_unknown);
 
             if (contactIntent.hasExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID)) {
                 conversationContactId = contactIntent.getIntExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID, ALL_CONTACTS_ID);
 
-                if ( conversationContactId == ALL_CONTACTS_ID) {
-                    activityLabel = getString( R.string.audio_attachment_list_all);
-                }else{
+                if (conversationContactId == ALL_CONTACTS_ID) {
+                    activityLabel = getString(R.string.audio_attachment_list_all);
+                } else {
                     TalkClientContact contact = null;
                     try {
                         contact = getXoActivity().getXoDatabase().findClientContactById(conversationContactId);
@@ -70,8 +71,8 @@ public class AudioAttachmentListFragment extends XoListFragment {
                         activityLabel = contact.getName();
                     }
                 }
-            }else{
-                activityLabel = getString( R.string.audio_attachment_list_all);
+            } else {
+                activityLabel = getString(R.string.audio_attachment_list_all);
             }
 
             getActivity().setTitle(activityLabel);
@@ -85,7 +86,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
         getListView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-            private void setMediaList(){
+            private void setMediaList() {
                 List<MediaItem> itemList = new ArrayList<MediaItem>();
                 for (TalkClientDownload tcd : mAttachmentListAdapter.getAttachments()) {
                     itemList.add(MediaItem.create(tcd.getContentDataUrl()));
@@ -93,7 +94,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 mMediaPlayerService.setMediaList(itemList, mAttachmentListAdapter.getConversationContactId());
             }
 
-            private void updateMediaList(){
+            private void updateMediaList() {
                 int numberOfMediaItemsToAdd = mAttachmentListAdapter.getCount() - mMediaPlayerService.getMediaListSize();
 
                 for (int i = 0; i < numberOfMediaItemsToAdd; ++i) {
@@ -111,14 +112,14 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 String currentFilePath = "";
 
                 MediaItem currentItem = mMediaPlayerService.getCurrentMediaItem();
-                if(currentItem != null) {
+                if (currentItem != null) {
                     currentFilePath = currentItem.getFilePath();
                 }
 
-                switch(mMediaPlayerService.getPlaylistType()) {
+                switch (mMediaPlayerService.getPlaylistType()) {
                     case ALL_MEDIA: {
-                        if ( conversationContactIdFinal == ALL_CONTACTS_ID){
-                            if ( newFilePath.equals(currentFilePath)) {
+                        if (conversationContactIdFinal == ALL_CONTACTS_ID) {
+                            if (newFilePath.equals(currentFilePath)) {
                                 updateMediaList();
                                 break;
                             }
@@ -126,7 +127,8 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
                         setMediaList();
                         mMediaPlayerService.play(position);
-                    } break;
+                    }
+                    break;
                     case CONVERSATION_MEDIA: {
                         if (conversationContactIdFinal == mMediaPlayerService.getCurrentConversationContactId()) {
                             if (newFilePath.equals(currentFilePath)) {
@@ -137,11 +139,13 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
                         setMediaList();
                         mMediaPlayerService.play(position);
-                    } break;
+                    }
+                    break;
                     case SINGLE_MEDIA: {
                         setMediaList();
                         mMediaPlayerService.play(position);
-                    } break;
+                    }
+                    break;
                 }
 
                 getXoActivity().showFullscreenPlayer();
