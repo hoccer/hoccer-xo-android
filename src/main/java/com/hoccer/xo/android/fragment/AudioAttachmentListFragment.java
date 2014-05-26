@@ -118,7 +118,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
                 switch (mMediaPlayerService.getPlaylistType()) {
                     case ALL_MEDIA: {
-                        if (conversationContactIdFinal == ALL_CONTACTS_ID) {
+                        if (conversationContactIdFinal == ALL_CONTACTS_ID && !mMediaPlayerService.isStopped()) {
                             if (newFilePath.equals(currentFilePath)) {
                                 updateMediaList();
                                 break;
@@ -130,7 +130,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
                     }
                     break;
                     case CONVERSATION_MEDIA: {
-                        if (conversationContactIdFinal == mMediaPlayerService.getCurrentConversationContactId()) {
+                        if (conversationContactIdFinal == mMediaPlayerService.getCurrentConversationContactId() && !mMediaPlayerService.isStopped()) {
                             if (newFilePath.equals(currentFilePath)) {
                                 updateMediaList();
                                 break;
