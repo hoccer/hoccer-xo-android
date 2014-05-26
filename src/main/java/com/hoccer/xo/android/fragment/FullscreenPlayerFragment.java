@@ -8,11 +8,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 public class FullscreenPlayerFragment extends Fragment {
 
     static final Logger LOG = Logger.getLogger(FullscreenPlayerFragment.class);
-    static final String LOG_TAG = "BAZINGA";
 
     private ToggleButton mPlayButton;
     private ImageButton mSkipForwardButton;
@@ -102,11 +101,13 @@ public class FullscreenPlayerFragment extends Fragment {
                 public void onServiceConnected(ComponentName name, IBinder service) {
                     MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
                     mMediaPlayerService = binder.getService();
-                    setupViewListeners();
                     enableViewComponents(true);
                     updateTrackData();
-                    refreshRepeatButton();
-                    refreshShuffleButton();
+                    updateRepeatButton();
+                    mPlayButton.setChecked(!mMediaPlayerService.isPaused());
+                    mShuffleButton.setChecked(mMediaPlayerService.isShuffleActive());
+
+                    setupViewListeners(); // must be last to call!
                 }
 
                 @Override
@@ -123,7 +124,6 @@ public class FullscreenPlayerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //resizeCoverArtView();
         if (mMediaPlayerService != null) {
             updateTrackData();
         }
@@ -142,13 +142,16 @@ public class FullscreenPlayerFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mBlinkAnimation.cancel();
-                    if (mMediaPlayerService.isPaused() || mMediaPlayerService.isStopped()) {
-                        mPlayButton.setActivated(false);
+                    if ((mPlayButton.isChecked() && mMediaPlayerService.isPaused()) || (mPlayButton.isChecked() && mMediaPlayerService.isStopped())) {
+                        mPlayButton.setChecked(false);
                         mBlinkAnimation.start();
-                    } else {
-                        mPlayButton.setActivated(true);
+                    } else if (!mPlayButton.isChecked() && !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
+                        if (mBlinkAnimation.isRunning()) {
+                            mBlinkAnimation.cancel();
+                        }
+
                         mCurrentTimeLabel.setTextColor(getResources().getColor(R.color.xo_media_player_secondary_text));
+                        mPlayButton.setChecked(true);
                     }
                 }
             });
@@ -179,7 +182,7 @@ public class FullscreenPlayerFragment extends Fragment {
                 mTrackProgressBar.setMax(totalDuration);
                 mTrackProgressBar.setProgress(mMediaPlayerService.getCurrentPosition());
 
-                mTotalDurationLabel.setText(stringFromTimeStamp(totalDuration));
+                mTotalDurationLabel.setText(getStringFromTimeStamp(totalDuration));
                 mPlaylistIndexLabel.setText(Integer.toString(mMediaPlayerService.getCurrentTrackNumber() + 1));
                 mPlaylistSizeLabel.setText(Integer.toString(mMediaPlayerService.getMediaListSize()));
 
@@ -204,12 +207,12 @@ public class FullscreenPlayerFragment extends Fragment {
 
     private void setupViewListeners() {
         OnPlayerInteractionListener listener = new OnPlayerInteractionListener();
-        mPlayButton.setOnClickListener(listener);
+        mPlayButton.setOnCheckedChangeListener(listener);
         mTrackProgressBar.setOnSeekBarChangeListener(listener);
         mSkipBackButton.setOnClickListener(listener);
         mSkipForwardButton.setOnClickListener(listener);
         mRepeatButton.setOnClickListener(listener);
-        mShuffleButton.setOnClickListener(listener);
+        mShuffleButton.setOnCheckedChangeListener(listener);
     }
 
     private void enableViewComponents(final boolean enable) {
@@ -241,7 +244,7 @@ public class FullscreenPlayerFragment extends Fragment {
         });
     }
 
-    private String stringFromTimeStamp(int timeInMillis) {
+    private String getStringFromTimeStamp(int timeInMillis) {
         long hours = TimeUnit.MILLISECONDS.toHours(timeInMillis);
         long minutes = TimeUnit.MILLISECONDS.toMinutes(timeInMillis) - TimeUnit.HOURS.toMinutes(hours);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(timeInMillis) - TimeUnit.MINUTES.toSeconds(minutes);
@@ -256,64 +259,71 @@ public class FullscreenPlayerFragment extends Fragment {
         int margin = getActivity().getResources().getDimensionPixelSize(R.dimen.media_player_layout_margin);
         int measuredViewHeight = getView().getMeasuredWidth() - (margin * 4);
         if (mArtworkView.getHeight() != measuredViewHeight) {
-            Log.d(LOG_TAG, "Current width: " + mArtworkView.getWidth() + " height: " + mArtworkView.getHeight());
-            Log.d(LOG_TAG, "ParentView width: " + getView().getMeasuredWidth());
             RelativeLayout.LayoutParams coverArtLayoutParams = (RelativeLayout.LayoutParams) mArtworkView.getLayoutParams();
-
             coverArtLayoutParams.height = measuredViewHeight;
             coverArtLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
             mArtworkView.setLayoutParams(coverArtLayoutParams);
-            Log.d(LOG_TAG, "New width: " + mArtworkView.getWidth() + " height: " + mArtworkView.getHeight());
-            Log.d(LOG_TAG, "getView() = " + getView());
         }
     }
 
-    private class UpdateTimeTask implements Runnable {
+    private void updateRepeatButton() {
+        MediaPlaylist.RepeatMode repeatMode = mMediaPlayerService.getRepeatMode();
+        final Drawable buttonStateDrawable;
+        switch (repeatMode) {
+            case NO_REPEAT:
+                buttonStateDrawable = getResources().getDrawable(R.drawable.btn_player_repeat);
+                break;
+            case REPEAT_ALL:
+                buttonStateDrawable = getResources().getDrawable(R.drawable.btn_player_repeat_all);
+                break;
+            case REPEAT_TITLE:
+                buttonStateDrawable = getResources().getDrawable(R.drawable.btn_player_repeat_title);
+                break;
+            default:
+                buttonStateDrawable = null;
+        }
 
-        @Override
-        public void run() {
-            try {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        int currentProgress = mMediaPlayerService.getCurrentProgress();
-                        mCurrentTimeLabel.setText(stringFromTimeStamp(currentProgress));
-                        mTrackProgressBar.setProgress(currentProgress);
-                    }
-                });
-
-                mTimeProgressHandler.postDelayed(this, 100);
-            } catch (Exception e) {
-                LOG.error(e);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mRepeatButton.setBackgroundDrawable(buttonStateDrawable);
             }
-        }
+        });
     }
 
-    private class OnPlayerInteractionListener implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
+    private void updateRepeatMode() {
+        switch (mMediaPlayerService.getRepeatMode()) {
+            case NO_REPEAT:
+                mMediaPlayerService.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_ALL);
+                break;
+            case REPEAT_ALL:
+                mMediaPlayerService.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_TITLE);
+                break;
+            case REPEAT_TITLE:
+                mMediaPlayerService.setRepeatMode(MediaPlaylist.RepeatMode.NO_REPEAT);
+                break;
+        }
+
+        updateRepeatButton();
+    }
+
+    private class OnPlayerInteractionListener implements SeekBar.OnSeekBarChangeListener, View.OnClickListener, ToggleButton.OnCheckedChangeListener {
 
 
         @Override
         public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.bt_player_play:
-                    if (!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
-                        mMediaPlayerService.pause();
-                    } else {
-                        mMediaPlayerService.play();
-                    }
-                    break;
-                case R.id.bt_player_skip_back:
-                    mMediaPlayerService.skipBackwards();
-                    break;
-                case R.id.bt_player_skip_forward:
-                    mMediaPlayerService.skipForward();
-                    break;
-                case R.id.bt_player_repeat:
-                    updateRepeatMode();
-                    break;
-                case R.id.bt_player_shuffle:
-                    updateShuffleState();
-                    break;
+            if (mMediaPlayerService != null) {
+                switch (v.getId()) {
+                    case R.id.bt_player_skip_back:
+                        mMediaPlayerService.skipBackwards();
+                        break;
+                    case R.id.bt_player_skip_forward:
+                        mMediaPlayerService.skipForward();
+                        break;
+                    case R.id.bt_player_repeat:
+                        updateRepeatMode();
+                        break;
+                }
             }
         }
 
@@ -333,55 +343,54 @@ public class FullscreenPlayerFragment extends Fragment {
             mTimeProgressHandler.postDelayed(mUpdateTimeTask, 100);
         }
 
-    }
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (mMediaPlayerService != null) {
+                switch (buttonView.getId()) {
+                    case R.id.bt_player_play:
+                        boolean isPlaying = (mMediaPlayerService.isPaused() || mMediaPlayerService.isStopped()) ? false : true;
+                        if (!isChecked && isPlaying) {
+                            mMediaPlayerService.pause();
+                            mBlinkAnimation.start();
+                        } else if (isChecked && !isPlaying){
+                            mMediaPlayerService.play();
+                            if (mBlinkAnimation.isRunning()) {
+                                mBlinkAnimation.cancel();
+                            }
 
-    private void refreshRepeatButton() {
-        MediaPlaylist.RepeatMode repeatMode = mMediaPlayerService.getRepeatMode();
-        switch (repeatMode) {
-            case NO_REPEAT:
-                mRepeatButton.setImageResource(R.drawable.btn_player_repeat);
-                break;
-            case REPEAT_ALL:
-                mRepeatButton.setImageResource(R.drawable.btn_player_repeat_all);
-                break;
-            case REPEAT_TITLE:
-                mRepeatButton.setImageResource(R.drawable.btn_player_repeat_title);
-                break;
+                            mCurrentTimeLabel.setTextColor(getResources().getColor(R.color.xo_media_player_secondary_text));
+                        }
+                        break;
+                    case R.id.bt_player_shuffle:
+                        if (isChecked && !mMediaPlayerService.isShuffleActive()) {
+                            mMediaPlayerService.setShuffleActive(true);
+                        } else if (!isChecked && mMediaPlayerService.isShuffleActive()){
+                            mMediaPlayerService.setShuffleActive(false);
+                        }
+                        break;
+                }
+            }
         }
     }
 
-    private void refreshShuffleButton() {
-        if (mMediaPlayerService.isShuffleActive()) {
-            mShuffleButton.setActivated(true);
-        } else {
-            mShuffleButton.setActivated(false);
-        }
-    }
+    private class UpdateTimeTask implements Runnable {
 
-    private void updateRepeatMode() {
-        switch (mMediaPlayerService.getRepeatMode()) {
-            case NO_REPEAT:
-                mMediaPlayerService.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_ALL);
-                mRepeatButton.setImageResource(R.drawable.btn_player_repeat_all);
-                break;
-            case REPEAT_ALL:
-                mMediaPlayerService.setRepeatMode(MediaPlaylist.RepeatMode.REPEAT_TITLE);
-                mRepeatButton.setImageResource(R.drawable.btn_player_repeat_title);
-                break;
-            case REPEAT_TITLE:
-                mMediaPlayerService.setRepeatMode(MediaPlaylist.RepeatMode.NO_REPEAT);
-                mRepeatButton.setImageResource(R.drawable.btn_player_repeat);
-                break;
-        }
-    }
+        @Override
+        public void run() {
+            try {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int currentProgress = mMediaPlayerService.getCurrentProgress();
+                        mCurrentTimeLabel.setText(getStringFromTimeStamp(currentProgress));
+                        mTrackProgressBar.setProgress(currentProgress);
+                    }
+                });
 
-    private void updateShuffleState() {
-        if (mMediaPlayerService.isShuffleActive()) {
-            mShuffleButton.setActivated(false);
-            mMediaPlayerService.setShuffleActive(false);
-        } else {
-            mShuffleButton.setActivated(true);
-            mMediaPlayerService.setShuffleActive(true);
+                mTimeProgressHandler.postDelayed(this, 100);
+            } catch (Exception e) {
+                LOG.error(e);
+            }
         }
     }
 }
