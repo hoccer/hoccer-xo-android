@@ -2,16 +2,11 @@ package com.hoccer.xo.android.fragment;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.widget.*;
+import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.content.MediaItem;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
@@ -47,11 +43,10 @@ public class FullscreenPlayerFragment extends Fragment {
     private TextView mPlaylistSizeLabel;
     private ImageView mArtworkView;
 
-    private MediaPlayerService mMediaPlayerService;
-    private ServiceConnection mServiceConnection;
     private Handler mTimeProgressHandler = new Handler();
     private Runnable mUpdateTimeTask;
     private ValueAnimator mBlinkAnimation;
+    private MediaPlayerService mMediaPlayerService;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,48 +88,20 @@ public class FullscreenPlayerFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (mServiceConnection == null) {
-            mServiceConnection = new ServiceConnection() {
-                @Override
-                public void onServiceConnected(ComponentName name, IBinder service) {
-                    MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
-                    mMediaPlayerService = binder.getService();
-                    enableViewComponents(true);
-                    updateTrackData();
-                    updateRepeatButton();
-                    mPlayButton.setChecked(!mMediaPlayerService.isPaused());
-                    mShuffleButton.setChecked(mMediaPlayerService.isShuffleActive());
-
-                    setupViewListeners(); // must be last to call!
-                }
-
-                @Override
-                public void onServiceDisconnected(ComponentName name) {
-                    enableViewComponents(false);
-                }
-            };
-        }
-        Intent serviceIntent = new Intent(getActivity(), MediaPlayerService.class);
-        getActivity().startService(serviceIntent);
-        getActivity().bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mMediaPlayerService != null) {
-            updateTrackData();
-        }
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
-        getActivity().unbindService(mServiceConnection);
         mTimeProgressHandler.removeCallbacks(mUpdateTimeTask);
         mUpdateTimeTask = null;
+    }
+
+    public void initView() {
+        mMediaPlayerService = ((FullscreenPlayerActivity) getActivity()).getMediaPlayerService();
+        enableViewComponents(true);
+        updateTrackData();
+        mPlayButton.setChecked(!mMediaPlayerService.isPaused());
+        mShuffleButton.setChecked(mMediaPlayerService.isShuffleActive());
+
+        setupViewListeners(); // must be last to call!
     }
 
     public void updatePlayState() {
@@ -215,7 +182,7 @@ public class FullscreenPlayerFragment extends Fragment {
         mShuffleButton.setOnCheckedChangeListener(listener);
     }
 
-    private void enableViewComponents(final boolean enable) {
+    public void enableViewComponents(final boolean enable) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -226,7 +193,6 @@ public class FullscreenPlayerFragment extends Fragment {
                 mShuffleButton.setEnabled(enable);
             }
         });
-
     }
 
     private void setupBlinkAnimation() {
@@ -278,7 +244,6 @@ public class FullscreenPlayerFragment extends Fragment {
                 mMediaPlayerService.setRepeatMode(MediaPlaylist.RepeatMode.NO_REPEAT);
                 break;
         }
-
         updateRepeatButton();
     }
 

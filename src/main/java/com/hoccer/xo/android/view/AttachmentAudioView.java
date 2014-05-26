@@ -38,11 +38,11 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
         mContext = context;
         mMediaItem = mediaItem;
 
-        addView(inflate(mContext, R.layout.attachmentlist_music_item, null));
+        addView(inflate(mContext, R.layout.item_attachments_audio, null));
 
-        mTitleTextView = ((TextView) findViewById(R.id.attachmentlist_item_title_name));
-        mArtistTextView = ((TextView) findViewById(R.id.attachmentlist_item_artist_name));
-        mArtworkImageView = ((ImageView) findViewById(R.id.item_thumbnail_layout));
+        mTitleTextView = ((TextView) findViewById(R.id.tv_title_name));
+        mArtistTextView = ((TextView) findViewById(R.id.tv_artist_name));
+        mArtworkImageView = ((ImageView) findViewById(R.id.iv_artcover));
     }
 
     public void setTitleTextView(String titleName) {
@@ -92,7 +92,7 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
     }
 
     private void updatePlayPauseView() {
-        View view = findViewById(R.id.attachmentlist_item_playpause_button);
+        View view = findViewById(R.id.iv_playing_status);
         if (isActive()) {
             view.setVisibility(View.VISIBLE);
         } else {
