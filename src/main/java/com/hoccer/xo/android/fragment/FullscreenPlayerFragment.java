@@ -197,9 +197,9 @@ public class FullscreenPlayerFragment extends Fragment {
 
         if (mUpdateTimeTask == null) {
             mUpdateTimeTask = new UpdateTimeTask();
+            mTimeProgressHandler.post(mUpdateTimeTask);
         }
 
-        mTimeProgressHandler.postDelayed(mUpdateTimeTask, 100);
     }
 
     private void setupViewListeners() {
@@ -282,7 +282,7 @@ public class FullscreenPlayerFragment extends Fragment {
                     }
                 });
 
-                mTimeProgressHandler.postDelayed(this, 100);
+                mTimeProgressHandler.postDelayed(this, 1000);
             } catch (Exception e) {
                 LOG.error(e);
             }
@@ -330,7 +330,6 @@ public class FullscreenPlayerFragment extends Fragment {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             mMediaPlayerService.setSeekPosition(seekBar.getProgress());
-            mTimeProgressHandler.postDelayed(mUpdateTimeTask, 100);
         }
 
     }
