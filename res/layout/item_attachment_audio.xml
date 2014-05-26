@@ -51,7 +51,6 @@
             android:background="@null"
             android:src="@drawable/ic_playing"
             android:visibility="gone"
-            android:layout_marginLeft="@dimen/media_player_layout_margin"
-            android:layout_marginRight="@dimen/media_player_layout_margin"/>
+            android:layout_marginLeft="@dimen/media_player_layout_margin"/>
 
 </RelativeLayout>

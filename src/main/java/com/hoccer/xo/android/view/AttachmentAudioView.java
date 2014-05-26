@@ -38,7 +38,7 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
         mContext = context;
         mMediaItem = mediaItem;
 
-        addView(inflate(mContext, R.layout.item_attachments_audio, null));
+        addView(inflate(mContext, R.layout.item_attachment_audio, null));
 
         mTitleTextView = ((TextView) findViewById(R.id.tv_title_name));
         mArtistTextView = ((TextView) findViewById(R.id.tv_artist_name));
