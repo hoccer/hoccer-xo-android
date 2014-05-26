@@ -128,8 +128,8 @@ public class AudioAttachmentListFragment extends XoListFragment {
                         mMediaPlayerService.play(position);
                     } break;
                     case CONVERSATION_MEDIA: {
-                        if ( conversationContactIdFinal == mMediaPlayerService.getCurrentConversationContactId()) {
-                            if (newFilePath == currentFilePath) {
+                        if (conversationContactIdFinal == mMediaPlayerService.getCurrentConversationContactId()) {
+                            if (newFilePath.equals(currentFilePath)) {
                                 updateMediaList();
                                 break;
                             }
