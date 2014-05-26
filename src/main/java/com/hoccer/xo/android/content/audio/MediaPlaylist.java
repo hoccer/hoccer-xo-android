@@ -156,8 +156,9 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
         for (int i = 0; i < mMediaItems.size(); i++) {
             mPlaylistIndexes.add(i);
         }
+
+        int currentTrackNumber = getCurrentTrackNumber();
         if (shuffleActive) {
-            int currentTrackNumber = getCurrentTrackNumber();
             Random rnd = new Random(System.nanoTime());
             Collections.shuffle(mPlaylistIndexes, rnd);
 
@@ -167,6 +168,9 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
             mPlaylistIndexes.set(0, currentTrackNumber);
             mPlaylistIndexes.set(shuffledIndex, firstShuffledTrack);
             mCurrentIndex = 0;
+        } else {
+            mCurrentIndex = currentTrackNumber;
         }
+
     }
 }
