@@ -462,9 +462,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         return mPlaylistType;
     }
 
-    public void setMedia(MediaItem item) {
+    public void setMedia(MediaItem item, int conversationContactId) {
         mPlaylist.clear();
         mPlaylist.add(0, item);
+        mCurrentConversationContactId = conversationContactId;
         mPlaylistType = PlaylistType.SINGLE_MEDIA;
     }
 

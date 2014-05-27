@@ -6,11 +6,16 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.MediaItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
+
+import java.sql.SQLException;
 
 public class AudioPlayerView
         extends LinearLayout
@@ -69,7 +74,23 @@ public class AudioPlayerView
 
     private void startPlaying() {
         if (isBound()) {
-            mMediaPlayerService.setMedia(MediaItem.create(contentObject.getContentDataUrl()));
+
+            int conversationContactId = -1;
+
+            int talkClientDownloadId = ((TalkClientDownload) contentObject).getClientDownloadId();
+
+            TalkClientMessage message = null;
+            try {
+                message = XoApplication.getXoClient().getDatabase().findClientMessageByTalkClientDownloadId(talkClientDownloadId);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            if (message != null) {
+                conversationContactId = message.getConversationContact().getClientContactId();
+            }
+
+            mMediaPlayerService.setMedia(MediaItem.create(contentObject.getContentDataUrl()), conversationContactId);
             mMediaPlayerService.play(0);
         }
     }

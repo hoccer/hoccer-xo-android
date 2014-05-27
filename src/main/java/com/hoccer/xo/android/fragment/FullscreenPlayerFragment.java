@@ -14,6 +14,9 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.widget.*;
+import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.model.TalkClient;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.content.MediaItem;
 import com.hoccer.xo.android.content.MediaMetaData;
@@ -23,6 +26,7 @@ import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 public class FullscreenPlayerFragment extends Fragment {
@@ -41,6 +45,7 @@ public class FullscreenPlayerFragment extends Fragment {
     private TextView mTotalDurationLabel;
     private TextView mPlaylistIndexLabel;
     private TextView mPlaylistSizeLabel;
+    private TextView mConversationNameLabel;
     private ImageView mArtworkView;
 
     private Handler mTimeProgressHandler = new Handler();
@@ -75,6 +80,7 @@ public class FullscreenPlayerFragment extends Fragment {
         mTotalDurationLabel = (TextView) getView().findViewById(R.id.tv_player_total_duration);
         mPlaylistIndexLabel = (TextView) getView().findViewById(R.id.tv_player_current_track_no);
         mPlaylistSizeLabel = (TextView) getView().findViewById(R.id.tv_player_playlist_size);
+        mConversationNameLabel = (TextView) getView().findViewById(R.id.tv_conversation_name);
         mArtworkView = (ImageView) getView().findViewById(R.id.iv_player_artwork);
         mTrackProgressBar.setProgress(0);
         mTrackProgressBar.setMax(100);
@@ -98,6 +104,7 @@ public class FullscreenPlayerFragment extends Fragment {
         mMediaPlayerService = ((FullscreenPlayerActivity) getActivity()).getMediaPlayerService();
         enableViewComponents(true);
         updateTrackData();
+        updateConversationName();
         mPlayButton.setChecked(!mMediaPlayerService.isPaused());
         mShuffleButton.setChecked(mMediaPlayerService.isShuffleActive());
 
@@ -122,6 +129,19 @@ public class FullscreenPlayerFragment extends Fragment {
                     }
                 }
             });
+        }
+    }
+
+    private void updateConversationName() {
+        int conversationContactId = mMediaPlayerService.getCurrentConversationContactId();
+        TalkClientContact talkClientContact = null;
+        try {
+            talkClientContact = XoApplication.getXoClient().getDatabase().findClientContactById(conversationContactId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (talkClientContact != null){
+            mConversationNameLabel.setText(talkClientContact.getName());
         }
     }
 
