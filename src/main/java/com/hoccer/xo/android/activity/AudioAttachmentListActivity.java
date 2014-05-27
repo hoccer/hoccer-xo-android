@@ -30,14 +30,4 @@ public class AudioAttachmentListActivity extends XoActionbarActivity {
 
 
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        LOG.debug("onCreateOptionsMenu()");
-        boolean result = super.onCreateOptionsMenu(menu);
-
-        menu.findItem(R.id.menu_audio_attachment_list).setVisible(false);
-
-        return result;
-    }
 }

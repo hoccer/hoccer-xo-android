@@ -189,9 +189,6 @@ public class GroupProfileFragment extends XoFragment
                 }
             }
         }
-
-        MenuItem musicItem = menu.findItem(R.id.menu_audio_attachment_list);
-        musicItem.setVisible(true);
     }
 
     @Override
@@ -322,7 +319,7 @@ public class GroupProfileFragment extends XoFragment
         LOG.debug("refreshContact()");
 
         mGroup = newContact;
-        
+
         try {
             getXoDatabase().refreshClientContact(mGroup);
             if (mMode == Mode.PROFILE) {
