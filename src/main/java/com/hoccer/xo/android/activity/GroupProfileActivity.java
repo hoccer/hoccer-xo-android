@@ -75,11 +75,12 @@ public class GroupProfileActivity extends XoActionbarActivity {
         LOG.debug("onCreateOptionsMenu()");
         boolean result = super.onCreateOptionsMenu(menu);
 
-        TalkClientContact contact = mGroupProfileFragment == null ? null : mGroupProfileFragment.getContact();
-        if (contact != null) {
-            menu.findItem(R.id.menu_audio_attachment_list).setVisible(true);
+        if(mMode == Mode.PROFILE) {
+            TalkClientContact contact = mGroupProfileFragment == null ? null : mGroupProfileFragment.getContact();
+            if (contact != null) {
+                menu.findItem(R.id.menu_audio_attachment_list).setVisible(true);
+            }
         }
-
         return result;
     }
 
