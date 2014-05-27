@@ -6,7 +6,7 @@
                 android:padding="8dp">
 
     <RelativeLayout
-            android:id="@+id/ll_player_playlist_track_container"
+            android:id="@+id/rl_player_playlist_track_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -47,7 +47,7 @@
     <ImageView android:id="@+id/iv_player_artwork"
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
-               android:layout_below="@id/ll_player_playlist_track_container"
+               android:layout_below="@id/rl_player_playlist_track_container"
                android:src="@drawable/media_cover_art_default"
                android:gravity="center" android:layout_marginLeft="8dp" android:layout_marginRight="8dp"
                android:layout_marginTop="8dp"/>
@@ -88,7 +88,7 @@
     </LinearLayout>
 
     <RelativeLayout
-            android:id="@+id/ll_player_seekbar_container"
+            android:id="@+id/rl_player_seekbar_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/ll_player_track_description"
@@ -140,10 +140,10 @@
 
     <!-- Player Footer -->
     <RelativeLayout
-            android:id="@+id/ll_player_controls"
+            android:id="@+id/rl_player_controls"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/ll_player_seekbar_container"
+            android:layout_below="@+id/rl_player_seekbar_container"
             android:padding="@dimen/media_player_layout_margin"
             android:orientation="horizontal"
             android:layout_alignParentBottom="true"
