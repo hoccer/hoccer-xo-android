@@ -264,7 +264,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         mTempMediaFilePath = mediaFilePath;
         try {
             mMediaPlayer.reset();
-            mMediaPlayer.setDataSource(mediaFilePath);
+            mMediaPlayer.setDataSource(mediaFilePath.replace("file:///", "/"));
             mMediaPlayer.prepareAsync();
         } catch (Exception e) {
             LOG.error("setFile: exception setting data source", e);
