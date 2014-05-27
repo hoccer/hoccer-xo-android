@@ -125,7 +125,7 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
             clientItem.setVisible(mContact.isClient());
             MenuItem groupItem = menu.findItem(R.id.menu_single_profile);
             groupItem.setVisible(mContact.isGroup());
-//            getActionBar().setIcon(android.R.color.transparent);
+            menu.findItem(R.id.menu_audio_attachment_list).setVisible(true);
         }
 
         return result;

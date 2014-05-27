@@ -3,8 +3,11 @@ package com.hoccer.xo.android.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.model.TalkRelationship;
 import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.fragment.GroupProfileFragment;
 import com.hoccer.xo.android.fragment.StatusFragment;
@@ -67,6 +70,29 @@ public class GroupProfileActivity extends XoActionbarActivity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        LOG.debug("onCreateOptionsMenu()");
+        boolean result = super.onCreateOptionsMenu(menu);
+
+        TalkClientContact contact = mGroupProfileFragment == null ? null : mGroupProfileFragment.getContact();
+        if (contact != null) {
+            menu.findItem(R.id.menu_audio_attachment_list).setVisible(true);
+        }
+
+        return result;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_audio_attachment_list:
+                showAudioAttachmentList(mGroupProfileFragment.getContact());
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
     @Override
     protected void onResume() {
         LOG.debug("onResume()");

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -86,35 +87,49 @@ public class SingleProfileActivity extends XoActionbarActivity
         TalkClientContact contact = mSingleProfileFragment == null ? null
                 : mSingleProfileFragment.getContact();
 
-        boolean isSelf = mMode == Mode.CREATE_SELF || (contact != null && contact.isSelf());
+        if(contact != null) {
+            boolean isSelf = mMode == Mode.CREATE_SELF || contact.isSelf();
 
-        menu.findItem(R.id.menu_my_profile).setVisible(!isSelf);
-        if(contact.isSelf()) {
-            menu.findItem(R.id.menu_profile_edit).setVisible(true);
-            menu.findItem(R.id.menu_profile_block).setVisible(false);
-            menu.findItem(R.id.menu_profile_unblock).setVisible(false);
-            menu.findItem(R.id.menu_profile_delete).setVisible(false);
-        } else {
-            if (contact.isNearby()) {
-                menu.findItem(R.id.menu_profile_edit).setVisible(false);
-                menu.findItem(R.id.menu_profile_delete).setVisible(false);
+            menu.findItem(R.id.menu_my_profile).setVisible(!isSelf);
+            if (contact.isSelf()) {
+                menu.findItem(R.id.menu_profile_edit).setVisible(true);
                 menu.findItem(R.id.menu_profile_block).setVisible(false);
                 menu.findItem(R.id.menu_profile_unblock).setVisible(false);
+                menu.findItem(R.id.menu_profile_delete).setVisible(false);
             } else {
-                TalkRelationship relationship = contact.getClientRelationship();
-                if (relationship == null || relationship.isBlocked()) { // todo != null correct
+                if (contact.isNearby()) {
+                    menu.findItem(R.id.menu_profile_edit).setVisible(false);
+                    menu.findItem(R.id.menu_profile_delete).setVisible(false);
                     menu.findItem(R.id.menu_profile_block).setVisible(false);
-                    menu.findItem(R.id.menu_profile_unblock).setVisible(true);
-                } else {
-                    menu.findItem(R.id.menu_profile_block).setVisible(true);
                     menu.findItem(R.id.menu_profile_unblock).setVisible(false);
+                } else {
+                    TalkRelationship relationship = contact.getClientRelationship();
+                    if (relationship == null || relationship.isBlocked()) { // todo != null correct
+                        menu.findItem(R.id.menu_profile_block).setVisible(false);
+                        menu.findItem(R.id.menu_profile_unblock).setVisible(true);
+                        menu.findItem(R.id.menu_audio_attachment_list).setVisible(true);
+                    } else {
+                        menu.findItem(R.id.menu_profile_block).setVisible(true);
+                        menu.findItem(R.id.menu_profile_unblock).setVisible(false);
+                        menu.findItem(R.id.menu_audio_attachment_list).setVisible(true);
+                    }
                 }
             }
         }
-
         return result;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.menu_audio_attachment_list:
+                showAudioAttachmentList(mSingleProfileFragment.getContact());
+            break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onResume() {

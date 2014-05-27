@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
 import android.view.MenuItem;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.adapter.ContactsPageAdapter;
@@ -123,6 +124,14 @@ public class ContactsActivity extends XoActionbarActivity {
 
             return false;
         }
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu (Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        menu.findItem(R.id.menu_audio_attachment_list).setVisible(true);
+
         return true;
     }
 
