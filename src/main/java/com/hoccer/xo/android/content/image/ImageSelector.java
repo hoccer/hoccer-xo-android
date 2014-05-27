@@ -2,6 +2,7 @@ package com.hoccer.xo.android.content.image;
 
 import android.graphics.drawable.Drawable;
 import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.IContentSelector;
 import com.hoccer.xo.android.content.SelectedContent;
 
@@ -112,7 +113,7 @@ public class ImageSelector implements IContentSelector {
                     SelectedContent contentObject = new SelectedContent(intent, "file://" + imageFile.getAbsolutePath());
                     contentObject.setFileName(displayName);
                     contentObject.setContentType("image/jpeg");
-                    contentObject.setContentMediaType("image");
+                    contentObject.setContentMediaType(ContentMediaTypes.MediaTypeImage);
                     contentObject.setContentLength((int) imageFile.length());
                     contentObject.setContentAspectRatio(aspectRatio);
                     return contentObject;
@@ -214,7 +215,7 @@ public class ImageSelector implements IContentSelector {
         SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);
         contentObject.setFileName(fileName);
         contentObject.setContentType(mimeType);
-        contentObject.setContentMediaType("image");
+        contentObject.setContentMediaType(ContentMediaTypes.MediaTypeImage);
         contentObject.setContentLength(fileSize);
         contentObject.setContentAspectRatio(aspectRatio);
         return contentObject;

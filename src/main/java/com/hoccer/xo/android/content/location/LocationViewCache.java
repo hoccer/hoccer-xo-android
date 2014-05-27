@@ -8,6 +8,7 @@ import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.activity.MessagingActivity;
 import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.android.content.SelectedContent;
@@ -39,7 +40,7 @@ public class LocationViewCache extends ContentViewCache<View> {
 
     @Override
     public boolean canViewObject(IContentObject object) {
-        return object.getContentMediaType().equals("geolocation");
+        return object.getContentMediaType().equals(ContentMediaTypes.MediaTypeGeolocation);
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.base.XoFragment;
+import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.gesture.Gestures;
 import com.hoccer.xo.android.gesture.MotionGestureListener;
@@ -139,17 +140,17 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
         int imageResource = -1;
         if(mediaType != null) {
-            if(mediaType.equals("image")) {
+            if(mediaType.equals(ContentMediaTypes.MediaTypeImage)) {
                 imageResource = R.drawable.ic_dark_image;
-            } else if(mediaType.equals("video")) {
+            } else if(mediaType.equals(ContentMediaTypes.MediaTypeVideo)) {
                 imageResource = R.drawable.ic_dark_video;
-            } else if(mediaType.equals("vcard")) {
+            } else if(mediaType.equals(ContentMediaTypes.MediaTypeVCard)) {
                 imageResource = R.drawable.ic_dark_contact;
-            } else if(mediaType.equals("geolocation")) {
+            } else if(mediaType.equals(ContentMediaTypes.MediaTypeGeolocation)) {
                 imageResource = R.drawable.ic_dark_location;
-            } else if(mediaType.equals("data")) {
+            } else if(mediaType.equals(ContentMediaTypes.MediaTypeData)) {
                 imageResource = R.drawable.ic_dark_data;
-            } else if(mediaType.equals("audio")) {
+            } else if(mediaType.equals(ContentMediaTypes.MediaTypeAudio)) {
                 imageResource = R.drawable.ic_dark_music;
             }
         } else {

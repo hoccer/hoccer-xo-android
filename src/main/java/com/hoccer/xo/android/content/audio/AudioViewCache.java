@@ -1,6 +1,7 @@
 package com.hoccer.xo.android.content.audio;
 
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.android.view.AudioPlayerView;
@@ -11,7 +12,7 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
 
     @Override
     public boolean canViewObject(IContentObject object) {
-        if (object.getContentMediaType().equals("audio")) {
+        if (object.getContentMediaType().equals(ContentMediaTypes.MediaTypeAudio)) {
             return true;
         }
         return false;

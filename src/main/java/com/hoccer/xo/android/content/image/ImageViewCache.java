@@ -2,6 +2,7 @@ package com.hoccer.xo.android.content.image;
 
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.android.view.AspectImageView;
@@ -35,7 +36,7 @@ public class ImageViewCache extends ContentViewCache<View> implements ImageLoadi
 
     @Override
     public boolean canViewObject(IContentObject object) {
-        return object.getContentMediaType().equals("image");
+        return object.getContentMediaType().equals(ContentMediaTypes.MediaTypeImage);
     }
 
     @Override

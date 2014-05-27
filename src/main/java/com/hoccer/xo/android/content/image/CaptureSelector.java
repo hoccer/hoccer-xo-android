@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
+import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;
 import com.hoccer.xo.release.R;
@@ -72,7 +73,7 @@ public class CaptureSelector implements IContentSelector {
 
         SelectedContent contentObject = new SelectedContent(intent, "file://" + filePath);
         contentObject.setFileName(fileName);
-        contentObject.setContentMediaType("image");
+        contentObject.setContentMediaType(ContentMediaTypes.MediaTypeImage);
         contentObject.setContentType(fileType);
         contentObject.setContentLength(fileSize);
         contentObject.setContentAspectRatio(((float) fileWidth) / ((float) fileHeight));

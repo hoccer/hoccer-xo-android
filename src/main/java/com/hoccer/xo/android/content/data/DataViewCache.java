@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.release.R;
@@ -29,7 +30,7 @@ public class DataViewCache extends ContentViewCache<Button> {
 
     @Override
     public boolean canViewObject(IContentObject object) {
-        return object.getContentMediaType().equals("data");
+        return object.getContentMediaType().equals(ContentMediaTypes.MediaTypeData);
     }
 
     @Override

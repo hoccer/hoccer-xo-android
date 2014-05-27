@@ -1,6 +1,7 @@
 package com.hoccer.xo.android.content.vcard;
 
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
 
@@ -10,7 +11,7 @@ public class ContactViewCache extends ContentViewCache<ContactView> {
 
     @Override
     public boolean canViewObject(IContentObject object) {
-        if (object.getContentMediaType().equals("vcard")) {
+        if (object.getContentMediaType().equals(ContentMediaTypes.MediaTypeVCard)) {
             return true;
         }
         return false;
