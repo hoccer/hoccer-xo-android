@@ -41,6 +41,8 @@ public class MotionInterpreter implements SensorEventListener {
     private final FeatureHistory mFeatureHistory;
     //private Transaction pMode;
 
+    public boolean activated = false;
+
     public MotionInterpreter(Transaction pMode, Context pContext,
                              MotionGestureListener pOnShakeListener) {
         LOG.debug(LOG_TAG + " Creating GestureInterpreter");
@@ -67,27 +69,30 @@ public class MotionInterpreter implements SensorEventListener {
     }
 
     public void deactivate() {
-        if (mContext == null) {
+        if (mContext == null || !activated) {
             return;
         }
 
-        SensorManager sensorManager = (SensorManager) mContext
-                .getSystemService(Context.SENSOR_SERVICE);
+        SensorManager sensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         sensorManager.unregisterListener(this);
 
         synchronized (mFeatureHistory) {
             mFeatureHistory.clear();
             mLastGestureTime = 0;
         }
+
+        activated = false;
     }
 
     public void activate() {
-        if (mContext == null) {
+        if (mContext == null || activated) {
             return;
         }
 
         SensorManager sensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
+
+        activated = true;
     }
 
     @Override
@@ -139,6 +144,10 @@ public class MotionInterpreter implements SensorEventListener {
         if (pMode == Transaction.RECEIVE || pMode == Transaction.SHARE_AND_RECEIVE) {
             addGestureDetector(new CatchDetector());
         }
+    }
+
+    public boolean isActivated() {
+        return activated;
     }
 
 }

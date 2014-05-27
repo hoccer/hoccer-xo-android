@@ -104,11 +104,17 @@ public abstract class XoAdapter extends BaseAdapter {
 
     public void requestReload() {
         LOG.debug("requestReload()");
-        if (mActive) {
-            performReload();
-        } else {
-            mNeedsReload = true;
-        }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mActive) {
+                    performReload();
+                } else {
+                    mNeedsReload = true;
+                }
+            }
+        });
     }
 
     private void performReload() {
