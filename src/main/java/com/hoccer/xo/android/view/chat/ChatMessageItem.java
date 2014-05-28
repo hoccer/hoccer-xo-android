@@ -30,18 +30,9 @@ public class ChatMessageItem {
         mContext = context;
     }
 
-    private View createViewForMessage(TalkClientMessage message) {
+    private View createView() {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view;
-
-        if (message.isIncoming()) {
-            displaysIncoming = true;
-            view = inflater.inflate(R.layout.item_conversation_incoming, null);
-        } else {
-            displaysIncoming = false;
-            view = inflater.inflate(R.layout.item_conversation_outgoing, null);
-        }
-        return view;
+        return inflater.inflate(R.layout.item_chat_message, null);
     }
 
     private void configureViewForMessage(View view, TalkClientMessage message) {
@@ -57,15 +48,23 @@ public class ChatMessageItem {
             } else {
                 avatarView.setVisibility(View.GONE);
             }
+            messageName.setVisibility(View.VISIBLE);
+            messageName.setText(message.getSenderContact().getName());
+
+            messageText.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_grey));
+            messageText.setTextColor(mContext.getResources().getColorStateList(android.R.color.black));
+            messageText.setLinkTextColor(mContext.getResources().getColorStateList(android.R.color.black));
+        } else {
+            avatarView.setVisibility(View.GONE);
+            messageName.setVisibility(View.GONE);
+
+            messageText.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_green));
+            messageText.setTextColor(mContext.getResources().getColorStateList(android.R.color.white));
+            messageText.setLinkTextColor(mContext.getResources().getColorStateList(android.R.color.white));
         }
 
         messageTime.setText(getMessageTimestamp(message));
         messageText.setText(message.getText());
-
-        // Only for incoming messages
-        if (message.isIncoming()) {
-            messageName.setText(message.getSenderContact().getName());
-        }
     }
 
     private String getMessageTimestamp(TalkClientMessage message) {
@@ -104,20 +103,12 @@ public class ChatMessageItem {
     }
 
     public View getViewForMessage(TalkClientMessage message) {
-        View view = createViewForMessage(message);
+        View view = createView();
         configureViewForMessage(view, message);
         return view;
     }
 
     public View recycleViewForMessage(View view, TalkClientMessage message) {
-        // TODO: change layout if direction is not the same
-//        if (displaysIncoming != message.isIncoming()) {
-//            LOG.info("should reload");
-//            View newView = createViewForMessage(message);
-//            configureViewForMessage(newView, message);
-//            return newView;
-//        }
-        view = createViewForMessage(message);
         configureViewForMessage(view, message);
         return view;
     }
