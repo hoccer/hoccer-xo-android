@@ -1,7 +1,8 @@
-package com.hoccer.xo.android.view.chat;
+package com.hoccer.xo.android.view.chat.attachements;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import com.hoccer.xo.android.view.chat.attachements.ChatAttachmentView;
 
 
 public class ChatVideoView extends ChatAttachmentView {

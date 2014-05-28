@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.content.audio;
+package com.hoccer.xo.android.content.contentselectors;
 
 import android.content.Context;
 import android.content.Intent;

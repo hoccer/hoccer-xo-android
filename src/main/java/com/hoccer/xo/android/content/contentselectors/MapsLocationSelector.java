@@ -1,8 +1,9 @@
-package com.hoccer.xo.android.content.location;
+package com.hoccer.xo.android.content.contentselectors;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import com.hoccer.xo.android.activity.MapsLocationActivity;
 import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.content.IContentSelector;

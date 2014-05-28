@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.content.image;
+package com.hoccer.xo.android.content.contentselectors;
 
 import android.graphics.drawable.Drawable;
 import com.hoccer.xo.android.XoApplication;

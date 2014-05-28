@@ -54,13 +54,14 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
     public synchronized void loadNextMessages() {
         try {
             mHistoryCount++;
-            long offset = mHistoryCount * LOAD_MESSAGES;
-            final List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
+            //long offset = mHistoryCount * LOAD_MESSAGES;
+            //final List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
+            final List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mMessages.addAll(0, messages);
+                    mMessages = messages;
                     notifyDataSetChanged();
                 }
             });

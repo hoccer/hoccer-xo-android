@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.content.location;
+package com.hoccer.xo.android.activity;
 
 import android.app.Activity;
 import android.content.Intent;

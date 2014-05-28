@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.content.clipboard;
+package com.hoccer.xo.android.content.contentselectors;
 
 
 import android.content.Context;
@@ -10,6 +10,7 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.activity.ClipboardPreviewActivity;
 import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.content.Clipboard;
 import com.hoccer.xo.android.content.IContentSelector;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;

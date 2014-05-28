@@ -197,7 +197,7 @@
 
         <!-- Maps selection activity -->
         <activity
-                android:name="com.hoccer.xo.android.content.location.MapsLocationActivity"
+                android:name="com.hoccer.xo.android.activity.MapsLocationActivity"
                 android:label="@string/selectlocation_title">
         </activity>
 

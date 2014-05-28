@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.content.clipboard;
+package com.hoccer.xo.android.content;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.content.data;
+package com.hoccer.xo.android.content.contentselectors;
 
 import android.content.Context;
 import android.content.Intent;

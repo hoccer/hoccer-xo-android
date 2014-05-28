@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.view.chat;
+package com.hoccer.xo.android.view.chat.attachements;
 
 import android.content.Context;
 import android.media.MediaPlayer;

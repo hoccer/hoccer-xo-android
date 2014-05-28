@@ -1,5 +1,7 @@
-package com.hoccer.xo.android.view.chat;
+package com.hoccer.xo.android.view.chat.attachements;
 
+
+import com.hoccer.xo.android.view.chat.attachements.ClickableImageView;
 
 public interface IClickableImageViewListener {
 
