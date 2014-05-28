@@ -10,6 +10,7 @@ import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
+import org.apache.log4j.Logger;
 
 import java.util.Date;
 
@@ -19,12 +20,14 @@ import java.util.Date;
  */
 public class ChatMessageItem {
 
+    protected Logger LOG = Logger.getLogger(getClass());
+
     protected Context mContext;
+    private boolean displaysIncoming;
 
     public ChatMessageItem(Context context) {
         super();
         mContext = context;
-
     }
 
     private View createViewForMessage(TalkClientMessage message) {
@@ -32,8 +35,10 @@ public class ChatMessageItem {
         View view;
 
         if (message.isIncoming()) {
+            displaysIncoming = true;
             view = inflater.inflate(R.layout.item_conversation_incoming, null);
         } else {
+            displaysIncoming = false;
             view = inflater.inflate(R.layout.item_conversation_outgoing, null);
         }
         return view;
@@ -98,17 +103,20 @@ public class ChatMessageItem {
         }
     }
 
-    // TODO: configure AvatarView, attachment progress indicator
-
     public View getViewForMessage(TalkClientMessage message) {
         View view = createViewForMessage(message);
-
         configureViewForMessage(view, message);
-
         return view;
     }
 
     public View recycleViewForMessage(View view, TalkClientMessage message) {
+        // change layout if direction is not the same
+//        if (displaysIncoming != message.isIncoming()) {
+//            LOG.info("should reload");
+//            View newView = createViewForMessage(message);
+//            configureViewForMessage(newView, message);
+//            return newView;
+//        }
         view = createViewForMessage(message);
         configureViewForMessage(view, message);
         return view;
