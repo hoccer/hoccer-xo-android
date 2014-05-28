@@ -110,7 +110,7 @@ public class ChatMessageItem {
     }
 
     public View recycleViewForMessage(View view, TalkClientMessage message) {
-        // change layout if direction is not the same
+        // TODO: change layout if direction is not the same
 //        if (displaysIncoming != message.isIncoming()) {
 //            LOG.info("should reload");
 //            View newView = createViewForMessage(message);
