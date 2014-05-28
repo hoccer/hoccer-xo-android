@@ -9,7 +9,6 @@ import android.widget.TextView;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.activity.ClipboardPreviewActivity;
 import com.hoccer.xo.android.base.XoFragment;
-import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -19,7 +18,7 @@ public class ClipboardPreviewFragment extends XoFragment {
 
     private IContentObject mContentObject;
 
-    private ContentView mContentView;
+//    private OldContentView mContentView;
     private TextView mContentName;
     private TextView mContentSize;
     private Button mOkButton;
@@ -31,7 +30,7 @@ public class ClipboardPreviewFragment extends XoFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.fragment_clipboard_preview, container, false);
-        mContentView = (ContentView) view.findViewById(R.id.content_view);
+//        mContentView = (OldContentView) view.findViewById(R.id.content_view);
 
         View labels = view.findViewById(R.id.clipboard_preview_labels);
         mContentName = (TextView) labels.findViewById(R.id.content_name);
@@ -60,7 +59,7 @@ public class ClipboardPreviewFragment extends XoFragment {
 
     public void setContentObject(IContentObject contentObject) {
         mContentObject = contentObject;
-        mContentView.displayContent(getXoActivity(), mContentObject, null);
+//        mContentView.displayContent(getXoActivity(), mContentObject, null);
 
         mContentName.setText("");
         mContentSize.setText(String.valueOf(contentObject.getContentLength()));

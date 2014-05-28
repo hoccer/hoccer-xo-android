@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>-->
 
-    <com.hoccer.xo.android.content.image.ClickableImageView
+    <com.hoccer.xo.android.view.chatitems.ClickableImageView
             android:id="@+id/image_show_button"
             android:src="@drawable/ic_light_content_picture"
             android:layout_alignParentBottom="true"

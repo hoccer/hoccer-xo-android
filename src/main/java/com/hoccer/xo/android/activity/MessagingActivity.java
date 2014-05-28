@@ -9,7 +9,6 @@ import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.clipboard.Clipboard;
 import com.hoccer.xo.android.fragment.CompositionFragment;
 import com.hoccer.xo.android.fragment.MessagingFragment;
@@ -154,26 +153,26 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
         return true;
     }
 
-    @Override
-    public void showPopupForContentView(ContentView contentView) {
-        IContentObject contentObject = contentView.getContent();
-
-        if (contentObject.isContentAvailable()) {
-            mClipboardAttachment = contentObject;
-
-            PopupMenu popup = new PopupMenu(this, contentView);
-            popup.getMenuInflater().inflate(R.menu.popup_menu_messaging, popup.getMenu());
-            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-                public boolean onMenuItemClick(MenuItem item) {
-                    popupItemSelected(item);
-                    return true;
-                }
-            });
-
-            popup.show();
-        }
-    }
+//    @Override
+//    public void showPopupForContentView(OldContentView contentView) {
+//        IContentObject contentObject = contentView.getContent();
+//
+//        if (contentObject.isContentAvailable()) {
+//            mClipboardAttachment = contentObject;
+//
+//            PopupMenu popup = new PopupMenu(this, contentView);
+//            popup.getMenuInflater().inflate(R.menu.popup_menu_messaging, popup.getMenu());
+//            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//
+//                public boolean onMenuItemClick(MenuItem item) {
+//                    popupItemSelected(item);
+//                    return true;
+//                }
+//            });
+//
+//            popup.show();
+//        }
+//    }
 
     public void popupItemSelected(MenuItem item) {
         switch (item.getItemId()) {

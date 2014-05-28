@@ -6,23 +6,15 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientUpload;
-import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
-import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.IContentViewListener;
-import com.hoccer.xo.android.view.AvatarView;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.android.content.ContentMediaTypes;
 
-import android.text.format.DateUtils;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ScheduledExecutorService;
@@ -34,13 +26,21 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Adapter for messages in a conversation
  */
 public class ConversationAdapter extends XoAdapter
-        implements IXoMessageListener, IXoTransferListener, IContentViewListener {
+        implements IXoMessageListener, IXoTransferListener {
 
-    private static final int VIEW_TYPE_INCOMING = 0;
-
-    private static final int VIEW_TYPE_OUTGOING = 1;
-
-    private static final int VIEW_TYPE_COUNT = 2;
+    /**
+     * Enumerates all types of list items used by this adapter.
+     */
+    private static final class ListItemTypes {
+        public static final int ListItemWithText = 0;
+        public static final int ListItemWithImage = 1;
+        public static final int ListItemWithVideo = 2;
+        public static final int ListItemWithAudio = 3;
+        public static final int ListItemWithData = 4;
+        public static final int ListItemWithContact = 5;
+        public static final int ListItemWithLocation = 6;
+        public static final int length = 7;
+    }
 
     private static final long LOAD_MESSAGES = 10L;
 
@@ -55,6 +55,7 @@ public class ConversationAdapter extends XoAdapter
     private ScheduledFuture<?> mReloadFuture;
 
     private int mHistoryCount = 0;
+
 
     public ConversationAdapter(XoActivity activity) {
         super(activity);
@@ -175,9 +176,9 @@ public class ConversationAdapter extends XoAdapter
                 LOG.error("error reloading", e);
             }
         }
-        synchronized (ConversationAdapter.this) {
-            mReloadFuture = null;
-        }
+//        synchronized (ConversationAdapter.this) {
+//            mReloadFuture = null;
+//        }
     }
 
     /** Performs a full onReloadRequest */
@@ -206,13 +207,40 @@ public class ConversationAdapter extends XoAdapter
     private boolean cancelReload() {
         LOG.trace("cancelReload()");
         boolean cancelled = false;
-        synchronized (ConversationAdapter.this) {
-            if (mReloadFuture != null) {
-                cancelled = mReloadFuture.cancel(true);
-                mReloadFuture = null;
-            }
-        }
+//        synchronized (ConversationAdapter.this) {
+//            if (mReloadFuture != null) {
+//                cancelled = mReloadFuture.cancel(true);
+//                mReloadFuture = null;
+//            }
+//        }
         return cancelled;
+    }
+
+//    @Override
+//    public void onContentViewLongClick(OldContentView contentView) {
+//        mActivity.showPopupForContentView(contentView);
+//    }
+
+
+    public synchronized void loadNextMessages() {
+        try {
+            mHistoryCount++;
+            long offset = mHistoryCount * LOAD_MESSAGES;
+            final List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
+            for (TalkClientMessage message : messages) {
+                reloadRelated(message);
+            }
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mMessages.addAll(0, messages);
+                    notifyDataSetChanged();
+                }
+            });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -244,6 +272,9 @@ public class ConversationAdapter extends XoAdapter
     public void onMessageStateChanged(TalkClientMessage message) {
         update();
     }
+
+    // TODO: do not update the whole conversation just because the transfer state of a single file has changed by some percent.
+    // TODO: Either update the cell selectively or have the cell observe the state of the transfer object by itself.
 
     @Override
     public void onDownloadRegistered(TalkClientDownload download) {
@@ -290,14 +321,14 @@ public class ConversationAdapter extends XoAdapter
     }
 
 
+
+
+
+
+
     @Override
     public boolean hasStableIds() {
         return true;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return VIEW_TYPE_COUNT;
     }
 
     @Override
@@ -316,37 +347,58 @@ public class ConversationAdapter extends XoAdapter
     }
 
     @Override
+    public int getViewTypeCount() {
+        return ListItemTypes.length;
+    }
+
+    @Override
     public int getItemViewType(int position) {
-        TalkClientMessage msg = getItem(position);
-        if (msg.isOutgoing()) {
-            return VIEW_TYPE_OUTGOING;
-        } else {
-            return VIEW_TYPE_INCOMING;
+        TalkClientMessage message = getItem(position);
+
+        return getListItemTypeForMessage(message);
+    }
+
+    private int getListItemTypeForMessage(TalkClientMessage message) {
+        int listItemType = ListItemTypes.ListItemWithText;
+        String contentType = null;
+
+        if (message.getAttachmentDownload() != null) {
+            contentType = message.getAttachmentDownload().getContentMediaType();
+        } else if (message.getAttachmentUpload() != null) {
+            contentType = message.getAttachmentUpload().getContentMediaType();
         }
+
+        if (contentType != null) {
+            if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeImage)) {
+                listItemType = ListItemTypes.ListItemWithImage;
+            } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeVideo)) {
+                listItemType = ListItemTypes.ListItemWithVideo;
+            } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeAudio)) {
+                listItemType = ListItemTypes.ListItemWithAudio;
+            } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeData)) {
+                listItemType = ListItemTypes.ListItemWithData;
+            } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeVCard)) {
+                listItemType = ListItemTypes.ListItemWithContact;
+            } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeGeolocation)) {
+                listItemType = ListItemTypes.ListItemWithLocation;
+            }
+        }
+        return listItemType;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        int viewType = getItemViewType(position);
         TalkClientMessage message = getItem(position);
-        switch (viewType) {
-            case VIEW_TYPE_OUTGOING:
-                if (convertView == null) {
-                    convertView = mInflater.inflate(R.layout.item_conversation_outgoing, null);
-                }
-                updateViewOutgoing(convertView, message);
-                break;
-            case VIEW_TYPE_INCOMING:
-                if (convertView == null) {
-                    convertView = mInflater.inflate(R.layout.item_conversation_incoming, null);
-                }
-                updateViewIncoming(convertView, message);
-                break;
-        }
 
+        if (convertView == null) {
+            //convertView = new ChatMessageItem.get(parent.getContext());
+        }
+        //ChatMessageItem contentItem = (ChatMessageItem)convertView;
+        //contentItem.configureWithMessage(message);
         return convertView;
     }
 
+    /*
     private void updateViewOutgoing(View view, TalkClientMessage message) {
         LOG.trace("updateViewOutgoing(" + message.getClientMessageId() + ")");
         updateViewCommon(view, message);
@@ -384,7 +436,7 @@ public class ConversationAdapter extends XoAdapter
     }
 
     private void setAttachment(View view, TalkClientMessage message) {
-        final ContentView contentView = (ContentView) view.findViewById(R.id.message_content);
+        final OldContentView contentView = (OldContentView) view.findViewById(R.id.message_content);
         int displayHeight = mResources.getDisplayMetrics().heightPixels;
         contentView.setMaxContentHeight(Math.round(displayHeight * 0.8f));
 
@@ -406,11 +458,6 @@ public class ConversationAdapter extends XoAdapter
             contentView.displayContent(mActivity, contentObject, message);
             contentView.setContentViewListener(this);
         }
-    }
-
-    @Override
-    public void onContentViewLongClick(ContentView contentView) {
-        mActivity.showPopupForContentView(contentView);
     }
 
     private void setAvatar(View view, final TalkClientContact sendingContact) {
@@ -471,28 +518,8 @@ public class ConversationAdapter extends XoAdapter
             }
         });
     }
+    */
 
 
-    public synchronized void loadNextMessages() {
-        try {
-            mHistoryCount++;
-            long offset = mHistoryCount * LOAD_MESSAGES;
-            final List<TalkClientMessage> messages = mDatabase
-                    .findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
-            for (TalkClientMessage message : messages) {
-                reloadRelated(message);
-            }
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mMessages.addAll(0, messages);
-                    notifyDataSetChanged();
-                }
-            });
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
 }

@@ -12,7 +12,7 @@
                     android:layout_height="match_parent">
 
         <TextView
-                android:id="@+id/message_time"
+                android:id="@+id/tv_message_time"
                 android:text="13:23"
                 android:textColor="@android:color/secondary_text_dark"
                 android:layout_centerHorizontal="true"
@@ -21,11 +21,11 @@
                 android:layout_height="wrap_content" tools:ignore="HardcodedText"/>
 
         <com.hoccer.xo.android.view.AvatarView
-                android:id="@+id/message_avatar"
+                android:id="@+id/av_message_avatar"
                 android:padding="2dp"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
-                android:layout_below="@+id/message_time"
+                android:layout_below="@+id/tv_message_time"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp"
@@ -34,8 +34,8 @@
                 custom:defaultAvatarImageUrl="@drawable/avatar_default_contact"/>
 
         <TextView
-                android:id="@+id/message_text"
-                android:layout_below="@+id/message_time"
+                android:id="@+id/tv_message_text"
+                android:layout_below="@+id/tv_message_time"
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -49,30 +49,30 @@
                 style="@style/AppBaseTheme.Message.Incoming"
                 android:textIsSelectable="true"
                 android:autoLink="all"
-                android:layout_toRightOf="@id/message_avatar"
+                android:layout_toRightOf="@id/av_message_avatar"
                 android:layout_alignParentRight="true"
                 android:text="@string/message_text"
                 />
 
-        <com.hoccer.xo.android.content.ContentView
-                android:id="@+id/message_content"
-                android:gravity="center"
-                custom:maxHeight="150dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="30dp"
-                android:layout_width="match_parent"
-                android:layout_toRightOf="@id/message_avatar"
-                android:layout_alignWithParentIfMissing="true"
-                android:layout_below="@id/message_text"
-                android:layout_height="wrap_content"
-                style="@style/AppBaseTheme.Message.Incoming"
-                />
+        <!--<com.hoccer.xo.android.content.old.OldContentView-->
+                <!--android:id="@+id/cv_message_content"-->
+                <!--android:gravity="center"-->
+                <!--custom:maxHeight="150dp"-->
+                <!--android:layout_marginTop="2dp"-->
+                <!--android:layout_marginBottom="2dp"-->
+                <!--android:layout_marginLeft="10dp"-->
+                <!--android:layout_marginRight="30dp"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_toRightOf="@id/message_avatar"-->
+                <!--android:layout_alignWithParentIfMissing="true"-->
+                <!--android:layout_below="@id/tv_message_text"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:visibility="gone"-->
+                <!--style="@style/AppBaseTheme.Message.Incoming"/>-->
 
     </RelativeLayout>
     <TextView
-            android:id="@+id/tv_message_name"
+            android:id="@+id/tv_message_contact_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="73dp"

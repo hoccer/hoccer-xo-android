@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.content.vcard;
+package com.hoccer.xo.android.view.chat;
 
 import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.IContentObject;

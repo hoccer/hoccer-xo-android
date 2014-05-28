@@ -813,8 +813,8 @@ public abstract class XoActivity extends FragmentActivity {
     public void hackReturnedFromDialog() {
     }
 
-    public void showPopupForContentView(ContentView contentView) {
-    }
+//    public void showPopupForContentView(OldContentView contentView) {
+//    }
 
     public void clipBoardItemSelected(IContentObject contentObject) {
     }

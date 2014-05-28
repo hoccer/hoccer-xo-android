@@ -1,7 +1,7 @@
 package com.hoccer.xo.android.fragment;
 
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.xo.android.adapter.ConversationAdapter;
+import com.hoccer.xo.android.adapter.ChatAdapter;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.android.view.OnOverscrollListener;
@@ -31,19 +31,14 @@ public class MessagingFragment extends XoListFragment
         XoAdapter.AdapterReloadListener, OnOverscrollListener, View.OnTouchListener {
 
     private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
-
     private static final int OVERSCROLL_THRESHOLD = -5;
 
-    private OverscrollListView mMessageList;
-
-    private TextView mEmptyText;
-
     private TalkClientContact mContact;
+    private ChatAdapter mAdapter;
 
-    private ConversationAdapter mAdapter;
-
+    private OverscrollListView mMessageList;
+    private TextView mEmptyText;
     private View mOverscrollIndicator;
-
     private boolean mInOverscroll = false;
 
     @Override
@@ -72,31 +67,12 @@ public class MessagingFragment extends XoListFragment
 
     }
 
-    @Override
     public void onResume() {
-        LOG.debug("onResume()");
         super.onResume();
 
-        if (mAdapter == null) {
-            mAdapter = new ConversationAdapter(getXoActivity());
-            mAdapter.setAdapterReloadListener(this);
-            mAdapter.onCreate();
-            mAdapter.requestReload();
-            mMessageList.setAdapter(mAdapter);
+        if (mAdapter != null) {
+            mAdapter.onResume();
         }
-
-        mAdapter.onResume();
-
-        if (mContact != null) {
-            mAdapter.converseWithContact(mContact);
-        }
-    }
-
-    @Override
-    public void onPause() {
-        LOG.debug("onPause()");
-        super.onPause();
-        mAdapter.onPause();
     }
 
     @Override
@@ -105,7 +81,6 @@ public class MessagingFragment extends XoListFragment
         super.onDestroy();
         if (mAdapter != null) {
             mAdapter.onDestroy();
-            mAdapter = null;
         }
     }
 
@@ -136,9 +111,15 @@ public class MessagingFragment extends XoListFragment
     public void converseWithContact(TalkClientContact contact) {
         LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
         mContact = contact;
-        if (mAdapter != null) {
-            mAdapter.converseWithContact(contact);
+
+        if (mAdapter == null) {
+            mAdapter = new ChatAdapter(getXoActivity(), mContact);
+            mAdapter.setAdapterReloadListener(this);
+            mAdapter.onCreate();
+            mMessageList.setAdapter(mAdapter);
         }
+
+        mAdapter.onResume();
     }
 
     @Override
