@@ -102,7 +102,7 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
             }
         }
 
-        mMotionInterpreter.activate();
+        configureMotionInterpreterForContact(mContact);
         getXoClient().registerContactListener(this);
     }
 
@@ -200,6 +200,17 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
         }
         // invalidate menu so that profile buttons get disabled/enabled
         invalidateOptionsMenu();
+
+        configureMotionInterpreterForContact(mContact);
+    }
+
+    private void configureMotionInterpreterForContact(TalkClientContact contact) {
+        // react on gestures only when contact is nearby
+        if (contact != null && (contact.isNearby() || (contact.isGroup() && contact.getGroupPresence().isTypeNearby()))) {
+            mMotionInterpreter.activate();
+        } else {
+            mMotionInterpreter.deactivate();
+        }
     }
 
     @Override

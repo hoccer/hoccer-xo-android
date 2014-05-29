@@ -175,26 +175,38 @@ public abstract class XoActivity extends FragmentActivity {
     public static boolean isBackgroundActive = false;
 
     protected void applicationWillEnterForeground() {
-        LOG.info("Application will enter foreground.");
+        LOG.debug("Application will enter foreground.");
         isAppInBackground = false;
         isBackgroundActive = false;
         XoApplication.enterForegroundMode();
     }
 
     protected void applicationWillEnterBackground() {
-        LOG.info("Application will enter background.");
+        LOG.debug("Application will enter background.");
         isAppInBackground = true;
         XoApplication.enterBackgroundMode();
     }
 
     protected void applicationWillEnterBackgroundActive() {
-        LOG.info("Application will enter background active.");
+        LOG.debug("Application will enter background active.");
         isAppInBackground = false;
         XoApplication.enterBackgroundActiveMode();
     }
 
     protected void setBackgroundActive() {
         isBackgroundActive = true;
+    }
+
+    public void startExternalActivity(Intent intent) {
+        LOG.debug(getClass() + " starting external activity " + intent.toString());
+        setBackgroundActive();
+        startActivity(intent);
+    }
+
+    public void startExternalActivityForResult(Intent intent, int requestCode) {
+        LOG.debug(getClass() + " starting external activity " +  intent.toString() + " for request code: " + requestCode);
+        setBackgroundActive();
+        startActivityForResult(intent, requestCode);
     }
 
     @Override
@@ -204,7 +216,6 @@ public abstract class XoActivity extends FragmentActivity {
         }
         super.onStart();
     }
-
 
     @Override
     protected void onStop() {
@@ -537,7 +548,7 @@ public abstract class XoActivity extends FragmentActivity {
         if (requestCode == REQUEST_SELECT_AVATAR) {
             if (mAvatarSelection != null) {
                 ImageSelector selector = (ImageSelector) mAvatarSelection.getSelector();
-                startActivityForResult(selector.createCropIntent(this, data.getData()),
+                startExternalActivityForResult(selector.createCropIntent(this, data.getData()),
                         REQUEST_CROP_AVATAR);
             }
             return;
