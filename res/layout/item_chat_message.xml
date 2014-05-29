@@ -48,7 +48,6 @@
                 android:minHeight="50dp"
                 android:gravity="center_vertical"
                 android:paddingLeft="25dp"
-                style="@style/AppBaseTheme.Message.Incoming"
                 android:textIsSelectable="true"
                 android:autoLink="all"
                 android:layout_toRightOf="@id/av_message_avatar"
@@ -57,7 +56,7 @@
                 />
 
         <View
-                android:id="@+id/cv_message_content"
+                android:id="@+id/cv_message_attachment"
                 android:gravity="center"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"

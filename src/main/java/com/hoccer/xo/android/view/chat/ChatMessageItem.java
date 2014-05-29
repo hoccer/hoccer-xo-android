@@ -23,7 +23,6 @@ public class ChatMessageItem {
     protected Logger LOG = Logger.getLogger(getClass());
 
     protected Context mContext;
-    private boolean displaysIncoming;
 
     public ChatMessageItem(Context context) {
         super();
@@ -35,7 +34,7 @@ public class ChatMessageItem {
         return inflater.inflate(R.layout.item_chat_message, null);
     }
 
-    private void configureViewForMessage(View view, TalkClientMessage message) {
+    protected void configureViewForMessage(View view, TalkClientMessage message) {
         AvatarView avatarView = (AvatarView) view.findViewById(R.id.av_message_avatar);
         TextView messageTime = (TextView) view.findViewById(R.id.tv_message_time);
         TextView messageText = (TextView) view.findViewById(R.id.tv_message_text);
