@@ -14,13 +14,20 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
 
-
+/**
+ * This class represents an adapter which loads data from a given conversation and configures the chat view.
+ *
+ * When loading the all messages from the data base this adaptor performs batching.
+ * The size of a batch is defined by the constant LOAD_MESSAGES.
+ *
+ * To configure list items it uses instances of ChatMessageItem and its subtypes.
+ */
 public class ChatAdapter extends XoAdapter implements IXoMessageListener {
 
     /**
      * Enumerates all types of list items used by this adapter.
      */
-    private enum ListItemTypes {
+    private enum ListItemType {
         ListItemWithText,
         ListItemWithImage,
         ListItemWithVideo,
@@ -117,7 +124,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
 
     @Override
     public int getViewTypeCount() {
-        return ListItemTypes.values().length;
+        return ListItemType.values().length;
     }
 
     @Override
@@ -127,8 +134,14 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
         return getListItemTypeForMessage(message);
     }
 
+    /**
+     * Return the ListItemType which is appropriate for the given message / attachment.
+     *
+     * @param message The message to display
+     * @return The corresponding ListItemType
+     */
     private int getListItemTypeForMessage(TalkClientMessage message) {
-        int listItemType = ListItemTypes.ListItemWithText.ordinal();
+        int listItemType = ListItemType.ListItemWithText.ordinal();
         String contentType = null;
 
         if (message.getAttachmentDownload() != null) {
@@ -139,17 +152,17 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
 
         if (contentType != null) {
             if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeImage)) {
-                listItemType = ListItemTypes.ListItemWithImage.ordinal();
+                listItemType = ListItemType.ListItemWithImage.ordinal();
             } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeVideo)) {
-                listItemType = ListItemTypes.ListItemWithVideo.ordinal();
+                listItemType = ListItemType.ListItemWithVideo.ordinal();
             } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeAudio)) {
-                listItemType = ListItemTypes.ListItemWithAudio.ordinal();
+                listItemType = ListItemType.ListItemWithAudio.ordinal();
             } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeData)) {
-                listItemType = ListItemTypes.ListItemWithData.ordinal();
+                listItemType = ListItemType.ListItemWithData.ordinal();
             } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeVCard)) {
-                listItemType = ListItemTypes.ListItemWithContact.ordinal();
+                listItemType = ListItemType.ListItemWithContact.ordinal();
             } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeGeolocation)) {
-                listItemType = ListItemTypes.ListItemWithLocation.ordinal();
+                listItemType = ListItemType.ListItemWithLocation.ordinal();
             }
         }
         return listItemType;

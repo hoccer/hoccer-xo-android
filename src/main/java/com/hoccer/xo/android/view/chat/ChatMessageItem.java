@@ -15,8 +15,7 @@ import org.apache.log4j.Logger;
 import java.util.Date;
 
 /**
- * This class represents a chat message. It layouts a message as incoming or
- * outgoing and displays the message text. To configure the cell only the TalkClientMessage object is needed.
+ * This class creates and configures layouts for incoming or outgoing messages.
  */
 public class ChatMessageItem {
 
@@ -29,18 +28,31 @@ public class ChatMessageItem {
         mContext = context;
     }
 
+    /**
+     * Creates a new empty message layout.
+     *
+     * @return a View object containing an empty message layout
+     */
     private View createView() {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         return inflater.inflate(R.layout.item_chat_message, null);
     }
 
+    /**
+     * Configures a given message layout using data from a given TalkClientMessage object.
+     *
+     * Subtypes will have to overwrite this method to enhance the configuration of the message layout.
+     *
+     * @param view    The given layout
+     * @param message The given TalkClientMessage object
+     */
     protected void configureViewForMessage(View view, TalkClientMessage message) {
         AvatarView avatarView = (AvatarView) view.findViewById(R.id.av_message_avatar);
         TextView messageTime = (TextView) view.findViewById(R.id.tv_message_time);
         TextView messageText = (TextView) view.findViewById(R.id.tv_message_text);
         TextView messageName = (TextView) view.findViewById(R.id.tv_message_contact_name);
 
-        // Only for incoming messages from groups
+        // Adjust layout for incoming / outgoing message
         if (message.isIncoming()) {
             if (message.getConversationContact().isGroup()) {
                 setAvatar(avatarView, message.getSenderContact());
@@ -94,19 +106,32 @@ public class ChatMessageItem {
                     if (!contact.isSelf()) {
 
                         // TODO: reevaluate - might not work
-                        ((XoActivity)mContext).showContactProfile(contact);
+                        ((XoActivity) mContext).showContactProfile(contact);
                     }
                 }
             });
         }
     }
 
+    /**
+     * Returns a new and fully configured View object containing the layout for a given message.
+     *
+     * @param message The given TalkClientMessage object
+     * @return A new View object containing the message layout
+     */
     public View getViewForMessage(TalkClientMessage message) {
         View view = createView();
         configureViewForMessage(view, message);
         return view;
     }
 
+    /**
+     * Reconfigures a given message layout from a given message.
+     *
+     * @param view The message layout to reconfigure
+     * @param message The given TalkClientMessage object
+     * @return The fully reconfigured message layout
+     */
     public View recycleViewForMessage(View view, TalkClientMessage message) {
         configureViewForMessage(view, message);
         return view;
