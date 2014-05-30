@@ -4,6 +4,8 @@
 
           android:versionCode="31"
           android:versionName="2.0.1">
+          android:versionCode="33"
+          android:versionName="2.1.2">
 
     <!-- We run on 4.0 (14) and up, we use features from up to 4.2 (17) -->
     <uses-sdk
