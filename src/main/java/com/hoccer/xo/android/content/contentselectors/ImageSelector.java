@@ -149,8 +149,8 @@ public class ImageSelector implements IContentSelector {
                 MediaStore.Images.Media.MIME_TYPE,
                 MediaStore.Images.Media.DATA,
                 MediaStore.Images.Media.SIZE,
-                MediaStore.Images.Media.WIDTH,
-                MediaStore.Images.Media.HEIGHT,
+                // MediaStore.Images.Media.WIDTH,
+                // MediaStore.Images.Media.HEIGHT,
                 MediaStore.Images.Media.TITLE,
                 MediaStore.Images.Media.ORIENTATION
         };
@@ -161,6 +161,8 @@ public class ImageSelector implements IContentSelector {
         int mimeTypeIndex = cursor.getColumnIndex(MediaStore.Images.Media.MIME_TYPE);
         int dataIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
         int sizeIndex = cursor.getColumnIndex(MediaStore.Images.Media.SIZE);
+
+        //TODO: since this fields are not available below API Level 16 we will not use them for now. Comment all following lines in when fully available.
         // int widthIndex = cursor.getColumnIndex(MediaStore.Images.Media.WIDTH);
         // int heightIndex = cursor.getColumnIndex(MediaStore.Images.Media.HEIGHT);
         int fileNameIndex = cursor.getColumnIndex(MediaStore.Images.Media.TITLE);
@@ -191,22 +193,15 @@ public class ImageSelector implements IContentSelector {
         }
 
         // Validating image measurements
-        if (fileWidth == 0 || fileHeight == 0) {
-            LOG.debug("Could not retrieve image measurements from content database. Will use values extracted from file instead.");
+        //if (fileWidth == 0 || fileHeight == 0) {
+        //    LOG.debug("Could not retrieve image measurements from content database. Will use values extracted from file instead.");
 
-            try {
-                Bitmap bmp = MediaStore.Images.Media.getBitmap(context.getContentResolver(), selectedContent);
-                fileWidth = bmp.getWidth();
-                fileHeight = bmp.getHeight();
-
-            } catch (IOException e) {
-                LOG.error("Error while creating image from file: " + filePath, e);
-
-                // safeguard
-                fileWidth = 1;
-                fileHeight = 1;
-            }
-        }
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, options);
+        fileWidth = options.outWidth;
+        fileHeight = options.outHeight;
+        //}
 
         aspectRatio = calculateAspectRatio(fileWidth, fileHeight, orientation);
 
