@@ -11,6 +11,11 @@ import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
 import org.apache.log4j.Logger;
 
+/**
+ * This class handles interactions with an AttachmentTransferControlView.
+ *
+ * It receives click events and pauses / resumes the transfer of the given attachment.
+ */
 public class AttachmentTransferHandler implements View.OnClickListener {
 
     protected Logger LOG = Logger.getLogger(AttachmentTransferHandler.class);
@@ -36,12 +41,13 @@ public class AttachmentTransferHandler implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == mTransferProgress) {
-            doDownAndUploadActions(getTransferState(mContent));
+            setTransferAction(getTransferState(mContent));
             switch (mTransferAction) {
                 case REQUEST_DOWNLOAD:
                     if (mContent instanceof TalkClientDownload) {
                         TalkClientDownload download = (TalkClientDownload) mContent;
                         XoApplication.getXoClient().requestDownload(download);
+                        // TODO: maybe we should rather let this be handled by the adapter / fragment / activity ?
                     }
                     break;
                 case CANCEL_DOWNLOAD:
@@ -98,7 +104,7 @@ public class AttachmentTransferHandler implements View.OnClickListener {
         return state;
     }
 
-    private void doDownAndUploadActions(ContentState state) {
+    private void setTransferAction(ContentState state) {
         mTransferProgress.setEnabled(true);
         mTransferAction = TransferAction.NONE;
         switch (state) {
@@ -107,7 +113,7 @@ public class AttachmentTransferHandler implements View.OnClickListener {
                 mTransferAction = TransferAction.REQUEST_DOWNLOAD;
                 break;
             case DOWNLOAD_DETECTING:
-                mTransferProgress.setEnabled(false);
+                mTransferProgress.setEnabled(false); // TODO: is this needed / balanced?
                 break;
             case DOWNLOAD_DECRYPTING:
             case DOWNLOAD_DOWNLOADING:
@@ -118,7 +124,7 @@ public class AttachmentTransferHandler implements View.OnClickListener {
                 mTransferAction = TransferAction.REQUEST_UPLOAD;
                 break;
             case UPLOAD_REGISTERING:
-                mTransferProgress.setEnabled(false);
+                mTransferProgress.setEnabled(false); // TODO: is this needed / balanced?
                 break;
             case UPLOAD_ENCRYPTING:
             case UPLOAD_UPLOADING:

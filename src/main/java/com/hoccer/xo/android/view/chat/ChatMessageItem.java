@@ -132,6 +132,14 @@ public class ChatMessageItem {
         }
     }
 
+    /**
+     * Configures the attachment view for a given message / attachment.
+     *
+     * * Subtypes will have to overwrite this method to enhance the configuration of the attachment layout.
+     *
+     * @param view    The chat message item's view to configure
+     * @param message The given TalkClientMessage
+     */
     protected void configureAttachmentViewForMessage(View view, TalkClientMessage message) {
 
         RelativeLayout attachmentView = (RelativeLayout) view.findViewById(R.id.v_message_attachment);
@@ -143,6 +151,13 @@ public class ChatMessageItem {
             attachmentView.addView(contentView);
         }
         attachmentView.setVisibility(View.VISIBLE);
+
+        // Adjust layout for incoming / outgoing attachment
+        if (message.isIncoming()) {
+            attachmentView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_grey));
+        } else {
+            attachmentView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_green));
+        }
 
         // configure transfer progress view
         mContentTransferProgress = (RelativeLayout) attachmentView.findViewById(R.id.content_transfer_progress);
@@ -156,15 +171,15 @@ public class ChatMessageItem {
             mContentTransferProgress.setVisibility(View.VISIBLE);
 
             mTransferControl.setOnClickListener(new AttachmentTransferHandler(mTransferControl, contentObject));
-            ContentState contentState = getTransferState(contentObject);
-            updateTransferControl(contentState, contentObject);
+            updateTransferControl(contentObject);
 
         } else {
             mContentTransferProgress.setVisibility(View.GONE);
             mTransferControl.setOnClickListener(null);
+            displayAttachment();
         }
 
-        // hide message text field when empty
+        // hide message text field when empty - there is still an attachment to display
         if (message.getText() == null || message.getText().isEmpty()) {
             mMessageText.setVisibility(View.GONE);
         } else {
@@ -172,6 +187,16 @@ public class ChatMessageItem {
         }
     }
 
+    protected void displayAttachment() {
+
+    }
+
+    /**
+     * Returns true when the transfer (upload or download) of the attachment is not completed.
+     *
+     * @param state
+     * @return
+     */
     protected boolean shouldDisplayTransferControl(ContentState state) {
         return !(state == ContentState.SELECTED || state == ContentState.UPLOAD_COMPLETE || state == ContentState.DOWNLOAD_COMPLETE);
     }
@@ -208,10 +233,16 @@ public class ChatMessageItem {
         return state;
     }
 
-    protected void updateTransferControl(ContentState contentState, IContentObject contentObject) {
+    /**
+     * Updates the AttachmentTransferControlView from a given IContentObject
+     *
+     * @param contentObject The given content object
+     */
+    protected void updateTransferControl(IContentObject contentObject) {
         int length = 0;
         int progress = 0;
         Resources res = mContext.getResources();
+        ContentState contentState = getTransferState(contentObject);
         switch (contentState) {
             case DOWNLOAD_DETECTING:
                 break;
@@ -251,6 +282,7 @@ public class ChatMessageItem {
                 break;
             case DOWNLOAD_COMPLETE:
                 mTransferControl.finishSpinningAndProceed();
+                displayAttachment();
             case UPLOAD_REGISTERING:
                 break;
             case UPLOAD_NEW:
@@ -283,9 +315,11 @@ public class ChatMessageItem {
                 break;
             case UPLOAD_COMPLETE:
                 mTransferControl.completeAndGone();
+                displayAttachment();
                 break;
             default:
                 mTransferControl.setVisibility(View.GONE);
+                displayAttachment();
                 break;
         }
     }

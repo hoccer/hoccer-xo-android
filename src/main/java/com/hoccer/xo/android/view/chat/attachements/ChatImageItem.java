@@ -18,4 +18,9 @@ public class ChatImageItem extends ChatMessageItem {
 
         configureAttachmentViewForMessage(view, message);
     }
+
+    @Override
+    protected void displayAttachment() {
+
+    }
 }
