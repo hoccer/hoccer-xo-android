@@ -37,7 +37,7 @@
 
         <TextView
                 android:id="@+id/tv_message_text"
-                android:layout_below="@+id/tv_message_time"
+                android:layout_below="@+id/v_message_attachment"
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,18 +55,17 @@
                 android:text="@string/message_text"
                 style="@style/AppBaseTheme.Message.Incoming"/>
 
-        <View
-                android:id="@+id/cv_message_attachment"
+        <RelativeLayout
+                android:id="@+id/v_message_attachment"
                 android:gravity="center"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="30dp"
                 android:layout_width="match_parent"
-                android:layout_above="@id/tv_message_text"
+                android:layout_height="200dp"
+                android:layout_below="@id/tv_message_time"
                 android:layout_alignWithParentIfMissing="true"
-                android:layout_below="@id/tv_message_text"
-                android:layout_height="wrap_content"
                 android:visibility="gone"
                 style="@style/AppBaseTheme.Message.Incoming"/>
 

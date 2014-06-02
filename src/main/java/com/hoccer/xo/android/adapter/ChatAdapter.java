@@ -3,12 +3,16 @@ package com.hoccer.xo.android.adapter;
 import android.view.View;
 import android.view.ViewGroup;
 import com.hoccer.talk.client.IXoMessageListener;
+import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
+import com.hoccer.xo.android.view.chat.attachements.ChatImageItem;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -16,13 +20,13 @@ import java.util.Vector;
 
 /**
  * This class represents an adapter which loads data from a given conversation and configures the chat view.
- *
+ * <p/>
  * When loading the all messages from the data base this adaptor performs batching.
  * The size of a batch is defined by the constant LOAD_MESSAGES.
- *
+ * <p/>
  * To configure list items it uses instances of ChatMessageItem and its subtypes.
  */
-public class ChatAdapter extends XoAdapter implements IXoMessageListener {
+public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTransferListener {
 
     /**
      * Enumerates all types of list items used by this adapter.
@@ -44,6 +48,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
     private int mHistoryCount = -1;
 
     private ChatMessageItem mChatMessageItem;
+    private ChatImageItem mChatImageItem;
 
 
     public ChatAdapter(XoActivity activity, TalkClientContact contact) {
@@ -55,6 +60,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
 
     private void initialize() {
         mChatMessageItem = new ChatMessageItem(mActivity);
+        mChatImageItem = new ChatImageItem(mActivity);
         loadNextMessages();
     }
 
@@ -82,6 +88,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
         super.onCreate();
 
         getXoClient().registerMessageListener(this);
+        getXoClient().registerTransferListener(this);
     }
 
     @Override
@@ -89,6 +96,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
         super.onDestroy();
 
         getXoClient().unregisterMessageListener(this);
+        getXoClient().unregisterTransferListener(this);
     }
 
     @Override
@@ -114,10 +122,11 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
             markMessageAsSeen(message);
         }
 
+        ChatMessageItem chatItem = getItemForMessage(message);
         if (convertView == null) {
-            convertView = mChatMessageItem.getViewForMessage(message);
+            convertView = chatItem.getViewForMessage(message); // mChatMessageItem.getViewForMessage(message);
         } else {
-            convertView = mChatMessageItem.recycleViewForMessage(convertView, message);
+            convertView = chatItem.recycleViewForMessage(convertView, message); // mChatMessageItem.recycleViewForMessage(convertView, message);
         }
         return convertView;
     }
@@ -130,8 +139,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
     @Override
     public int getItemViewType(int position) {
         TalkClientMessage message = (TalkClientMessage) getItem(position);
-
-        return getListItemTypeForMessage(message);
+        return getListItemTypeForMessage(message).ordinal();
     }
 
     /**
@@ -140,8 +148,8 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
      * @param message The message to display
      * @return The corresponding ListItemType
      */
-    private int getListItemTypeForMessage(TalkClientMessage message) {
-        int listItemType = ListItemType.ListItemWithText.ordinal();
+    private ListItemType getListItemTypeForMessage(TalkClientMessage message) {
+        ListItemType listItemType = ListItemType.ListItemWithText;
         String contentType = null;
 
         if (message.getAttachmentDownload() != null) {
@@ -152,20 +160,28 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
 
         if (contentType != null) {
             if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeImage)) {
-                listItemType = ListItemType.ListItemWithImage.ordinal();
+                listItemType = ListItemType.ListItemWithImage;
             } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeVideo)) {
-                listItemType = ListItemType.ListItemWithVideo.ordinal();
+                listItemType = ListItemType.ListItemWithVideo;
             } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeAudio)) {
-                listItemType = ListItemType.ListItemWithAudio.ordinal();
+                listItemType = ListItemType.ListItemWithAudio;
             } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeData)) {
-                listItemType = ListItemType.ListItemWithData.ordinal();
+                listItemType = ListItemType.ListItemWithData;
             } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeVCard)) {
-                listItemType = ListItemType.ListItemWithContact.ordinal();
+                listItemType = ListItemType.ListItemWithContact;
             } else if (contentType.equalsIgnoreCase(ContentMediaTypes.MediaTypeGeolocation)) {
-                listItemType = ListItemType.ListItemWithLocation.ordinal();
+                listItemType = ListItemType.ListItemWithLocation;
             }
         }
         return listItemType;
+    }
+
+    private ChatMessageItem getItemForMessage(TalkClientMessage message) {
+        ListItemType itemType = getListItemTypeForMessage(message);
+        if (itemType == ListItemType.ListItemWithImage) {
+            return mChatImageItem;
+        }
+        return mChatMessageItem;
     }
 
     private void markMessageAsSeen(final TalkClientMessage message) {
@@ -220,5 +236,91 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
                 }
             });
         }
+    }
+
+    // TODO: do not update the whole conversation just because the transfer state of a single file has changed by some percent.
+
+    @Override
+    public void onDownloadRegistered(TalkClientDownload download) {
+    }
+
+    @Override
+    public void onDownloadStarted(TalkClientDownload download) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void onDownloadProgress(TalkClientDownload download) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void onDownloadFinished(TalkClientDownload download) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void onDownloadStateChanged(TalkClientDownload download) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void onUploadStarted(TalkClientUpload upload) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void onUploadProgress(TalkClientUpload upload) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void onUploadFinished(TalkClientUpload upload) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void onUploadStateChanged(TalkClientUpload upload) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 }

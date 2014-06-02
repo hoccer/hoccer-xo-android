@@ -59,20 +59,20 @@ public class SelectedContent implements IContentObject {
 
     public SelectedContent(Intent resultIntent, String contentDataUrl) {
         Uri contentUrl = resultIntent.getData();
-        LOG.info("new selected content: " + contentUrl);
+        LOG.debug("new selected content: " + contentUrl);
         mContentUrl = contentUrl.toString();
         mContentType = resultIntent.getType();
         mContentDataUrl = contentDataUrl;
     }
 
     public SelectedContent(String contentUrl, String contentDataUrl) {
-        LOG.info("new selected content: " + contentUrl);
+        LOG.debug("new selected content: " + contentUrl);
         mContentUrl = contentUrl;
         mContentDataUrl = contentDataUrl;
     }
 
     public SelectedContent(byte[] data) {
-        LOG.info("new selected content with raw data");
+        LOG.debug("new selected content with raw data");
         mData = data;
         mContentLength = data.length;
     }
@@ -159,7 +159,7 @@ public class SelectedContent implements IContentObject {
                 e.printStackTrace();
             }
         }
-        LOG.info("mContentHmac="+mContentHmac);
+        LOG.debug("mContentHmac="+mContentHmac);
         return mContentHmac;
     }
 

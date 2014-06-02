@@ -16,6 +16,6 @@ public class ChatImageItem extends ChatMessageItem {
     protected void configureViewForMessage(View view, TalkClientMessage message) {
         super.configureViewForMessage(view, message);
 
-        // TODO: do additional configuration here
+        configureAttachmentViewForMessage(view, message);
     }
 }
