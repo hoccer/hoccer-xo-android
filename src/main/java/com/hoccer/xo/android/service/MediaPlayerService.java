@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.RemoteViews;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.content.MediaItem;
+import com.hoccer.xo.android.content.audio.HeadsetHandlerReceiver;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -62,6 +63,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
 
     private LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mReceiver;
+    private BroadcastReceiver mHeadsetStateBroadcastReceiver;
     private MediaPlaylist mPlaylist = new MediaPlaylist();
 
     public class MediaPlayerBinder extends Binder {
@@ -85,6 +87,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         registerPlayStateToggleIntentFilter();
 
         createAppFocusTracker();
+        createHeadsetHandlerReceiver();
+    }
+
+    private void createHeadsetHandlerReceiver(){
+        IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        mHeadsetStateBroadcastReceiver = new HeadsetHandlerReceiver();
+        registerReceiver(mHeadsetStateBroadcastReceiver, receiverFilter);
     }
 
     @Override
