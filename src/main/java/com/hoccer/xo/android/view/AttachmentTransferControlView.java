@@ -8,7 +8,6 @@ import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import com.hoccer.xo.release.R;
 
@@ -171,12 +170,12 @@ public class AttachmentTransferControlView extends View {
     }
 
     private void setupWheels() {
-        int circleCenterX = mLayoutWidth/2;
-        int circleCenterY = mLayoutHeight/2;
-        float outerRadius = mWheelDiameter/2.0f;
+        int circleCenterX = mLayoutWidth / 2;
+        int circleCenterY = mLayoutHeight / 2;
+        float outerRadius = mWheelDiameter / 2.0f;
         mOuterWheel = new RectF(circleCenterX - outerRadius, circleCenterY - outerRadius,
                 circleCenterX + outerRadius, circleCenterY + outerRadius);
-        float innerRadius = outerRadius - mInnerWheelSize/2.0f;
+        float innerRadius = outerRadius - mInnerWheelSize / 2.0f;
         mInnerWheel = new RectF(circleCenterX - innerRadius, circleCenterY - innerRadius,
                 circleCenterX + innerRadius, circleCenterY + innerRadius);
 
@@ -215,7 +214,7 @@ public class AttachmentTransferControlView extends View {
                 canvas.drawLines(mArrowUpload, mOuterWheelPaint);
             }
         }
-        canvas.drawText(mText, mLayoutWidth/2, mLayoutHeight/2 + mWheelDiameter/2.0f + mTextMargin, mTextPaint);
+        canvas.drawText(mText, mLayoutWidth / 2, mLayoutHeight / 2 + mWheelDiameter / 2.0f + mTextMargin, mTextPaint);
     }
 
     public void setMax(int length) {
@@ -224,13 +223,13 @@ public class AttachmentTransferControlView extends View {
 
     public void setProgress(int progress) {
         mPause = false;
-        float percentage = progress / (float)mFileSize;
+        float percentage = progress / (float) mFileSize;
         mProgressCompleted = 360 * percentage;
         progressHandler.sendEmptyMessage(0);
     }
 
     public void setProgressImmediately(int progress) {
-        float percentage = progress / (float)mFileSize;
+        float percentage = progress / (float) mFileSize;
         mShownProgress = 360 * percentage;
         invalidate();
     }
@@ -309,18 +308,18 @@ public class AttachmentTransferControlView extends View {
     private void initDownloadArrow(float centerX, float centerY, float innerRadius, float wheelDiameter) {
         float offsetFromWheelEdges = wheelDiameter / 3;
         float rowOffset = wheelDiameter / 18;
-        mArrowDownload =  new float[12];
+        mArrowDownload = new float[12];
         mArrowDownload[0] = centerX;
         mArrowDownload[1] = centerY - innerRadius + offsetFromWheelEdges;
         mArrowDownload[2] = centerX;
         mArrowDownload[3] = centerY + innerRadius - offsetFromWheelEdges;
 
-        mArrowDownload[4] = centerX - (((2 * (mArrowDownload[3] - mArrowDownload[1])) / 3))/2; //It is a half of 2/3 of arrow length B-)
+        mArrowDownload[4] = centerX - (((2 * (mArrowDownload[3] - mArrowDownload[1])) / 3)) / 2; //It is a half of 2/3 of arrow length B-)
         mArrowDownload[5] = centerY + rowOffset;
         mArrowDownload[6] = centerX;
         mArrowDownload[7] = mArrowDownload[3];
 
-        mArrowDownload[8] = centerX + (((2 * (mArrowDownload[3] - mArrowDownload[1])) / 3))/2;
+        mArrowDownload[8] = centerX + (((2 * (mArrowDownload[3] - mArrowDownload[1])) / 3)) / 2;
         mArrowDownload[9] = centerY + rowOffset;
         mArrowDownload[10] = centerX;
         mArrowDownload[11] = mArrowDownload[3];
@@ -329,18 +328,18 @@ public class AttachmentTransferControlView extends View {
     private void initUploadArrow(float centerX, float centerY, float innerRadius, float wheelDiameter) {
         float offsetFromWheelEdges = wheelDiameter / 3;
         float rowOffset = wheelDiameter / 18;
-        mArrowUpload =  new float[12];
+        mArrowUpload = new float[12];
         mArrowUpload[0] = centerX;
         mArrowUpload[1] = centerY - innerRadius + offsetFromWheelEdges;
         mArrowUpload[2] = centerX;
         mArrowUpload[3] = centerY + innerRadius - offsetFromWheelEdges;
 
-        mArrowUpload[4] = centerX - (((2 * (mArrowUpload[3] - mArrowUpload[1])) / 3))/2;
+        mArrowUpload[4] = centerX - (((2 * (mArrowUpload[3] - mArrowUpload[1])) / 3)) / 2;
         mArrowUpload[5] = centerY - rowOffset;
         mArrowUpload[6] = centerX;
         mArrowUpload[7] = mArrowUpload[1];
 
-        mArrowUpload[8] = centerX + (((2 * (mArrowUpload[3] - mArrowUpload[1])) / 3))/2;
+        mArrowUpload[8] = centerX + (((2 * (mArrowUpload[3] - mArrowUpload[1])) / 3)) / 2;
         mArrowUpload[9] = centerY - rowOffset;
         mArrowUpload[10] = centerX;
         mArrowUpload[11] = mArrowUpload[1];
@@ -349,7 +348,7 @@ public class AttachmentTransferControlView extends View {
     private void initPauseArrow(float centerX, float centerY, float innerRadius, float wheelDiameter) {
         float offsetFromWheelEdges = wheelDiameter / 3;
         float pauseOffset = wheelDiameter / 12;
-        mArrowPause =  new float[8];
+        mArrowPause = new float[8];
         mArrowPause[0] = centerX - pauseOffset;
         mArrowPause[1] = centerY - innerRadius + offsetFromWheelEdges;
         mArrowPause[2] = centerX - pauseOffset;
