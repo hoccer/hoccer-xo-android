@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.RemoteViews;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.content.MediaItem;
+import com.hoccer.xo.android.content.audio.HeadsetHandlerReceiver;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -62,6 +63,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
 
     private LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mReceiver;
+    private BroadcastReceiver mHeadsetStateBroadcastReceiver;
     private MediaPlaylist mPlaylist = new MediaPlaylist();
 
     public class MediaPlayerBinder extends Binder {
@@ -85,6 +87,29 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         registerPlayStateToggleIntentFilter();
 
         createAppFocusTracker();
+        createHeadsetHandlerReceiver();
+    }
+
+    private void createHeadsetHandlerReceiver(){
+
+        mHeadsetStateBroadcastReceiver =  new BroadcastReceiver()
+        {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if (intent.getAction().equals( android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
+
+                    int headSetState = intent.getIntExtra("state", 0);
+
+                    if (headSetState == 0){
+                        pause();
+                    }
+                }
+            }
+        };
+
+        IntentFilter receiverFilter = new IntentFilter(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        registerReceiver(mHeadsetStateBroadcastReceiver, receiverFilter);
     }
 
     @Override
