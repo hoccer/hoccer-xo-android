@@ -6,23 +6,17 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-  <fragment
-          class="com.hoccer.xo.android.fragment.StatusFragment"
-          android:id="@+id/activity_messaging_status_fragment"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"/>
+    <fragment
+            class="com.hoccer.xo.android.fragment.MessagingFragment"
+            android:id="@+id/activity_messaging_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
 
-  <fragment
-          class="com.hoccer.xo.android.fragment.MessagingFragment"
-          android:id="@+id/activity_messaging_fragment"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:layout_weight="1"/>
-
-  <fragment
-          class="com.hoccer.xo.android.fragment.CompositionFragment"
-          android:id="@+id/activity_messaging_composer"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"/>
+    <fragment
+            class="com.hoccer.xo.android.fragment.CompositionFragment"
+            android:id="@+id/activity_messaging_composer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
 </LinearLayout>
