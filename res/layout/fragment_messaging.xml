@@ -37,4 +37,9 @@
                 android:text="@string/messaging_loading"/>
     </LinearLayout>
 
+    <com.hoccer.xo.android.view.CompositionView
+            android:id="@+id/cv_composition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
 </LinearLayout>

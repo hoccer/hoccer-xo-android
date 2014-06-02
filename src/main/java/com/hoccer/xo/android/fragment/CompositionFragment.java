@@ -44,7 +44,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         LOG.debug("onCreateView()");
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View v = inflater.inflate(R.layout.fragment_composition, container, false);
+        View v = inflater.inflate(R.layout.view_composition, container, false);
 
         setHasOptionsMenu(true);
 

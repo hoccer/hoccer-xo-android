@@ -1,13 +1,13 @@
 package com.hoccer.xo.android.activity;
 
 import android.app.ActionBar;
-import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.PopupMenu;
@@ -64,12 +64,14 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
         // enable up navigation
         enableUpNavigation();
 
-        // get our primary fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        mMessagingFragment = (MessagingFragment) fragmentManager.findFragmentById(R.id.activity_messaging_fragment);
-        mMessagingFragment.setRetainInstance(true);
-        mCompositionFragment = (CompositionFragment) fragmentManager.findFragmentById(R.id.activity_messaging_composer);
-        mCompositionFragment.setRetainInstance(true);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fl_messaging_fragment_container, new MessagingFragment());
+        ft.commit();
+
+//        // get our primary fragment
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        mMessagingFragment = (MessagingFragment) fragmentManager.findFragmentById(R.id.activity_messaging_fragment);
+//        mMessagingFragment.setRetainInstance(true);
 
         // register receiver for notification check
         IntentFilter filter = new IntentFilter("com.hoccer.xo.android.activity.MessagingActivity$getContactIdInConversation");

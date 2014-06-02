@@ -1,22 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:background="@color/xo_main_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-    <fragment
-            class="com.hoccer.xo.android.fragment.MessagingFragment"
-            android:id="@+id/activity_messaging_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
-
-    <fragment
-            class="com.hoccer.xo.android.fragment.CompositionFragment"
-            android:id="@+id/activity_messaging_composer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-</LinearLayout>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/fl_messaging_fragment_container"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"/>

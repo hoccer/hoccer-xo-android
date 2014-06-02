@@ -8,9 +8,11 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.adapter.ConversationAdapter;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
+import com.hoccer.xo.android.view.CompositionView;
 import com.hoccer.xo.android.view.OnOverscrollListener;
 import com.hoccer.xo.android.view.OverscrollListView;
 import com.hoccer.xo.release.R;
@@ -37,6 +39,8 @@ public class MessagingFragment extends XoListFragment
 
     private View mOverscrollIndicator;
 
+    private CompositionView mCompositionView;
+
     private boolean mInOverscroll = false;
 
     @Override
@@ -46,6 +50,12 @@ public class MessagingFragment extends XoListFragment
         super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.fragment_messaging, container, false);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         mMessageList = (OverscrollListView) view.findViewById(android.R.id.list);
         mMessageList.setOverScrollMode(ListView.OVER_SCROLL_IF_CONTENT_SCROLLS);
@@ -55,8 +65,18 @@ public class MessagingFragment extends XoListFragment
 //        mMessageList.setOverscrollHeader(getResources().getDrawable(R.drawable.ic_light_av_replay));
         mEmptyText = (TextView) view.findViewById(R.id.messaging_empty);
         mOverscrollIndicator = view.findViewById(R.id.overscroll_indicator);
+        mCompositionView = (CompositionView) view.findViewById(R.id.cv_composition);
+        mCompositionView.setCompositionViewListener(new CompositionView.ICompositionViewListener() {
+            @Override
+            public void onAddAttachmentClicked() {
+                getXoActivity().selectAttachment();
+            }
 
-        return view;
+            @Override
+            public void onAttachmentClicked() {
+                getXoActivity().selectAttachment();
+            }
+        });
     }
 
     @Override
@@ -132,6 +152,8 @@ public class MessagingFragment extends XoListFragment
         if (mAdapter != null) {
             mAdapter.converseWithContact(contact);
         }
+
+        mCompositionView.converseWithContact(contact);
     }
 
     @Override
@@ -180,5 +202,12 @@ public class MessagingFragment extends XoListFragment
             mInOverscroll = false;
         }
         return false;
+    }
+
+    @Override
+    public void onAttachmentSelected(IContentObject contentObject) {
+        LOG.debug("onAttachmentSelected(" + contentObject.getContentDataUrl() + ")");
+
+        mCompositionView.showAttachment(contentObject);
     }
 }
