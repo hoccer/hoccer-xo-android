@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.view.chat.attachements;
+package com.hoccer.xo.android.view.chat.attachments;
 
 import android.content.Context;
 import android.view.View;
@@ -6,9 +6,9 @@ import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 
 
-public class ChatDataItem extends ChatMessageItem {
+public class ChatLocationItem extends ChatMessageItem {
 
-    public ChatDataItem(Context context) {
+    public ChatLocationItem(Context context) {
         super(context);
     }
 

@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.hoccer.talk.client.XoTransferAgent;
@@ -18,7 +19,7 @@ import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
 import com.hoccer.xo.android.view.AvatarView;
-import com.hoccer.xo.android.view.chat.attachements.AttachmentTransferHandler;
+import com.hoccer.xo.android.view.chat.attachments.AttachmentTransferHandler;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -36,7 +37,7 @@ public class ChatMessageItem {
 
     protected TextView mMessageText;
     protected RelativeLayout mContentTransferProgress;
-    protected RelativeLayout mContentWrapper;
+    protected LinearLayout mContentWrapper;
     protected AttachmentTransferControlView mTransferControl;
 
 
@@ -152,7 +153,9 @@ public class ChatMessageItem {
         }
         attachmentView.setVisibility(View.VISIBLE);
 
-        // Adjust layout for incoming / outgoing attachment
+        mContentWrapper = (LinearLayout) attachmentView.findViewById(R.id.content_wrapper);
+
+        // adjust layout for incoming / outgoing attachment
         if (message.isIncoming()) {
             attachmentView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_grey));
         } else {
@@ -168,15 +171,15 @@ public class ChatMessageItem {
         }
 
         if (shouldDisplayTransferControl(getTransferState(contentObject))) {
+            mContentWrapper.setVisibility(View.GONE);
             mContentTransferProgress.setVisibility(View.VISIBLE);
-
             mTransferControl.setOnClickListener(new AttachmentTransferHandler(mTransferControl, contentObject));
             updateTransferControl(contentObject);
-
         } else {
-            mContentTransferProgress.setVisibility(View.GONE);
             mTransferControl.setOnClickListener(null);
-            displayAttachment();
+            mContentTransferProgress.setVisibility(View.GONE);
+            mContentWrapper.setVisibility(View.VISIBLE);
+            displayAttachment(contentObject);
         }
 
         // hide message text field when empty - there is still an attachment to display
@@ -187,7 +190,7 @@ public class ChatMessageItem {
         }
     }
 
-    protected void displayAttachment() {
+    protected void displayAttachment(IContentObject contentObject) {
 
     }
 
@@ -282,7 +285,7 @@ public class ChatMessageItem {
                 break;
             case DOWNLOAD_COMPLETE:
                 mTransferControl.finishSpinningAndProceed();
-                displayAttachment();
+                displayAttachment(contentObject);
             case UPLOAD_REGISTERING:
                 break;
             case UPLOAD_NEW:
@@ -315,11 +318,11 @@ public class ChatMessageItem {
                 break;
             case UPLOAD_COMPLETE:
                 mTransferControl.completeAndGone();
-                displayAttachment();
+                displayAttachment(contentObject);
                 break;
             default:
                 mTransferControl.setVisibility(View.GONE);
-                displayAttachment();
+                displayAttachment(contentObject);
                 break;
         }
     }

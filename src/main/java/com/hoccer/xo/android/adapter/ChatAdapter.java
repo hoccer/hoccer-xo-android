@@ -12,7 +12,7 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
-import com.hoccer.xo.android.view.chat.attachements.ChatImageItem;
+import com.hoccer.xo.android.view.chat.attachments.ChatImageItem;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -124,9 +124,9 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
 
         ChatMessageItem chatItem = getItemForMessage(message);
         if (convertView == null) {
-            convertView = chatItem.getViewForMessage(message); // mChatMessageItem.getViewForMessage(message);
+            convertView = chatItem.getViewForMessage(message);
         } else {
-            convertView = chatItem.recycleViewForMessage(convertView, message); // mChatMessageItem.recycleViewForMessage(convertView, message);
+            convertView = chatItem.recycleViewForMessage(convertView, message);
         }
         return convertView;
     }

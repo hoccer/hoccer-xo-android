@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.view.chat.attachements;
+package com.hoccer.xo.android.view.chat.attachments;
 
 import android.content.Context;
 import android.view.View;
@@ -6,9 +6,9 @@ import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 
 
-public class ChatAudioItem extends ChatMessageItem {
+public class ChatVideoItem extends ChatMessageItem {
 
-    public ChatAudioItem(Context context) {
+    public ChatVideoItem(Context context) {
         super(context);
     }
 

@@ -1,4 +1,4 @@
-package com.hoccer.xo.android.view.chat.attachements;
+package com.hoccer.xo.android.view.chat.attachments;
 
 import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.IContentObject;
