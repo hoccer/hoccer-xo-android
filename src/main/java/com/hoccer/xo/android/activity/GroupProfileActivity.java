@@ -84,7 +84,7 @@ public class GroupProfileActivity extends XoActionbarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_audio_attachment_list:
-                showAudioAttachmentList(mGroupProfileFragment.getContact());
+//                showAudioAttachmentList(mGroupProfileFragment.getContact());
                 break;
         }
 

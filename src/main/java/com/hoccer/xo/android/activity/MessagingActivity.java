@@ -20,6 +20,7 @@ import com.hoccer.xo.android.content.clipboard.Clipboard;
 import com.hoccer.xo.android.fragment.AudioAttachmentListFragment;
 import com.hoccer.xo.android.fragment.CompositionFragment;
 import com.hoccer.xo.android.fragment.MessagingFragment;
+import com.hoccer.xo.android.fragment.SingleProfileFragment;
 import com.hoccer.xo.android.gesture.Gestures;
 import com.hoccer.xo.android.gesture.MotionInterpreter;
 import com.hoccer.xo.release.R;
@@ -34,6 +35,7 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
 
     MessagingFragment mMessagingFragment;
     AudioAttachmentListFragment mAudioAttachmentListFragment;
+    SingleProfileFragment mSingleProfileFragment;
 
     TalkClientContact mContact;
     private IContentObject mClipboardAttachment;
@@ -141,7 +143,7 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
             case R.id.menu_profile_client:
             case R.id.menu_single_profile:
                 if (mContact != null) {
-                    showContactProfile(mContact);
+                    showSingleProfileFragment();
                 }
                 break;
             case R.id.menu_audio_attachment_list:
@@ -251,6 +253,19 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fl_messaging_fragment_container, mAudioAttachmentListFragment);
+        ft.commit();
+    }
+
+    private void showSingleProfileFragment() {
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("clientContactId", mContact.getClientContactId());
+
+        mSingleProfileFragment = new SingleProfileFragment();
+        mSingleProfileFragment.setArguments(bundle);
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fl_messaging_fragment_container, mSingleProfileFragment);
         ft.commit();
     }
 

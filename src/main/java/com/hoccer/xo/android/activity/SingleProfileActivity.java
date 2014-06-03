@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,24 +54,26 @@ public class SingleProfileActivity extends XoActionbarActivity
 
         mActionBar = getActionBar();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        mSingleProfileFragment = (SingleProfileFragment) fragmentManager
-                .findFragmentById(R.id.activity_single_profile_fragment);
-
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra(EXTRA_CLIENT_CREATE_SELF)) {
+                showSingleProfileFragment();
                 createSelf();
-            } else if (intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
-                int contactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
-                if (contactId == -1) {
-                    LOG.error("invalid contact id");
-                } else {
-                    showProfile(refreshContact(contactId));
-                }
             }
         }
         getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void showSingleProfileFragment() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(SingleProfileFragment.ARG_CREATE_SELF, true);
+
+        mSingleProfileFragment = new SingleProfileFragment();
+        mSingleProfileFragment.setArguments(bundle);
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fl_single_profile_fragment_container, mSingleProfileFragment);
+        ft.commit();
     }
 
     @Override
@@ -118,7 +121,7 @@ public class SingleProfileActivity extends XoActionbarActivity
 
         switch (item.getItemId()) {
             case R.id.menu_audio_attachment_list:
-                showAudioAttachmentList(mSingleProfileFragment.getContact());
+//                showAudioAttachmentList(mSingleProfileFragment.getContact());
             break;
         }
 
@@ -155,18 +158,9 @@ public class SingleProfileActivity extends XoActionbarActivity
         return null;
     }
 
-    public void showProfile(TalkClientContact contact) {
-        LOG.debug("showProfile(" + contact.getClientContactId() + ")");
-        mMode = Mode.PROFILE;
-        mSingleProfileFragment.showProfile(contact);
-        update(contact);
-
-    }
-
     public void createSelf() {
         LOG.debug("createSelf()");
         mMode = Mode.CREATE_SELF;
-        mSingleProfileFragment.createSelf();
         update(mSingleProfileFragment.getContact());
     }
 

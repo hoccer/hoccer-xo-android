@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.hoccer.talk.client.IXoContactListener;
+import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
@@ -34,6 +35,8 @@ import java.sql.SQLException;
  */
 public class SingleProfileFragment extends XoFragment
         implements View.OnClickListener, IXoContactListener, ActionMode.Callback {
+
+    public static final String ARG_CREATE_SELF = "ARG_CREATE_SELF";
 
     private static final Logger LOG = Logger.getLogger(SingleProfileFragment.class);
 
@@ -61,13 +64,33 @@ public class SingleProfileFragment extends XoFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_single_profile, container, false);
         mAvatarImage = (ImageView) v.findViewById(R.id.profile_avatar_image);
         mNameText = (TextView) v.findViewById(R.id.tv_profile_name);
         mKeyText = (TextView) v.findViewById(R.id.tv_profile_key);
         mEditName = (EditText) v.findViewById(R.id.et_profile_name);
+
+        if (getArguments() != null) {
+            if (getArguments().getBoolean(ARG_CREATE_SELF)) {
+                createSelf();
+            } else {
+                int clientContactId = getArguments().getInt("clientContactId");
+                try {
+                    mContact = XoApplication.getXoClient().getDatabase().findClientContactById(clientContactId);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         return v;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        showProfile();
     }
 
     @Override
@@ -173,19 +196,19 @@ public class SingleProfileFragment extends XoFragment
         return mContact;
     }
 
-    public void showProfile(TalkClientContact contact) {
-        if (contact != null) {
-            LOG.debug("showProfile(" + contact.getClientContactId() + ")");
+    private void showProfile() {
+        if (mContact != null) {
+            LOG.debug("showProfile(" + mContact.getClientContactId() + ")");
         }
         mMode = Mode.PROFILE;
-        refreshContact(contact);
+        refreshContact(mContact);
     }
 
     public void createSelf() {
         LOG.debug("createSelf()");
         mMode = Mode.CREATE_SELF;
         mContact = getXoClient().getSelfContact();
-        if(mContact.getPublicKey() == null) {
+        if (mContact.getPublicKey() == null) {
             isRegistered = false;
             getActivity().startActionMode(this);
         }
@@ -317,12 +340,13 @@ public class SingleProfileFragment extends XoFragment
         if (mMode == Mode.PROFILE) {
             mContact = newContact;
             try {
-                getXoDatabase().refreshClientContact(mContact);
+                XoClientDatabase database = XoApplication.getXoClient().getDatabase();
+                database.refreshClientContact(mContact);
                 if (mContact.getAvatarDownload() != null) {
-                    getXoDatabase().refreshClientDownload(mContact.getAvatarDownload());
+                    database.refreshClientDownload(mContact.getAvatarDownload());
                 }
                 if (mContact.getAvatarUpload() != null) {
-                    getXoDatabase().refreshClientUpload(mContact.getAvatarUpload());
+                    database.refreshClientUpload(mContact.getAvatarUpload());
                 }
             } catch (SQLException e) {
                 LOG.error("SQL error", e);
