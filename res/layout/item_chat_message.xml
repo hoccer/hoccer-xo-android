@@ -65,6 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_below="@id/tv_message_time"
+                android:layout_toRightOf="@id/av_message_avatar"
                 android:layout_alignWithParentIfMissing="true"
                 android:visibility="gone"
                 style="@style/AppBaseTheme.Message.Incoming"/>

@@ -15,6 +15,7 @@ import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.android.view.chat.attachments.ChatImageItem;
 
+import java.lang.reflect.Array;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,13 +44,23 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         ListItemWithLocation
     }
 
+    /**
+     * Number of TalkClientMessage objects in a batch
+     */
     private static final long LOAD_MESSAGES = 10L;
+
+    /**
+     * Defines the distance from the bottom-most item in the chat view - in number of items.
+     * If you scroll up beyond this limit the chat view will not scroll to the bottom when a new message is displayed.
+     */
+    private static final int AUTO_SCROLL_LIMIT = 5;
 
     private TalkClientContact mContact;
     private int mHistoryCount = -1;
 
     private List<TalkClientMessage> mMessages;
 
+    //private List<ChatMessageItem> mChatMessageItems = ArrayList<ChatMessageItem>();
     private ChatMessageItem mChatMessageItem;
     private ChatImageItem mChatImageItem;
 
@@ -221,6 +232,15 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     }
 
     @Override
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
+
+        if (mListView.getLastVisiblePosition() >= getCount() - AUTO_SCROLL_LIMIT) {
+            mListView.smoothScrollToPosition(getCount() - 1);
+        }
+    }
+
+    @Override
     public void onMessageAdded(final TalkClientMessage message) {
         LOG.debug("onMessageAdded()");
         if (message.getConversationContact() == mContact) {
@@ -229,7 +249,6 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
                 public void run() {
                     mMessages.add(message);
                     notifyDataSetChanged();
-                    mListView.smoothScrollToPosition(mListView.getCount() - 1);
                 }
             });
         }
