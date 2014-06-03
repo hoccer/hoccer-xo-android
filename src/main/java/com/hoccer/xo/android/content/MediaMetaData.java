@@ -87,9 +87,28 @@ public class MediaMetaData {
 
         try {
             retriever.setDataSource(pMediaFilePath);
-            metaData.setTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
-            metaData.setArtist(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
-            metaData.setAlbumTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
+            ArrayList<String> data = new ArrayList<String>();
+            for( int i = 0; i < 100; i++)
+                data.add(retriever.extractMetadata(i));
+
+            String album = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+            if(album == null) {
+                album = retriever.extractMetadata(25); // workaround bug on Galaxy S3 and S4
+            }
+            metaData.setAlbumTitle(album);
+
+            String artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+            if(artist == null) {
+                artist = retriever.extractMetadata(26); // workaround bug on Galaxy S3 and S4
+            }
+            metaData.setArtist(artist);
+
+            String title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+            if(title == null) {
+                title = retriever.extractMetadata(31); // workaround bug on Galaxy S3 and S4
+            }
+            metaData.setTitle(title);
+
             metaData.setMimeType(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE));
 
             if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO) != null) {
