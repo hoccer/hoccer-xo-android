@@ -20,6 +20,8 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
 import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.android.view.chat.attachments.AttachmentTransferHandler;
+import com.hoccer.xo.android.view.chat.attachments.AttachmentTransferListener;
+import com.hoccer.xo.android.view.chat.attachments.ChatItemType;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -28,22 +30,60 @@ import java.util.Date;
 /**
  * This class creates and configures layouts for incoming or outgoing messages.
  */
-public class ChatMessageItem {
+public class ChatMessageItem implements AttachmentTransferListener {
 
     protected Logger LOG = Logger.getLogger(getClass());
 
     protected Context mContext;
     protected boolean mWaitUntilOperationIsFinished;
 
+    protected TalkClientMessage mMessage;
+
     protected TextView mMessageText;
     protected RelativeLayout mContentTransferProgress;
     protected LinearLayout mContentWrapper;
     protected AttachmentTransferControlView mTransferControl;
 
+    protected AttachmentTransferHandler mAttachmentTransferHandler;
 
-    public ChatMessageItem(Context context) {
+    public ChatMessageItem(Context context, TalkClientMessage message) {
         super();
         mContext = context;
+        mMessage = message;
+    }
+
+    public TalkClientMessage getMessage() {
+        return mMessage;
+    }
+
+    public void setMessage(TalkClientMessage message) {
+        mMessage = message;
+    }
+
+    /**
+     * Returns a new and fully configured View object containing the layout for a given message.
+     *
+     * @return A new View object containing the message layout
+     */
+    public View getViewForMessage() {
+        View view = createView();
+        configureViewForMessage(view);
+        return view;
+    }
+
+    /**
+     * Reconfigures a given message layout from a given message.
+     *
+     * @param view    The message layout to reconfigure
+     * @return The fully reconfigured message layout
+     */
+    public View recycleViewForMessage(View view) {
+        configureViewForMessage(view);
+        return view;
+    }
+
+    public ChatItemType getType() {
+        return ChatItemType.ChatItemWithText;
     }
 
     /**
@@ -53,7 +93,8 @@ public class ChatMessageItem {
      */
     private View createView() {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        return inflater.inflate(R.layout.item_chat_message, null);
+        View view = inflater.inflate(R.layout.item_chat_message, null);
+        return view;
     }
 
     /**
@@ -62,23 +103,22 @@ public class ChatMessageItem {
      * Subtypes will have to overwrite this method to enhance the configuration of the message layout.
      *
      * @param view    The given layout
-     * @param message The given TalkClientMessage object
      */
-    protected void configureViewForMessage(View view, TalkClientMessage message) {
+    protected void configureViewForMessage(View view) {
         AvatarView avatarView = (AvatarView) view.findViewById(R.id.av_message_avatar);
         TextView messageTime = (TextView) view.findViewById(R.id.tv_message_time);
         TextView messageName = (TextView) view.findViewById(R.id.tv_message_contact_name);
         TextView messageText = (TextView) view.findViewById(R.id.tv_message_text);
 
         // Adjust layout for incoming / outgoing message
-        if (message.isIncoming()) {
-            if (message.getConversationContact().isGroup()) {
-                setAvatar(avatarView, message.getSenderContact());
+                setAvatar(avatarView, mMessage.getSenderContact());
+        if (mMessage.isIncoming()) {
+            if (mMessage.getConversationContact().isGroup()) {
             } else {
                 avatarView.setVisibility(View.GONE);
             }
             messageName.setVisibility(View.VISIBLE);
-            messageName.setText(message.getSenderContact().getName());
+            messageName.setText(mMessage.getSenderContact().getName());
 
             messageText.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_grey));
             messageText.setTextColor(mContext.getResources().getColorStateList(android.R.color.black));
@@ -92,8 +132,8 @@ public class ChatMessageItem {
             messageText.setLinkTextColor(mContext.getResources().getColorStateList(android.R.color.white));
         }
 
-        messageTime.setText(getMessageTimestamp(message));
-        messageText.setText(message.getText());
+        messageTime.setText(getMessageTimestamp(mMessage));
+        messageText.setText(mMessage.getText());
 
         mMessageText = messageText;
     }
@@ -139,9 +179,8 @@ public class ChatMessageItem {
      * * Subtypes will have to overwrite this method to enhance the configuration of the attachment layout.
      *
      * @param view    The chat message item's view to configure
-     * @param message The given TalkClientMessage
      */
-    protected void configureAttachmentViewForMessage(View view, TalkClientMessage message) {
+    protected void configureAttachmentViewForMessage(View view) {
 
         RelativeLayout attachmentView = (RelativeLayout) view.findViewById(R.id.v_message_attachment);
 
@@ -156,7 +195,7 @@ public class ChatMessageItem {
         mContentWrapper = (LinearLayout) attachmentView.findViewById(R.id.content_wrapper);
 
         // adjust layout for incoming / outgoing attachment
-        if (message.isIncoming()) {
+        if (mMessage.isIncoming()) {
             attachmentView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_grey));
         } else {
             attachmentView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_green));
@@ -165,16 +204,20 @@ public class ChatMessageItem {
         // configure transfer progress view
         mContentTransferProgress = (RelativeLayout) attachmentView.findViewById(R.id.content_transfer_progress);
         mTransferControl = (AttachmentTransferControlView) attachmentView.findViewById(R.id.content_transfer_control);
-        IContentObject contentObject = message.getAttachmentUpload();
+        IContentObject contentObject = mMessage.getAttachmentUpload();
         if (contentObject == null) {
-            contentObject = message.getAttachmentDownload();
+            contentObject = mMessage.getAttachmentDownload();
         }
 
         if (shouldDisplayTransferControl(getTransferState(contentObject))) {
             mContentWrapper.setVisibility(View.GONE);
             mContentTransferProgress.setVisibility(View.VISIBLE);
-            mTransferControl.setOnClickListener(new AttachmentTransferHandler(mTransferControl, contentObject));
-            updateTransferControl(contentObject);
+
+            // create handler for a pending attachment transfer
+            mAttachmentTransferHandler = new AttachmentTransferHandler(mTransferControl, contentObject, this);
+            XoApplication.getXoClient().registerTransferListener(mAttachmentTransferHandler);
+            mTransferControl.setOnClickListener(new AttachmentTransferHandler(mTransferControl, contentObject, this));
+
         } else {
             mTransferControl.setOnClickListener(null);
             mContentTransferProgress.setVisibility(View.GONE);
@@ -183,7 +226,7 @@ public class ChatMessageItem {
         }
 
         // hide message text field when empty - there is still an attachment to display
-        if (message.getText() == null || message.getText().isEmpty()) {
+        if (mMessage.getText() == null || mMessage.getText().isEmpty()) {
             mMessageText.setVisibility(View.GONE);
         } else {
             mMessageText.setVisibility(View.VISIBLE);
@@ -236,118 +279,25 @@ public class ChatMessageItem {
         return state;
     }
 
-    /**
-     * Updates the AttachmentTransferControlView from a given IContentObject
-     *
-     * @param contentObject The given content object
-     */
-    protected void updateTransferControl(IContentObject contentObject) {
-        int length = 0;
-        int progress = 0;
-        Resources res = mContext.getResources();
-        ContentState contentState = getTransferState(contentObject);
-        switch (contentState) {
-            case DOWNLOAD_DETECTING:
-                break;
-            case DOWNLOAD_NEW:
-                mTransferControl.setVisibility(View.VISIBLE);
-                mTransferControl.prepareToDownload();
-                mTransferControl.setText(res.getString(R.string.transfer_state_pause));
-                mTransferControl.pause();
-                break;
-            case DOWNLOAD_PAUSED:
-                length = contentObject.getTransferLength();
-                progress = contentObject.getTransferProgress();
-                mTransferControl.setMax(length);
-                mTransferControl.setProgressImmediately(progress);
-                mTransferControl.setText(res.getString(R.string.transfer_state_pause));
-                mTransferControl.prepareToDownload();
-                mTransferControl.pause();
-                break;
-            case DOWNLOAD_DOWNLOADING:
-                length = contentObject.getTransferLength();
-                progress = contentObject.getTransferProgress();
-                if (length == 0 || progress == 0) {
-                    length = 360;
-                    progress = 18;
-                }
-                mTransferControl.prepareToDownload();
-                mTransferControl.setText(res.getString(R.string.transfer_state_downloading));
-                mTransferControl.setMax(length);
-                mTransferControl.setProgress(progress);
-                break;
-            case DOWNLOAD_DECRYPTING:
-                length = contentObject.getTransferLength();
-                mTransferControl.setText(res.getString(R.string.transfer_state_decrypting));
-                mTransferControl.setProgress(length);
-                mTransferControl.spin();
-                mWaitUntilOperationIsFinished = true;
-                break;
-            case DOWNLOAD_COMPLETE:
-                mTransferControl.finishSpinningAndProceed();
-                displayAttachment(contentObject);
-            case UPLOAD_REGISTERING:
-                break;
-            case UPLOAD_NEW:
-                mTransferControl.prepareToUpload();
-                mTransferControl.setText(res.getString(R.string.transfer_state_encrypting));
-                mTransferControl.setVisibility(View.VISIBLE);
-                break;
-            case UPLOAD_ENCRYPTING:
-                mTransferControl.prepareToUpload();
-                mTransferControl.setText(res.getString(R.string.transfer_state_encrypting));
-                mTransferControl.setVisibility(View.VISIBLE);
-                mTransferControl.spin();
-                break;
-            case UPLOAD_PAUSED:
-                length = contentObject.getTransferLength();
-                progress = contentObject.getTransferProgress();
-                mTransferControl.setMax(length);
-                mTransferControl.setProgressImmediately(progress);
-                mTransferControl.setText(res.getString(R.string.transfer_state_pause));
-                mTransferControl.pause();
-                break;
-            case UPLOAD_UPLOADING:
-                mTransferControl.finishSpinningAndProceed();
-                mTransferControl.setText(res.getString(R.string.transfer_state_uploading));
-                mWaitUntilOperationIsFinished = true;
-                length = contentObject.getTransferLength();
-                progress = contentObject.getTransferProgress();
-                mTransferControl.setMax(length);
-                mTransferControl.setProgress(progress);
-                break;
-            case UPLOAD_COMPLETE:
-                mTransferControl.completeAndGone();
-                displayAttachment(contentObject);
-                break;
-            default:
-                mTransferControl.setVisibility(View.GONE);
-                displayAttachment(contentObject);
-                break;
-        }
+    @Override
+    public void onAttachmentTransferComplete(IContentObject contentObject) {
+        displayAttachment(contentObject);
     }
 
-    /**
-     * Returns a new and fully configured View object containing the layout for a given message.
-     *
-     * @param message The given TalkClientMessage object
-     * @return A new View object containing the message layout
-     */
-    public View getViewForMessage(TalkClientMessage message) {
-        View view = createView();
-        configureViewForMessage(view, message);
-        return view;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChatMessageItem)) return false;
+
+        ChatMessageItem that = (ChatMessageItem) o;
+
+        if (mMessage != null ? !mMessage.equals(that.mMessage) : that.mMessage != null) return false;
+
+        return true;
     }
 
-    /**
-     * Reconfigures a given message layout from a given message.
-     *
-     * @param view    The message layout to reconfigure
-     * @param message The given TalkClientMessage object
-     * @return The fully reconfigured message layout
-     */
-    public View recycleViewForMessage(View view, TalkClientMessage message) {
-        configureViewForMessage(view, message);
-        return view;
+    @Override
+    public int hashCode() {
+        return mMessage != null ? mMessage.hashCode() : 0;
     }
 }

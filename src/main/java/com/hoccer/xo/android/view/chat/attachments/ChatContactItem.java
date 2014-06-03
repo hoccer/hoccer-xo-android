@@ -8,13 +8,13 @@ import com.hoccer.xo.android.view.chat.ChatMessageItem;
 
 public class ChatContactItem extends ChatMessageItem {
 
-    public ChatContactItem(Context context) {
-        super(context);
+    public ChatContactItem(Context context, TalkClientMessage message) {
+        super(context, message);
     }
 
     @Override
-    protected void configureViewForMessage(View view, TalkClientMessage message) {
-        super.configureViewForMessage(view, message);
+    protected void configureViewForMessage(View view) {
+        super.configureViewForMessage(view);
 
         // TODO: do additional configuration here
     }

@@ -23,15 +23,19 @@ public class ChatImageItem extends ChatMessageItem implements ImageLoadingListen
 
     private ClickableImageView mImageView;
 
-    public ChatImageItem(Context context) {
-        super(context);
+    public ChatImageItem(Context context, TalkClientMessage message) {
+        super(context, message);
+    }
+
+    public ChatItemType getType() {
+        return ChatItemType.ChatItemWithImage;
     }
 
     @Override
-    protected void configureViewForMessage(View view, TalkClientMessage message) {
-        super.configureViewForMessage(view, message);
+    protected void configureViewForMessage(View view) {
+        super.configureViewForMessage(view);
 
-        configureAttachmentViewForMessage(view, message);
+        configureAttachmentViewForMessage(view);
     }
 
     @Override
