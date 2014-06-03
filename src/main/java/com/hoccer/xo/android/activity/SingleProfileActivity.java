@@ -12,7 +12,6 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.model.TalkRelationship;
 import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.fragment.SingleProfileFragment;
-import com.hoccer.xo.android.fragment.StatusFragment;
 import com.hoccer.xo.release.R;
 
 import java.sql.SQLException;
@@ -34,8 +33,6 @@ public class SingleProfileActivity extends XoActionbarActivity
     ActionBar mActionBar;
 
     SingleProfileFragment mSingleProfileFragment;
-
-    StatusFragment mStatusFragment;
 
     @Override
     protected int getLayoutResource() {
@@ -59,9 +56,6 @@ public class SingleProfileActivity extends XoActionbarActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         mSingleProfileFragment = (SingleProfileFragment) fragmentManager
                 .findFragmentById(R.id.activity_single_profile_fragment);
-        mStatusFragment = (StatusFragment) fragmentManager
-                .findFragmentById(R.id.activity_profile_status_fragment);
-        mStatusFragment.getView().setVisibility(View.VISIBLE);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -139,7 +133,6 @@ public class SingleProfileActivity extends XoActionbarActivity
         getXoClient().registerContactListener(this);
 
         if (mMode == Mode.CREATE_SELF) {
-            mStatusFragment.getView().setVisibility(View.GONE);
             getActionBar().setDisplayHomeAsUpEnabled(false);
         }
     }

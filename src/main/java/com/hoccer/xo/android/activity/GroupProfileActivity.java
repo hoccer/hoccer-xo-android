@@ -10,7 +10,6 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.model.TalkRelationship;
 import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.fragment.GroupProfileFragment;
-import com.hoccer.xo.android.fragment.StatusFragment;
 import com.hoccer.xo.release.R;
 
 import java.sql.SQLException;
@@ -26,7 +25,6 @@ public class GroupProfileActivity extends XoActionbarActivity {
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 
     private GroupProfileFragment mGroupProfileFragment;
-    private StatusFragment mStatusFragment;
     private int mContactId;
 
     private Mode mMode;
@@ -51,8 +49,6 @@ public class GroupProfileActivity extends XoActionbarActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         mGroupProfileFragment = (GroupProfileFragment) fragmentManager.findFragmentById(R.id.activity_group_profile_fragment);
-        mStatusFragment = (StatusFragment) fragmentManager.findFragmentById(R.id.activity_profile_status_fragment);
-        mStatusFragment.getView().setVisibility(View.VISIBLE);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -98,10 +94,6 @@ public class GroupProfileActivity extends XoActionbarActivity {
     protected void onResume() {
         LOG.debug("onResume()");
         super.onResume();
-
-        if (mMode == Mode.CREATE_SELF) {
-            mStatusFragment.getView().setVisibility(View.GONE);
-        }
     }
 
     private TalkClientContact refreshContact(int contactId) {

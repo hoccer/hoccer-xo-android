@@ -62,6 +62,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
 
     private LocalBroadcastManager mLocalBroadcastManager;
     private BroadcastReceiver mReceiver;
+    private BroadcastReceiver mHeadsetStateBroadcastReceiver;
     private MediaPlaylist mPlaylist = new MediaPlaylist();
 
     public class MediaPlayerBinder extends Binder {
@@ -85,6 +86,29 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         registerPlayStateToggleIntentFilter();
 
         createAppFocusTracker();
+        createHeadsetHandlerReceiver();
+    }
+
+    private void createHeadsetHandlerReceiver(){
+
+        mHeadsetStateBroadcastReceiver =  new BroadcastReceiver()
+        {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                if (intent.getAction().equals( android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
+
+                    int headSetState = intent.getIntExtra("state", 0);
+
+                    if (headSetState == 0){
+                        pause();
+                    }
+                }
+            }
+        };
+
+        IntentFilter receiverFilter = new IntentFilter(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        registerReceiver(mHeadsetStateBroadcastReceiver, receiverFilter);
     }
 
     @Override
