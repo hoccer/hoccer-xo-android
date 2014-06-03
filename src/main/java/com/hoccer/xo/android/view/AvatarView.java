@@ -68,7 +68,7 @@ public class AvatarView extends LinearLayout implements IXoContactListener {
         TypedArray a = context.getTheme()
                 .obtainStyledAttributes(attributes, R.styleable.AvatarView, 0, 0);
         try {
-            mDefaultAvatarImageUrl = a.getString(R.styleable.AvatarView_defaultAvatarImageUrl);
+            mDefaultAvatarImageUrl = "drawable://" + a.getResourceId(R.styleable.AvatarView_defaultAvatarImageUrl, R.drawable.avatar_default_contact);
             mCornerRadius = a.getFloat(R.styleable.AvatarView_cornerRadius, 0.0f);
         } finally {
             a.recycle();
