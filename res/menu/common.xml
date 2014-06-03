@@ -25,7 +25,8 @@
         android:icon="@drawable/ic_notification_music"
         android:visible="false"
         android:showAsAction="always"
-        android:orderInCategory="90"/>
+        android:orderInCategory="90"
+            android:title=""/>
 
     <item
         android:id="@+id/menu_audio_attachment_list"
