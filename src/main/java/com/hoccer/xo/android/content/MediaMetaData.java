@@ -2,6 +2,7 @@ package com.hoccer.xo.android.content;
 
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.util.Log;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -84,20 +85,25 @@ public class MediaMetaData {
 
         MediaMetaData metaData = new MediaMetaData();
 
-        retriever.setDataSource(pMediaFilePath);
-        metaData.setTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
-        metaData.setArtist(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
-        metaData.setAlbumTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
-        metaData.setMimeType(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE));
+        try {
+            retriever.setDataSource(pMediaFilePath);
+            metaData.setTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
+            metaData.setArtist(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
+            metaData.setAlbumTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
+            metaData.setMimeType(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE));
 
-        if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO) != null) {
-            metaData.setHasAudio(true);
+            if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO) != null) {
+                metaData.setHasAudio(true);
+            }
+
+            if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO) != null) {
+                metaData.setHasVideo(true);
+            }
+        } catch(IllegalArgumentException e) {
+            Logger logger = Logger.getLogger(MediaMetaData.class);
+            logger.error("Error reading metadata from file: " + pMediaFilePath);
+            e.printStackTrace();
         }
-
-        if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO) != null) {
-            metaData.setHasVideo(true);
-        }
-
         return metaData;
     }
 
