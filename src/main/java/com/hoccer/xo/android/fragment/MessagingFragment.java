@@ -218,9 +218,7 @@ public class MessagingFragment extends XoListFragment
 
     @Override
     public void onAttachmentSelected(IContentObject contentObject) {
-        LOG.debug("onAttachmentSelected(" + contentObject.getContentDataUrl() + ")");
-
-        mCompositionView.showAttachment(contentObject);
+        mCompositionView.onAttachmentSelected(contentObject);
     }
 
     public void configureMotionInterpreterForContact(TalkClientContact contact) {

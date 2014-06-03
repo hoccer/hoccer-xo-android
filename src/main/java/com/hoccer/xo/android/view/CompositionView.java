@@ -160,6 +160,12 @@ public class CompositionView extends LinearLayout implements View.OnClickListene
         return longpressHandled;
     }
 
+    public void onAttachmentSelected(IContentObject contentObject) {
+        LOG.debug("onAttachmentSelected(" + contentObject.getContentDataUrl() + ")");
+        showAttachment(contentObject);
+        mSendButton.setEnabled(isComposed());
+    }
+
     public void setCompositionViewListener(ICompositionViewListener compositionViewListener) {
         this.mCompositionViewListener = compositionViewListener;
     }

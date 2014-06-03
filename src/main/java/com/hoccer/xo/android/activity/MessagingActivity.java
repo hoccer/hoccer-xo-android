@@ -33,14 +33,11 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
     ActionBar mActionBar;
 
     MessagingFragment mMessagingFragment;
-//    CompositionFragment mCompositionFragment;
     AudioAttachmentListFragment mAudioAttachmentListFragment;
-
 
     TalkClientContact mContact;
     private IContentObject mClipboardAttachment;
-    private  getContactIdInConversation m_checkIdReceiver;
-
+    private getContactIdInConversation m_checkIdReceiver;
 
 
     @Override
@@ -85,15 +82,15 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
         Intent intent = getIntent();
 
         // handle converse intent
-        if(intent != null && intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
+        if (intent != null && intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
             int contactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
             m_checkIdReceiver.setId(contactId);
-            if(contactId == -1) {
+            if (contactId == -1) {
                 LOG.error("invalid contact id");
             } else {
                 try {
                     TalkClientContact contact = getXoDatabase().findClientContactById(contactId);
-                    if(contact != null) {
+                    if (contact != null) {
                         converseWithContact(contact);
                     }
                 } catch (SQLException e) {
@@ -120,7 +117,7 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
         boolean result = super.onCreateOptionsMenu(menu);
 
         // select client/group profile entry for appropriate icon
-        if(mContact != null) {
+        if (mContact != null) {
             MenuItem clientItem = menu.findItem(R.id.menu_profile_client);
             clientItem.setVisible(mContact.isClient());
             MenuItem groupItem = menu.findItem(R.id.menu_single_profile);
@@ -143,13 +140,13 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
         switch (item.getItemId()) {
             case R.id.menu_profile_client:
             case R.id.menu_single_profile:
-                if(mContact != null) {
+                if (mContact != null) {
                     showContactProfile(mContact);
                 }
                 break;
             case R.id.menu_audio_attachment_list:
-                if(mContact != null) {
-                    showAudioAttachmentList(mContact);
+                if (mContact != null) {
+                    showAudioAttachmentListFragment();
                 }
             default:
                 return super.onOptionsItemSelected(item);
@@ -187,17 +184,17 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
         }
     }
 
-//    @Override
-//    public void clipBoardItemSelected(IContentObject contentObject) {
-//        mCompositionFragment.onAttachmentSelected(contentObject);
-//    }
+    @Override
+    public void clipBoardItemSelected(IContentObject contentObject) {
+        mMessagingFragment.onAttachmentSelected(contentObject);
+    }
 
     public void converseWithContact(TalkClientContact contact) {
         LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
         mContact = contact;
         mActionBar.setTitle(contact.getName());
         mMessagingFragment.converseWithContact(contact);
-        if(mContact.isDeleted()) {
+        if (mContact.isDeleted()) {
             finish();
         }
         // invalidate menu so that profile buttons get disabled/enabled
@@ -223,7 +220,7 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
 
     @Override
     public void onContactRemoved(TalkClientContact contact) {
-        if(mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
+        if (mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
             finish();
         }
     }
@@ -246,6 +243,19 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
         // we don't care
+    }
+
+    private void showAudioAttachmentListFragment() {
+
+        mAudioAttachmentListFragment = new AudioAttachmentListFragment();
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fl_messaging_fragment_container, mAudioAttachmentListFragment);
+        ft.commit();
+    }
+
+    public TalkClientContact getContact() {
+        return mContact;
     }
 
     private class getContactIdInConversation extends BroadcastReceiver {
