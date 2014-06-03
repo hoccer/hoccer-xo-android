@@ -22,7 +22,6 @@
 
     <item
         android:id="@+id/menu_media_player"
-        android:title="@string/menu_profile"
         android:icon="@drawable/ic_notification_music"
         android:visible="false"
         android:showAsAction="always"
@@ -34,4 +33,5 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/menu_music_viewer"/>
+
 </menu>

@@ -51,7 +51,7 @@
               android:layout_alignParentRight="true"
               android:gravity="right"
               android:layout_toRightOf="@+id/rl_player_playlist_track_container"
-              android:text="@string/media_fullscreen_player_default_title"
+              android:text="@string/media_player_default_filter_label"
               android:textColor="@android:color/white"
               android:layout_marginRight="@dimen/media_player_layout_margin"
               android:layout_marginLeft="16dp"
