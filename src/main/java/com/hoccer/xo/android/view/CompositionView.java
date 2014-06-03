@@ -55,8 +55,8 @@ public class CompositionView extends LinearLayout implements View.OnClickListene
 
     private ICompositionViewListener mCompositionViewListener;
 
-    public CompositionView(Context context, AttributeSet attributeSet) {
-        super(context);
+    public CompositionView(Context context, AttributeSet attSet) {
+        super(context, attSet);
         mContext = context;
         initialize();
     }

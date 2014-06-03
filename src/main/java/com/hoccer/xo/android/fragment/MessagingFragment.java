@@ -12,6 +12,8 @@ import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.adapter.ConversationAdapter;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
+import com.hoccer.xo.android.gesture.Gestures;
+import com.hoccer.xo.android.gesture.MotionInterpreter;
 import com.hoccer.xo.android.view.CompositionView;
 import com.hoccer.xo.android.view.OnOverscrollListener;
 import com.hoccer.xo.android.view.OverscrollListView;
@@ -30,6 +32,8 @@ public class MessagingFragment extends XoListFragment
     private static final int OVERSCROLL_THRESHOLD = -5;
 
     private OverscrollListView mMessageList;
+
+    private MotionInterpreter mMotionInterpreter;
 
     private TextView mEmptyText;
 
@@ -62,21 +66,23 @@ public class MessagingFragment extends XoListFragment
         mMessageList.addOverScrollListener(this);
         mMessageList.setOnTouchListener(this);
         mMessageList.setMaxOverScrollY(150);
-//        mMessageList.setOverscrollHeader(getResources().getDrawable(R.drawable.ic_light_av_replay));
+        mMessageList.setOverscrollHeader(getResources().getDrawable(R.drawable.ic_light_av_replay));
         mEmptyText = (TextView) view.findViewById(R.id.messaging_empty);
         mOverscrollIndicator = view.findViewById(R.id.overscroll_indicator);
-        mCompositionView = (CompositionView) view.findViewById(R.id.cv_composition);
+        mCompositionView = ((CompositionView) view.findViewById(R.id.cv_composition));
         mCompositionView.setCompositionViewListener(new CompositionView.ICompositionViewListener() {
             @Override
             public void onAddAttachmentClicked() {
-                getXoActivity().selectAttachment();
+            getXoActivity().selectAttachment();
             }
 
             @Override
             public void onAttachmentClicked() {
-                getXoActivity().selectAttachment();
+            getXoActivity().selectAttachment();
             }
         });
+
+        mMotionInterpreter = new MotionInterpreter(Gestures.Transaction.SHARE, getActivity(), mCompositionView);
     }
 
     @Override
@@ -110,6 +116,7 @@ public class MessagingFragment extends XoListFragment
         LOG.debug("onPause()");
         super.onPause();
         mAdapter.onPause();
+        mMotionInterpreter.deactivate();
     }
 
     @Override
@@ -145,6 +152,11 @@ public class MessagingFragment extends XoListFragment
         LOG.debug("onQueryTextSubmit(\"" + query + "\")");
         return true;
     }
+
+//    @Override
+//    public void clipBoardItemSelected(IContentObject contentObject) {
+//        mCompositionView.onAttachmentSelected(contentObject);
+//    }
 
     public void converseWithContact(TalkClientContact contact) {
         LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
@@ -209,5 +221,14 @@ public class MessagingFragment extends XoListFragment
         LOG.debug("onAttachmentSelected(" + contentObject.getContentDataUrl() + ")");
 
         mCompositionView.showAttachment(contentObject);
+    }
+
+    public void configureMotionInterpreterForContact(TalkClientContact contact) {
+        // react on gestures only when contact is nearby
+        if (contact != null && (contact.isNearby() || (contact.isGroup() && contact.getGroupPresence().isTypeNearby()))) {
+            mMotionInterpreter.activate();
+        } else {
+            mMotionInterpreter.deactivate();
+        }
     }
 }

@@ -33,7 +33,7 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
     ActionBar mActionBar;
 
     MessagingFragment mMessagingFragment;
-    CompositionFragment mCompositionFragment;
+//    CompositionFragment mCompositionFragment;
     AudioAttachmentListFragment mAudioAttachmentListFragment;
 
 
@@ -41,7 +41,7 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
     private IContentObject mClipboardAttachment;
     private  getContactIdInConversation m_checkIdReceiver;
 
-    private MotionInterpreter mMotionInterpreter;
+
 
     @Override
     protected int getLayoutResource() {
@@ -64,22 +64,17 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
         // enable up navigation
         enableUpNavigation();
 
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fl_messaging_fragment_container, new MessagingFragment());
-        ft.commit();
+        mMessagingFragment = new MessagingFragment();
 
-//        // get our primary fragment
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        mMessagingFragment = (MessagingFragment) fragmentManager.findFragmentById(R.id.activity_messaging_fragment);
-//        mMessagingFragment.setRetainInstance(true);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fl_messaging_fragment_container, mMessagingFragment);
+        ft.commit();
 
         // register receiver for notification check
         IntentFilter filter = new IntentFilter("com.hoccer.xo.android.activity.MessagingActivity$getContactIdInConversation");
         filter.addAction("CHECK_ID_IN_CONVERSATION");
         m_checkIdReceiver = new getContactIdInConversation();
         registerReceiver(m_checkIdReceiver, filter);
-
-        mMotionInterpreter = new MotionInterpreter(Gestures.Transaction.SHARE, this, mCompositionFragment);
     }
 
     @Override
@@ -107,7 +102,7 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
             }
         }
 
-        configureMotionInterpreterForContact(mContact);
+        mMessagingFragment.configureMotionInterpreterForContact(mContact);
         getXoClient().registerContactListener(this);
     }
 
@@ -116,7 +111,6 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
         LOG.debug("onPause()");
         super.onPause();
 
-        mMotionInterpreter.deactivate();
         getXoClient().unregisterContactListener(this);
     }
 
@@ -193,33 +187,23 @@ public class MessagingActivity extends XoActionbarActivity implements IXoContact
         }
     }
 
-    @Override
-    public void clipBoardItemSelected(IContentObject contentObject) {
-        mCompositionFragment.onAttachmentSelected(contentObject);
-    }
+//    @Override
+//    public void clipBoardItemSelected(IContentObject contentObject) {
+//        mCompositionFragment.onAttachmentSelected(contentObject);
+//    }
 
     public void converseWithContact(TalkClientContact contact) {
         LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
         mContact = contact;
         mActionBar.setTitle(contact.getName());
         mMessagingFragment.converseWithContact(contact);
-        mCompositionFragment.converseWithContact(contact);
         if(mContact.isDeleted()) {
             finish();
         }
         // invalidate menu so that profile buttons get disabled/enabled
         invalidateOptionsMenu();
 
-        configureMotionInterpreterForContact(mContact);
-    }
-
-    private void configureMotionInterpreterForContact(TalkClientContact contact) {
-        // react on gestures only when contact is nearby
-        if (contact != null && (contact.isNearby() || (contact.isGroup() && contact.getGroupPresence().isTypeNearby()))) {
-            mMotionInterpreter.activate();
-        } else {
-            mMotionInterpreter.deactivate();
-        }
+        mMessagingFragment.configureMotionInterpreterForContact(mContact);
     }
 
     @Override
