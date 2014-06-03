@@ -150,8 +150,8 @@ public class FullscreenPlayerFragment extends Fragment {
             @Override
             public void run() {
                 MediaItem currentItem = mMediaPlayerService.getCurrentMediaItem();
-                String trackArtist = currentItem.getMetaData().getArtist();
-                String trackTitle = currentItem.getMetaData().getTitle();
+                String trackArtist = currentItem.getMetaData().getArtist().trim();
+                String trackTitle = currentItem.getMetaData().getTitle().trim();
                 int totalDuration = mMediaPlayerService.getTotalDuration();
                 byte[] cover = MediaMetaData.getArtwork(currentItem.getFilePath());
 

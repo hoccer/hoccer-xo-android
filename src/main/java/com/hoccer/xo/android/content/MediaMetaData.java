@@ -64,7 +64,7 @@ public class MediaMetaData {
     }
 
     private void setAlbumTitle(String pAlbumTitle) {
-        this.mArtist = pAlbumTitle;
+        this.mAlbumTitle = pAlbumTitle;
     }
 
     private void setMimeType(String pMimeType) {

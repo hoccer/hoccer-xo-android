@@ -26,7 +26,8 @@ public class AudioAttachmentListActivity extends XoActionbarActivity {
         super.onCreate(savedInstanceState);
 
         enableUpNavigation();
-        mAudioAttachmentListFragment = (AudioAttachmentListFragment) getSupportFragmentManager().findFragmentById(R.id.audio_attachment_list_fragment);
+        mAudioAttachmentListFragment = (AudioAttachmentListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.audio_attachment_list_fragment);
 
 
     }
