@@ -229,10 +229,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
                 public void run() {
                     mMessages.add(message);
                     notifyDataSetChanged();
-
                     mListView.smoothScrollToPosition(mListView.getCount() - 1);
-                    //mListView.setSelection(mListView.getCount() - 1);
-
                 }
             });
         }
