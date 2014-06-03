@@ -113,7 +113,7 @@ public class AttachmentTransferHandler implements View.OnClickListener {
                 mTransferAction = TransferAction.REQUEST_DOWNLOAD;
                 break;
             case DOWNLOAD_DETECTING:
-                mTransferProgress.setEnabled(false); // TODO: is this needed / balanced?
+                //mTransferProgress.setEnabled(false); // TODO: is this needed / balanced?
                 break;
             case DOWNLOAD_DECRYPTING:
             case DOWNLOAD_DOWNLOADING:
@@ -124,7 +124,7 @@ public class AttachmentTransferHandler implements View.OnClickListener {
                 mTransferAction = TransferAction.REQUEST_UPLOAD;
                 break;
             case UPLOAD_REGISTERING:
-                mTransferProgress.setEnabled(false); // TODO: is this needed / balanced?
+                //mTransferProgress.setEnabled(false); // TODO: is this needed / balanced?
                 break;
             case UPLOAD_ENCRYPTING:
             case UPLOAD_UPLOADING:

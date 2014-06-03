@@ -28,35 +28,25 @@ import android.widget.TextView;
  */
 public class MessagingFragment extends XoListFragment
         implements SearchView.OnQueryTextListener,
-        XoAdapter.AdapterReloadListener, OnOverscrollListener, View.OnTouchListener {
+        XoAdapter.AdapterReloadListener {
 
     private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
-    private static final int OVERSCROLL_THRESHOLD = -5;
 
     private TalkClientContact mContact;
     private ChatAdapter mAdapter;
 
     private OverscrollListView mMessageList;
     private TextView mEmptyText;
-    private View mOverscrollIndicator;
-    private boolean mInOverscroll = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         LOG.debug("onCreateView()");
         super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.fragment_messaging, container, false);
-
         mMessageList = (OverscrollListView) view.findViewById(android.R.id.list);
-        mMessageList.setOverScrollMode(ListView.OVER_SCROLL_IF_CONTENT_SCROLLS);
-        mMessageList.addOverScrollListener(this);
-        mMessageList.setOnTouchListener(this);
-        mMessageList.setMaxOverScrollY(150);
-//        mMessageList.setOverscrollHeader(getResources().getDrawable(R.drawable.ic_light_av_replay));
         mEmptyText = (TextView) view.findViewById(R.id.messaging_empty);
-        mOverscrollIndicator = view.findViewById(R.id.overscroll_indicator);
 
         return view;
     }
@@ -113,7 +103,7 @@ public class MessagingFragment extends XoListFragment
         mContact = contact;
 
         if (mAdapter == null) {
-            mAdapter = new ChatAdapter(getXoActivity(), mContact);
+            mAdapter = new ChatAdapter(mMessageList, getXoActivity(), mContact);
             mAdapter.setAdapterReloadListener(this);
             mAdapter.onCreate();
             mMessageList.setAdapter(mAdapter);
@@ -122,11 +112,12 @@ public class MessagingFragment extends XoListFragment
         mAdapter.onResume();
     }
 
+    /*
     @Override
     public void onOverscroll(int deltaX, int deltaY, boolean clampedX, boolean clampedY) {
         if (deltaY < OVERSCROLL_THRESHOLD && !mInOverscroll && clampedY) {
             mInOverscroll = true;
-            mAdapter.loadNextMessages();
+            //mAdapter.loadNextMessages();
         }
     }
 
@@ -169,4 +160,5 @@ public class MessagingFragment extends XoListFragment
         }
         return false;
     }
+    */
 }

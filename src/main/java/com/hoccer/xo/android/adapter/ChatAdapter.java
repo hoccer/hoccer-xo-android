@@ -2,6 +2,7 @@ package com.hoccer.xo.android.adapter;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import com.hoccer.talk.client.IXoMessageListener;
 import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -15,6 +16,7 @@ import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.android.view.chat.attachments.ChatImageItem;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -44,16 +46,20 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     private static final long LOAD_MESSAGES = 10L;
 
     private TalkClientContact mContact;
-    private List<TalkClientMessage> mMessages = new Vector<TalkClientMessage>();
     private int mHistoryCount = -1;
+
+    private List<TalkClientMessage> mMessages;
 
     private ChatMessageItem mChatMessageItem;
     private ChatImageItem mChatImageItem;
 
+    private ListView mListView;
 
-    public ChatAdapter(XoActivity activity, TalkClientContact contact) {
+
+    public ChatAdapter(ListView listView, XoActivity activity, TalkClientContact contact) {
         super(activity);
         mContact = contact;
+        mListView = listView;
 
         initialize();
     }
@@ -61,25 +67,41 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     private void initialize() {
         mChatMessageItem = new ChatMessageItem(mActivity);
         mChatImageItem = new ChatImageItem(mActivity);
-        loadNextMessages();
+
+        if (mMessages == null) {
+
+            int totalMessageCount = 0;
+
+            try {
+                totalMessageCount = (int)mDatabase.getMessageCountByContactId(mContact.getClientContactId());
+            } catch (SQLException e) {
+                LOG.error("Error while loading message count", e);
+            }
+            mMessages = new ArrayList<TalkClientMessage>(totalMessageCount);
+            for (int i = 0; i < totalMessageCount; i++) {
+                mMessages.add(null);
+            }
+        }
+
+        loadNextMessages(mMessages.size() - (int)LOAD_MESSAGES);
     }
 
-    public synchronized void loadNextMessages() {
+    public synchronized void loadNextMessages(final int offset) {
         try {
-            mHistoryCount++;
-            //long offset = mHistoryCount * LOAD_MESSAGES;
-            //final List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
-            final List<TalkClientMessage> messages = mDatabase.findMessagesByContactId(mContact.getClientContactId());
+            final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
+
+            for (int i = 0; i < messagesBatch.size(); i++) {
+                mMessages.set(offset + i, messagesBatch.get(i));
+            }
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mMessages = messages;
                     notifyDataSetChanged();
                 }
             });
         } catch (SQLException e) {
-            LOG.error("SQLException while retrieving messages for contact: " + mContact.getClientId(), e);
+            LOG.error("SQLException while batch retrieving messages for contact: " + mContact.getClientId(), e);
         }
     }
 
@@ -106,6 +128,11 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
 
     @Override
     public Object getItem(int position) {
+
+        if (mMessages.get(position) == null) {
+            int offset = (position / (int) LOAD_MESSAGES) * (int) LOAD_MESSAGES;
+            loadNextMessages(offset);
+        }
         return mMessages.get(position);
     }
 
@@ -202,6 +229,10 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
                 public void run() {
                     mMessages.add(message);
                     notifyDataSetChanged();
+
+                    mListView.smoothScrollToPosition(mListView.getCount() - 1);
+                    //mListView.setSelection(mListView.getCount() - 1);
+
                 }
             });
         }
