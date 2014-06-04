@@ -59,22 +59,31 @@
               android:ellipsize="end"
               android:textSize="@dimen/media_player_text_medium"/>
 
+<FrameLayout android:id="@+id/fl_player_artwork"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_below="@id/rl_player_playlist_track_container"
+             android:gravity="center"
+             android:layout_marginLeft="@dimen/media_player_layout_margin"
+             android:layout_marginRight="@dimen/media_player_layout_margin"
+             android:layout_marginTop="@dimen/media_player_layout_margin">
+
+    <ImageView
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:src="@drawable/media_cover_art_default"/>
 
     <ImageView android:id="@+id/iv_player_artwork"
                android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:layout_below="@id/rl_player_playlist_track_container"
-               android:src="@drawable/media_cover_art_default"
-               android:gravity="center"
-               android:layout_marginLeft="@dimen/media_player_layout_margin"
-               android:layout_marginRight="@dimen/media_player_layout_margin"
-               android:layout_marginTop="@dimen/media_player_layout_margin"/>
+               android:layout_height="match_parent"
+               android:src="@null"/>
+</FrameLayout>
 
     <LinearLayout
             android:id="@+id/ll_player_track_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/iv_player_artwork"
+            android:layout_below="@id/fl_player_artwork"
             android:orientation="vertical"
             android:layout_margin="@dimen/media_player_layout_margin">
 

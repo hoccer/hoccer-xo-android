@@ -2,9 +2,10 @@ package com.hoccer.xo.android.fragment;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -15,7 +16,6 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.widget.*;
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.model.TalkClient;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.content.MediaItem;
@@ -47,11 +47,13 @@ public class FullscreenPlayerFragment extends Fragment {
     private TextView mPlaylistSizeLabel;
     private TextView mConversationNameLabel;
     private ImageView mArtworkView;
+    private FrameLayout mArtworkContainer;
 
     private Handler mTimeProgressHandler = new Handler();
     private Runnable mUpdateTimeTask;
     private ValueAnimator mBlinkAnimation;
     private MediaPlayerService mMediaPlayerService;
+    private LoadArtworkTask mCurrentLoadArtworkTask;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,7 @@ public class FullscreenPlayerFragment extends Fragment {
         mPlaylistSizeLabel = (TextView) getView().findViewById(R.id.tv_player_playlist_size);
         mConversationNameLabel = (TextView) getView().findViewById(R.id.tv_conversation_name);
         mArtworkView = (ImageView) getView().findViewById(R.id.iv_player_artwork);
+        mArtworkContainer = (FrameLayout) getView().findViewById(R.id.fl_player_artwork);
         mTrackProgressBar.setProgress(0);
         mTrackProgressBar.setMax(100);
 
@@ -146,26 +149,29 @@ public class FullscreenPlayerFragment extends Fragment {
     }
 
     public void updateTrackData() {
+        if (mCurrentLoadArtworkTask != null && mCurrentLoadArtworkTask.getStatus() != AsyncTask.Status.FINISHED) {
+            mCurrentLoadArtworkTask.cancel(true);
+        }
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 MediaItem currentItem = mMediaPlayerService.getCurrentMediaItem();
-                String trackArtist = currentItem.getMetaData().getArtist().trim();
-                String trackTitle = currentItem.getMetaData().getTitle().trim();
+                String trackArtist = currentItem.getMetaData().getArtist();
+                String trackTitle = currentItem.getMetaData().getTitle();
                 int totalDuration = mMediaPlayerService.getTotalDuration();
-                byte[] cover = MediaMetaData.getArtwork(currentItem.getFilePath());
-
 
                 if (trackTitle == null || trackTitle.isEmpty()) {
                     File file = new File(currentItem.getFilePath());
                     trackTitle = file.getName();
                 }
 
-                mTrackTitleLabel.setText(trackTitle);
+                mTrackTitleLabel.setText(trackTitle.trim());
                 if (trackArtist == null || trackArtist.isEmpty()) {
                     trackArtist = getActivity().getResources().getString(R.string.media_meta_data_unknown_artist);
                 }
-                mTrackArtistLabel.setText(trackArtist);
+
+                mTrackArtistLabel.setText(trackArtist.trim());
                 mTrackProgressBar.setMax(totalDuration);
                 mTrackProgressBar.setProgress(mMediaPlayerService.getCurrentPosition());
 
@@ -173,11 +179,11 @@ public class FullscreenPlayerFragment extends Fragment {
                 mPlaylistIndexLabel.setText(Integer.toString(mMediaPlayerService.getCurrentTrackNumber() + 1));
                 mPlaylistSizeLabel.setText(Integer.toString(mMediaPlayerService.getMediaListSize()));
 
-                if (cover != null) {
-                    Bitmap coverBitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
-                    mArtworkView.setImageBitmap(coverBitmap);
+                if (currentItem.getMetaData().getArtwork() == null) {
+                    mCurrentLoadArtworkTask = new LoadArtworkTask();
+                    mCurrentLoadArtworkTask.execute(currentItem);
                 } else {
-                    mArtworkView.setImageResource(R.drawable.media_cover_art_default);
+                    mArtworkView.setImageDrawable(currentItem.getMetaData().getArtwork());
                 }
 
                 resizeCoverArtView();
@@ -244,11 +250,11 @@ public class FullscreenPlayerFragment extends Fragment {
     private void resizeCoverArtView() {
         int margin = getActivity().getResources().getDimensionPixelSize(R.dimen.media_player_layout_margin);
         int measuredViewHeight = getView().getMeasuredWidth() - (margin * 4);
-        if (mArtworkView.getHeight() != measuredViewHeight) {
-            RelativeLayout.LayoutParams coverArtLayoutParams = (RelativeLayout.LayoutParams) mArtworkView.getLayoutParams();
+        if (mArtworkContainer.getHeight() != measuredViewHeight) {
+            RelativeLayout.LayoutParams coverArtLayoutParams = (RelativeLayout.LayoutParams) mArtworkContainer.getLayoutParams();
             coverArtLayoutParams.height = measuredViewHeight;
             coverArtLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            mArtworkView.setLayoutParams(coverArtLayoutParams);
+            mArtworkContainer.setLayoutParams(coverArtLayoutParams);
         }
     }
 
@@ -375,6 +381,29 @@ public class FullscreenPlayerFragment extends Fragment {
                 mTimeProgressHandler.postDelayed(this, 1000);
             } catch (Exception e) {
                 LOG.error(e);
+            }
+        }
+    }
+
+    private class LoadArtworkTask extends AsyncTask<MediaItem, Void, Drawable> {
+
+        private MediaItem mMediaItem;
+
+        protected Drawable doInBackground(MediaItem... params) {
+            mMediaItem = params[0];
+            byte[] artworkRaw = MediaMetaData.getArtwork( mMediaItem.getFilePath());
+            if (artworkRaw != null) {
+                return new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(artworkRaw, 0, artworkRaw.length));
+            } else {
+                return null;
+            }
+        }
+
+        protected void onPostExecute(Drawable artwork) {
+            super.onPostExecute(artwork);
+            if (!this.isCancelled()) {
+                mMediaItem.getMetaData().setArtwork(artwork);
+                mArtworkView.setImageDrawable(artwork);
             }
         }
     }
