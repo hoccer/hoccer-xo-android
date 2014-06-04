@@ -3,6 +3,7 @@ package com.hoccer.xo.android.view;
 import android.content.*;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.hoccer.xo.android.content.MediaItem;
+import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -45,6 +47,10 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
         mArtworkImageView = ((ImageView) findViewById(R.id.iv_artcover));
     }
 
+    public MediaItem getmMediaItem(){
+        return mMediaItem;
+    }
+
     public void setTitleTextView(String titleName) {
         mTitleTextView.setText(titleName);
     }
@@ -53,12 +59,12 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
         mArtistTextView.setText(artistName);
     }
 
-    public void setArtworkImageView(byte[] cover) {
-        if (cover != null) {
-            Bitmap coverBitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
+    public void setArtworkImageBitmap(Bitmap coverBitmap) {
+        if (coverBitmap != null) {
             mArtworkImageView.setImageBitmap(coverBitmap);
         } else {
-            mArtworkImageView.setImageResource(R.drawable.media_cover_art_default);
+            //mArtworkImageView.setImageResource(R.drawable.media_cover_art_default); //TODO time consuming. Use setImageBitmap or setImageDrawable instead
+            mArtworkImageView.setImageDrawable(getResources().getDrawable(R.drawable.media_cover_art_default));
         }
     }
 

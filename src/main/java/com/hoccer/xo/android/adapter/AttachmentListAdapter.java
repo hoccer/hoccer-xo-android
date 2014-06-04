@@ -1,5 +1,9 @@
 package com.hoccer.xo.android.adapter;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import com.hoccer.talk.client.IXoTransferListener;
@@ -19,7 +23,7 @@ import com.hoccer.xo.release.R;
 import java.sql.SQLException;
 import java.util.List;
 
-public class AttachmentListAdapter extends XoAdapter implements IXoTransferListener {
+public class AttachmentListAdapter extends XoAdapter implements IXoTransferListener{
 
     private List<TalkClientDownload> mAttachments;
 
@@ -89,7 +93,8 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
             audioRowView = (AttachmentAudioView) convertView;
         }
 
-        audioRowView.setArtworkImageView(MediaMetaData.getArtwork(mediaItem.getFilePath()));
+        getArtworkAsynchronously( audioRowView);
+        //audioRowView.setArtworkImageView(MediaMetaData.getArtwork(mediaItem.getFilePath()));
         audioRowView.setTitleTextView(mediaItem.getMetaData().getTitleOrFilename(mediaItem.getFilePath()));
         String artist = mediaItem.getMetaData().getArtist();
         if (artist == null || artist.isEmpty()){
@@ -98,6 +103,32 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
         audioRowView.setArtistTextView(artist);
 
         return audioRowView;
+    }
+
+    private void getArtworkAsynchronously(AttachmentAudioView audioRowView) {
+        new DownloadArtworkTask().execute(audioRowView);
+    }
+
+    private class DownloadArtworkTask extends AsyncTask<AttachmentAudioView, Void, Bitmap> {
+
+        AttachmentAudioView view;
+
+        protected Bitmap doInBackground(AttachmentAudioView... params) {
+            view = params[0];
+            String filePath = view.getmMediaItem().getFilePath();
+
+            byte[] artworkRaw = MediaMetaData.getArtwork(filePath);
+            if ( artworkRaw != null) {
+                return BitmapFactory.decodeByteArray(artworkRaw, 0, artworkRaw.length);
+            }else{
+                return null;
+            }
+        }
+
+        protected void onPostExecute(Bitmap artwork) {
+            super.onPostExecute(artwork);
+            view.setArtworkImageBitmap(artwork);
+        }
     }
 
     @Override
@@ -167,6 +198,7 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
                 });
             }
         }
+
     }
 
     @Override
