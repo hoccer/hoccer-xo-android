@@ -3,6 +3,8 @@ package com.hoccer.xo.android.view;
 import android.content.*;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -18,11 +20,14 @@ import org.apache.log4j.Logger;
 
 public class AttachmentAudioView extends LinearLayout implements View.OnClickListener {
 
+    private static Drawable defaultArtwork;
+
     private Context mContext;
     private MediaItem mMediaItem;
     private ServiceConnection mConnection;
     private BroadcastReceiver mReceiver;
     private MediaPlayerService mMediaPlayerService;
+    private DownloadArtworkTask mCurrentTask = null;
 
     private TextView mTitleTextView;
     private TextView mArtistTextView;
@@ -30,15 +35,14 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
 
     private static final Logger LOG = Logger.getLogger(AttachmentAudioView.class);
 
-    public AttachmentAudioView(Context context, MediaItem mediaItem) {
+    public AttachmentAudioView(Context context) {
         super(context);
-        initialize(context, mediaItem);
-    }
-
-    private void initialize(Context context, MediaItem mediaItem) {
 
         mContext = context;
-        mMediaItem = mediaItem;
+
+        if (defaultArtwork == null) {
+            defaultArtwork = getResources().getDrawable(R.drawable.media_cover_art_default);
+        }
 
         addView(inflate(mContext, R.layout.item_attachment_audio, null));
 
@@ -47,45 +51,29 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
         mArtworkImageView = ((ImageView) findViewById(R.id.iv_artcover));
     }
 
-    public MediaItem getmMediaItem(){
-        return mMediaItem;
-    }
-
-    public void setTitleTextView(String titleName) {
-        mTitleTextView.setText(titleName);
-    }
-
-    public void setArtistTextView(String artistName) {
-        mArtistTextView.setText(artistName);
-    }
-
-    public void setArtworkImageBitmap(Bitmap coverBitmap) {
-        if (coverBitmap != null) {
-            mArtworkImageView.setImageBitmap(coverBitmap);
-        } else {
-            //mArtworkImageView.setImageResource(R.drawable.media_cover_art_default); //TODO time consuming. Use setImageBitmap or setImageDrawable instead
-            mArtworkImageView.setImageDrawable(getResources().getDrawable(R.drawable.media_cover_art_default));
+    public void setMediaItem(MediaItem mediaItem) {
+        if (mMediaItem == null || !mMediaItem.getFilePath().equals(mediaItem.getFilePath())) {
+            mMediaItem = mediaItem;
+            updateView();
         }
+
     }
 
-    private void bindService(Intent intent) {
+    private void updateView() {
+        mTitleTextView.setText(mMediaItem.getMetaData().getTitleOrFilename(mMediaItem.getFilePath()));
 
-        mConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
-                mMediaPlayerService = binder.getService();
+        String artist = mMediaItem.getMetaData().getArtist();
+        if (artist == null || artist.isEmpty()){
+            artist = getResources().getString(R.string.media_meta_data_unknown_artist);
+        }
 
-                updatePlayPauseView();
-            }
+        mArtistTextView.setText(artist);
 
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mMediaPlayerService = null;
-            }
-        };
-
-        mContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        if (mCurrentTask != null && mCurrentTask.getStatus() != AsyncTask.Status.FINISHED) {
+            mCurrentTask.cancel(true);
+        }
+        mCurrentTask = new DownloadArtworkTask();
+        mCurrentTask.execute();
     }
 
     public boolean isActive() {
@@ -129,6 +117,27 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
     public void onClick(View v) {
     }
 
+    private void bindService(Intent intent) {
+
+        mConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
+                mMediaPlayerService = binder.getService();
+
+                updatePlayPauseView();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                mMediaPlayerService = null;
+            }
+        };
+
+        mContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+
     private void createBroadcastReceiver() {
         mReceiver = new BroadcastReceiver() {
             @Override
@@ -144,5 +153,29 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
 
     public boolean isBound() {
         return mMediaPlayerService != null;
+    }
+
+    private class DownloadArtworkTask extends AsyncTask<Void, Void, Drawable> {
+
+        protected Drawable doInBackground(Void... params) {
+            byte[] artworkRaw = MediaMetaData.getArtwork(mMediaItem.getFilePath());
+            if (artworkRaw != null) {
+                return new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(artworkRaw, 0, artworkRaw.length));
+            } else {
+                return null;
+            }
+        }
+
+        protected void onPostExecute(Drawable artwork) {
+            super.onPostExecute(artwork);
+            if (!this.isCancelled() && AttachmentAudioView.this.isAttachedToWindow()) {
+                if (artwork != null) {
+                    AttachmentAudioView.this.mArtworkImageView.setImageDrawable(artwork);
+                } else {
+                    AttachmentAudioView.this.mArtworkImageView.setImageDrawable(defaultArtwork);
+                }
+
+            }
+        }
     }
 }

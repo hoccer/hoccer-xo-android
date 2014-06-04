@@ -7,6 +7,19 @@ public class MediaItem {
     private MediaMetaData mMetaData;
     private String mFilePath;
 
+
+    public static MediaItem create(String mediaFilePath) {
+        if (mediaFilePath == null || mediaFilePath.isEmpty()) {
+            return null;
+        }
+        MediaItem mi = new MediaItem();
+        mi.setFilePath(mediaFilePath);
+
+        String path = Uri.parse(mediaFilePath).getPath();
+        mi.setMetaData(MediaMetaData.create(path));
+        return mi;
+    }
+
     public String getFilePath() {
         return mFilePath;
     }
@@ -25,17 +38,5 @@ public class MediaItem {
 
     public void setMetaData(MediaMetaData metaData) {
         this.mMetaData = metaData;
-    }
-
-    public static MediaItem create(String mediaFilePath) {
-        if (mediaFilePath == null || mediaFilePath.isEmpty()) {
-            return null;
-        }
-        MediaItem mi = new MediaItem();
-        mi.setFilePath(mediaFilePath);
-
-        String path = Uri.parse(mediaFilePath).getPath();
-        mi.setMetaData(MediaMetaData.create(path));
-        return mi;
     }
 }
