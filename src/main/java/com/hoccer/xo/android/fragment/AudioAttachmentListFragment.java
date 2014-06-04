@@ -210,7 +210,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 mContactIdFilter = selectedContactId;
                 loadAttachments();
             }
-            Toast.makeText(getActivity(), "BAZINGA " + mFilterAdapter.getItemId(itemPosition), Toast.LENGTH_SHORT).show();
+
             return true;
         }
     }

@@ -168,7 +168,7 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
 
         protected void onPostExecute(Drawable artwork) {
             super.onPostExecute(artwork);
-            if (!this.isCancelled() && AttachmentAudioView.this.isAttachedToWindow()) {
+            if (!this.isCancelled()) {
                 if (artwork != null) {
                     AttachmentAudioView.this.mArtworkImageView.setImageDrawable(artwork);
                 } else {
