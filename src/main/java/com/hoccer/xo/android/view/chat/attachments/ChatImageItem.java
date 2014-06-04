@@ -21,6 +21,9 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 public class ChatImageItem extends ChatMessageItem implements ImageLoadingListener {
 
+    /**
+     * Caches the loaded attachment image
+     */
     private ClickableImageView mImageView;
 
     public ChatImageItem(Context context, TalkClientMessage message) {
@@ -34,14 +37,12 @@ public class ChatImageItem extends ChatMessageItem implements ImageLoadingListen
     @Override
     protected void configureViewForMessage(View view) {
         super.configureViewForMessage(view);
-
         configureAttachmentViewForMessage(view);
     }
 
     @Override
     protected void displayAttachment(IContentObject contentObject) {
-
-        mContentTransferProgress.setVisibility(View.GONE);
+        super.displayAttachment(contentObject);
 
         // add view lazily
         if (mContentWrapper.getChildCount() == 0) {
@@ -51,40 +52,38 @@ public class ChatImageItem extends ChatMessageItem implements ImageLoadingListen
         }
 
         mImageView = (ClickableImageView) mContentWrapper.findViewById(R.id.civ_image_view);
-        mContentWrapper.setVisibility(View.GONE);
-
+        mImageView.setVisibility(View.INVISIBLE);
         loadImage(mImageView, contentObject.getContentDataUrl());
     }
 
     private void loadImage(ImageView view, String contentUrl) {
         int cornerRadiusInPixels = getCornerRadius(view);
-
         DisplayImageOptions displayOptions = new DisplayImageOptions.Builder()
                 .cloneFrom(XoApplication.getContentImageOptions())
-                .displayer(new RoundedBitmapDisplayer(cornerRadiusInPixels)).build();
-
+                .displayer(new RoundedBitmapDisplayer(cornerRadiusInPixels))
+                .build();
         ImageLoader.getInstance().displayImage(contentUrl, view, displayOptions, this);
     }
 
     private int getCornerRadius(ImageView view) {
-        float cornerRadiusInDP = view.getResources()
-                .getDimension(R.dimen.xo_message_corner_radius);
-        return (int) TypedValue
-                .applyDimension(TypedValue.COMPLEX_UNIT_DIP, cornerRadiusInDP,
-                        view.getResources().getDisplayMetrics());
+        float cornerRadiusInDP = view.getResources().getDimension(R.dimen.xo_message_corner_radius);
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, cornerRadiusInDP, view.getResources().getDisplayMetrics());
     }
 
     @Override
-    public void onLoadingStarted(String imageUri, View view) {}
+    public void onLoadingStarted(String imageUri, View view) {
+    }
 
     @Override
-    public void onLoadingFailed(String imageUri, View view, FailReason failReason) {}
+    public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+    }
 
     @Override
     public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-        mContentWrapper.setVisibility(View.VISIBLE);
+        mImageView.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onLoadingCancelled(String imageUri, View view) {}
+    public void onLoadingCancelled(String imageUri, View view) {
+    }
 }

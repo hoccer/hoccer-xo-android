@@ -10,8 +10,7 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
-import com.hoccer.xo.android.view.chat.attachments.ChatImageItem;
-import com.hoccer.xo.android.view.chat.attachments.ChatItemType;
+import com.hoccer.xo.android.view.chat.attachments.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
 
     /**
      * Defines the distance from the bottom-most item in the chat view - in number of items.
-     * If you scroll up beyond this limit the chat view will not scroll to the bottom when a new message is displayed.
+     * If you scroll up beyond this limit the chat view will not automatically scroll to the bottom when a new message is displayed.
      */
     private static final int AUTO_SCROLL_LIMIT = 5;
 
@@ -54,36 +53,29 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
     }
 
     private void initialize() {
-
         int totalMessageCount = 0;
-
         try {
             totalMessageCount = (int) mDatabase.getMessageCountByContactId(mContact.getClientContactId());
         } catch (SQLException e) {
-            LOG.error("SQLException while loading message count", e);
+            LOG.error("SQLException while loading message count: " + mContact.getClientId(), e);
         }
         mChatMessageItems = new ArrayList<ChatMessageItem>(totalMessageCount);
         for (int i = 0; i < totalMessageCount; i++) {
             mChatMessageItems.add(null);
         }
-
         loadNextMessages(mChatMessageItems.size() - (int) LOAD_MESSAGES);
     }
 
     public synchronized void loadNextMessages(int offset) {
         try {
-
             if (offset < 0) {
                 offset = 0;
             }
-
             final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
-
             for (int i = 0; i < messagesBatch.size(); i++) {
                 ChatMessageItem messageItem = getItemForMessage(messagesBatch.get(i));
                 mChatMessageItems.set(offset + i, messageItem);
             }
-
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -114,7 +106,6 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
 
     @Override
     public ChatMessageItem getItem(int position) {
-
         if (mChatMessageItems.get(position) == null) {
             int offset = (position / (int) LOAD_MESSAGES) * (int) LOAD_MESSAGES;
             loadNextMessages(offset);
@@ -130,11 +121,9 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ChatMessageItem chatItem = getItem(position);
-
         if (!chatItem.getMessage().isSeen()) {
             markMessageAsSeen(chatItem.getMessage());
         }
-
         if (convertView == null) {
             convertView = chatItem.getViewForMessage();
         } else {
@@ -150,9 +139,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
 
     @Override
     public int getItemViewType(int position) {
-
         ChatMessageItem item = getItem(position);
-
         return item.getType().ordinal();
     }
 
@@ -194,8 +181,19 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
         ChatItemType itemType = getListItemTypeForMessage(message);
         if (itemType == ChatItemType.ChatItemWithImage) {
             return new ChatImageItem(mActivity, message);
+        } else if (itemType == ChatItemType.ChatItemWithVideo) {
+            return new ChatVideoItem(mActivity, message);
+        } else if (itemType == ChatItemType.ChatItemWithAudio) {
+            return new ChatAudioItem(mActivity, message);
+        } else if (itemType == ChatItemType.ChatItemWithData) {
+            return new ChatDataItem(mActivity, message);
+        } else if (itemType == ChatItemType.ChatItemWithContact) {
+            return new ChatContactItem(mActivity, message);
+        } else if (itemType == ChatItemType.ChatItemWithLocation) {
+            return new ChatLocationItem(mActivity, message);
+        } else {
+            return new ChatMessageItem(mActivity, message);
         }
-        return new ChatMessageItem(mActivity, message);
     }
 
     private void markMessageAsSeen(final TalkClientMessage message) {

@@ -1,7 +1,6 @@
 package com.hoccer.xo.android.view.chat;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +34,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
     protected Logger LOG = Logger.getLogger(getClass());
 
     protected Context mContext;
-    protected boolean mWaitUntilOperationIsFinished;
-
+    protected AttachmentTransferHandler mAttachmentTransferHandler;
     protected TalkClientMessage mMessage;
 
     protected TextView mMessageText;
@@ -44,7 +42,6 @@ public class ChatMessageItem implements AttachmentTransferListener {
     protected LinearLayout mContentWrapper;
     protected AttachmentTransferControlView mTransferControl;
 
-    protected AttachmentTransferHandler mAttachmentTransferHandler;
 
     public ChatMessageItem(Context context, TalkClientMessage message) {
         super();
@@ -82,6 +79,13 @@ public class ChatMessageItem implements AttachmentTransferListener {
         return view;
     }
 
+    /**
+     * Returns the type of message item defined in ChatItemType.
+     *
+     * Subtypes need to overwrite this method and return the appropriate ChatItemType.
+     *
+     * @return The ChatItemType of this message item
+     */
     public ChatItemType getType() {
         return ChatItemType.ChatItemWithText;
     }
@@ -176,7 +180,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
     /**
      * Configures the attachment view for a given message / attachment.
      *
-     * * Subtypes will have to overwrite this method to enhance the configuration of the attachment layout.
+     * Subtypes will have to call this method to trigger the configuration of the attachment layout.
      *
      * @param view    The chat message item's view to configure
      */
@@ -220,8 +224,6 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
         } else {
             mTransferControl.setOnClickListener(null);
-            mContentTransferProgress.setVisibility(View.GONE);
-            mContentWrapper.setVisibility(View.VISIBLE);
             displayAttachment(contentObject);
         }
 
@@ -233,8 +235,16 @@ public class ChatMessageItem implements AttachmentTransferListener {
         }
     }
 
+    /**
+     * Configures the attachment view for a given message / attachment.
+     *
+     * Subtypes will have to overwrite this method to configure the attachment layout.
+     *
+     * @param contentObject The IContentObject to display
+     */
     protected void displayAttachment(IContentObject contentObject) {
-
+        mContentTransferProgress.setVisibility(View.GONE);
+        mContentWrapper.setVisibility(View.VISIBLE);
     }
 
     /**
