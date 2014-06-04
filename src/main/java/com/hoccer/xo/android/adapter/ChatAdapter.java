@@ -60,7 +60,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
         try {
             totalMessageCount = (int) mDatabase.getMessageCountByContactId(mContact.getClientContactId());
         } catch (SQLException e) {
-            LOG.error("Error while loading message count", e);
+            LOG.error("SQLException while loading message count", e);
         }
         mChatMessageItems = new ArrayList<ChatMessageItem>(totalMessageCount);
         for (int i = 0; i < totalMessageCount; i++) {

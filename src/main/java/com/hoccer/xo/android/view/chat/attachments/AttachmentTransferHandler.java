@@ -56,7 +56,6 @@ public class AttachmentTransferHandler implements View.OnClickListener, IXoTrans
 
                         TalkClientDownload download = (TalkClientDownload) mContent;
                         XoApplication.getXoClient().requestDownload(download);
-                        // TODO: maybe we should rather let this be handled by the adapter / fragment / activity ?
                     }
                     break;
                 case CANCEL_DOWNLOAD:
@@ -153,13 +152,17 @@ public class AttachmentTransferHandler implements View.OnClickListener, IXoTrans
             case UPLOAD_FAILED:
                 break;
             case UPLOAD_COMPLETE:
+
                 LOG.info("Upload complete for " + ((TalkClientUpload) mContent).getUploadUrl());
+
                 XoApplication.getXoClient().unregisterTransferListener(this);
                 break;
             case DOWNLOAD_FAILED:
                 break;
             case DOWNLOAD_COMPLETE:
+
                 LOG.info("Download complete for " + ((TalkClientDownload) mContent).getDownloadUrl());
+
                 XoApplication.getXoClient().unregisterTransferListener(this);
                 break;
             default:
@@ -172,6 +175,7 @@ public class AttachmentTransferHandler implements View.OnClickListener, IXoTrans
     /**
      * Updates the AttachmentTransferControlView from a given IContentObject
      *
+     * TODO: move this into the AttachmentTransferControlView class.
      */
     protected void updateTransferControl() {
 
@@ -181,7 +185,7 @@ public class AttachmentTransferHandler implements View.OnClickListener, IXoTrans
 
         int length = 0;
         int progress = 0;
-        //Resources res = mContext.getResources();
+        Resources res = mTransferControl.getResources();
         ContentState contentState = getTransferState(mContent);
         switch (contentState) {
             case DOWNLOAD_DETECTING:
@@ -189,7 +193,7 @@ public class AttachmentTransferHandler implements View.OnClickListener, IXoTrans
             case DOWNLOAD_NEW:
                 mTransferControl.setVisibility(View.VISIBLE);
                 mTransferControl.prepareToDownload();
-                //mTransferControl.setText(res.getString(R.string.transfer_state_pause));
+                mTransferControl.setText(res.getString(R.string.transfer_state_pause));
                 mTransferControl.pause();
                 break;
             case DOWNLOAD_PAUSED:
@@ -197,7 +201,7 @@ public class AttachmentTransferHandler implements View.OnClickListener, IXoTrans
                 progress = mContent.getTransferProgress();
                 mTransferControl.setMax(length);
                 mTransferControl.setProgressImmediately(progress);
-                //mTransferControl.setText(res.getString(R.string.transfer_state_pause));
+                mTransferControl.setText(res.getString(R.string.transfer_state_pause));
                 mTransferControl.prepareToDownload();
                 mTransferControl.pause();
                 break;
@@ -209,30 +213,30 @@ public class AttachmentTransferHandler implements View.OnClickListener, IXoTrans
                     progress = 18;
                 }
                 mTransferControl.prepareToDownload();
-                //mTransferControl.setText(res.getString(R.string.transfer_state_downloading));
+                mTransferControl.setText(res.getString(R.string.transfer_state_downloading));
                 mTransferControl.setMax(length);
                 mTransferControl.setProgress(progress);
                 break;
             case DOWNLOAD_DECRYPTING:
                 length = mContent.getTransferLength();
-                //mTransferControl.setText(res.getString(R.string.transfer_state_decrypting));
+                mTransferControl.setText(res.getString(R.string.transfer_state_decrypting));
                 mTransferControl.setProgress(length);
                 mTransferControl.spin();
-                //mWaitUntilOperationIsFinished = true;
+//                mWaitUntilOperationIsFinished = true;
                 break;
             case DOWNLOAD_COMPLETE:
                 mTransferControl.finishSpinningAndProceed();
-                //displayAttachment(contentObject);
+                mListener.onAttachmentTransferComplete(mContent);
             case UPLOAD_REGISTERING:
                 break;
             case UPLOAD_NEW:
                 mTransferControl.prepareToUpload();
-                //mTransferControl.setText(res.getString(R.string.transfer_state_encrypting));
+                mTransferControl.setText(res.getString(R.string.transfer_state_encrypting));
                 mTransferControl.setVisibility(View.VISIBLE);
                 break;
             case UPLOAD_ENCRYPTING:
                 mTransferControl.prepareToUpload();
-                //mTransferControl.setText(res.getString(R.string.transfer_state_encrypting));
+                mTransferControl.setText(res.getString(R.string.transfer_state_encrypting));
                 mTransferControl.setVisibility(View.VISIBLE);
                 mTransferControl.spin();
                 break;
@@ -241,12 +245,12 @@ public class AttachmentTransferHandler implements View.OnClickListener, IXoTrans
                 progress = mContent.getTransferProgress();
                 mTransferControl.setMax(length);
                 mTransferControl.setProgressImmediately(progress);
-                //mTransferControl.setText(res.getString(R.string.transfer_state_pause));
+                mTransferControl.setText(res.getString(R.string.transfer_state_pause));
                 mTransferControl.pause();
                 break;
             case UPLOAD_UPLOADING:
                 mTransferControl.finishSpinningAndProceed();
-                //mTransferControl.setText(res.getString(R.string.transfer_state_uploading));
+                mTransferControl.setText(res.getString(R.string.transfer_state_uploading));
                 //mWaitUntilOperationIsFinished = true;
                 length = mContent.getTransferLength();
                 progress = mContent.getTransferProgress();
