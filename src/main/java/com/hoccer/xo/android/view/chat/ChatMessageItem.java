@@ -186,13 +186,13 @@ public class ChatMessageItem implements AttachmentTransferListener {
      */
     protected void configureAttachmentViewForMessage(View view) {
 
-        RelativeLayout attachmentView = (RelativeLayout) view.findViewById(R.id.v_message_attachment);
+        RelativeLayout attachmentView = (RelativeLayout) view.findViewById(R.id.rl_message_attachment);
 
         // add content view
         if (attachmentView.getChildCount() == 0) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View contentView = inflater.inflate(R.layout.view_content_new, null);
-            attachmentView.addView(contentView);
+            View attachmentWrapper = inflater.inflate(R.layout.view_attachment_wrapper, null);
+            attachmentView.addView(attachmentWrapper);
         }
         attachmentView.setVisibility(View.VISIBLE);
 
