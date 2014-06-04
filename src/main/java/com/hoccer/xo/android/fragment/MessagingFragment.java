@@ -7,8 +7,10 @@ import android.view.*;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.adapter.ConversationAdapter;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
@@ -20,16 +22,19 @@ import com.hoccer.xo.android.view.OverscrollListView;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
+import java.sql.SQLException;
+
 /**
  * Fragment for conversations
  */
 public class MessagingFragment extends XoListFragment
         implements SearchView.OnQueryTextListener,
-        XoAdapter.AdapterReloadListener, OnOverscrollListener, View.OnTouchListener {
+        XoAdapter.AdapterReloadListener, OnOverscrollListener, View.OnTouchListener, IXoContactListener {
 
     private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
 
     private static final int OVERSCROLL_THRESHOLD = -5;
+    private static final String ARG_CLIENT_CONTACT_ID = "ARG_CLIENT_CONTACT_ID";
 
     private OverscrollListView mMessageList;
 
@@ -47,9 +52,19 @@ public class MessagingFragment extends XoListFragment
 
     private boolean mInOverscroll = false;
 
+    public interface IMessagingFragmentListener {
+        public void onShowSingleProfileFragment();
+
+        public void onShowGroupProfileFragment();
+
+        public void onShowAudioAttachmentListFragment();
+    }
+
+    private IMessagingFragmentListener mMessagingFragmentListener;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         LOG.debug("onCreateView()");
         super.onCreateView(inflater, container, savedInstanceState);
 
@@ -73,28 +88,76 @@ public class MessagingFragment extends XoListFragment
         mCompositionView.setCompositionViewListener(new CompositionView.ICompositionViewListener() {
             @Override
             public void onAddAttachmentClicked() {
-            getXoActivity().selectAttachment();
+                getXoActivity().selectAttachment();
             }
 
             @Override
             public void onAttachmentClicked() {
-            getXoActivity().selectAttachment();
+                getXoActivity().selectAttachment();
             }
         });
 
+
         mMotionInterpreter = new MotionInterpreter(Gestures.Transaction.SHARE, getActivity(), mCompositionView);
+
+        if (getArguments() != null) {
+            int clientContactId = getArguments().getInt(ARG_CLIENT_CONTACT_ID);
+            if (clientContactId == -1) {
+                LOG.error("invalid contact id");
+            } else {
+                try {
+                    mContact = XoApplication.getXoClient().getDatabase().findClientContactById(clientContactId);
+                    converseWithContact();
+                } catch (SQLException e) {
+                    LOG.error("sql error", e);
+                }
+            }
+
+        } else {
+            LOG.error("Creating SingleProfileFragment without arguments is not supported.");
+        }
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
+        // select client/group profile entry for appropriate icon
+        if (mContact != null) {
+            MenuItem clientItem = menu.findItem(R.id.menu_profile_client);
+            clientItem.setVisible(mContact.isClient());
+            MenuItem groupItem = menu.findItem(R.id.menu_single_profile);
+            groupItem.setVisible(mContact.isGroup());
+            menu.findItem(R.id.menu_audio_attachment_list).setVisible(true);
+        }
+        menu.findItem(R.id.menu_profile_client).setVisible(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
+        switch (item.getItemId()) {
+            case R.id.menu_profile_client:
+            case R.id.menu_single_profile:
+                if (mContact != null) {
+                    mMessagingFragmentListener.onShowSingleProfileFragment();
+                }
+                break;
+            case R.id.menu_audio_attachment_list:
+                if (mContact != null) {
+                    mMessagingFragmentListener.onShowAudioAttachmentListFragment();
+                }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 
     @Override
     public void onResume() {
         LOG.debug("onResume()");
         super.onResume();
+        setHasOptionsMenu(true);
 
         if (mAdapter == null) {
             mAdapter = new ConversationAdapter(getXoActivity());
@@ -104,11 +167,16 @@ public class MessagingFragment extends XoListFragment
             mMessageList.setAdapter(mAdapter);
         }
 
+        converseWithContact();
+
         mAdapter.onResume();
 
         if (mContact != null) {
             mAdapter.converseWithContact(mContact);
         }
+
+        configureMotionInterpreterForContact(mContact);
+        XoApplication.getXoClient().registerContactListener(this);
     }
 
     @Override
@@ -117,6 +185,7 @@ public class MessagingFragment extends XoListFragment
         super.onPause();
         mAdapter.onPause();
         mMotionInterpreter.deactivate();
+        XoApplication.getXoClient().unregisterContactListener(this);
     }
 
     @Override
@@ -158,15 +227,6 @@ public class MessagingFragment extends XoListFragment
 //        mCompositionView.onAttachmentSelected(contentObject);
 //    }
 
-    public void converseWithContact(TalkClientContact contact) {
-        LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
-        mContact = contact;
-        if (mAdapter != null) {
-            mAdapter.converseWithContact(contact);
-        }
-
-        mCompositionView.converseWithContact(contact);
-    }
 
     @Override
     public void onOverscroll(int deltaX, int deltaY, boolean clampedX, boolean clampedY) {
@@ -174,6 +234,10 @@ public class MessagingFragment extends XoListFragment
             mInOverscroll = true;
             mAdapter.loadNextMessages();
         }
+    }
+
+    public void setMessagingFragmentListener(IMessagingFragmentListener messagingFragmentListener) {
+        this.mMessagingFragmentListener = messagingFragmentListener;
     }
 
     private void animateOverscroll() {
@@ -228,5 +292,64 @@ public class MessagingFragment extends XoListFragment
         } else {
             mMotionInterpreter.deactivate();
         }
+    }
+
+    @Override
+    public void onContactAdded(TalkClientContact contact) {
+
+    }
+
+    @Override
+    public void onContactRemoved(TalkClientContact contact) {
+        if (mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
+            getActivity().finish();
+        }
+    }
+
+    @Override
+    public void onClientPresenceChanged(TalkClientContact contact) {
+
+    }
+
+    @Override
+    public void onClientRelationshipChanged(TalkClientContact contact) {
+
+    }
+
+    @Override
+    public void onGroupPresenceChanged(TalkClientContact contact) {
+
+    }
+
+    @Override
+    public void onGroupMembershipChanged(TalkClientContact contact) {
+
+    }
+
+    public void applicationWillEnterBackground() {
+        if (mContact.isGroup() && mContact.getGroupPresence().isTypeNearby()) {
+            getActivity().finish();
+        } else if (mContact.isClient() && mContact.isNearby()) {
+            getActivity().finish();
+        }
+    }
+
+    private void converseWithContact() {
+        LOG.debug("converseWithContact(" + mContact.getClientContactId() + ")");
+
+        getActivity().getActionBar().setTitle(mContact.getName());
+        if (mContact.isDeleted()) {
+            getActivity().finish();
+        }
+        // invalidate menu so that profile buttons get disabled/enabled
+        getActivity().invalidateOptionsMenu();
+
+        configureMotionInterpreterForContact(mContact);
+
+        if (mAdapter != null) {
+            mAdapter.converseWithContact(mContact);
+        }
+
+        mCompositionView.converseWithContact(mContact);
     }
 }

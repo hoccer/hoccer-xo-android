@@ -31,6 +31,9 @@ import java.sql.SQLException;
 public class GroupProfileFragment extends XoFragment
         implements View.OnClickListener, IXoContactListener, ActionMode.Callback {
 
+    public static final String ARG_CREATE_GROUP = "ARG_CREATE_GROUP";
+    public static final String ARG_CLIENT_CONTACT_ID = "ARG_CLIENT_CONTACT_ID";
+
     private static final Logger LOG = Logger.getLogger(SingleProfileFragment.class);
 
     public enum Mode {
@@ -54,6 +57,14 @@ public class GroupProfileFragment extends XoFragment
     private ImageView mAvatarImage;
 
     private Menu mOptionsMenu;
+
+    public interface IGroupProfileFragmentListener {
+        public void onShowMessageFragment();
+
+        public void onShowAudioAttachmentListFragment();
+    }
+
+    private IGroupProfileFragmentListener mIGroupProfileFragmentListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,6 +103,22 @@ public class GroupProfileFragment extends XoFragment
             }
         });
 
+        if (getArguments() != null) {
+            if (getArguments().getBoolean(ARG_CREATE_GROUP)) {
+                createGroup();
+            } else {
+                int clientContactId = getArguments().getInt(ARG_CLIENT_CONTACT_ID);
+                try {
+                    mGroup = XoApplication.getXoClient().getDatabase().findClientContactById(clientContactId);
+                    showProfile();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            LOG.error("Creating GroupProfileFragment without arguments is not supported.");
+        }
+
         mGroupCreateButton = (Button) v.findViewById(R.id.profile_group_button_create);
         mGroupCreateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +130,9 @@ public class GroupProfileFragment extends XoFragment
         mGroupMembersContainer = (LinearLayout) v.findViewById(R.id.profile_group_members_container);
         mGroupMembersTitle = (TextView) mGroupMembersContainer.findViewById(R.id.profile_group_members_title);
         mGroupMembersList = (ListView) mGroupMembersContainer.findViewById(R.id.profile_group_members_list);
+
+
+
         return v;
     }
 
@@ -234,6 +264,10 @@ public class GroupProfileFragment extends XoFragment
         getXoClient().setGroupName(mGroup, newGroupName);
     }
 
+    public void setGroupProfileFragmentListener(IGroupProfileFragmentListener groupProfileFragmentListener) {
+        this.mIGroupProfileFragmentListener = groupProfileFragmentListener;
+    }
+
     private void updateAvatar(TalkClientContact contact) {
 
         String avatarUrl = "drawable://" + R.drawable.avatar_default_group_large;
@@ -346,12 +380,12 @@ public class GroupProfileFragment extends XoFragment
         });
     }
 
-    public void showProfile(TalkClientContact contact) {
+    public void showProfile() {
         mMode = Mode.PROFILE;
-        if (contact != null) {
-            LOG.debug("showProfile(" + contact.getClientContactId() + ")");
+        if (mGroup != null) {
+            LOG.debug("showProfile(" + mGroup.getClientContactId() + ")");
         }
-        refreshContact(contact);
+        refreshContact(mGroup);
     }
 
     public void createGroup() {
@@ -363,6 +397,31 @@ public class GroupProfileFragment extends XoFragment
         groupPresence.setGroupTag(mGroup.getGroupTag());
         mGroup.updateGroupPresence(groupPresence);
         update(mGroup);
+    }
+
+    public void updateActionBar() {
+        LOG.debug("update(" + mGroup.getClientContactId() + ")");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getActivity().getActionBar().setTitle(mGroup.getName());
+
+                if (mGroup.isSelf()) {
+                    getActivity().getActionBar().setTitle(R.string.my_profile_title);
+                }
+            }
+        });
+    }
+
+    public void finishActivityIfContactDeleted() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mGroup.isDeleted()) {
+                    getActivity().finish();
+                }
+            }
+        });
     }
 
     private void manageGroupMembers() {
