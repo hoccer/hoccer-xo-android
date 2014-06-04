@@ -2,6 +2,7 @@ package com.hoccer.xo.android.content;
 
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.util.Log;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -63,7 +64,7 @@ public class MediaMetaData {
     }
 
     private void setAlbumTitle(String pAlbumTitle) {
-        this.mArtist = pAlbumTitle;
+        this.mAlbumTitle = pAlbumTitle;
     }
 
     private void setMimeType(String pMimeType) {
@@ -84,20 +85,44 @@ public class MediaMetaData {
 
         MediaMetaData metaData = new MediaMetaData();
 
-        retriever.setDataSource(pMediaFilePath);
-        metaData.setTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
-        metaData.setArtist(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
-        metaData.setAlbumTitle(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM));
-        metaData.setMimeType(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE));
+        try {
+            retriever.setDataSource(pMediaFilePath);
+            ArrayList<String> data = new ArrayList<String>();
+            for( int i = 0; i < 100; i++)
+                data.add(retriever.extractMetadata(i));
 
-        if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO) != null) {
-            metaData.setHasAudio(true);
+            String album = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+            if(album == null) {
+                album = retriever.extractMetadata(25); // workaround bug on Galaxy S3 and S4
+            }
+            metaData.setAlbumTitle(album);
+
+            String artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+            if(artist == null) {
+                artist = retriever.extractMetadata(26); // workaround bug on Galaxy S3 and S4
+            }
+            metaData.setArtist(artist);
+
+            String title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+            if(title == null) {
+                title = retriever.extractMetadata(31); // workaround bug on Galaxy S3 and S4
+            }
+            metaData.setTitle(title);
+
+            metaData.setMimeType(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE));
+
+            if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO) != null) {
+                metaData.setHasAudio(true);
+            }
+
+            if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO) != null) {
+                metaData.setHasVideo(true);
+            }
+        } catch(IllegalArgumentException e) {
+            Logger logger = Logger.getLogger(MediaMetaData.class);
+            logger.error("Error reading metadata from file: " + pMediaFilePath);
+            e.printStackTrace();
         }
-
-        if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO) != null) {
-            metaData.setHasVideo(true);
-        }
-
         return metaData;
     }
 
