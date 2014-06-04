@@ -87,9 +87,6 @@ public class MediaMetaData {
 
         try {
             retriever.setDataSource(pMediaFilePath);
-            ArrayList<String> data = new ArrayList<String>();
-            for( int i = 0; i < 100; i++)
-                data.add(retriever.extractMetadata(i));
 
             String album = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
             if(album == null) {
