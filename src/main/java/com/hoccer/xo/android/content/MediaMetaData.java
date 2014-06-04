@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.content;
 
+import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.util.Log;
@@ -19,6 +20,7 @@ public class MediaMetaData {
     private String mMimeType = null;
     private boolean mHasAudio = false;
     private boolean mHasVideo = false;
+    private Drawable mArtwork = null;
 
     private MediaMetaData() {
     }
@@ -55,6 +57,10 @@ public class MediaMetaData {
         return mHasVideo;
     }
 
+    public Drawable getArtwork() {
+        return mArtwork;
+    }
+
     private void setTitle(String pTitle) {
         this.mTitle = pTitle;
     }
@@ -77,6 +83,10 @@ public class MediaMetaData {
 
     private void setHasVideo(boolean pHasVideo) {
         mHasVideo = pHasVideo;
+    }
+
+    public void setArtwork(Drawable artwork) {
+        mArtwork = artwork;
     }
 
     public static MediaMetaData create(String pMediaFilePath) throws IllegalArgumentException {
@@ -145,4 +155,5 @@ public class MediaMetaData {
 
         return retriever.getEmbeddedPicture();
     }
+
 }

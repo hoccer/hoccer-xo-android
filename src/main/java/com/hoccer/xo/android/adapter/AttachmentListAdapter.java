@@ -22,11 +22,12 @@ import com.hoccer.xo.android.view.AttachmentAudioView;
 import com.hoccer.xo.release.R;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AttachmentListAdapter extends XoAdapter implements IXoTransferListener{
 
-    private List<TalkClientDownload> mAttachments;
+    private List<MediaItem> mMediaItems;
     private String mContentMediaType;
     private int mConversationContactId = MediaPlayerService.UNDEFINED_CONTACT_ID;
 
@@ -49,8 +50,8 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
         loadAttachmentList();
     }
 
-    public List<TalkClientDownload> getAttachments() {
-        return mAttachments;
+    public List<MediaItem> getMediaItems() {
+        return mMediaItems;
     }
 
     public int getConversationContactId() {
@@ -59,12 +60,12 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
 
     @Override
     public int getCount() {
-        return mAttachments.size();
+        return mMediaItems.size();
     }
 
     @Override
-    public TalkClientDownload getItem(int position) {
-        return mAttachments.get(position);
+    public MediaItem getItem(int position) {
+        return mMediaItems.get(position);
     }
 
     @Override
@@ -74,10 +75,9 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        MediaItem mediaItem = MediaItem.create(mAttachments.get(position).getContentDataUrl());
-        if (mediaItem == null) {
-            mAttachments.remove(position);
-            if (mAttachments.size() <= position) {
+        if (mMediaItems.get(position) == null) {
+            mMediaItems.remove(position);
+            if (mMediaItems.size() <= position) {
                 return null;
             }
             return getView(position, convertView, parent);
@@ -88,7 +88,7 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
             audioRowView = new AttachmentAudioView(mActivity);
         }
 
-        audioRowView.setMediaItem(mediaItem);
+        audioRowView.setMediaItem(mMediaItems.get(position));
         return audioRowView;
     }
 
@@ -133,7 +133,7 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
 
         if (download.getContentMediaType().equals(this.mContentMediaType)) {
             if ((mConversationContactId == MediaPlayerService.UNDEFINED_CONTACT_ID) || (mConversationContactId == contactId)) {
-                mAttachments.add(0, download);
+                mMediaItems.add(0, MediaItem.create(download.getContentDataUrl()));
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -171,16 +171,26 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
     }
 
     private void loadAttachmentList() {
+        mMediaItems = new ArrayList<MediaItem>();
         try {
+            List<TalkClientDownload> downloads;
             if (mContentMediaType != null) {
                 if (mConversationContactId != MediaPlayerService.UNDEFINED_CONTACT_ID) {
-                    mAttachments = getXoClient().getDatabase().findClientDownloadByMediaTypeAndConversationContactId(ContentMediaType.AUDIO, mConversationContactId);
+                    downloads = getXoClient().getDatabase().findClientDownloadByMediaTypeAndConversationContactId(ContentMediaType.AUDIO, mConversationContactId);
                 } else {
-                    mAttachments = getXoClient().getDatabase().findClientDownloadByMediaType(mContentMediaType);
+                    downloads = getXoClient().getDatabase().findClientDownloadByMediaType(mContentMediaType);
                 }
             } else {
-                mAttachments = getXoClient().getDatabase().findAllClientDownloads();
+                downloads = getXoClient().getDatabase().findAllClientDownloads();
             }
+
+            if (downloads != null) {
+                for (TalkClientDownload download : downloads) {
+                    mMediaItems.add(MediaItem.create(download.getContentDataUrl()));
+                }
+
+            }
+
         } catch (SQLException e) {
             LOG.error(e);
         }

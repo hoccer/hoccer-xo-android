@@ -39,4 +39,13 @@ public class MediaItem {
     public void setMetaData(MediaMetaData metaData) {
         this.mMetaData = metaData;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj instanceof MediaItem) {
+            return this.getFilePath().equals(((MediaItem) obj).getFilePath());
+        }
+
+        return false;
+    }
 }

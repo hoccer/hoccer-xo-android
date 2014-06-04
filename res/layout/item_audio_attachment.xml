@@ -6,19 +6,28 @@
                 android:background="@drawable/list_item_attachment_bg"
                 android:padding="@dimen/media_player_layout_margin">
 
-    <ImageView
-            android:id="@+id/iv_artcover"
+    <FrameLayout
+            android:id="@+id/fl_artwork"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginRight="@dimen/media_player_layout_margin"
-            android:layout_centerVertical="true"
-            android:src="@drawable/media_cover_art_default"
-            />
-
+            android:layout_centerVertical="true">
+        <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/media_cover_art_default"
+                />
+        <ImageView
+                android:id="@+id/iv_artcover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@android:color/transparent"
+                />
+    </FrameLayout>
     <LinearLayout android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:orientation="vertical"
-                  android:layout_toRightOf="@+id/iv_artcover"
+                  android:layout_toRightOf="@+id/fl_artwork"
                   android:layout_toLeftOf="@+id/iv_playing_status"
                   android:layout_centerVertical="true">
 
