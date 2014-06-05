@@ -232,7 +232,7 @@ public class MessagingActivity extends XoActionbarActivity {
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fl_messaging_fragment_container, mSingleProfileFragment);
-//        ft.addToBackStack(null);
+        ft.addToBackStack(null);
         ft.commit();
     }
 
