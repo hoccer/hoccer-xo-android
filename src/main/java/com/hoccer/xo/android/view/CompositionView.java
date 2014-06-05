@@ -89,8 +89,7 @@ public class CompositionView extends LinearLayout implements View.OnClickListene
         mSendButton.setEnabled(isComposed());
     }
 
-    public void converseWithContact(TalkClientContact contact) {
-        LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
+    public void setContact(TalkClientContact contact) {
         mContact = contact;
     }
 
