@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import com.hoccer.xo.android.content.IContentSelector;
 import com.hoccer.xo.android.content.SelectedContent;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 import org.apache.log4j.Logger;
 
 import java.io.FileNotFoundException;

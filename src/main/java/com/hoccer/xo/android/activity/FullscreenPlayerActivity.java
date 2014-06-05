@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import com.hoccer.xo.android.fragment.FullscreenPlayerFragment;
 import com.hoccer.xo.android.service.MediaPlayerService;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 import org.apache.log4j.Logger;
 
 public class FullscreenPlayerActivity extends FragmentActivity {

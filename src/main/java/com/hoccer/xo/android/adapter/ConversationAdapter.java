@@ -17,7 +17,7 @@ import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.IContentViewListener;
 import com.hoccer.xo.android.view.AvatarView;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 
 import java.sql.SQLException;
 import java.util.Date;

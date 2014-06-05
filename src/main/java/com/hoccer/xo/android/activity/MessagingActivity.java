@@ -22,7 +22,7 @@ import com.hoccer.xo.android.fragment.CompositionFragment;
 import com.hoccer.xo.android.fragment.MessagingFragment;
 import com.hoccer.xo.android.gesture.Gestures;
 import com.hoccer.xo.android.gesture.MotionInterpreter;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 
 import java.sql.SQLException;
 

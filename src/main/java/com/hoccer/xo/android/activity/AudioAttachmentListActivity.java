@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.fragment.AudioAttachmentListFragment;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 
 public class AudioAttachmentListActivity extends XoActionbarActivity {
 

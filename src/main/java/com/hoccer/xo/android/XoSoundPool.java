@@ -4,7 +4,7 @@ package com.hoccer.xo.android;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 
 /**
  * This class manages all internal sounds of the application.

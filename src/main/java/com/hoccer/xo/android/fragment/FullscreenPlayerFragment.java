@@ -22,7 +22,7 @@ import com.hoccer.xo.android.content.MediaItem;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.android.service.MediaPlayerService;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 import org.apache.log4j.Logger;
 
 import java.io.File;

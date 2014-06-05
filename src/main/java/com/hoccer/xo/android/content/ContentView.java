@@ -24,7 +24,7 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.image.ClickableImageView;
 import com.hoccer.xo.android.content.image.IClickableImageViewListener;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 import org.apache.log4j.Logger;
 
 import java.io.File;

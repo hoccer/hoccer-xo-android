@@ -17,7 +17,7 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.android.content.SelectedContent;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 import org.apache.log4j.Logger;
 
 import java.io.ByteArrayInputStream;

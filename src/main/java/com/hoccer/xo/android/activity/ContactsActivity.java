@@ -18,7 +18,7 @@ import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.adapter.ContactsPageAdapter;
 import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.fragment.NearbyContactsFragment;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 
 public class ContactsActivity extends XoActionbarActivity {
 

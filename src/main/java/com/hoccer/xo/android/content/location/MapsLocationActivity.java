@@ -19,7 +19,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

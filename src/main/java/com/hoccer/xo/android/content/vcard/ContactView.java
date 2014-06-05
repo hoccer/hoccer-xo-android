@@ -4,7 +4,7 @@ import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 
 import org.apache.log4j.Logger;
 

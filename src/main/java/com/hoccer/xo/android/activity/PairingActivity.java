@@ -3,7 +3,7 @@ package com.hoccer.xo.android.activity;
 import android.os.Bundle;
 import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.fragment.PairingFragment;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 
 public class PairingActivity extends XoActionbarActivity {
 

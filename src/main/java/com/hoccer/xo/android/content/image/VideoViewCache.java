@@ -13,7 +13,7 @@ import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 
 public class VideoViewCache extends ContentViewCache<View> {
 

@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.hoccer.xo.android.content.MediaItem;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.service.MediaPlayerService;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 import org.apache.log4j.Logger;
 
 public class AttachmentAudioView extends LinearLayout implements View.OnClickListener {

@@ -7,7 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 import org.apache.log4j.Logger;
 
 public class GroupRejectInvitationDialog extends DialogFragment {

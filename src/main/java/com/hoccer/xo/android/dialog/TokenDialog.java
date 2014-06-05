@@ -12,7 +12,7 @@ import android.provider.ContactsContract;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 import org.apache.log4j.Logger;
 
 public class TokenDialog extends DialogFragment implements DialogInterface.OnClickListener {

@@ -14,7 +14,7 @@ import com.hoccer.talk.model.TalkClient;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.MediaItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;

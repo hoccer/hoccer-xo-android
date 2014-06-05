@@ -11,7 +11,7 @@ import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.clipboard.Clipboard;
 import com.hoccer.xo.android.fragment.ClipboardPreviewFragment;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 
 import java.sql.SQLException;
 

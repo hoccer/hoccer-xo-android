@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.hoccer.xo.release"
+          package="com.hoccer.xo.test"
 
-          android:versionCode="34"
-          android:versionName="2.1.3">
+          android:versionCode="35"
+          android:versionName="2.1.4">
 
     <!-- We run on 4.0 (14) and up, we use features from up to 4.2 (17) -->
     <uses-sdk
@@ -51,7 +51,7 @@
     <!-- SMS receive for pairing tokens -->
     <uses-permission android:name="android.permission.RECEIVE_SMS"/>
     <!-- Our own GCM permission -->
-    <uses-permission android:name="com.hoccer.xo.release.permission.C2D_MESSAGE"/>
+    <uses-permission android:name="com.hoccer.xo.test.permission.C2D_MESSAGE"/>
     <!-- Google Play Services / GMaps -->
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
     <!-- GMaps / locations -->
@@ -63,7 +63,7 @@
 
     <!-- Declare permission for controlling our own push package -->
     <permission
-            android:name="com.hoccer.xo.release.permission.C2D_MESSAGE"
+            android:name="com.hoccer.xo.test.permission.C2D_MESSAGE"
             android:protectionLevel="signature"/>
 
     <!-- Declare our application -->
@@ -81,14 +81,14 @@
                 android:value="@integer/google_play_services_version"/>
 
         <!--API key for Google Maps Android API v2 for RELEASE certificate-->
-        <meta-data
-                android:name="com.google.android.maps.v2.API_KEY"
-                android:value="AIzaSyBDd2wBF1gH9UcU2KcAPXXKI9G6HQattkM"/>
+        <!--<meta-data-->
+                <!--android:name="com.google.android.maps.v2.API_KEY"-->
+                <!--android:value="AIzaSyBDd2wBF1gH9UcU2KcAPXXKI9G6HQattkM"/>-->
 
         <!-- API key for Google Maps Android API v2 based on DEBUG certificate -->
-        <!--<meta-data-->
-        <!--android:name="com.google.android.maps.v2.API_KEY"-->
-        <!--android:value="AIzaSyC9hBvAarkQ9ktS0rWZ5Row-MXRatv8Dj0"/>-->
+        <meta-data
+        android:name="com.google.android.maps.v2.API_KEY"
+        android:value="AIzaSyC9hBvAarkQ9ktS0rWZ5Row-MXRatv8Dj0"/>
 
         <!-- Contact list - our main activity -->
         <activity
@@ -180,7 +180,7 @@
                 android:screenOrientation="portrait">
             <action android:name="android.intent.action.VIEW"/>
             <category android:name="android.intent.category.BROWSABLE"/>
-            <data android:scheme="hxo"/>
+            <data android:scheme="hxod"/>
         </activity>
 
         <!-- Preference activity -->

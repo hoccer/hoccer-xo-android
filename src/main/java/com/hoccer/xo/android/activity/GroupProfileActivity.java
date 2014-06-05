@@ -10,7 +10,7 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.model.TalkRelationship;
 import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.fragment.GroupProfileFragment;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 
 import java.sql.SQLException;
 

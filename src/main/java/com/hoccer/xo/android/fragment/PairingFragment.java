@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.hoccer.talk.client.IXoPairingListener;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoFragment;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;

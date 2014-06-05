@@ -20,7 +20,7 @@ import android.widget.Toast;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 import net.hockeyapp.android.CrashManager;
 import org.apache.log4j.Logger;
 

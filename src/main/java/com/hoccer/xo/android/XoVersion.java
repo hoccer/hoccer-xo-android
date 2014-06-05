@@ -1,7 +1,7 @@
 package com.hoccer.xo.android;
 
 import android.content.Context;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;

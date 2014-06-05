@@ -8,7 +8,7 @@ import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.android.view.AudioPlayerView;
-import com.hoccer.xo.release.R;
+import com.hoccer.xo.test.R;
 
 import java.io.File;
 
