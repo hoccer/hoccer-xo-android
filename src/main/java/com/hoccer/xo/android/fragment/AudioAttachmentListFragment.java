@@ -1,6 +1,5 @@
 package com.hoccer.xo.android.fragment;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +12,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.*;
 import android.widget.*;
-import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.activity.AudioAttachmentListActivity;
@@ -36,13 +33,13 @@ public class AudioAttachmentListFragment extends XoListFragment {
     private ServiceConnection mConnection;
     private AttachmentListAdapter mAttachmentListAdapter;
     private AttachmentListFilterAdapter mFilterAdapter;
-    private int mContactIdFilter;
+    private int mFilteredContactId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mContactIdFilter = ALL_CONTACTS_ID;
+        mFilteredContactId = ALL_CONTACTS_ID;
     }
 
     @Override
@@ -62,6 +59,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
         mFilterAdapter = new AttachmentListFilterAdapter(getXoActivity());
         SpinnerAdapter spinnerAdapter = mFilterAdapter;
         ab.setListNavigationCallbacks(spinnerAdapter, new AttachmentListFilterHandler());
+        ab.setSelectedNavigationItem(mFilterAdapter.getPosition(mFilteredContactId));
     }
 
     @Override
@@ -71,7 +69,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
         Intent contactIntent = getActivity().getIntent();
         if (contactIntent != null) {
             if (contactIntent.hasExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID)) {
-                mContactIdFilter = contactIntent
+                mFilteredContactId = contactIntent
                         .getIntExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID, ALL_CONTACTS_ID);
             }
         }
@@ -109,7 +107,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
         }
 
         mAttachmentListAdapter = new AttachmentListAdapter(getXoActivity(), ContentMediaType.AUDIO,
-                mContactIdFilter);
+                mFilteredContactId);
         XoApplication.getXoClient().registerTransferListener(mAttachmentListAdapter);
         setListAdapter(mAttachmentListAdapter);
 
@@ -145,7 +143,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
             switch (mMediaPlayerService.getPlaylistType()) {
                 case ALL_MEDIA: {
-                    if (mContactIdFilter == ALL_CONTACTS_ID && !mMediaPlayerService.isStopped()) {
+                    if (mFilteredContactId == ALL_CONTACTS_ID && !mMediaPlayerService.isStopped()) {
                         if (selectedItem.equals(currentlyPlayedItem)) {
                             updateMediaList();
                             break;
@@ -157,7 +155,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 }
                 break;
                 case CONVERSATION_MEDIA: {
-                    if (mContactIdFilter == mMediaPlayerService.getCurrentConversationContactId()
+                    if (mFilteredContactId == mMediaPlayerService.getCurrentConversationContactId()
                             && !mMediaPlayerService.isStopped()) {
                         if (selectedItem.equals(currentlyPlayedItem)) {
                             updateMediaList();
@@ -201,8 +199,8 @@ public class AudioAttachmentListFragment extends XoListFragment {
         @Override
         public boolean onNavigationItemSelected(int itemPosition, long itemId) {
             int selectedContactId = Integer.valueOf(new Long(itemId).intValue());
-            if (mContactIdFilter != selectedContactId) {
-                mContactIdFilter = selectedContactId;
+            if (mFilteredContactId != selectedContactId) {
+                mFilteredContactId = selectedContactId;
                 loadAttachments();
             }
 

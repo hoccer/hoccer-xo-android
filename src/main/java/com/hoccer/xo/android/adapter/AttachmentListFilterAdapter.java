@@ -47,6 +47,16 @@ public class AttachmentListFilterAdapter extends XoAdapter {
         return mFilterItems.get(position).getContactId();
     }
 
+    public int getPosition(int contactId){
+        for (FilterItem item : mFilterItems) {
+            if (item.getContactId() == contactId) {
+                return mFilterItems.indexOf(item);
+            }
+        }
+
+        return 0;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View filterView;
