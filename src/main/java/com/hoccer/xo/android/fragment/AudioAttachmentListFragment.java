@@ -1,6 +1,5 @@
 package com.hoccer.xo.android.fragment;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.*;
 import android.widget.*;
-import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
@@ -63,8 +61,8 @@ public class AudioAttachmentListFragment extends XoListFragment {
         SpinnerAdapter spinnerAdapter = mFilterAdapter;
         ab.setListNavigationCallbacks(spinnerAdapter, new AttachmentListFilterHandler());
 
-        menu.findItem(R.id.menu_profile_client).setVisible(false);
-        menu.findItem(R.id.menu_single_profile).setVisible(false);
+        menu.findItem(R.id.menu_profile_single).setVisible(false);
+        menu.findItem(R.id.menu_profile_group).setVisible(false);
     }
 
     @Override

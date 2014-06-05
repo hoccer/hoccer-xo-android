@@ -142,7 +142,7 @@ public class SingleProfileFragment extends XoFragment
                     menu.findItem(R.id.menu_profile_block).setVisible(false);
                     menu.findItem(R.id.menu_profile_unblock).setVisible(false);
                 } else {
-                    menu.findItem(R.id.menu_profile_client).setVisible(false);
+                    menu.findItem(R.id.menu_profile_single).setVisible(false);
                     TalkRelationship relationship = mContact.getClientRelationship();
                     if (relationship == null || relationship.isBlocked()) { // todo != null correct
                         menu.findItem(R.id.menu_profile_block).setVisible(false);
@@ -455,7 +455,7 @@ public class SingleProfileFragment extends XoFragment
 
     @Override
     public void onContactRemoved(TalkClientContact contact) {
-        if (mContact != null && mContact.getClientContactId() == contact.getClientContactId()) {
+        if (isMyContact(contact))  {
             getActivity().finish();
         }
     }
@@ -464,6 +464,8 @@ public class SingleProfileFragment extends XoFragment
     public void onClientPresenceChanged(TalkClientContact contact) {
         if (isMyContact(contact)) {
             refreshContact(contact);
+            updateActionBar();
+            finishActivityIfContactDeleted();
         }
     }
 
@@ -471,17 +473,25 @@ public class SingleProfileFragment extends XoFragment
     public void onClientRelationshipChanged(TalkClientContact contact) {
         if (isMyContact(contact)) {
             refreshContact(contact);
+            updateActionBar();
+            finishActivityIfContactDeleted();
         }
     }
 
     @Override
     public void onGroupPresenceChanged(TalkClientContact contact) {
-
+        if (isMyContact(contact)) {
+            updateActionBar();
+            finishActivityIfContactDeleted();
+        }
     }
 
     @Override
     public void onGroupMembershipChanged(TalkClientContact contact) {
-
+        if (isMyContact(contact)) {
+            updateActionBar();
+            finishActivityIfContactDeleted();
+        }
     }
 
     // Actionmode Callbacks

@@ -4,8 +4,6 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import com.hoccer.talk.client.IXoContactListener;
-import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.fragment.SingleProfileFragment;
 import com.hoccer.xo.release.R;
@@ -13,8 +11,7 @@ import com.hoccer.xo.release.R;
 /**
  * Activity wrapping a single profile fragment
  */
-public class SingleProfileActivity extends XoActionbarActivity
-        implements IXoContactListener {
+public class SingleProfileActivity extends XoActionbarActivity {
 
     /* use this extra to open in "client registration" mode */
     public static final String EXTRA_CLIENT_CREATE_SELF = "clientCreateSelf";
@@ -70,19 +67,9 @@ public class SingleProfileActivity extends XoActionbarActivity
         LOG.debug("onResume()");
         super.onResume();
 
-        getXoClient().registerContactListener(this);
-
         if (mMode == Mode.CREATE_SELF) {
             getActionBar().setDisplayHomeAsUpEnabled(false);
         }
-    }
-
-    @Override
-    protected void onPause() {
-        LOG.debug("onPause()");
-        super.onPause();
-
-        getXoClient().unregisterContactListener(this);
     }
 
     public void confirmSelf() {
@@ -108,55 +95,6 @@ public class SingleProfileActivity extends XoActionbarActivity
         mSingleProfileFragment.updateActionBar();
         mSingleProfileFragment.finishActivityIfContactDeleted();
         mSingleProfileFragment.refreshContact(mSingleProfileFragment.getContact());
-    }
-
-    private boolean isMyContact(TalkClientContact contact) {
-        TalkClientContact myContact = mSingleProfileFragment.getContact();
-        return myContact != null && myContact.getClientContactId() == contact.getClientContactId();
-    }
-
-    @Override
-    public void onContactAdded(TalkClientContact contact) {
-        // we don't care
-    }
-
-    @Override
-    public void onContactRemoved(TalkClientContact contact) {
-        if (isMyContact(contact)) {
-            finish();
-        }
-    }
-
-    @Override
-    public void onClientPresenceChanged(TalkClientContact contact) {
-        if (isMyContact(contact)) {
-            mSingleProfileFragment.updateActionBar();
-            mSingleProfileFragment.finishActivityIfContactDeleted();
-        }
-    }
-
-    @Override
-    public void onClientRelationshipChanged(TalkClientContact contact) {
-        if (isMyContact(contact)) {
-            mSingleProfileFragment.updateActionBar();
-            mSingleProfileFragment.finishActivityIfContactDeleted();
-        }
-    }
-
-    @Override
-    public void onGroupPresenceChanged(TalkClientContact contact) {
-        if (isMyContact(contact)) {
-            mSingleProfileFragment.updateActionBar();
-            mSingleProfileFragment.finishActivityIfContactDeleted();
-        }
-    }
-
-    @Override
-    public void onGroupMembershipChanged(TalkClientContact contact) {
-        if (isMyContact(contact)) {
-            mSingleProfileFragment.updateActionBar();
-            mSingleProfileFragment.finishActivityIfContactDeleted();
-        }
     }
 
     private void showSingleProfileFragment(int contactId) {

@@ -80,6 +80,17 @@ public class GroupProfileFragment extends XoFragment
         View v = inflater.inflate(R.layout.fragment_group_profile, container, false);
 
         mAvatarImage = (ImageView) v.findViewById(R.id.profile_group_profile_image);
+        mGroupMembersContainer = (LinearLayout) v.findViewById(R.id.profile_group_members_container);
+        mGroupMembersTitle = (TextView) mGroupMembersContainer.findViewById(R.id.profile_group_members_title);
+        mGroupMembersList = (ListView) mGroupMembersContainer.findViewById(R.id.profile_group_members_list);
+        mGroupCreateButton = (Button) v.findViewById(R.id.profile_group_button_create);
+        mGroupCreateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveCreatedGroup();
+                mGroupCreateButton.setEnabled(false);
+            }
+        });
         mGroupNameText = (TextView) v.findViewById(R.id.profile_group_name);
         mGroupNameEdit = (EditText) v.findViewById(R.id.profile_group_name_edit);
         mGroupNameEdit.addTextChangedListener(new TextWatcher() {
@@ -118,20 +129,6 @@ public class GroupProfileFragment extends XoFragment
         } else {
             LOG.error("Creating GroupProfileFragment without arguments is not supported.");
         }
-
-        mGroupCreateButton = (Button) v.findViewById(R.id.profile_group_button_create);
-        mGroupCreateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveCreatedGroup();
-                mGroupCreateButton.setEnabled(false);
-            }
-        });
-        mGroupMembersContainer = (LinearLayout) v.findViewById(R.id.profile_group_members_container);
-        mGroupMembersTitle = (TextView) mGroupMembersContainer.findViewById(R.id.profile_group_members_title);
-        mGroupMembersList = (ListView) mGroupMembersContainer.findViewById(R.id.profile_group_members_list);
-
-
 
         return v;
     }

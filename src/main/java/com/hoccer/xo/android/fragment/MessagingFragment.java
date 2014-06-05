@@ -81,7 +81,6 @@ public class MessagingFragment extends XoListFragment
         mMessageList.addOverScrollListener(this);
         mMessageList.setOnTouchListener(this);
         mMessageList.setMaxOverScrollY(150);
-        mMessageList.setOverscrollHeader(getResources().getDrawable(R.drawable.ic_light_av_replay));
         mEmptyText = (TextView) view.findViewById(R.id.messaging_empty);
         mOverscrollIndicator = view.findViewById(R.id.overscroll_indicator);
         mCompositionView = ((CompositionView) view.findViewById(R.id.cv_composition));
@@ -107,7 +106,6 @@ public class MessagingFragment extends XoListFragment
             } else {
                 try {
                     mContact = XoApplication.getXoClient().getDatabase().findClientContactById(clientContactId);
-                    converseWithContact();
                 } catch (SQLException e) {
                     LOG.error("sql error", e);
                 }
@@ -124,23 +122,27 @@ public class MessagingFragment extends XoListFragment
 
         // select client/group profile entry for appropriate icon
         if (mContact != null) {
-            MenuItem clientItem = menu.findItem(R.id.menu_profile_client);
+            MenuItem clientItem = menu.findItem(R.id.menu_profile_single);
             clientItem.setVisible(mContact.isClient());
-            MenuItem groupItem = menu.findItem(R.id.menu_single_profile);
+            MenuItem groupItem = menu.findItem(R.id.menu_profile_group);
             groupItem.setVisible(mContact.isGroup());
             menu.findItem(R.id.menu_audio_attachment_list).setVisible(true);
         }
-        menu.findItem(R.id.menu_profile_client).setVisible(true);
+        menu.findItem(R.id.menu_profile_single).setVisible(true);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
         switch (item.getItemId()) {
-            case R.id.menu_profile_client:
-            case R.id.menu_single_profile:
+            case R.id.menu_profile_single:
                 if (mContact != null) {
                     mMessagingFragmentListener.onShowSingleProfileFragment();
+                }
+                break;
+            case R.id.menu_profile_group:
+                if (mContact != null) {
+                    mMessagingFragmentListener.onShowGroupProfileFragment();
                 }
                 break;
             case R.id.menu_audio_attachment_list:
