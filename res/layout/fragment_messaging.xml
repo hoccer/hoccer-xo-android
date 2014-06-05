@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment_messaging"
         android:background="@color/xo_main_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+
+    <com.hoccer.xo.android.view.CompositionView
+            android:id="@+id/cv_composition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"/>
 
     <View
             android:id="@+id/overscroll_indicator"
@@ -17,8 +24,9 @@
     <com.hoccer.xo.android.view.OverscrollListView
             android:id="@android:id/list"
             android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_above="@id/cv_composition"
             android:transcriptMode="normal"
             android:stackFromBottom="true"
             android:smoothScrollbar="false"
@@ -27,10 +35,9 @@
 
     <LinearLayout
             android:id="@android:id/empty"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent">
+            android:layout_centerInParent="true"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content">
         <TextView
                 android:id="@+id/messaging_empty"
                 android:layout_width="wrap_content"
@@ -38,9 +45,5 @@
                 android:text="@string/messaging_loading"/>
     </LinearLayout>
 
-    <com.hoccer.xo.android.view.CompositionView
-            android:id="@+id/cv_composition"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
-</LinearLayout>
+</RelativeLayout>
