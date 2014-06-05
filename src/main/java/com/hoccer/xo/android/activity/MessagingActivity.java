@@ -168,7 +168,6 @@ public class MessagingActivity extends XoActionbarActivity {
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fl_messaging_fragment_container, mMessagingFragment);
-//        ft.addToBackStack(null);
         ft.commit();
     }
 
@@ -178,7 +177,7 @@ public class MessagingActivity extends XoActionbarActivity {
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fl_messaging_fragment_container, mAudioAttachmentListFragment);
-//        ft.addToBackStack(null);
+        ft.addToBackStack(null);
         ft.commit();
     }
 
