@@ -63,6 +63,26 @@ public class MessagingFragment extends XoListFragment
     private IMessagingFragmentListener mMessagingFragmentListener;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            int clientContactId = getArguments().getInt(ARG_CLIENT_CONTACT_ID);
+            if (clientContactId == -1) {
+                LOG.error("invalid contact id");
+            } else {
+                try {
+                    mContact = XoApplication.getXoClient().getDatabase().findClientContactById(clientContactId);
+                } catch (SQLException e) {
+                    LOG.error("sql error", e);
+                }
+            }
+
+        } else {
+            LOG.error("Creating SingleProfileFragment without arguments is not supported.");
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         LOG.debug("onCreateView()");
@@ -95,70 +115,20 @@ public class MessagingFragment extends XoListFragment
                 getXoActivity().selectAttachment();
             }
         });
-
+        mCompositionView.setContact(mContact);
 
         mMotionInterpreter = new MotionInterpreter(Gestures.Transaction.SHARE, getActivity(), mCompositionView);
-
-        if (getArguments() != null) {
-            int clientContactId = getArguments().getInt(ARG_CLIENT_CONTACT_ID);
-            if (clientContactId == -1) {
-                LOG.error("invalid contact id");
-            } else {
-                try {
-                    mContact = XoApplication.getXoClient().getDatabase().findClientContactById(clientContactId);
-                } catch (SQLException e) {
-                    LOG.error("sql error", e);
-                }
-            }
-
-        } else {
-            LOG.error("Creating SingleProfileFragment without arguments is not supported.");
-        }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-
-        // select client/group profile entry for appropriate icon
-        if (mContact != null) {
-            MenuItem clientItem = menu.findItem(R.id.menu_profile_single);
-            clientItem.setVisible(mContact.isClient());
-            MenuItem groupItem = menu.findItem(R.id.menu_profile_group);
-            groupItem.setVisible(mContact.isGroup());
-            menu.findItem(R.id.menu_audio_attachment_list).setVisible(true);
-        }
-        menu.findItem(R.id.menu_profile_single).setVisible(true);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
-        switch (item.getItemId()) {
-            case R.id.menu_profile_single:
-                if (mContact != null) {
-                    mMessagingFragmentListener.onShowSingleProfileFragment();
-                }
-                break;
-            case R.id.menu_profile_group:
-                if (mContact != null) {
-                    mMessagingFragmentListener.onShowGroupProfileFragment();
-                }
-                break;
-            case R.id.menu_audio_attachment_list:
-                if (mContact != null) {
-                    mMessagingFragmentListener.onShowAudioAttachmentListFragment();
-                }
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-        return true;
     }
 
     @Override
     public void onResume() {
         LOG.debug("onResume()");
         super.onResume();
+
+        if (mContact.isDeleted()) {
+            getActivity().finish();
+        }
+
         setHasOptionsMenu(true);
 
         if (mAdapter == null) {
@@ -166,11 +136,9 @@ public class MessagingFragment extends XoListFragment
             mAdapter.setAdapterReloadListener(this);
             mAdapter.onCreate();
             mAdapter.requestReload();
-            mMessageList.setAdapter(mAdapter);
         }
 
-        converseWithContact();
-
+        mMessageList.setAdapter(mAdapter);
         mAdapter.onResume();
 
         if (mContact != null) {
@@ -198,6 +166,46 @@ public class MessagingFragment extends XoListFragment
             mAdapter.onDestroy();
             mAdapter = null;
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        // select client/group profile entry for appropriate icon
+        if (mContact != null) {
+            MenuItem clientItem = menu.findItem(R.id.menu_profile_single);
+            clientItem.setVisible(mContact.isClient());
+            MenuItem groupItem = menu.findItem(R.id.menu_profile_group);
+            groupItem.setVisible(mContact.isGroup());
+            menu.findItem(R.id.menu_audio_attachment_list).setVisible(true);
+            getActivity().getActionBar().setTitle(mContact.getName());
+        }
+        menu.findItem(R.id.menu_profile_single).setVisible(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
+        switch (item.getItemId()) {
+            case R.id.menu_profile_single:
+                if (mContact != null) {
+                    mMessagingFragmentListener.onShowSingleProfileFragment();
+                }
+                break;
+            case R.id.menu_profile_group:
+                if (mContact != null) {
+                    mMessagingFragmentListener.onShowGroupProfileFragment();
+                }
+                break;
+            case R.id.menu_audio_attachment_list:
+                if (mContact != null) {
+                    mMessagingFragmentListener.onShowAudioAttachmentListFragment();
+                }
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+        return true;
     }
 
     @Override
@@ -334,24 +342,5 @@ public class MessagingFragment extends XoListFragment
         } else if (mContact.isClient() && mContact.isNearby()) {
             getActivity().finish();
         }
-    }
-
-    private void converseWithContact() {
-        LOG.debug("converseWithContact(" + mContact.getClientContactId() + ")");
-
-        getActivity().getActionBar().setTitle(mContact.getName());
-        if (mContact.isDeleted()) {
-            getActivity().finish();
-        }
-        // invalidate menu so that profile buttons get disabled/enabled
-        getActivity().invalidateOptionsMenu();
-
-        configureMotionInterpreterForContact(mContact);
-
-        if (mAdapter != null) {
-            mAdapter.converseWithContact(mContact);
-        }
-
-        mCompositionView.converseWithContact(mContact);
     }
 }
