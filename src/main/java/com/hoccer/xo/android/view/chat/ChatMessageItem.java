@@ -2,6 +2,7 @@ package com.hoccer.xo.android.view.chat;
 
 import android.content.Context;
 import android.text.format.DateUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -71,7 +72,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
     /**
      * Reconfigures a given message layout from a given message.
      *
-     * @param view    The message layout to reconfigure
+     * @param view The message layout to reconfigure
      * @return The fully reconfigured message layout
      */
     public View recycleViewForMessage(View view) {
@@ -81,7 +82,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
     /**
      * Returns the type of message item defined in ChatItemType.
-     *
+     * <p/>
      * Subtypes need to overwrite this method and return the appropriate ChatItemType.
      *
      * @return The ChatItemType of this message item
@@ -106,7 +107,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
      * <p/>
      * Subtypes will have to overwrite this method to enhance the configuration of the message layout.
      *
-     * @param view    The given layout
+     * @param view The given layout
      */
     protected void configureViewForMessage(View view) {
         AvatarView avatarView = (AvatarView) view.findViewById(R.id.av_message_avatar);
@@ -115,7 +116,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
         TextView messageText = (TextView) view.findViewById(R.id.tv_message_text);
 
         // Adjust layout for incoming / outgoing message
-                setAvatar(avatarView, mMessage.getSenderContact());
+        setAvatar(avatarView, mMessage.getSenderContact());
         if (mMessage.isIncoming()) {
             if (mMessage.getConversationContact().isGroup()) {
             } else {
@@ -127,6 +128,14 @@ public class ChatMessageItem implements AttachmentTransferListener {
             messageText.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_grey));
             messageText.setTextColor(mContext.getResources().getColorStateList(android.R.color.black));
             messageText.setLinkTextColor(mContext.getResources().getColorStateList(android.R.color.black));
+
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) messageText.getLayoutParams();
+            float marginLeft = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, mContext.getResources().getDisplayMetrics());
+            float marginRight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, mContext.getResources().getDisplayMetrics());
+            layoutParams.leftMargin = (int) marginLeft;
+            layoutParams.rightMargin = (int) marginRight;
+            messageText.setLayoutParams(layoutParams);
+
         } else {
             avatarView.setVisibility(View.GONE);
             messageName.setVisibility(View.GONE);
@@ -134,6 +143,13 @@ public class ChatMessageItem implements AttachmentTransferListener {
             messageText.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_green));
             messageText.setTextColor(mContext.getResources().getColorStateList(android.R.color.white));
             messageText.setLinkTextColor(mContext.getResources().getColorStateList(android.R.color.white));
+
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) messageText.getLayoutParams();
+            float marginLeft = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, mContext.getResources().getDisplayMetrics());
+            float marginRight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, mContext.getResources().getDisplayMetrics());
+            layoutParams.leftMargin = (int) marginLeft;
+            layoutParams.rightMargin = (int) marginRight;
+            messageText.setLayoutParams(layoutParams);
         }
 
         messageTime.setText(getMessageTimestamp(mMessage));
@@ -179,10 +195,10 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
     /**
      * Configures the attachment view for a given message / attachment.
-     *
+     * <p/>
      * Subtypes will have to call this method to trigger the configuration of the attachment layout.
      *
-     * @param view    The chat message item's view to configure
+     * @param view The chat message item's view to configure
      */
     protected void configureAttachmentViewForMessage(View view) {
 
@@ -201,8 +217,20 @@ public class ChatMessageItem implements AttachmentTransferListener {
         // adjust layout for incoming / outgoing attachment
         if (mMessage.isIncoming()) {
             attachmentView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_grey));
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) attachmentView.getLayoutParams();
+            float marginLeft = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, mContext.getResources().getDisplayMetrics());
+            float marginRight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, mContext.getResources().getDisplayMetrics());
+            layoutParams.leftMargin = (int) marginLeft;
+            layoutParams.rightMargin = (int) marginRight;
+            attachmentView.setLayoutParams(layoutParams);
         } else {
             attachmentView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_green));
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) attachmentView.getLayoutParams();
+            float marginLeft = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, mContext.getResources().getDisplayMetrics());
+            float marginRight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, mContext.getResources().getDisplayMetrics());
+            layoutParams.leftMargin = (int) marginLeft;
+            layoutParams.rightMargin = (int) marginRight;
+            attachmentView.setLayoutParams(layoutParams);
         }
 
         // configure transfer progress view
@@ -237,7 +265,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
     /**
      * Configures the attachment view for a given message / attachment.
-     *
+     * <p/>
      * Subtypes will have to overwrite this method to configure the attachment layout.
      *
      * @param contentObject The IContentObject to display
@@ -250,8 +278,8 @@ public class ChatMessageItem implements AttachmentTransferListener {
     /**
      * Returns true when the transfer (upload or download) of the attachment is not completed.
      *
-     * @param state
-     * @return
+     * @param state The current state of the content object
+     * @return true if the transfer control should be displayed for a incomplete transfer
      */
     protected boolean shouldDisplayTransferControl(ContentState state) {
         return !(state == ContentState.SELECTED || state == ContentState.UPLOAD_COMPLETE || state == ContentState.DOWNLOAD_COMPLETE);
