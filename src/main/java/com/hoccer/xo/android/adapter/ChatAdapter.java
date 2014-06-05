@@ -4,8 +4,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import com.hoccer.talk.client.IXoMessageListener;
+import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentMediaTypes;
@@ -24,7 +27,7 @@ import java.util.List;
  * <p/>
  * To configure list items it uses instances of ChatMessageItem and its subtypes.
  */
-public class ChatAdapter extends XoAdapter implements IXoMessageListener {
+public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTransferListener {
 
     /**
      * Number of TalkClientMessage objects in a batch
@@ -36,6 +39,11 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
      * If you scroll up beyond this limit the chat view will not automatically scroll to the bottom when a new message is displayed.
      */
     private static final int AUTO_SCROLL_LIMIT = 5;
+
+    /**
+     * Set to false to override auto scrolling behavior
+     */
+    private boolean shouldAutoScroll = true;
 
     private TalkClientContact mContact;
 
@@ -91,12 +99,14 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
     public void onCreate() {
         super.onCreate();
         getXoClient().registerMessageListener(this);
+        getXoClient().registerTransferListener(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         getXoClient().unregisterMessageListener(this);
+        getXoClient().unregisterTransferListener(this);
     }
 
     @Override
@@ -209,8 +219,10 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
 
-        if (mListView.getLastVisiblePosition() >= getCount() - AUTO_SCROLL_LIMIT) {
-            mListView.smoothScrollToPosition(getCount() - 1);
+        if (shouldAutoScroll) {
+            if (mListView.getLastVisiblePosition() >= getCount() - AUTO_SCROLL_LIMIT) {
+                mListView.smoothScrollToPosition(getCount() - 1);
+            }
         }
     }
 
@@ -258,6 +270,69 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener {
                         originalItem.setMessage(message);
                         notifyDataSetChanged();
                     }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onDownloadRegistered(TalkClientDownload download) {
+
+    }
+
+    @Override
+    public void onDownloadStarted(TalkClientDownload download) {
+
+    }
+
+    @Override
+    public void onDownloadProgress(TalkClientDownload download) {
+
+    }
+
+    @Override
+    public void onDownloadFinished(TalkClientDownload download) {
+
+    }
+
+    @Override
+    public void onDownloadStateChanged(TalkClientDownload download) {
+        if (download.isAvatar() && download.getState() == TalkClientDownload.State.COMPLETE) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    shouldAutoScroll = false;
+                    notifyDataSetChanged();
+                    shouldAutoScroll = true;
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onUploadStarted(TalkClientUpload upload) {
+
+    }
+
+    @Override
+    public void onUploadProgress(TalkClientUpload upload) {
+
+    }
+
+    @Override
+    public void onUploadFinished(TalkClientUpload upload) {
+
+    }
+
+    @Override
+    public void onUploadStateChanged(TalkClientUpload upload) {
+        if (upload.isAvatar()) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    shouldAutoScroll = false;
+                    notifyDataSetChanged();
+                    shouldAutoScroll = true;
                 }
             });
         }
