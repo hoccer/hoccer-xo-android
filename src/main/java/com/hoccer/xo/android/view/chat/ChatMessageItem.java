@@ -1,6 +1,7 @@
 package com.hoccer.xo.android.view.chat;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +42,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
     protected RelativeLayout mContentTransferProgress;
     protected LinearLayout mContentWrapper;
     protected AttachmentTransferControlView mTransferControl;
+    protected RelativeLayout mAttachmentView;
 
 
     public ChatMessageItem(Context context, TalkClientMessage message) {
@@ -186,28 +188,28 @@ public class ChatMessageItem implements AttachmentTransferListener {
      */
     protected void configureAttachmentViewForMessage(View view) {
 
-        RelativeLayout attachmentView = (RelativeLayout) view.findViewById(R.id.rl_message_attachment);
+        mAttachmentView = (RelativeLayout) view.findViewById(R.id.rl_message_attachment);
 
         // add content view
-        if (attachmentView.getChildCount() == 0) {
+        if (mAttachmentView.getChildCount() == 0) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View attachmentWrapper = inflater.inflate(R.layout.view_attachment_wrapper, null);
-            attachmentView.addView(attachmentWrapper);
+            mAttachmentView.addView(attachmentWrapper);
         }
-        attachmentView.setVisibility(View.VISIBLE);
+        mAttachmentView.setVisibility(View.VISIBLE);
 
-        mContentWrapper = (LinearLayout) attachmentView.findViewById(R.id.content_wrapper);
+        mContentWrapper = (LinearLayout) mAttachmentView.findViewById(R.id.content_wrapper);
 
         // adjust layout for incoming / outgoing attachment
         if (mMessage.isIncoming()) {
-            attachmentView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_grey));
+            mAttachmentView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_grey));
         } else {
-            attachmentView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_green));
+            mAttachmentView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_green));
         }
 
         // configure transfer progress view
-        mContentTransferProgress = (RelativeLayout) attachmentView.findViewById(R.id.content_transfer_progress);
-        mTransferControl = (AttachmentTransferControlView) attachmentView.findViewById(R.id.content_transfer_control);
+        mContentTransferProgress = (RelativeLayout) mAttachmentView.findViewById(R.id.content_transfer_progress);
+        mTransferControl = (AttachmentTransferControlView) mAttachmentView.findViewById(R.id.content_transfer_control);
         IContentObject contentObject = mMessage.getAttachmentUpload();
         if (contentObject == null) {
             contentObject = mMessage.getAttachmentDownload();
@@ -224,7 +226,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
         } else {
             mTransferControl.setOnClickListener(null);
-            displayAttachment(contentObject);
+            displayAttachment(contentObject, mMessage.isIncoming());
         }
 
         // hide message text field when empty - there is still an attachment to display
@@ -242,7 +244,11 @@ public class ChatMessageItem implements AttachmentTransferListener {
      *
      * @param contentObject The IContentObject to display
      */
-    protected void displayAttachment(IContentObject contentObject) {
+    protected void displayAttachment(IContentObject contentObject, boolean isIncoming) {
+        if (contentObject.getContentMediaType().contains("image")) {
+            mAttachmentView.setPadding(0, 0, 0, 0);
+            mAttachmentView.setBackgroundColor(Color.TRANSPARENT);
+        }
         mContentTransferProgress.setVisibility(View.GONE);
         mContentWrapper.setVisibility(View.VISIBLE);
     }
@@ -291,7 +297,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
     @Override
     public void onAttachmentTransferComplete(IContentObject contentObject) {
-        displayAttachment(contentObject);
+        displayAttachment(contentObject, mMessage.isIncoming());
     }
 
     @Override
