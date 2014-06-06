@@ -12,13 +12,11 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import org.apache.log4j.Logger;
 
 /**
  * A view holding an AspectImageView and a presence indicator.

@@ -5,7 +5,7 @@ import android.view.*;
 import android.widget.LinearLayout;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
-import com.hoccer.xo.android.view.AttachmentTransferControlView;
+import com.hoccer.xo.android.view.chat.attachments.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
 
 import net.hockeyapp.android.CrashManager;

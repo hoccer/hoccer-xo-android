@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.ContentMediaTypes;
-import com.hoccer.xo.android.content.IContentSelector;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
 

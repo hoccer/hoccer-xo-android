@@ -10,7 +10,6 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.ContentState;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.android.view.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 

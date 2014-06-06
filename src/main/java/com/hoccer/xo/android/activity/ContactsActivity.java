@@ -15,9 +15,7 @@ import android.support.v4.view.ViewPager;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.adapter.ContactsPageAdapter;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.error.EnvironmentUpdaterException;
 import com.hoccer.xo.android.fragment.NearbyContactsFragment;
-import com.hoccer.xo.android.nearby.EnvironmentUpdater;
 import com.hoccer.xo.release.R;
 
 public class ContactsActivity extends XoActivity {

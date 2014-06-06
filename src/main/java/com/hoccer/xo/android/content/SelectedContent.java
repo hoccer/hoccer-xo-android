@@ -12,8 +12,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
 import java.io.*;
-import java.net.URL;
-import java.security.DigestInputStream;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

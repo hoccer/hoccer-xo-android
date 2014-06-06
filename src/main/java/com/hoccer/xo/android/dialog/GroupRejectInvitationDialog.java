@@ -14,7 +14,7 @@ import android.os.Bundle;
 
 public class GroupRejectInvitationDialog extends DialogFragment {
 
-    private static final Logger LOG = Logger.getLogger(GroupDeleteDialog.class);
+    private static final Logger LOG = Logger.getLogger(GroupRejectInvitationDialog.class);
 
     XoActivity mActivity;
 

@@ -10,7 +10,6 @@
     <LinearLayout
             android:id="@+id/content_wrapper"
             android:orientation="vertical"
-            android:layout_centerInParent="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
     </LinearLayout>
@@ -34,7 +33,7 @@
                 android:layout_gravity="center"
                 android:layout_centerInParent="true">
 
-            <com.hoccer.xo.android.view.AttachmentTransferControlView
+            <com.hoccer.xo.android.view.chat.attachments.AttachmentTransferControlView
                     android:id="@+id/content_transfer_control"
                     android:layout_width="170dp"
                     android:layout_height="170dp"
