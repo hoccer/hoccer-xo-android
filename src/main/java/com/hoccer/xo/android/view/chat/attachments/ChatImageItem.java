@@ -43,10 +43,8 @@ public class ChatImageItem extends ChatMessageItem {
         mAttachmentView.setBackgroundDrawable(null);
         // add view lazily
         if (mContentWrapper.getChildCount() == 0) {
-            LayoutInflater inflater = (LayoutInflater) mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            RelativeLayout imageLayout = (RelativeLayout) inflater
-                    .inflate(R.layout.content_image, null);
+            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            RelativeLayout imageLayout = (RelativeLayout) inflater.inflate(R.layout.content_image, null);
             mContentWrapper.addView(imageLayout);
         }
 
