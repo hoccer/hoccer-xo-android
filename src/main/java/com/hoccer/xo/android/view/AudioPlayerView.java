@@ -8,11 +8,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
-import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
-import com.hoccer.talk.model.TalkClient;
 import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.android.content.MediaItem;
+import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -96,7 +94,7 @@ public class AudioPlayerView
                 conversationContactId = XoApplication.getXoClient().getSelfContact().getClientContactId();
             }
 
-            mMediaPlayerService.setMedia(MediaItem.create(contentObject.getContentDataUrl()), conversationContactId);
+            mMediaPlayerService.setMedia(AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject), conversationContactId);
             mMediaPlayerService.play(0);
         }
     }
@@ -116,7 +114,7 @@ public class AudioPlayerView
 
     public boolean isActive() {
         if (contentObject != null && isBound()) {
-            MediaItem currentItem = mMediaPlayerService.getCurrentMediaItem();
+            AudioAttachmentItem currentItem = mMediaPlayerService.getCurrentMediaItem();
             return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && contentObject.getContentDataUrl().equals(currentItem.getFilePath());
         } else {
             return false;

@@ -13,6 +13,8 @@
     <string name="common_done">Done</string>
     <string name="common_decline">Decline</string>
     <string name="common_accept">Accept</string>
+    <string name="common_delete">Delete</string>
+
 
     <!-- Menu entries -->
     <string name="menu_my_profile">My profile</string>

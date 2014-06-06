@@ -18,7 +18,7 @@ import android.widget.*;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
-import com.hoccer.xo.android.content.MediaItem;
+import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.android.service.MediaPlayerService;
@@ -156,7 +156,7 @@ public class FullscreenPlayerFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                MediaItem currentItem = mMediaPlayerService.getCurrentMediaItem();
+                AudioAttachmentItem currentItem = mMediaPlayerService.getCurrentMediaItem();
                 String trackArtist = currentItem.getMetaData().getArtist();
                 String trackTitle = currentItem.getMetaData().getTitle();
                 int totalDuration = mMediaPlayerService.getTotalDuration();
@@ -391,13 +391,13 @@ public class FullscreenPlayerFragment extends Fragment {
         }
     }
 
-    private class LoadArtworkTask extends AsyncTask<MediaItem, Void, Drawable> {
+    private class LoadArtworkTask extends AsyncTask<AudioAttachmentItem, Void, Drawable> {
 
-        private MediaItem mMediaItem;
+        private AudioAttachmentItem mAudioAttachmentItem;
 
-        protected Drawable doInBackground(MediaItem... params) {
-            mMediaItem = params[0];
-            byte[] artworkRaw = MediaMetaData.getArtwork( mMediaItem.getFilePath());
+        protected Drawable doInBackground(AudioAttachmentItem... params) {
+            mAudioAttachmentItem = params[0];
+            byte[] artworkRaw = MediaMetaData.getArtwork( mAudioAttachmentItem.getFilePath());
             if (artworkRaw != null) {
                 return new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(artworkRaw, 0, artworkRaw.length));
             } else {
@@ -408,7 +408,7 @@ public class FullscreenPlayerFragment extends Fragment {
         protected void onPostExecute(Drawable artwork) {
             super.onPostExecute(artwork);
             if (!this.isCancelled()) {
-                mMediaItem.getMetaData().setArtwork(artwork);
+                mAudioAttachmentItem.getMetaData().setArtwork(artwork);
                 mArtworkView.setImageDrawable(artwork);
             }
         }

@@ -17,7 +17,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.RemoteViews;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
-import com.hoccer.xo.android.content.MediaItem;
+import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -260,7 +260,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
     private void updateMetaDataView(RemoteViews views) {
         String title = getString(R.string.media_meta_data_unknown_title);
         String artist = getString(R.string.media_meta_data_unknown_artist);
-        MediaItem item = mPlaylist.current();
+        AudioAttachmentItem item = mPlaylist.current();
         String metaDataTitle = item.getMetaData().getTitle();
         String metaDataArtist = item.getMetaData().getArtist();
         boolean metaDataAvailable = false;
@@ -311,23 +311,23 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         play(mPlaylist.current());
     }
 
-    public void play(final MediaItem mediaItem) {
+    public void play(final AudioAttachmentItem audioAttachmentItem) {
         if (mMediaPlayer == null) {
-            createMediaPlayerAndPlay(mediaItem);
+            createMediaPlayerAndPlay(audioAttachmentItem);
         } else {
             startPlaying();
         }
     }
 
-    private void createMediaPlayerAndPlay(final MediaItem mediaItem) {
+    private void createMediaPlayerAndPlay(final AudioAttachmentItem audioAttachmentItem) {
         createMediaPlayer();
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                play(mediaItem);
+                play(audioAttachmentItem);
             }
         });
-        resetAndPrepareMediaPlayer(mediaItem.getFilePath());
+        resetAndPrepareMediaPlayer(audioAttachmentItem.getFilePath());
     }
 
     private void startPlaying() {
@@ -353,18 +353,18 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         return isPaused();
     }
 
-    private void playNewTrack(MediaItem mediaItem) {
+    private void playNewTrack(AudioAttachmentItem audioAttachmentItem) {
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
             mMediaPlayer = null;
         }
-        play(mediaItem);
+        play(audioAttachmentItem);
     }
 
     private void playNext() {
-        MediaItem mediaItem = mPlaylist.nextByRepeatMode();
-        if (mediaItem != null) {
-            playNewTrack(mediaItem);
+        AudioAttachmentItem audioAttachmentItem = mPlaylist.nextByRepeatMode();
+        if (audioAttachmentItem != null) {
+            playNewTrack(audioAttachmentItem);
         } else {
             stop();
         }
@@ -486,14 +486,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         return mPlaylistType;
     }
 
-    public void setMedia(MediaItem item, int conversationContactId) {
+    public void setMedia(AudioAttachmentItem item, int conversationContactId) {
         mPlaylist.clear();
         mPlaylist.add(0, item);
         mCurrentConversationContactId = conversationContactId;
         mPlaylistType = PlaylistType.SINGLE_MEDIA;
     }
 
-    public void setMediaList(List<MediaItem> itemList, int conversationContactId) {
+    public void setMediaList(List<AudioAttachmentItem> itemList, int conversationContactId) {
         mPlaylist.clear();
         mPlaylist.addAll(itemList);
         mCurrentConversationContactId = conversationContactId;
@@ -505,7 +505,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         }
     }
 
-    public void addMedia(MediaItem item) {
+    public void addMedia(AudioAttachmentItem item) {
         mPlaylist.add(0, item);
     }
 
@@ -540,7 +540,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         mLocalBroadcastManager.sendBroadcast(intent);
     }
 
-    public MediaItem getCurrentMediaItem() {
+    public AudioAttachmentItem getCurrentMediaItem() {
         return mPlaylist.current();
     }
 }

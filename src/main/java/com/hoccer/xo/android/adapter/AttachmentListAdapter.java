@@ -1,12 +1,7 @@
 package com.hoccer.xo.android.adapter;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
@@ -15,19 +10,17 @@ import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
-import com.hoccer.xo.android.content.MediaItem;
-import com.hoccer.xo.android.content.MediaMetaData;
+import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.android.view.AttachmentAudioView;
-import com.hoccer.xo.release.R;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AttachmentListAdapter extends XoAdapter implements IXoTransferListener{
+public class AttachmentListAdapter extends XoAdapter implements IXoTransferListener {
 
-    private List<MediaItem> mMediaItems;
+    private List<AudioAttachmentItem> mAudioAttachmentItems;
     private String mContentMediaType;
     private int mConversationContactId = MediaPlayerService.UNDEFINED_CONTACT_ID;
 
@@ -50,8 +43,8 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
         loadAttachmentList();
     }
 
-    public List<MediaItem> getMediaItems() {
-        return mMediaItems;
+    public List<AudioAttachmentItem> getAudioAttachmentItems() {
+        return mAudioAttachmentItems;
     }
 
     public int getConversationContactId() {
@@ -60,12 +53,12 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
 
     @Override
     public int getCount() {
-        return mMediaItems.size();
+        return mAudioAttachmentItems.size();
     }
 
     @Override
-    public MediaItem getItem(int position) {
-        return mMediaItems.get(position);
+    public AudioAttachmentItem getItem(int position) {
+        return mAudioAttachmentItems.get(position);
     }
 
     @Override
@@ -75,9 +68,9 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if (mMediaItems.get(position) == null) {
-            mMediaItems.remove(position);
-            if (mMediaItems.size() <= position) {
+        if (mAudioAttachmentItems.get(position) == null) {
+            mAudioAttachmentItems.remove(position);
+            if (mAudioAttachmentItems.size() <= position) {
                 return null;
             }
             return getView(position, convertView, parent);
@@ -88,7 +81,7 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
             audioRowView = new AttachmentAudioView(mActivity);
         }
 
-        audioRowView.setMediaItem(mMediaItems.get(position));
+        audioRowView.setMediaItem(mAudioAttachmentItems.get(position));
         return audioRowView;
     }
 
@@ -133,7 +126,7 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
 
         if (download.getContentMediaType().equals(this.mContentMediaType)) {
             if ((mConversationContactId == MediaPlayerService.UNDEFINED_CONTACT_ID) || (mConversationContactId == contactId)) {
-                mMediaItems.add(0, MediaItem.create(download.getContentDataUrl()));
+                mAudioAttachmentItems.add(0, AudioAttachmentItem.create(download.getContentDataUrl(), download));
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -170,8 +163,18 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
 
     }
 
+    public void removeItem(int pos) {
+        mAudioAttachmentItems.remove(pos);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
     private void loadAttachmentList() {
-        mMediaItems = new ArrayList<MediaItem>();
+        mAudioAttachmentItems = new ArrayList<AudioAttachmentItem>();
         try {
             List<TalkClientDownload> downloads;
             if (mContentMediaType != null) {
@@ -186,7 +189,7 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
 
             if (downloads != null) {
                 for (TalkClientDownload download : downloads) {
-                    mMediaItems.add(MediaItem.create(download.getContentDataUrl()));
+                    mAudioAttachmentItems.add(AudioAttachmentItem.create(download.getContentDataUrl(), download));
                 }
 
             }
@@ -195,4 +198,5 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
             LOG.error(e);
         }
     }
+
 }

@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.hoccer.xo.android.content.MediaItem;
+import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
 public class AttachmentAudioView extends LinearLayout implements View.OnClickListener {
 
     private Context mContext;
-    private MediaItem mMediaItem;
+    private AudioAttachmentItem mAudioAttachmentItem;
     private ServiceConnection mConnection;
     private BroadcastReceiver mReceiver;
     private MediaPlayerService mMediaPlayerService;
@@ -42,18 +42,18 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
         mArtworkImageView = ((ImageView) findViewById(R.id.iv_artcover));
     }
 
-    public void setMediaItem(MediaItem mediaItem) {
-        if (mMediaItem == null || !mMediaItem.getFilePath().equals(mediaItem.getFilePath())) {
-            mMediaItem = mediaItem;
+    public void setMediaItem(AudioAttachmentItem audioAttachmentItem) {
+        if (mAudioAttachmentItem == null || !mAudioAttachmentItem.getFilePath().equals(audioAttachmentItem.getFilePath())) {
+            mAudioAttachmentItem = audioAttachmentItem;
             updateView();
         }
 
     }
 
     private void updateView() {
-        mTitleTextView.setText(mMediaItem.getMetaData().getTitleOrFilename(mMediaItem.getFilePath()));
+        mTitleTextView.setText(mAudioAttachmentItem.getMetaData().getTitleOrFilename(mAudioAttachmentItem.getFilePath()));
 
-        String artist = mMediaItem.getMetaData().getArtist();
+        String artist = mAudioAttachmentItem.getMetaData().getArtist();
         if (artist == null || artist.isEmpty()){
             artist = getResources().getString(R.string.media_meta_data_unknown_artist);
         }
@@ -62,19 +62,19 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
         if (mCurrentTask != null && mCurrentTask.getStatus() != AsyncTask.Status.FINISHED) {
             mCurrentTask.cancel(true);
         }
-        if (mMediaItem.getMetaData().getArtwork() == null) {
+        if (mAudioAttachmentItem.getMetaData().getArtwork() == null) {
             mCurrentTask = new DownloadArtworkTask();
             mCurrentTask.execute();
         } else {
-            AttachmentAudioView.this.mArtworkImageView.setImageDrawable(mMediaItem.getMetaData().getArtwork());
+            AttachmentAudioView.this.mArtworkImageView.setImageDrawable(mAudioAttachmentItem.getMetaData().getArtwork());
         }
 
     }
 
     public boolean isActive() {
         if (isBound()) {
-            MediaItem currentItem = mMediaPlayerService.getCurrentMediaItem();
-            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && ((mMediaItem.getFilePath()).equals(currentItem.getFilePath()));
+            AudioAttachmentItem currentItem = mMediaPlayerService.getCurrentMediaItem();
+            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && ((mAudioAttachmentItem.getFilePath()).equals(currentItem.getFilePath()));
         } else {
             return false;
         }
@@ -153,7 +153,7 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
     private class DownloadArtworkTask extends AsyncTask<Void, Void, Drawable> {
 
         protected Drawable doInBackground(Void... params) {
-            byte[] artworkRaw = MediaMetaData.getArtwork(mMediaItem.getFilePath());
+            byte[] artworkRaw = MediaMetaData.getArtwork(mAudioAttachmentItem.getFilePath());
             if (artworkRaw != null) {
                 return new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(artworkRaw, 0, artworkRaw.length));
             } else {
@@ -164,7 +164,7 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
         protected void onPostExecute(Drawable artwork) {
             super.onPostExecute(artwork);
             if (!this.isCancelled()) {
-                mMediaItem.getMetaData().setArtwork(artwork);
+                mAudioAttachmentItem.getMetaData().setArtwork(artwork);
                 AttachmentAudioView.this.mArtworkImageView.setImageDrawable(artwork);
             }
         }

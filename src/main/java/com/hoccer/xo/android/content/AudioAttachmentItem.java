@@ -1,23 +1,37 @@
 package com.hoccer.xo.android.content;
 
 import android.net.Uri;
+import com.hoccer.talk.content.IContentObject;
 
-public class MediaItem {
+public class AudioAttachmentItem {
+
+    private IContentObject contentObject;
 
     private MediaMetaData mMetaData;
+
     private String mFilePath;
 
-
-    public static MediaItem create(String mediaFilePath) {
+    public static AudioAttachmentItem create(String mediaFilePath, IContentObject contentObject) {
         if (mediaFilePath == null || mediaFilePath.isEmpty()) {
             return null;
         }
-        MediaItem mi = new MediaItem();
+        AudioAttachmentItem mi = new AudioAttachmentItem();
         mi.setFilePath(mediaFilePath);
 
         String path = Uri.parse(mediaFilePath).getPath();
         mi.setMetaData(MediaMetaData.create(path));
+
+        mi.setContentObject(contentObject);
+
         return mi;
+    }
+
+    public IContentObject getContentObject() {
+        return contentObject;
+    }
+
+    public void setContentObject(IContentObject contentObject) {
+        this.contentObject = contentObject;
     }
 
     public String getFilePath() {
@@ -42,8 +56,8 @@ public class MediaItem {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof MediaItem) {
-            return this.getFilePath().equals(((MediaItem) obj).getFilePath());
+        if (obj != null && obj instanceof AudioAttachmentItem) {
+            return this.getFilePath().equals(((AudioAttachmentItem) obj).getFilePath());
         }
 
         return false;

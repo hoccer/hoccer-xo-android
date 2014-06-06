@@ -1,27 +1,36 @@
 package com.hoccer.xo.android.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.ActionBar;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.SparseBooleanArray;
 import android.view.*;
-import android.widget.*;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.SpinnerAdapter;
+import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.activity.AudioAttachmentListActivity;
 import com.hoccer.xo.android.adapter.AttachmentListAdapter;
 import com.hoccer.xo.android.adapter.AttachmentListFilterAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
-import com.hoccer.xo.android.content.MediaItem;
+import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AudioAttachmentListFragment extends XoListFragment {
 
@@ -34,6 +43,8 @@ public class AudioAttachmentListFragment extends XoListFragment {
     private AttachmentListAdapter mAttachmentListAdapter;
     private AttachmentListFilterAdapter mFilterAdapter;
     private int mFilteredContactId;
+    private ActionMode mActionMode;
+    private ActionMode.Callback mActionModeCallback;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,9 +84,52 @@ public class AudioAttachmentListFragment extends XoListFragment {
                         .getIntExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID, ALL_CONTACTS_ID);
             }
         }
-        
+
         loadAttachments();
-        getListView().setOnItemClickListener(new OnAttachmentClickHandler());
+
+        ListView listView = getListView();
+        listView.setOnItemClickListener(new OnAttachmentClickHandler());
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                View view = getListView().getChildAt(position - getListView().getFirstVisiblePosition());
+                if (checked) {
+                    view.setBackgroundColor(getResources().getColor(R.color.xo_group_members_divder));
+                } else {
+                    view.setBackgroundColor(Color.TRANSPARENT);
+                }
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.context_menu_fragment_messaging, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_delete_attachment:
+                        deleteSelectedAttachmentItems();
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
+            }
+        });
 
         Intent intent = new Intent(getActivity(), MediaPlayerService.class);
         getActivity().startService(intent);
@@ -113,6 +167,37 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
     }
 
+    private void deleteSelectedAttachmentItems() {
+        SparseBooleanArray checked = getListView().getCheckedItemPositions();
+        LOG.error("#foo " + checked);
+        for (int i = 0; i < getListView().getCount(); i++) {
+            if (checked.get(i)) {
+                deleteAudioAttachment(i);
+            }
+        }
+    }
+
+    private void deleteAudioAttachment(int i) {
+        AudioAttachmentItem audioAttachmentItem = mAttachmentListAdapter.getItem(i);
+
+        if (deleteFile(audioAttachmentItem.getFilePath())) {
+            try {
+                XoApplication.getXoClient().getDatabase().deleteMessageByTalkClientDownloadId(((TalkClientDownload) audioAttachmentItem.getContentObject()).getClientDownloadId());
+            } catch (SQLException e) {
+                LOG.error("Error deleting message with client download id of " + ((TalkClientDownload) audioAttachmentItem.getContentObject()).getClientDownloadId());
+                e.printStackTrace();
+            }
+            mAttachmentListAdapter.removeItem(i);
+        }
+    }
+
+    private boolean deleteFile(String filePath) {
+        String path = Uri.parse(filePath).getPath();
+        File file = new File(path);
+        boolean deleted = file.delete();
+        return deleted;
+    }
+
     private void bindService(Intent intent) {
 
         mConnection = new ServiceConnection() {
@@ -137,9 +222,9 @@ public class AudioAttachmentListFragment extends XoListFragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            MediaItem selectedItem = mAttachmentListAdapter.getItem(position);
+            AudioAttachmentItem selectedItem = mAttachmentListAdapter.getItem(position);
 
-            MediaItem currentlyPlayedItem = mMediaPlayerService.getCurrentMediaItem();
+            AudioAttachmentItem currentlyPlayedItem = mMediaPlayerService.getCurrentMediaItem();
 
             switch (mMediaPlayerService.getPlaylistType()) {
                 case ALL_MEDIA: {
@@ -178,9 +263,9 @@ public class AudioAttachmentListFragment extends XoListFragment {
         }
 
         private void setMediaList() {
-            List<MediaItem> itemList = new ArrayList<MediaItem>();
-            for (MediaItem mediaItem : mAttachmentListAdapter.getMediaItems()) {
-                itemList.add(mediaItem);
+            List<AudioAttachmentItem> itemList = new ArrayList<AudioAttachmentItem>();
+            for (AudioAttachmentItem audioAttachmentItem : mAttachmentListAdapter.getAudioAttachmentItems()) {
+                itemList.add(audioAttachmentItem);
             }
             mMediaPlayerService.setMediaList(itemList, mAttachmentListAdapter.getConversationContactId());
         }
