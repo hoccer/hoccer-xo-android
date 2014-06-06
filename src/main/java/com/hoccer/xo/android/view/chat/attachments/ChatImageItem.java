@@ -4,12 +4,12 @@ import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.util.ImageLoader;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -22,7 +22,6 @@ import android.graphics.drawable.NinePatchDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -38,11 +37,6 @@ import java.io.IOException;
 
 
 public class ChatImageItem extends ChatMessageItem {
-
-    /**
-     * Caches the loaded attachment image
-     */
-    private ImageView mImageView;
 
     private Context mContext;
 
@@ -82,10 +76,17 @@ public class ChatImageItem extends ChatMessageItem {
             }
         });
 
-        mImageView = (ImageView) mContentWrapper.findViewById(R.id.iv_image_view);
+        ImageView imageView = (ImageView) mContentWrapper.findViewById(R.id.iv_image_view);
         RelativeLayout rootView = (RelativeLayout) mContentWrapper.findViewById(R.id.rl_root);
-        mImageView.setVisibility(View.INVISIBLE);
-        loadImage(rootView, mImageView, mMessage.isIncoming());
+        imageView.setVisibility(View.INVISIBLE);
+        loadImage(rootView, imageView, mMessage.isIncoming());
+        if (mMessage.isIncoming()) {
+            rootView.setGravity(Gravity.LEFT);
+        } else {
+            rootView.setGravity(Gravity.RIGHT);
+        }
+        imageView.setVisibility(View.INVISIBLE);
+        ImageLoader.getInstance(mContext).displayImage(contentObject.getContentDataUrl(), imageView, mMessage.isIncoming());
     }
 
     private void displayImage(IContentObject contentObject) {
@@ -229,7 +230,8 @@ public class ChatImageItem extends ChatMessageItem {
         private Bitmap scaleBitmap(Bitmap bitmap, Context context) {
             //200dp in item_chat_message.xml -> rl_message_attachment -> height
             DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-            float scaledHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, metrics);
+            float scaledHeight = TypedValue
+                    .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, metrics);
             float scaledWidth = bitmap.getWidth() * (scaledHeight / bitmap.getHeight());
             return Bitmap.createScaledBitmap(bitmap, Math.round(scaledWidth), Math.round(scaledHeight),
                     false);

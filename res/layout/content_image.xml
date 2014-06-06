@@ -9,10 +9,9 @@
             android:id="@+id/iv_image_view"
             android:src="@drawable/ic_light_content_picture"
             android:layout_alignParentBottom="true"
-
             android:adjustViewBounds="true"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:layout_width="wrap_content"/>
 </RelativeLayout>
