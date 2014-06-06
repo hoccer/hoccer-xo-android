@@ -1,6 +1,7 @@
 package com.hoccer.xo.android.view.chat.attachments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.*;
 import android.graphics.drawable.NinePatchDrawable;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 import java.io.IOException;
@@ -27,9 +29,12 @@ public class ChatImageItem extends ChatMessageItem {
     /**
      * Caches the loaded attachment image
      */
+    private ImageView mImageView;
+    private Context mContext;
 
     public ChatImageItem(Context context, TalkClientMessage message) {
         super(context, message);
+        mContext = context;
     }
 
     public ChatItemType getType() {
@@ -43,7 +48,7 @@ public class ChatImageItem extends ChatMessageItem {
     }
 
     @Override
-    protected void displayAttachment(IContentObject contentObject, boolean isIncoming) {
+    protected void displayAttachment(final IContentObject contentObject, boolean isIncoming) {
         super.displayAttachment(contentObject, isIncoming);
 
         // add view lazily
@@ -52,10 +57,29 @@ public class ChatImageItem extends ChatMessageItem {
             RelativeLayout imageLayout = (RelativeLayout) inflater.inflate(R.layout.content_image, null);
             mContentWrapper.addView(imageLayout);
         }
-        ImageView imageView = (ClickableImageView) mContentWrapper.findViewById(R.id.civ_image_view);
-        RelativeLayout root = (RelativeLayout) mContentWrapper.findViewById(R.id.rl_root);
-        imageView.setVisibility(View.INVISIBLE);
-        loadImage(root, imageView, contentObject.getContentDataUrl(), mContext, isIncoming);
+
+        mContentWrapper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayImage(contentObject);
+            }
+        });
+
+        mImageView = (ImageView) mContentWrapper.findViewById(R.id.iv_image_view);
+        RelativeLayout rootView = (RelativeLayout) mContentWrapper.findViewById(R.id.rl_root);
+        mImageView.setVisibility(View.INVISIBLE);
+        loadImage(rootView, mImageView, contentObject.getContentDataUrl(), mContext, isIncoming);
+    }
+
+    private void displayImage(IContentObject contentObject) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse(contentObject.getContentDataUrl()), "image/*");
+        try {
+            XoActivity activity = (XoActivity) mContext;
+            activity.startExternalActivity(intent);
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadImage(RelativeLayout root, ImageView view, String contentUrl, Context context, boolean isIncoming) {

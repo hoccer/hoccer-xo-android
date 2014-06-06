@@ -62,7 +62,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="30dp"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/tv_message_time"
                 android:layout_toRightOf="@id/av_message_avatar"
                 android:layout_alignWithParentIfMissing="true"

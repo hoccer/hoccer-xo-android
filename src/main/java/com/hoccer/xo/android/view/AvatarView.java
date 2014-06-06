@@ -75,11 +75,6 @@ public class AvatarView extends LinearLayout implements IXoContactListener {
 
 
     public void setContact(TalkClientContact contact) {
-
-        // do nothing if nothing is to reload
-        if (mContact != null && contact != null && mContact.getAvatarContentUrl() != null && mContact.getAvatarContentUrl().equalsIgnoreCase(contact.getAvatarContentUrl())) {
-            return;
-        }
         mContact = contact;
         updateAvatar();
         updatePresence();

@@ -30,6 +30,7 @@ import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.IXoClientService;
 import com.hoccer.xo.android.service.XoClientService;
 import com.hoccer.xo.android.view.AttachmentTransferControlView;
+import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
 import net.hockeyapp.android.CrashManager;
@@ -813,8 +814,8 @@ public abstract class XoActivity extends FragmentActivity {
     public void hackReturnedFromDialog() {
     }
 
-//    public void showPopupForContentView(OldContentView contentView) {
-//    }
+    public void showPopupForMessageItem(ChatMessageItem messageItem, View messageItemView) {
+    }
 
     public void clipBoardItemSelected(IContentObject contentObject) {
     }
