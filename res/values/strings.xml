@@ -57,7 +57,7 @@
 
     <!-- Messaging fragment -->
     <string name="messaging_loading">Loading...</string>
-    <string name="messaging_no_messages"></string>
+    <string name="messaging_no_messages">No Messages</string>
     <string name="messaging_invited_join">Join group</string>
     <string name="menu_copy_attachment">Copy</string>
 

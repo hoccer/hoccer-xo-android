@@ -18,7 +18,7 @@ import com.hoccer.talk.content.ContentState;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.view.AttachmentTransferControlView;
+import com.hoccer.xo.android.view.chat.attachments.AttachmentTransferControlView;
 import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.android.view.chat.attachments.AttachmentTransferHandler;
 import com.hoccer.xo.android.view.chat.attachments.AttachmentTransferListener;
@@ -105,8 +105,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
      */
     private View createView() {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.item_chat_message, null);
-        return view;
+        return inflater.inflate(R.layout.item_chat_message, null);
     }
 
     /**

@@ -1,18 +1,12 @@
 package com.hoccer.xo.android;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import com.hoccer.talk.client.IXoClientDatabaseBackend;
 import com.hoccer.talk.client.IXoClientHost;
-import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientConfiguration;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
-import org.apache.log4j.Logger;
 import org.eclipse.jetty.websocket.WebSocketClientFactory;
 
 import android.content.Context;
@@ -25,7 +19,6 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.prefs.Preferences;
 
 /**
  * Android-specific implementation of an XO client host

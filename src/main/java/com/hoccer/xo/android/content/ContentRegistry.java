@@ -13,7 +13,6 @@ import android.widget.SimpleAdapter;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.contentselectors.*;
-import com.hoccer.xo.android.content.contentselectors.MapsLocationSelector;
 import com.hoccer.xo.android.util.IntentHelper;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -326,8 +325,7 @@ public class ContentRegistry {
     public IContentObject createSelectedAttachment(ContentSelection selection, Intent intent) {
         IContentSelector selector = selection.getSelector();
         if(selector != null) {
-            IContentObject object = selector.createObjectFromSelectionResult(selection.getActivity(), intent);
-            return object;
+            return selector.createObjectFromSelectionResult(selection.getActivity(), intent);
         }
         return null;
     }

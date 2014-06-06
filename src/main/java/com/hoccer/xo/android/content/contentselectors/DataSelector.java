@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import com.hoccer.talk.content.IContentObject;
-import com.hoccer.xo.android.content.IContentSelector;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
 

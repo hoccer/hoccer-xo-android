@@ -7,7 +7,7 @@
                 android:id="@+id/rl_root"
                 android:background="@android:color/transparent">
 
-    <com.hoccer.xo.android.view.AttachmentTransferControlView
+    <com.hoccer.xo.android.view.chat.attachments.AttachmentTransferControlView
             android:layout_width="170dp"
             android:layout_height="170dp"
             android:layout_gravity="center"

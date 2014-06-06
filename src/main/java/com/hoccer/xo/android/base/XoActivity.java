@@ -29,7 +29,7 @@ import com.hoccer.xo.android.content.contentselectors.ImageSelector;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.IXoClientService;
 import com.hoccer.xo.android.service.XoClientService;
-import com.hoccer.xo.android.view.AttachmentTransferControlView;
+import com.hoccer.xo.android.view.chat.attachments.AttachmentTransferControlView;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
@@ -38,7 +38,6 @@ import net.hockeyapp.android.CrashManager;
 import org.apache.log4j.Logger;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -594,9 +593,7 @@ public abstract class XoActivity extends FragmentActivity {
                     mBarcodeToken = code.replace(XoClientConfiguration.HXO_URL_SCHEME, "");
                 }
             }
-            return;
         }
-
     }
 
     protected void enableUpNavigation() {
@@ -798,7 +795,6 @@ public abstract class XoActivity extends FragmentActivity {
                     sendIntent.setPackage(defaultSmsPackageName);
                 }
                 startActivity(sendIntent);
-                return;
             } else {
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
                 intent.setData(Uri.parse("smsto:"));
