@@ -55,7 +55,69 @@ public class ChatImageItem extends ChatMessageItem {
         ImageView imageView = (ClickableImageView) mContentWrapper.findViewById(R.id.civ_image_view);
         RelativeLayout root = (RelativeLayout) mContentWrapper.findViewById(R.id.rl_root);
         imageView.setVisibility(View.INVISIBLE);
-        loadImageNew(root, imageView, contentObject.getContentDataUrl(), mContext, isIncoming);
+        loadImage(root, imageView, contentObject.getContentDataUrl(), mContext, isIncoming);
+    }
+
+    private void loadImage(RelativeLayout root, ImageView view, String contentUrl, Context context, boolean isIncoming) {
+        String path = getRealPathFromURI(Uri.parse(contentUrl), context);
+        UpdateImageView task = new UpdateImageView(mContext, path, view, root, isIncoming);
+        task.execute(null);
+    }
+
+    private class UpdateImageView extends AsyncTask<Object, Object, Bitmap> {
+        private Context mContext;
+        private String mPath;
+        private ImageView mView;
+        private boolean mIsIncoming;
+        private RelativeLayout mRoot;
+
+        public UpdateImageView(Context context, String path, ImageView view, RelativeLayout root, boolean isIncoming) {
+            mContext = context;
+            mPath = path;
+            mView = view;
+            mIsIncoming = isIncoming;
+            mRoot = root;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Bitmap doInBackground(Object[] objects) {
+            BitmapFactory.Options opt = new BitmapFactory.Options();
+            opt.inSampleSize = 4;
+            Bitmap original = BitmapFactory.decodeFile(mPath, opt);
+            original = rotateBitmap(original, mPath);
+            original = scaleBitmap(original, mContext);
+            //Load mask
+            int maskResource = R.drawable.bubble_green;
+            if (mIsIncoming) {
+                maskResource = R.drawable.bubble_grey;
+            }
+            Bitmap mask = getNinePatchMask(maskResource, original.getWidth(), original.getHeight(), mContext);
+            //Draw everything on canvas
+            Bitmap result = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas c = new Canvas(result);
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+            c.drawBitmap(original, 0, 0, null);
+            c.drawBitmap(mask, 0, 0, paint);
+            paint.setXfermode(null);
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            mView.setImageBitmap(bitmap);
+            mView.setVisibility(View.VISIBLE);
+            if (mIsIncoming) {
+                mRoot.setGravity(Gravity.LEFT);
+            } else {
+                mRoot.setGravity(Gravity.RIGHT);
+            }
+        }
     }
 
     private Bitmap rotateBitmap(Bitmap bitmap, String filePath) {
@@ -118,67 +180,5 @@ public class ChatImageItem extends ChatMessageItem {
             }
         }
         return result;
-    }
-
-    private void loadImageNew(RelativeLayout root, ImageView view, String contentUrl, Context context, boolean isIncoming) {
-        String path = getRealPathFromURI(Uri.parse(contentUrl), context);
-        UpdateImageView task = new UpdateImageView(mContext, path, view, root, isIncoming);
-        task.execute(null);
-    }
-
-    private class UpdateImageView extends AsyncTask<Object, Object, Bitmap> {
-        private Context mContext;
-        private String mPath;
-        private ImageView mView;
-        private boolean mIsIncoming;
-        private RelativeLayout mRoot;
-
-        public UpdateImageView(Context context, String path, ImageView view, RelativeLayout root, boolean isIncoming) {
-            mContext = context;
-            mPath = path;
-            mView = view;
-            mIsIncoming = isIncoming;
-            mRoot = root;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Bitmap doInBackground(Object[] objects) {
-            BitmapFactory.Options opt = new BitmapFactory.Options();
-            opt.inSampleSize = 4;
-            Bitmap original = BitmapFactory.decodeFile(mPath, opt);
-            original = rotateBitmap(original, mPath);
-            original = scaleBitmap(original, mContext);
-            //Load mask
-            int maskResource = R.drawable.bubble_green;
-            if (mIsIncoming) {
-                maskResource = R.drawable.bubble_grey;
-            }
-            Bitmap mask = getNinePatchMask(maskResource, original.getWidth(), original.getHeight(), mContext);
-            //Draw everything on canvas
-            Bitmap result = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
-            Canvas c = new Canvas(result);
-            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-            c.drawBitmap(original, 0, 0, null);
-            c.drawBitmap(mask, 0, 0, paint);
-            paint.setXfermode(null);
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            mView.setImageBitmap(bitmap);
-            mView.setVisibility(View.VISIBLE);
-            if (mIsIncoming) {
-                mRoot.setGravity(Gravity.LEFT);
-            } else {
-                mRoot.setGravity(Gravity.RIGHT);
-            }
-        }
     }
 }
