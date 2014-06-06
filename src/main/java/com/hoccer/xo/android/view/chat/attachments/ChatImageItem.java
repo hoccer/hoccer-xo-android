@@ -84,7 +84,7 @@ public class ChatImageItem extends ChatMessageItem implements ImageLoadingListen
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(contentObject.getContentDataUrl()), "image/*");
         try {
-            XoActivity activity = (XoActivity)mContext;
+            XoActivity activity = (XoActivity) mContext;
             activity.startExternalActivity(intent);
         } catch (ClassCastException e) {
             e.printStackTrace();
