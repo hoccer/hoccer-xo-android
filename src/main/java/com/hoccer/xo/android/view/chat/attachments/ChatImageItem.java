@@ -48,9 +48,10 @@ public class ChatImageItem extends ChatMessageItem {
     }
 
     @Override
-    protected void displayAttachment(final IContentObject contentObject, boolean isIncoming) {
-        super.displayAttachment(contentObject, isIncoming);
-
+    protected void displayAttachment(final IContentObject contentObject) {
+        super.displayAttachment(contentObject);
+        mAttachmentView.setPadding(0, 0, 0, 0);
+        mAttachmentView.setBackgroundColor(Color.TRANSPARENT);
         // add view lazily
         if (mContentWrapper.getChildCount() == 0) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -68,7 +69,7 @@ public class ChatImageItem extends ChatMessageItem {
         mImageView = (ImageView) mContentWrapper.findViewById(R.id.iv_image_view);
         RelativeLayout rootView = (RelativeLayout) mContentWrapper.findViewById(R.id.rl_root);
         mImageView.setVisibility(View.INVISIBLE);
-        loadImage(rootView, mImageView, contentObject.getContentDataUrl(), mContext, isIncoming);
+        loadImage(rootView, mImageView, contentObject.getContentDataUrl(), mContext, mMessage.isIncoming());
     }
 
     private void displayImage(IContentObject contentObject) {

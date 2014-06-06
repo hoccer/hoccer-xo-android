@@ -26,8 +26,8 @@ public class ChatDataItem extends ChatMessageItem {
     }
 
     @Override
-    protected void displayAttachment(IContentObject contentObject, boolean isIncoming) {
-        super.displayAttachment(contentObject, isIncoming);
+    protected void displayAttachment(IContentObject contentObject) {
+        super.displayAttachment(contentObject);
 
         // add view lazily
         if (mContentWrapper.getChildCount() == 0) {

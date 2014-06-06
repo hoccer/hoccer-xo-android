@@ -261,7 +261,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
         } else {
             mTransferControl.setOnClickListener(null);
             configureContextMenu();
-            displayAttachment(contentObject, mMessage.isIncoming());
+            displayAttachment(contentObject);
         }
 
         // hide message text field when empty - there is still an attachment to display
@@ -278,15 +278,10 @@ public class ChatMessageItem implements AttachmentTransferListener {
      * Subtypes will have to overwrite this method to configure the attachment layout.
      *
      * @param contentObject The IContentObject to display
-     * @param isIncoming Necessary for images, because they don't have bubble
      */
-    protected void displayAttachment(IContentObject contentObject, boolean isIncoming) {
+    protected void displayAttachment(IContentObject contentObject) {
         mContentTransferProgress.setVisibility(View.GONE);
         mContentWrapper.setVisibility(View.VISIBLE);
-        if (contentObject.getContentMediaType().contains("image")) {
-            mAttachmentView.setPadding(0, 0, 0, 0);
-            mAttachmentView.setBackgroundColor(Color.TRANSPARENT);
-        }
     }
 
     /**
@@ -346,7 +341,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
     @Override
     public void onAttachmentTransferComplete(IContentObject contentObject) {
-        displayAttachment(contentObject, mMessage.isIncoming());
+        displayAttachment(contentObject);
     }
 
     @Override

@@ -45,8 +45,8 @@ public class ChatContactItem extends ChatMessageItem {
     }
 
     @Override
-    protected void displayAttachment(IContentObject contentObject, boolean isIncoming) {
-        super.displayAttachment(contentObject, isIncoming);
+    protected void displayAttachment(IContentObject contentObject) {
+        super.displayAttachment(contentObject);
 
         mContent = contentObject;
 
