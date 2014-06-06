@@ -34,7 +34,7 @@
                 android:layout_gravity="center"
                 android:layout_centerInParent="true">
 
-            <com.hoccer.xo.android.view.AttachmentTransferControlView
+            <com.hoccer.xo.android.view.chat.attachments.AttachmentTransferControlView
                     android:id="@+id/content_transfer_control"
                     android:layout_width="170dp"
                     android:layout_height="170dp"
