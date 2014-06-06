@@ -103,8 +103,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
      */
     private View createView() {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.item_chat_message, null);
-        return view;
+        return inflater.inflate(R.layout.item_chat_message, null);
     }
 
     /**
