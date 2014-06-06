@@ -45,7 +45,7 @@ public class ChatLocationItem extends ChatMessageItem {
     }
 
     @Override
-    protected void displayAttachment(IContentObject contentObject, boolean isIncoming) {
+    protected void displayAttachment(final IContentObject contentObject, boolean isIncoming) {
         super.displayAttachment(contentObject, isIncoming);
 
         // add view lazily
