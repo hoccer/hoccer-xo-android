@@ -57,7 +57,6 @@
 
         <RelativeLayout
                 android:id="@+id/rl_message_attachment"
-                android:gravity="center"
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="10dp"

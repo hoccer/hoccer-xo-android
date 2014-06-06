@@ -258,7 +258,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
         } else {
             mTransferControl.setOnClickListener(null);
             configureContextMenu();
-            displayAttachment(contentObject);
+            displayAttachment(contentObject, mMessage.isIncoming());
         }
 
         // hide message text field when empty - there is still an attachment to display
@@ -276,7 +276,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
      *
      * @param contentObject The IContentObject to display
      */
-    protected void displayAttachment(IContentObject contentObject) {
+    protected void displayAttachment(IContentObject contentObject, boolean isIncoming) {
         mContentTransferProgress.setVisibility(View.GONE);
         mContentWrapper.setVisibility(View.VISIBLE);
     }
@@ -338,7 +338,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
     @Override
     public void onAttachmentTransferComplete(IContentObject contentObject) {
-        displayAttachment(contentObject);
+        displayAttachment(contentObject, mMessage.isIncoming());
     }
 
     @Override
