@@ -3,6 +3,7 @@ package com.hoccer.xo.android.view.chat.attachments;
 import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,8 +44,23 @@ public class ChatAudioItem extends ChatMessageItem {
         if (mContentWrapper.getChildCount() == 0) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             LinearLayout audioLayout = (LinearLayout) inflater.inflate(R.layout.content_audio, null);
+            TextView captionTextView = (TextView) audioLayout.findViewById(R.id.tv_content_audio_caption);
             TextView fileNameTextView = (TextView) audioLayout.findViewById(R.id.tv_content_audio_name);
             ImageButton playButton = (ImageButton) audioLayout.findViewById(R.id.ib_content_audio_play);
+
+            int textColor = -1;
+            int iconId = -1;
+            if(mMessage.isIncoming()) {
+                textColor = Color.BLACK;
+                iconId = R.drawable.ic_dark_music;
+            } else {
+                textColor = Color.WHITE;
+                iconId = R.drawable.ic_light_music;
+            }
+
+            captionTextView.setTextColor(textColor);
+            fileNameTextView.setTextColor(textColor);
+            playButton.setImageResource(iconId);
 
             String extension = contentObject.getContentDataUrl();
             extension = extension.substring(extension.lastIndexOf("."), extension.length());

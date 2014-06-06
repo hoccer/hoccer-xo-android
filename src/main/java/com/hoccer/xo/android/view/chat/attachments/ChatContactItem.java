@@ -3,6 +3,7 @@ package com.hoccer.xo.android.view.chat.attachments;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,17 +62,22 @@ public class ChatContactItem extends ChatMessageItem {
         ImageButton showButton = (ImageButton) mContentWrapper.findViewById(R.id.ib_vcard_show_button);
         ImageButton importButton = (ImageButton) mContentWrapper.findViewById(R.id.ib_vcard_import_button);
 
-        if (mMessage.isIncoming()) {
-            contactName.setTextColor(mContext.getResources().getColorStateList(android.R.color.black));
-            contactDescription.setTextColor(mContext.getResources().getColorStateList(android.R.color.black));
-            showButton.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_dark_contact));
-            importButton.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_dark_contact));
+        int textColor = -1;
+        int iconId = -1;
+        if(mMessage.isIncoming()) {
+            textColor = Color.BLACK;
+            iconId = R.drawable.ic_dark_music;
+            iconId = R.drawable.ic_dark_contact;
         } else {
-            contactName.setTextColor(mContext.getResources().getColorStateList(android.R.color.white));
-            contactDescription.setTextColor(mContext.getResources().getColorStateList(android.R.color.white));
-            showButton.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_light_contact));
-            importButton.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_light_contact));
+            textColor = Color.WHITE;
+            iconId = R.drawable.ic_light_music;
+            iconId = R.drawable.ic_light_contact;
         }
+
+        contactName.setTextColor(textColor);
+        contactDescription.setTextColor(textColor);
+        showButton.setImageResource(iconId);
+        importButton.setImageResource(iconId);
 
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override

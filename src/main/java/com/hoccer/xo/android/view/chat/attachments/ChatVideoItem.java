@@ -3,6 +3,7 @@ package com.hoccer.xo.android.view.chat.attachments;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,15 +50,22 @@ public class ChatVideoItem extends ChatMessageItem {
         TextView videoDescription = (TextView) mContentWrapper.findViewById(R.id.tv_video_description);
         ImageButton playButton = (ImageButton) mContentWrapper.findViewById(R.id.ib_content_open);
 
-        if (mMessage.isIncoming()) {
-            videoTitle.setTextColor(mContext.getResources().getColorStateList(android.R.color.black));
-            videoDescription.setTextColor(mContext.getResources().getColorStateList(android.R.color.black));
-            playButton.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_dark_video));
+
+        int textColor = -1;
+        int iconId = -1;
+        if(mMessage.isIncoming()) {
+            textColor = Color.BLACK;
+            iconId = R.drawable.ic_dark_music;
+            iconId = R.drawable.ic_dark_video;
         } else {
-            videoTitle.setTextColor(mContext.getResources().getColorStateList(android.R.color.white));
-            videoDescription.setTextColor(mContext.getResources().getColorStateList(android.R.color.white));
-            playButton.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_light_video));
+            textColor = Color.WHITE;
+            iconId = R.drawable.ic_light_music;
+            iconId = R.drawable.ic_light_video;
         }
+
+        videoTitle.setTextColor(textColor);
+        videoDescription.setTextColor(textColor);
+        playButton.setImageResource(iconId);
 
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -12,13 +12,23 @@
             android:layout_height="wrap_content">
 
         <TextView
+                android:id="@+id/tv_content_audio_caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="2dp"
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:text="@string/content_audio_caption"
+                />
+
+        <TextView
                 android:id="@+id/tv_content_audio_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/tv_content_audio_caption"
                 android:layout_toLeftOf="@+id/ib_content_audio_play"
-                android:layout_centerVertical="true"
-                android:text="filename.mp3" tools:ignore="HardcodedText"/>
+                android:text="filename.mp3"
+                android:textColor="@android:color/secondary_text_light"
+                tools:ignore="HardcodedText"/>
 
         <ImageButton
                 android:id="@+id/ib_content_audio_play"
