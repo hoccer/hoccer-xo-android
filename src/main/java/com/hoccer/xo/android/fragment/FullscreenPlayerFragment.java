@@ -91,7 +91,7 @@ public class FullscreenPlayerFragment extends Fragment {
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                resizeCoverArtView();
+                adjustViewSizes();
             }
         });
     }
@@ -186,7 +186,7 @@ public class FullscreenPlayerFragment extends Fragment {
                     mArtworkView.setImageDrawable(currentItem.getMetaData().getArtwork());
                 }
 
-                resizeCoverArtView();
+                adjustViewSizes();
                 updatePlayState();
             }
         });
@@ -247,15 +247,21 @@ public class FullscreenPlayerFragment extends Fragment {
         return String.format("%2d:%02d", minutes, seconds);
     }
 
-    private void resizeCoverArtView() {
+    private void adjustViewSizes() {
         int margin = getActivity().getResources().getDimensionPixelSize(R.dimen.media_player_layout_margin);
-        int measuredViewHeight = getView().getMeasuredWidth() - (margin * 4);
-        if (mArtworkContainer.getHeight() != measuredViewHeight) {
+        int expectedViewHeight = getView().getMeasuredWidth() - (margin * 4);
+
+        if (mArtworkContainer.getHeight() != expectedViewHeight) {
             RelativeLayout.LayoutParams coverArtLayoutParams = (RelativeLayout.LayoutParams) mArtworkContainer.getLayoutParams();
-            coverArtLayoutParams.height = measuredViewHeight;
+            coverArtLayoutParams.height = expectedViewHeight;
             coverArtLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
             mArtworkContainer.setLayoutParams(coverArtLayoutParams);
         }
+
+        RelativeLayout.LayoutParams playBtnLayoutParams = (RelativeLayout.LayoutParams) mPlayButton.getLayoutParams();
+        playBtnLayoutParams.width = mPlayButton.getMeasuredHeight();
+        mPlayButton.setLayoutParams(playBtnLayoutParams);
+
     }
 
     private void updateRepeatMode() {
