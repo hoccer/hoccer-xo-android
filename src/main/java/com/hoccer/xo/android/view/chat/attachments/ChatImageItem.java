@@ -39,6 +39,7 @@ import java.io.IOException;
 public class ChatImageItem extends ChatMessageItem {
 
     private Context mContext;
+    private Bitmap mBitmap = null;
 
     public ChatImageItem(Context context, TalkClientMessage message) {
         super(context, message);
@@ -166,6 +167,10 @@ public class ChatImageItem extends ChatMessageItem {
 
         @Override
         protected Bitmap doInBackground(Object[] objects) {
+            if(mBitmap != null) {
+                return mBitmap;
+            }
+
             String filename = mContentObject.getContentDataUrl();
             filename = filename.substring(filename.lastIndexOf("/") + 1, filename.length());
             File thumbnail = new File(XoApplication.getThumbnailDirectory(), filename);
@@ -173,6 +178,7 @@ public class ChatImageItem extends ChatMessageItem {
             if(thumbnail.exists()) {
                 Bitmap bitmap = BitmapFactory.decodeFile(thumbnail.getAbsolutePath());
                 if(bitmap != null) {
+                    mBitmap = bitmap;
                     return bitmap;
                 }
             }
@@ -200,6 +206,7 @@ public class ChatImageItem extends ChatMessageItem {
             paint.setXfermode(null);
 
             saveToThumbnailDirectory(result);
+            mBitmap = result;
             return result;
         }
 
