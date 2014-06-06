@@ -1,12 +1,19 @@
 package com.hoccer.xo.android.view.chat.attachments;
 
+import android.animation.LayoutTransition;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
@@ -29,17 +36,38 @@ public class ChatAudioItem extends ChatMessageItem {
     }
 
     @Override
-    protected void displayAttachment(IContentObject contentObject) {
+    protected void displayAttachment(final IContentObject contentObject) {
         super.displayAttachment(contentObject);
 
         // add view lazily
         if (mContentWrapper.getChildCount() == 0) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             LinearLayout audioLayout = (LinearLayout) inflater.inflate(R.layout.content_audio, null);
+            TextView fileNameTextView = (TextView) audioLayout.findViewById(R.id.tv_content_audio_name);
+            ImageButton playButton = (ImageButton) audioLayout.findViewById(R.id.ib_content_audio_play);
+
+            String extension = contentObject.getContentDataUrl();
+            extension = extension.substring(extension.lastIndexOf("."), extension.length());
+            fileNameTextView.setText(contentObject.getFileName() + extension);
+
+            playButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (contentObject.isContentAvailable()) {
+                        String url = contentObject.getContentUrl();
+                        if (url == null) {
+                            url = contentObject.getContentDataUrl();
+                        }
+                        if (url != null) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                            XoActivity activity = (XoActivity) view.getContext();
+                            activity.startExternalActivity(intent);
+                        }
+                    }
+                }
+            });
             mContentWrapper.addView(audioLayout);
         }
 
-
     }
-
 }

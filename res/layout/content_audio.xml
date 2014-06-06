@@ -9,19 +9,19 @@
 
     <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
         <TextView
                 android:id="@+id/tv_content_audio_name"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_toLeftOf="@+id/audio_play_pause"
-                android:gravity="center_vertical"
+                android:layout_toLeftOf="@+id/ib_content_audio_play"
+                android:layout_centerVertical="true"
                 android:text="filename.mp3" tools:ignore="HardcodedText"/>
 
         <ImageButton
-                android:id="@+id/audio_play_pause"
+                android:id="@+id/ib_content_audio_play"
                 android:src="@drawable/ic_dark_music"
                 android:layout_width="@dimen/default_attachment_icon_dim"
                 android:layout_height="@dimen/default_attachment_icon_dim"
