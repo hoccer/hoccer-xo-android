@@ -51,7 +51,7 @@ public class ChatImageItem extends ChatMessageItem {
     protected void displayAttachment(final IContentObject contentObject) {
         super.displayAttachment(contentObject);
         mAttachmentView.setPadding(0, 0, 0, 0);
-        mAttachmentView.setBackgroundColor(Color.TRANSPARENT);
+        mAttachmentView.setBackground(null);
         // add view lazily
         if (mContentWrapper.getChildCount() == 0) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
