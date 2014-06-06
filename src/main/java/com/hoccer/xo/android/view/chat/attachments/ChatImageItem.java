@@ -1,7 +1,9 @@
 package com.hoccer.xo.android.view.chat.attachments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.RelativeLayout;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -24,7 +27,7 @@ public class ChatImageItem extends ChatMessageItem implements ImageLoadingListen
     /**
      * Caches the loaded attachment image
      */
-    private ClickableImageView mImageView;
+    private ImageView mImageView;
 
     public ChatImageItem(Context context, TalkClientMessage message) {
         super(context, message);
@@ -41,7 +44,7 @@ public class ChatImageItem extends ChatMessageItem implements ImageLoadingListen
     }
 
     @Override
-    protected void displayAttachment(IContentObject contentObject) {
+    protected void displayAttachment(final IContentObject contentObject) {
         super.displayAttachment(contentObject);
 
         // add view lazily
@@ -51,7 +54,14 @@ public class ChatImageItem extends ChatMessageItem implements ImageLoadingListen
             mContentWrapper.addView(imageLayout);
         }
 
-        mImageView = (ClickableImageView) mContentWrapper.findViewById(R.id.civ_image_view);
+        mContentWrapper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayImage(contentObject);
+            }
+        });
+
+        mImageView = (ImageView) mContentWrapper.findViewById(R.id.iv_image_view);
         mImageView.setVisibility(View.INVISIBLE);
         loadImage(mImageView, contentObject.getContentDataUrl());
     }
@@ -68,6 +78,17 @@ public class ChatImageItem extends ChatMessageItem implements ImageLoadingListen
     private int getCornerRadius(ImageView view) {
         float cornerRadiusInDP = view.getResources().getDimension(R.dimen.xo_message_corner_radius);
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, cornerRadiusInDP, view.getResources().getDisplayMetrics());
+    }
+
+    private void displayImage(IContentObject contentObject) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse(contentObject.getContentDataUrl()), "image/*");
+        try {
+            XoActivity activity = (XoActivity)mContext;
+            activity.startExternalActivity(intent);
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

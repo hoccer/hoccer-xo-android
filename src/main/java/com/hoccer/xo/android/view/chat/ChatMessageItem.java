@@ -37,6 +37,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
     protected Context mContext;
     protected AttachmentTransferHandler mAttachmentTransferHandler;
     protected TalkClientMessage mMessage;
+    protected IContentObject mContentObject;
 
     protected TextView mMessageText;
     protected RelativeLayout mContentTransferProgress;
@@ -56,6 +57,10 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
     public void setMessage(TalkClientMessage message) {
         mMessage = message;
+    }
+
+    public IContentObject getContent() {
+        return mContentObject;
     }
 
     /**
@@ -240,6 +245,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
         if (contentObject == null) {
             contentObject = mMessage.getAttachmentDownload();
         }
+        mContentObject = contentObject;
 
         if (shouldDisplayTransferControl(getTransferState(contentObject))) {
             mContentWrapper.setVisibility(View.GONE);
@@ -252,6 +258,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
         } else {
             mTransferControl.setOnClickListener(null);
+            configureContextMenu();
             displayAttachment(contentObject);
         }
 
@@ -316,6 +323,19 @@ public class ChatMessageItem implements AttachmentTransferListener {
         }
         return state;
     }
+
+    private void configureContextMenu() {
+        final ChatMessageItem messageItem = this;
+        mContentWrapper.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                XoActivity activity = (XoActivity)mContext;
+                activity.showPopupForMessageItem(messageItem, v);
+                return true;
+            }
+        });
+    }
+
 
     @Override
     public void onAttachmentTransferComplete(IContentObject contentObject) {
