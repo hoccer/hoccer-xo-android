@@ -52,14 +52,9 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        ActionBar ab = getActivity().getActionBar();
-        ab.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        ab.setDisplayShowTitleEnabled(false);
-        mFilterAdapter = new AttachmentListFilterAdapter(getXoActivity());
-        SpinnerAdapter spinnerAdapter = mFilterAdapter;
-        ab.setListNavigationCallbacks(spinnerAdapter, new AttachmentListFilterHandler());
-        ab.setSelectedNavigationItem(mFilterAdapter.getPosition(mFilteredContactId));
+        getActivity().onCreateOptionsMenu(menu);
+
+
     }
 
     @Override
@@ -85,12 +80,21 @@ public class AudioAttachmentListFragment extends XoListFragment {
     @Override
     public void onResume() {
         super.onResume();
+        ActionBar ab = getActivity().getActionBar();
+        ab.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        ab.setDisplayShowTitleEnabled(false);
+        mFilterAdapter = new AttachmentListFilterAdapter(getXoActivity());
+        ab.setListNavigationCallbacks(mFilterAdapter, new AttachmentListFilterHandler());
+        ab.setSelectedNavigationItem(mFilterAdapter.getPosition(mFilteredContactId));
 
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        ActionBar ab = getActivity().getActionBar();
+        ab.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        ab.setDisplayShowTitleEnabled(true);
 
     }
 
