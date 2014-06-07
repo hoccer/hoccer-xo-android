@@ -4,7 +4,9 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.*;
-import android.graphics.drawable.*;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -14,57 +16,86 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.release.R;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
 
-public class ImageLoader {
-    private static ImageLoader mInstance;
+public class ThumbnailManager {
+    private static ThumbnailManager mInstance;
     private LruCache memoryLruCache;
     private Context mContext;
     private Map imageViews = Collections.synchronizedMap(new WeakHashMap());
     private Drawable mStubDrawable;
 
-    private ImageLoader(Context context) {
+    private ThumbnailManager(Context context) {
         mContext = context;
         init(context);
     }
 
-    public static ImageLoader getInstance(Context context) {
+    public static ThumbnailManager getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new ImageLoader(context);
+            mInstance = new ThumbnailManager(context);
         }
         return mInstance;
     }
 
     private void init(Context context) {
-        final int memClass = ((ActivityManager) context.getSystemService(
-                Context.ACTIVITY_SERVICE)).getMemoryClass();
+        final int memClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
         // 1/8 of the available mem
         final int cacheSize = 1024 * 1024 * memClass / 8;
         memoryLruCache = new LruCache(cacheSize);
         mStubDrawable = new ColorDrawable(Color.LTGRAY);
     }
 
-    public void displayImage(String uri, ImageView imageView, boolean isIncoming) {
+    public void displayThumbnailForImage(String uri, ImageView imageView, boolean isIncoming) {
         imageViews.put(imageView, uri);
         Bitmap bitmap = null;
-        if (uri != null)
+        if (uri != null) {
             bitmap = (Bitmap) memoryLruCache.get(uri);
+        }
+        if (bitmap == null) {
+            bitmap = loadThumbnailForImage(uri);
+        }
         if (bitmap != null) {
+            memoryLruCache.put(uri, bitmap);
             imageView.setImageBitmap(bitmap);
             imageView.setVisibility(View.VISIBLE);
         } else {
             imageView.setImageDrawable(mStubDrawable);
             if (uri != null) {
-                queuePhoto(uri, imageView, isIncoming);
+                queueThumbnailCreation(uri, imageView, isIncoming);
             }
         }
+    }
+
+    private Bitmap loadThumbnailForImage(String uri) {
+        String thumbnailFilename = uri.substring(uri.lastIndexOf("/") + 1, uri.length());
+        File thumbnail = new File(XoApplication.getThumbnailDirectory(), thumbnailFilename);
+        Bitmap bitmap = null;
+        if (thumbnail.exists()) {
+            bitmap = BitmapFactory.decodeFile(thumbnail.getAbsolutePath());
+        }
+        return bitmap;
+    }
+
+    private void saveToThumbnailDirectory(Bitmap bitmap, String filename) {
+        filename = filename.substring(filename.lastIndexOf("/") + 1, filename.length());
+        File destination = new File(XoApplication.getThumbnailDirectory(), filename);
+
+        try {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(destination));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private Bitmap rotateBitmap(Bitmap bitmap, String filePath) {
@@ -99,15 +130,15 @@ public class ImageLoader {
         //200dp in item_chat_message.xml -> rl_message_attachment -> height
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         float scaledHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, metrics);
-        float scaledWidth = bitmap.getWidth() * (scaledHeight/bitmap.getHeight());
+        float scaledWidth = bitmap.getWidth() * (scaledHeight / bitmap.getHeight());
         return Bitmap.createScaledBitmap(bitmap, Math.round(scaledWidth), Math.round(scaledHeight), false);
     }
 
-    private Bitmap getNinePatchMask(int id,int x, int y, Context context){
+    private Bitmap getNinePatchMask(int id, int x, int y, Context context) {
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), id);
         byte[] chunk = bitmap.getNinePatchChunk();
         NinePatchDrawable drawable = new NinePatchDrawable(context.getResources(), bitmap, chunk, new Rect(), null);
-        drawable.setBounds(0, 0,x, y);
+        drawable.setBounds(0, 0, x, y);
         Bitmap result = Bitmap.createBitmap(x, y, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(result);
         drawable.draw(canvas);
@@ -115,7 +146,7 @@ public class ImageLoader {
     }
 
     private String getRealPathFromURI(Uri contentURI, Context context) {
-        String result = ""  ;
+        String result = "";
         Cursor cursor = context.getContentResolver().query(contentURI, null, null, null, null);
         if (cursor == null) {
             result = contentURI.getPath();
@@ -129,22 +160,24 @@ public class ImageLoader {
         return result;
     }
 
-    private void queuePhoto(String uri, ImageView imageView, boolean isIncoming) {
+    private void queueThumbnailCreation(String uri, ImageView imageView, boolean isIncoming) {
         new LoadBitmapTask().execute(uri, imageView, isIncoming);
     }
 
-    private Bitmap getBitmap(String url, boolean isIncoming) {
-        Bitmap ret = null;
-        File f = new File(getRealPathFromURI(Uri.parse(url), mContext));
-        if (f.exists()) {
-            ret = decodeFile(f, isIncoming);
-            if (ret != null)
-                return ret;
+    private Bitmap createThumbnail(String url, boolean isIncoming) {
+        Bitmap thumbnail = null;
+        File imageFile = new File(getRealPathFromURI(Uri.parse(url), mContext));
+        if (imageFile.exists()) {
+            thumbnail = renderThumbnail(imageFile, isIncoming);
+            if (thumbnail != null) {
+                saveToThumbnailDirectory(thumbnail, url);
+                return thumbnail;
+            }
         }
-        return ret;
+        return thumbnail;
     }
 
-    private Bitmap decodeFile(File f, boolean isIncoming) {
+    private Bitmap renderThumbnail(File f, boolean isIncoming) {
         BitmapFactory.Options opt = new BitmapFactory.Options();
         opt.inSampleSize = 4;
         Bitmap original = BitmapFactory.decodeFile(f.getAbsolutePath(), opt);
@@ -167,25 +200,26 @@ public class ImageLoader {
         return result;
     }
 
-    private class PhotoToLoad {
+
+    private class ImageToLoad {
         public String url;
         public ImageView imageView;
 
-        public PhotoToLoad(String u, ImageView i) {
+        public ImageToLoad(String u, ImageView i) {
             url = u;
             imageView = i;
         }
     }
 
-    private boolean imageViewReused(PhotoToLoad photoToLoad) {
-        String tag = (String) imageViews.get(photoToLoad.imageView);
-        if (tag == null || !tag.equals(photoToLoad.url))
+    private boolean imageViewReused(ImageToLoad imageToLoad) {
+        String tag = (String) imageViews.get(imageToLoad.imageView);
+        if (tag == null || !tag.equals(imageToLoad.url))
             return true;
         return false;
     }
 
     class LoadBitmapTask extends AsyncTask<Object, Object, Bitmap> {
-        private PhotoToLoad mPhoto;
+        private ImageToLoad mImageToLoad;
         private boolean isIncoming;
 
         @Override
@@ -196,33 +230,35 @@ public class ImageLoader {
         @Override
         protected Bitmap doInBackground(Object[] params) {
             String uri = (String) params[0];
-            mPhoto = new PhotoToLoad(uri, (ImageView) params[1]);
-            if (imageViewReused(mPhoto))
+            mImageToLoad = new ImageToLoad(uri, (ImageView) params[1]);
+            if (imageViewReused(mImageToLoad)) {
                 return null;
-            isIncoming = (Boolean) params[2];
-            Bitmap bitmap = getBitmap(mPhoto.url, isIncoming);
-            if (bitmap == null)
-                return null;
-            memoryLruCache.put(mPhoto.url, bitmap);
-
-            if (bitmap != null) {
-                Drawable[] drawables = new Drawable[2];
-                drawables[0] = mStubDrawable;
-                drawables[1] = new BitmapDrawable(mContext.getResources(), bitmap);
             }
-            return bitmap;
+            isIncoming = (Boolean) params[2];
+            Bitmap thumbnail = createThumbnail(mImageToLoad.url, isIncoming);
+            if (thumbnail == null) {
+                return null;
+            }
+            memoryLruCache.put(mImageToLoad.url, thumbnail);
+
+//            if (thumbnail != null) {
+//                Drawable[] drawables = new Drawable[2];
+//                drawables[0] = mStubDrawable;
+//                drawables[1] = new BitmapDrawable(mContext.getResources(), thumbnail);
+//            }
+            return thumbnail;
         }
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            if (imageViewReused(mPhoto)) {
+            if (imageViewReused(mImageToLoad)) {
                 return;
             }
             if (bitmap != null) {
-                mPhoto.imageView.setImageBitmap(bitmap);
-                mPhoto.imageView.setVisibility(View.VISIBLE);
+                mImageToLoad.imageView.setImageBitmap(bitmap);
+                mImageToLoad.imageView.setVisibility(View.VISIBLE);
             } else {
-                mPhoto.imageView.setImageDrawable(mStubDrawable);
+                mImageToLoad.imageView.setImageDrawable(mStubDrawable);
             }
         }
     }

@@ -3,7 +3,7 @@ package com.hoccer.xo.android.view.chat.attachments;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.util.ImageLoader;
+import com.hoccer.xo.android.util.ThumbnailManager;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
@@ -64,7 +64,7 @@ public class ChatImageItem extends ChatMessageItem {
             rootView.setGravity(Gravity.RIGHT);
         }
         imageView.setVisibility(View.INVISIBLE);
-        ImageLoader.getInstance(mContext).displayImage(contentObject.getContentDataUrl(), imageView, mMessage.isIncoming());
+        ThumbnailManager.getInstance(mContext).displayThumbnailForImage(contentObject.getContentDataUrl(), imageView, mMessage.isIncoming());
     }
 
     private void displayImage(IContentObject contentObject) {
