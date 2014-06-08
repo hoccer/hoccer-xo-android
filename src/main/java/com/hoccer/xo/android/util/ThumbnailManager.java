@@ -30,7 +30,7 @@ import java.util.WeakHashMap;
 
 public class ThumbnailManager {
     private static ThumbnailManager mInstance;
-    private LruCache memoryLruCache;
+    private LruCache mMemoryLruCache;
     private Context mContext;
     private Map imageViews = Collections.synchronizedMap(new WeakHashMap());
     private Drawable mStubDrawable;
@@ -51,7 +51,7 @@ public class ThumbnailManager {
         final int memClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
         // 1/8 of the available mem
         final int cacheSize = 1024 * 1024 * memClass / 8;
-        memoryLruCache = new LruCache(cacheSize);
+        mMemoryLruCache = new LruCache(cacheSize);
         mStubDrawable = new ColorDrawable(Color.LTGRAY);
     }
 
@@ -59,13 +59,12 @@ public class ThumbnailManager {
         imageViews.put(imageView, uri);
         Bitmap bitmap = null;
         if (uri != null) {
-            bitmap = (Bitmap) memoryLruCache.get(uri);
+            bitmap = (Bitmap) mMemoryLruCache.get(uri);
         }
         if (bitmap == null) {
             bitmap = loadThumbnailForImage(uri);
         }
         if (bitmap != null) {
-            memoryLruCache.put(uri, bitmap);
             imageView.setImageBitmap(bitmap);
             imageView.setVisibility(View.VISIBLE);
         } else {
@@ -82,6 +81,9 @@ public class ThumbnailManager {
         Bitmap bitmap = null;
         if (thumbnail.exists()) {
             bitmap = BitmapFactory.decodeFile(thumbnail.getAbsolutePath());
+            if (bitmap != null) {
+                mMemoryLruCache.put(uri, bitmap);
+            }
         }
         return bitmap;
     }
@@ -239,7 +241,7 @@ public class ThumbnailManager {
             if (thumbnail == null) {
                 return null;
             }
-            memoryLruCache.put(mImageToLoad.url, thumbnail);
+            mMemoryLruCache.put(mImageToLoad.url, thumbnail);
 
 //            if (thumbnail != null) {
 //                Drawable[] drawables = new Drawable[2];
