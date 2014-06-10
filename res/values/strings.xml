@@ -125,6 +125,9 @@
     <string name="content_data">Data</string>
     <string name="content_clipboard">Clipboard</string>
 
+    <string name="content_not_supported_audio_title">Unsupported Format</string>
+    <string name="content_not_supported_audio_msg">This audio attachment cannot be played back.</string>
+
     <!-- Client states (used in status fragment) -->
     <string name="client_state_idle">Idle</string>
     <string name="client_state_inactive">Inactive</string>

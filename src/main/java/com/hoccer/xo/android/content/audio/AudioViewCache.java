@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.ContentViewCache;
 import com.hoccer.xo.android.view.AudioPlayerView;
@@ -39,15 +40,13 @@ public class AudioViewCache extends ContentViewCache<AudioPlayerView> {
     }
 
     private void updateFilenameText(View view, IContentObject contentObject, boolean isLightTheme) {
-
-        TextView filenameText = (TextView) view.findViewById(R.id.tv_content_audio_name);
         String filename = contentObject.getFileName();
-
         if (filename == null) {
             String dataUrl = contentObject.getContentDataUrl();
             filename = dataUrl.substring(dataUrl.lastIndexOf(File.separator) + 1);
         }
 
+        TextView filenameText = (TextView) view.findViewById(R.id.tv_content_audio_name);
         filenameText.setText(filename);
         if (isLightTheme) {
             filenameText.setTextColor(Color.BLACK);

@@ -124,6 +124,9 @@
     <string name="content_data">Dokument</string>
     <string name="content_clipboard">Aus Zwischenablage</string>
 
+    <string name="content_not_supported_audio_title">Nicht unterstütztes Format</string>
+    <string name="content_not_supported_audio_msg">Dieser Audio-Anhang kann nicht wiedergegeben werden.</string>
+
     <!-- Client states (used in status fragment) -->
     <string name="client_state_idle">Idle</string>
     <string name="client_state_inactive">Inaktiv</string>
