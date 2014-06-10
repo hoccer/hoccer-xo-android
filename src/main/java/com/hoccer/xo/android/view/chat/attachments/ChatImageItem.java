@@ -57,14 +57,17 @@ public class ChatImageItem extends ChatMessageItem {
 
         ImageView imageView = (ImageView) mContentWrapper.findViewById(R.id.iv_image_view);
         RelativeLayout rootView = (RelativeLayout) mContentWrapper.findViewById(R.id.rl_root);
+        int mask;
         imageView.setVisibility(View.INVISIBLE);
         if (mMessage.isIncoming()) {
             rootView.setGravity(Gravity.LEFT);
+            mask = R.drawable.bubble_grey;
         } else {
             rootView.setGravity(Gravity.RIGHT);
+            mask = R.drawable.bubble_green;
         }
         imageView.setVisibility(View.INVISIBLE);
-        ThumbnailManager.getInstance(mContext).displayThumbnailForImage(contentObject.getContentDataUrl(), imageView, mMessage.isIncoming());
+        ThumbnailManager.getInstance(mContext).displayThumbnailForImage(contentObject.getContentDataUrl(), imageView, mask);
     }
 
     private void displayImage(IContentObject contentObject) {
