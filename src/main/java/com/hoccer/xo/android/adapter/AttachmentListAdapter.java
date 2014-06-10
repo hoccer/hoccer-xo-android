@@ -1,7 +1,6 @@
 package com.hoccer.xo.android.adapter;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,11 +93,7 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         audioRowView.setMediaItem(mAudioAttachmentItems.get(position));
 
         if (mSelections != null) {
-            if (mSelections.get(position)) {
-                audioRowView.setBackgroundColor(Color.RED);
-            } else {
-                audioRowView.setBackgroundColor(Color.WHITE);
-            }
+            audioRowView.getChildAt(0).setSelected(mSelections.get(position));
         }
         return audioRowView;
     }
