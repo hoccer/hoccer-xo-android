@@ -21,6 +21,7 @@ import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.android.view.AttachmentAudioView;
 import com.hoccer.xo.release.R;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -194,5 +195,14 @@ public class AttachmentListAdapter extends XoAdapter implements IXoTransferListe
         } catch (SQLException e) {
             LOG.error(e);
         }
+    }
+
+    private boolean isRecordedAudio(String filePath) {
+        File attachmentFile = new File(filePath);
+        String fileName = attachmentFile.getName();
+        if (fileName.contains("recording")) {
+            return true;
+        }
+        return false;
     }
 }
