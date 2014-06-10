@@ -101,7 +101,7 @@ public class ThumbnailManager {
         if (thumbnail.exists()) {
             bitmap = BitmapFactory.decodeFile(thumbnail.getAbsolutePath());
             if (bitmap != null) {
-                mMemoryLruCache.put(uri, bitmap);
+                mMemoryLruCache.put(thumbnailFilename, bitmap);
             }
         }
         return bitmap;
