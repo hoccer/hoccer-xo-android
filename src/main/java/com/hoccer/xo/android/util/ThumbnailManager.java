@@ -37,7 +37,7 @@ public class ThumbnailManager {
     private static ThumbnailManager mInstance;
     private LruCache mMemoryLruCache;
     private Context mContext;
-    private Map imageViews = Collections.synchronizedMap(new WeakHashMap());
+    private Map mImageViews = Collections.synchronizedMap(new WeakHashMap());
     private Drawable mStubDrawable;
 
     private ThumbnailManager(Context context) {
@@ -68,7 +68,7 @@ public class ThumbnailManager {
      * @param maskResource The resource id of a drawable to mask the thumbnail
      */
     public void displayThumbnailForImage(String uri, ImageView imageView, int maskResource) {
-        imageViews.put(imageView, uri);
+        mImageViews.put(imageView, uri);
         Bitmap bitmap = null;
         if (uri != null) {
             bitmap = (Bitmap) mMemoryLruCache.get(uri);
@@ -222,7 +222,7 @@ public class ThumbnailManager {
     }
 
     private boolean imageViewReused(ImageToLoad imageToLoad) {
-        String tag = (String) imageViews.get(imageToLoad.mImageView);
+        String tag = (String) mImageViews.get(imageToLoad.mImageView);
         if (tag == null || !tag.equals(imageToLoad.mUrl))
             return true;
         return false;
