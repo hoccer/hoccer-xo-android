@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -14,7 +13,6 @@ import android.view.*;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SpinnerAdapter;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
@@ -88,12 +86,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                View view = getListView().getChildAt(position - getListView().getFirstVisiblePosition());
-                if (checked) {
-                    view.setBackgroundColor(getResources().getColor(R.color.xo_group_members_divder));
-                } else {
-                    view.setBackgroundColor(Color.TRANSPARENT);
-                }
+                mAttachmentListAdapter.setSelections(getListView().getCheckedItemPositions());
             }
 
             @Override
@@ -112,7 +105,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_delete_attachment:
-                        deleteSelectedAttachmentItems();
+                        deleteSelectedAttachments();
                         mode.finish();
                         return true;
                     default:
@@ -171,7 +164,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
     }
 
-    private void deleteSelectedAttachmentItems() {
+    private void deleteSelectedAttachments() {
         SparseBooleanArray checked = getListView().getCheckedItemPositions();
         LOG.error("#foo " + checked);
         for (int i = 0; i < getListView().getCount(); i++) {
