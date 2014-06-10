@@ -28,8 +28,6 @@ import java.io.IOException;
 /**
  * This class is the central source for thumbnail representations of given image attachments.
  * It creates, stores, caches scaled and masked bitmaps of specified images.
- * <p/>
- * it manage
  */
 public class ThumbnailManager {
     private static Logger LOG = Logger.getLogger(ThumbnailManager.class);
@@ -59,22 +57,23 @@ public class ThumbnailManager {
     }
 
     /**
-     * Retrieves a thumbnail representation of an image at a specified uri and adds it to a given ImageView.
+     * Retrieves a thumbnail representation of an image at a specified uri + specified tag and adds it to a given ImageView.
      *
      * @param uri          The uri of the image
      * @param imageView    The ImageView which will display the thumbnail
      * @param maskResource The resource id of a drawable to mask the thumbnail
+     * @param tag          The tag to identify this specific thumbnail representation
      */
-    public void displayThumbnailForImage(String uri, ImageView imageView, int maskResource) {
+    public void displayThumbnailForImage(String uri, ImageView imageView, int maskResource, String tag) {
 
-        String taggedUri = taggedFilename(uri, maskResource);
+        String taggedUri = taggedFilename(uri, tag);
 
         Bitmap bitmap = null;
         if (uri != null) {
             bitmap = (Bitmap) mMemoryLruCache.get(taggedUri);
         }
         if (bitmap == null) {
-            bitmap = loadThumbnailForImage(uri, maskResource);
+            bitmap = loadThumbnailForImage(uri, tag);
         }
         if (bitmap != null) {
             imageView.setImageBitmap(bitmap);
@@ -82,18 +81,18 @@ public class ThumbnailManager {
         } else {
             imageView.setImageDrawable(mStubDrawable);
             if (uri != null) {
-                queueThumbnailCreation(uri, imageView, maskResource);
+                queueThumbnailCreation(uri, imageView, maskResource, tag);
             }
         }
     }
 
-    private String taggedFilename(String filename, int tag) {
+    private String taggedFilename(String filename, String tag) {
         int index = filename.lastIndexOf(".");
         String taggedFilename = filename.substring(0, index) + String.valueOf(tag) + filename.substring(index);
         return taggedFilename;
     }
 
-    private Bitmap loadThumbnailForImage(String uri, int tag) {
+    private Bitmap loadThumbnailForImage(String uri, String tag) {
         String thumbnailFilename = uri.substring(uri.lastIndexOf("/") + 1, uri.length());
         thumbnailFilename = taggedFilename(thumbnailFilename, tag);
         File thumbnail = new File(XoApplication.getThumbnailDirectory(), thumbnailFilename);
@@ -107,7 +106,7 @@ public class ThumbnailManager {
         return bitmap;
     }
 
-    private void saveToThumbnailDirectory(Bitmap bitmap, String filename, int tag) {
+    private void saveToThumbnailDirectory(Bitmap bitmap, String filename, String tag) {
         filename = filename.substring(filename.lastIndexOf("/") + 1, filename.length());
         filename = taggedFilename(filename, tag);
         File destination = new File(XoApplication.getThumbnailDirectory(), filename);
@@ -180,17 +179,17 @@ public class ThumbnailManager {
         return result;
     }
 
-    private void queueThumbnailCreation(String uri, ImageView imageView, int maskResource) {
-        new LoadBitmapTask().execute(uri, imageView, maskResource);
+    private void queueThumbnailCreation(String uri, ImageView imageView, int maskResource, String tag) {
+        new LoadBitmapTask().execute(uri, imageView, maskResource, tag);
     }
 
-    private Bitmap createThumbnail(String uri, int maskResource) {
+    private Bitmap createThumbnail(String uri, int maskResource, String tag) {
         Bitmap thumbnail = null;
         File imageFile = new File(getRealPathFromURI(Uri.parse(uri), mContext));
         if (imageFile.exists()) {
             thumbnail = renderThumbnail(imageFile, maskResource);
             if (thumbnail != null) {
-                saveToThumbnailDirectory(thumbnail, uri, maskResource);
+                saveToThumbnailDirectory(thumbnail, uri, tag);
                 return thumbnail;
             }
         }
@@ -230,6 +229,7 @@ public class ThumbnailManager {
     class LoadBitmapTask extends AsyncTask<Object, Object, Bitmap> {
         private ImageToLoad mImageToLoad;
         private int mMaskResource;
+        private String mTag;
 
         @Override
         protected void onPreExecute() {
@@ -241,11 +241,12 @@ public class ThumbnailManager {
             String uri = (String) params[0];
             mImageToLoad = new ImageToLoad(uri, (ImageView) params[1]);
             mMaskResource = (Integer) params[2];
-            Bitmap thumbnail = createThumbnail(mImageToLoad.mUrl, mMaskResource);
+            mTag = (String) params[3];
+            Bitmap thumbnail = createThumbnail(mImageToLoad.mUrl, mMaskResource, mTag);
             if (thumbnail == null) {
                 return null;
             }
-            String thumbnailUri = taggedFilename(uri, mMaskResource);
+            String thumbnailUri = taggedFilename(uri, mTag);
             mMemoryLruCache.put(thumbnailUri, thumbnail);
             return thumbnail;
         }
