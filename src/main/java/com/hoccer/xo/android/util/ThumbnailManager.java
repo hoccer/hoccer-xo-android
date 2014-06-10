@@ -17,6 +17,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import com.hoccer.xo.android.XoApplication;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,10 +35,10 @@ import java.util.WeakHashMap;
  * it manage
  */
 public class ThumbnailManager {
+    private static Logger LOG = Logger.getLogger(ThumbnailManager.class);
     private static ThumbnailManager mInstance;
     private LruCache mMemoryLruCache;
     private Context mContext;
-    private Map mImageViews = Collections.synchronizedMap(new WeakHashMap());
     private Drawable mStubDrawable;
 
     private ThumbnailManager(Context context) {
@@ -68,7 +69,6 @@ public class ThumbnailManager {
      * @param maskResource The resource id of a drawable to mask the thumbnail
      */
     public void displayThumbnailForImage(String uri, ImageView imageView, int maskResource) {
-        mImageViews.put(imageView, uri);
         Bitmap bitmap = null;
         if (uri != null) {
             bitmap = (Bitmap) mMemoryLruCache.get(uri);
@@ -103,13 +103,11 @@ public class ThumbnailManager {
     private void saveToThumbnailDirectory(Bitmap bitmap, String filename) {
         filename = filename.substring(filename.lastIndexOf("/") + 1, filename.length());
         File destination = new File(XoApplication.getThumbnailDirectory(), filename);
-
         try {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(destination));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOG.error("Error while saving thumbnail bitmap: ", e);
         }
-
     }
 
     private Bitmap rotateBitmap(Bitmap bitmap, String filePath) {
@@ -133,7 +131,7 @@ public class ThumbnailManager {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Error while processing thumbnail bitmap: ", e);
         }
         Matrix matrix = new Matrix();
         matrix.postRotate(rotation);
@@ -221,13 +219,6 @@ public class ThumbnailManager {
         }
     }
 
-    private boolean imageViewReused(ImageToLoad imageToLoad) {
-        String tag = (String) mImageViews.get(imageToLoad.mImageView);
-        if (tag == null || !tag.equals(imageToLoad.mUrl))
-            return true;
-        return false;
-    }
-
     class LoadBitmapTask extends AsyncTask<Object, Object, Bitmap> {
         private ImageToLoad mImageToLoad;
         private int mMaskResource;
@@ -241,9 +232,6 @@ public class ThumbnailManager {
         protected Bitmap doInBackground(Object[] params) {
             String uri = (String) params[0];
             mImageToLoad = new ImageToLoad(uri, (ImageView) params[1]);
-            if (imageViewReused(mImageToLoad)) {
-                return null;
-            }
             mMaskResource = (Integer) params[2];
             Bitmap thumbnail = createThumbnail(mImageToLoad.mUrl, mMaskResource);
             if (thumbnail == null) {
@@ -255,9 +243,6 @@ public class ThumbnailManager {
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            if (imageViewReused(mImageToLoad)) {
-                return;
-            }
             if (bitmap != null) {
                 mImageToLoad.mImageView.setImageBitmap(bitmap);
                 mImageToLoad.mImageView.setVisibility(View.VISIBLE);
