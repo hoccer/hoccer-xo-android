@@ -18,6 +18,7 @@ import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.android.view.AttachmentAudioView;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -185,6 +186,10 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         });
     }
 
+    public void setSelections(SparseBooleanArray selections) {
+        this.mSelections = selections;
+    }
+
     private void loadAttachmentList() {
         mAudioAttachmentItems = new ArrayList<AudioAttachmentItem>();
         try {
@@ -211,7 +216,13 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         }
     }
 
-    public void setSelections(SparseBooleanArray selections) {
-        this.mSelections = selections;
+    private boolean isRecordedAudio(String filePath) {
+        File attachmentFile = new File(filePath);
+        String fileName = attachmentFile.getName();
+        if (fileName.contains("recording")) {
+            return true;
+        }
+        return false;
     }
 }
+	
