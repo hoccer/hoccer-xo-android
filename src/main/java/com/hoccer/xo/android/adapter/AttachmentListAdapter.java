@@ -201,24 +201,21 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
 
             if (downloads != null) {
                 for (TalkClientDownload download : downloads) {
-                    AudioAttachmentItem newItem = AudioAttachmentItem.create(download.getContentDataUrl(), download);
-                    if (newItem != null) {
-                        mAudioAttachmentItems.add(newItem);
+                    if (!isRecordedAudio(download.getFileName())) {
+                        AudioAttachmentItem newItem = AudioAttachmentItem.create(download.getContentDataUrl(), download);
+                        if (newItem != null) {
+                            mAudioAttachmentItems.add(newItem);
+                        }
                     }
-
                 }
-
             }
-
         } catch (SQLException e) {
             LOG.error(e);
         }
     }
 
-    private boolean isRecordedAudio(String filePath) {
-        File attachmentFile = new File(filePath);
-        String fileName = attachmentFile.getName();
-        if (fileName.contains("recording")) {
+    private boolean isRecordedAudio(String fileName) {
+        if (fileName.startsWith("recording")) {
             return true;
         }
 
