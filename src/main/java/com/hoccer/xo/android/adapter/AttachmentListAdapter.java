@@ -15,7 +15,7 @@ import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
-import com.hoccer.xo.android.view.AttachmentAudioView;
+import com.hoccer.xo.android.view.AudioAttachmentView;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -25,7 +25,7 @@ import java.util.List;
 
 public class AttachmentListAdapter extends BaseAdapter implements IXoTransferListener {
 
-    protected Logger LOG = null;
+    protected Logger LOG = Logger.getLogger(AttachmentListAdapter.class);
 
     private final Activity mActivity;
     private List<AudioAttachmentItem> mAudioAttachmentItems;
@@ -86,9 +86,9 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
             return getView(position, convertView, parent);
         }
 
-        AttachmentAudioView audioRowView = (AttachmentAudioView) convertView;
+        AudioAttachmentView audioRowView = (AudioAttachmentView) convertView;
         if (audioRowView == null) {
-            audioRowView = new AttachmentAudioView(mActivity);
+            audioRowView = new AudioAttachmentView(mActivity);
         }
 
         audioRowView.setMediaItem(mAudioAttachmentItems.get(position));
@@ -206,7 +206,11 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
 
             if (downloads != null) {
                 for (TalkClientDownload download : downloads) {
-                    mAudioAttachmentItems.add(AudioAttachmentItem.create(download.getContentDataUrl(), download));
+                    AudioAttachmentItem newItem = AudioAttachmentItem.create(download.getContentDataUrl(), download);
+                    if (newItem != null) {
+                        mAudioAttachmentItems.add(newItem);
+                    }
+
                 }
 
             }
@@ -222,6 +226,7 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         if (fileName.contains("recording")) {
             return true;
         }
+
         return false;
     }
 }

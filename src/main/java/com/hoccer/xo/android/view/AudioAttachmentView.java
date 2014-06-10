@@ -17,7 +17,7 @@ import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
-public class AttachmentAudioView extends LinearLayout implements View.OnClickListener {
+public class AudioAttachmentView extends LinearLayout implements View.OnClickListener {
 
     private Context mContext;
     private AudioAttachmentItem mAudioAttachmentItem;
@@ -30,9 +30,9 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
     private TextView mArtistTextView;
     private ImageView mArtworkImageView;
 
-    private static final Logger LOG = Logger.getLogger(AttachmentAudioView.class);
+    private static final Logger LOG = Logger.getLogger(AudioAttachmentView.class);
 
-    public AttachmentAudioView(Context context) {
+    public AudioAttachmentView(Context context) {
         super(context);
         mContext = context;
         addView(inflate(mContext, R.layout.item_audio_attachment, null));
@@ -66,7 +66,7 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
             mCurrentTask = new DownloadArtworkTask();
             mCurrentTask.execute();
         } else {
-            AttachmentAudioView.this.mArtworkImageView.setImageDrawable(mAudioAttachmentItem.getMetaData().getArtwork());
+            AudioAttachmentView.this.mArtworkImageView.setImageDrawable(mAudioAttachmentItem.getMetaData().getArtwork());
         }
 
     }
@@ -165,7 +165,7 @@ public class AttachmentAudioView extends LinearLayout implements View.OnClickLis
             super.onPostExecute(artwork);
             if (!this.isCancelled()) {
                 mAudioAttachmentItem.getMetaData().setArtwork(artwork);
-                AttachmentAudioView.this.mArtworkImageView.setImageDrawable(artwork);
+                AudioAttachmentView.this.mArtworkImageView.setImageDrawable(artwork);
             }
         }
     }

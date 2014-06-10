@@ -2,8 +2,11 @@ package com.hoccer.xo.android.content;
 
 import android.net.Uri;
 import com.hoccer.talk.content.IContentObject;
+import org.apache.log4j.Logger;
 
 public class AudioAttachmentItem {
+
+    static final Logger LOG = Logger.getLogger(AudioAttachmentItem.class);
 
     private IContentObject contentObject;
 
@@ -19,7 +22,12 @@ public class AudioAttachmentItem {
         mi.setFilePath(mediaFilePath);
 
         String path = Uri.parse(mediaFilePath).getPath();
-        mi.setMetaData(MediaMetaData.create(path));
+        try {
+            mi.setMetaData(MediaMetaData.create(path));
+        } catch (Exception e) {
+            LOG.warn("Cannot load meta-data for file.");
+            return null;
+        }
 
         mi.setContentObject(contentObject);
 
