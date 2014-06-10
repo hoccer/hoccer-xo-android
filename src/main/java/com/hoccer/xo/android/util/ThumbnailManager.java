@@ -23,9 +23,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
 
 
 /**
@@ -69,12 +66,15 @@ public class ThumbnailManager {
      * @param maskResource The resource id of a drawable to mask the thumbnail
      */
     public void displayThumbnailForImage(String uri, ImageView imageView, int maskResource) {
+
+        String taggedUri = taggedFilename(uri, maskResource);
+
         Bitmap bitmap = null;
         if (uri != null) {
-            bitmap = (Bitmap) mMemoryLruCache.get(uri);
+            bitmap = (Bitmap) mMemoryLruCache.get(taggedUri);
         }
         if (bitmap == null) {
-            bitmap = loadThumbnailForImage(uri);
+            bitmap = loadThumbnailForImage(uri, maskResource);
         }
         if (bitmap != null) {
             imageView.setImageBitmap(bitmap);
@@ -87,8 +87,15 @@ public class ThumbnailManager {
         }
     }
 
-    private Bitmap loadThumbnailForImage(String uri) {
+    private String taggedFilename(String filename, int tag) {
+        int index = filename.lastIndexOf(".");
+        String taggedFilename = filename.substring(0, index) + String.valueOf(tag) + filename.substring(index);
+        return taggedFilename;
+    }
+
+    private Bitmap loadThumbnailForImage(String uri, int tag) {
         String thumbnailFilename = uri.substring(uri.lastIndexOf("/") + 1, uri.length());
+        thumbnailFilename = taggedFilename(thumbnailFilename, tag);
         File thumbnail = new File(XoApplication.getThumbnailDirectory(), thumbnailFilename);
         Bitmap bitmap = null;
         if (thumbnail.exists()) {
@@ -100,8 +107,9 @@ public class ThumbnailManager {
         return bitmap;
     }
 
-    private void saveToThumbnailDirectory(Bitmap bitmap, String filename) {
+    private void saveToThumbnailDirectory(Bitmap bitmap, String filename, int tag) {
         filename = filename.substring(filename.lastIndexOf("/") + 1, filename.length());
+        filename = taggedFilename(filename, tag);
         File destination = new File(XoApplication.getThumbnailDirectory(), filename);
         try {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(destination));
@@ -182,7 +190,7 @@ public class ThumbnailManager {
         if (imageFile.exists()) {
             thumbnail = renderThumbnail(imageFile, maskResource);
             if (thumbnail != null) {
-                saveToThumbnailDirectory(thumbnail, uri);
+                saveToThumbnailDirectory(thumbnail, uri, maskResource);
                 return thumbnail;
             }
         }
@@ -237,7 +245,8 @@ public class ThumbnailManager {
             if (thumbnail == null) {
                 return null;
             }
-            mMemoryLruCache.put(mImageToLoad.mUrl, thumbnail);
+            String thumbnailUri = taggedFilename(uri, mMaskResource);
+            mMemoryLruCache.put(thumbnailUri, thumbnail);
             return thumbnail;
         }
 
