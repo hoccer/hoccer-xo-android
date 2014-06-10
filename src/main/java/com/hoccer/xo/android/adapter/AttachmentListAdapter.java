@@ -1,8 +1,10 @@
 package com.hoccer.xo.android.adapter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.util.SparseBooleanArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -16,6 +18,7 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.android.view.AttachmentAudioView;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -94,11 +97,7 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         audioRowView.setMediaItem(mAudioAttachmentItems.get(position));
 
         if (mSelections != null) {
-            if (mSelections.get(position)) {
-                audioRowView.setBackgroundColor(Color.RED);
-            } else {
-                audioRowView.setBackgroundColor(Color.WHITE);
-            }
+            audioRowView.getChildAt(0).setSelected(mSelections.get(position));
         }
         return audioRowView;
     }

@@ -87,6 +87,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 mAttachmentListAdapter.setSelections(getListView().getCheckedItemPositions());
+                mAttachmentListAdapter.notifyDataSetChanged();
             }
 
             @Override
