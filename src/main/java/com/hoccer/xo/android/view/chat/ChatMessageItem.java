@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 import java.util.Date;
 
 /**
- * This class creates and configures layouts for incoming or outgoing messages.
+ * This class creates and configures layouts for incoming and outgoing messages.
  */
 public class ChatMessageItem implements AttachmentTransferListener {
 

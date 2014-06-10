@@ -28,7 +28,10 @@ import java.util.WeakHashMap;
 
 
 /**
- * This class manages thumbnail representations of given images.
+ * This class is the central source for thumbnail representations of given image attachments.
+ * It creates, stores, caches scaled and masked bitmaps of specified images.
+ * <p/>
+ * it manage
  */
 public class ThumbnailManager {
     private static ThumbnailManager mInstance;
