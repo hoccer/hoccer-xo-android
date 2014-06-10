@@ -113,7 +113,7 @@ public class ThumbnailManager {
         try {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(destination));
         } catch (FileNotFoundException e) {
-            LOG.error("Error while saving thumbnail bitmap: ", e);
+            LOG.error("Error while saving thumbnail bitmap: " + destination.getAbsolutePath(), e);
         }
     }
 
@@ -138,7 +138,7 @@ public class ThumbnailManager {
             }
 
         } catch (IOException e) {
-            LOG.error("Error while processing thumbnail bitmap: ", e);
+            LOG.error("Error while accessing Exif information for image: " + filePath, e);
         }
         Matrix matrix = new Matrix();
         matrix.postRotate(rotation);
