@@ -1,7 +1,6 @@
 package com.hoccer.xo.android.view.chat;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.format.DateUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -218,7 +217,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
         }
         mAttachmentView.setVisibility(View.VISIBLE);
 
-        mContentWrapper = (LinearLayout) mAttachmentView.findViewById(R.id.content_wrapper);
+        mContentWrapper = (LinearLayout) mAttachmentView.findViewById(R.id.ll_content_wrapper);
 
         // adjust layout for incoming / outgoing attachment
         if (mMessage.isIncoming()) {
@@ -240,7 +239,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
         }
 
         // configure transfer progress view
-        mContentTransferProgress = (RelativeLayout) mAttachmentView.findViewById(R.id.content_transfer_progress);
+        mContentTransferProgress = (RelativeLayout) mAttachmentView.findViewById(R.id.rl_content_transfer_progress);
         mTransferControl = (AttachmentTransferControlView) mAttachmentView.findViewById(R.id.content_transfer_control);
         IContentObject contentObject = mMessage.getAttachmentUpload();
         if (contentObject == null) {

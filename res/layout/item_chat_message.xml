@@ -24,7 +24,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_alignParentLeft="true"
-            android:layout_alignBottom="@+id/container"
+            android:layout_alignBottom="@+id/rl_container"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:scaleType="centerCrop"
@@ -32,7 +32,7 @@
             custom:defaultAvatarImageUrl="@drawable/avatar_default_contact"/>
 
     <RelativeLayout
-            android:id="@+id/container"
+            android:id="@+id/rl_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/tv_message_time"
@@ -78,7 +78,7 @@
             android:layout_marginLeft="24dp"
             android:textColor="@android:color/secondary_text_dark"
             android:layout_alignParentBottom="true"
-            android:layout_alignLeft="@+id/container"
-            android:layout_below="@+id/container"/>
+            android:layout_alignLeft="@+id/rl_container"
+            android:layout_below="@+id/rl_container"/>
 
 </RelativeLayout>

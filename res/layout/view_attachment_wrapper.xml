@@ -8,14 +8,14 @@
         android:layout_height="wrap_content">
 
     <LinearLayout
-            android:id="@+id/content_wrapper"
+            android:id="@+id/ll_content_wrapper"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
     </LinearLayout>
 
     <RelativeLayout
-            android:id="@+id/content_transfer_progress"
+            android:id="@+id/rl_content_transfer_progress"
             android:background="@android:color/transparent"
             android:orientation="horizontal"
             android:padding="5dp"
