@@ -131,6 +131,7 @@ public class FullscreenPlayerFragment extends Fragment {
                         mPlayButton.setChecked(true);
                     }
                 }
+
             });
         }
     }

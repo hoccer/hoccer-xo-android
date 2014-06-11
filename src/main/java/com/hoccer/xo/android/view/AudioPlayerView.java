@@ -30,29 +30,22 @@ public class AudioPlayerView
     private BroadcastReceiver mReceiver;
     private Context mContext;
     private ServiceConnection mConnection;
-    private IContentObject contentObject;
+    private AudioAttachmentItem mAudioContentObject;
     private boolean mIsPlayable = false;
 
+    public AudioPlayerView(Context context) {
+        super(context);
+        mContext = context;
+        addView(inflate(mContext, R.layout.content_audio, null));
+    }
+
     public void setContentObject(IContentObject contentObject) {
-        this.contentObject = contentObject;
-        AudioAttachmentItem audioItem = AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject);
-        if (audioItem == null) {
+        mAudioContentObject = AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject);
+        if (mAudioContentObject == null) {
             mIsPlayable = false;
         } else {
             mIsPlayable = true;
         }
-    }
-
-    public AudioPlayerView(Context context) {
-        super(context);
-        initialize(context);
-    }
-
-    private void initialize(Context context) {
-        View v =  inflate(context, R.layout.content_audio, null);
-        addView(v);
-
-        mContext = context;
     }
 
     private void bindService(Intent intent) {
@@ -85,27 +78,7 @@ public class AudioPlayerView
 
     private void startPlaying() {
         if (isBound()) {
-
-            int conversationContactId = -1;
-
-            if (contentObject instanceof TalkClientDownload) {
-                int talkClientDownloadId = ((TalkClientDownload) contentObject).getClientDownloadId();
-                TalkClientMessage message = null;
-                try {
-                    message = XoApplication.getXoClient().getDatabase().findClientMessageByTalkClientDownloadId(talkClientDownloadId);
-                } catch (SQLException e) {
-                    LOG.error(e.getMessage());
-                    e.printStackTrace();
-                }
-
-                if (message != null) {
-                    conversationContactId = message.getConversationContact().getClientContactId();
-                }
-            } else {
-                conversationContactId = XoApplication.getXoClient().getSelfContact().getClientContactId();
-            }
-
-            mMediaPlayerService.setMedia(AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject), conversationContactId);
+            mMediaPlayerService.setMedia(mAudioContentObject);
             mMediaPlayerService.play(0);
         }
     }
@@ -133,12 +106,12 @@ public class AudioPlayerView
     }
 
     public boolean isActive() {
-        if (contentObject != null && isBound()) {
-            AudioAttachmentItem currentItem = mMediaPlayerService.getCurrentMediaItem();
-            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && contentObject.getContentDataUrl().equals(currentItem.getFilePath());
-        } else {
-            return false;
+        boolean isActive = false;
+        if (mAudioContentObject != null && isBound()) {
+            isActive = !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && mAudioContentObject.equals(mMediaPlayerService.getCurrentMediaItem());
         }
+
+        return isActive;
     }
 
     @Override

@@ -16,12 +16,17 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.RemoteViews;
+import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientMessage;
+import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class MediaPlayerService extends Service implements MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
@@ -49,10 +54,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
 
     private boolean paused = false;
     private boolean stopped = true;
-
-    private int mCurrentConversationContactId;
-    private String mCurrentMediaFilePath;
-    private String mTempMediaFilePath;
 
     private PendingIntent mResultPendingIntent;
 
@@ -157,7 +158,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         return true;
     }
 
-    public boolean isApplicationSentToBackground(Context context) {
+    private boolean isApplicationSentToBackground(Context context) {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
         if (!tasks.isEmpty()) {
@@ -285,7 +286,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
     }
 
     private void resetAndPrepareMediaPlayer(String mediaFilePath) {
-        mTempMediaFilePath = mediaFilePath;
         try {
             mMediaPlayer.reset();
             mMediaPlayer.setDataSource(mediaFilePath.replace("file:///", "/"));
@@ -337,7 +337,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
             setPaused(false);
             setStopped(false);
             if (!canResume()) {
-                mCurrentMediaFilePath = mTempMediaFilePath;
                 broadcastTrackChanged();
             }
             if (isNotificationActive()) {
@@ -429,21 +428,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         }
     }
 
-    private void removeNotification() {
-        stopForeground(true);
-    }
-
-    private void setPaused(boolean paused) {
-        this.paused = paused;
-    }
-
-    private void setStopped(boolean stopped) {
-        this.stopped = stopped;
-    }
-
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        LOG.debug("onError(" + what + "," + extra + ")");
         LOG.debug("onError(" + what + "," + extra + ")");
         return false;
     }
@@ -469,7 +455,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         return (isStopped()) ? 0 : mPlaylist.getCurrentTrackNumber();
     }
 
-
     public int getCurrentTrackNumber() {
         return mPlaylist.getCurrentTrackNumber();
     }
@@ -478,25 +463,49 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         return mMediaPlayer.getCurrentPosition();
     }
 
+    public AudioAttachmentItem getCurrentMediaItem() {
+        return mPlaylist.current();
+    }
+
     public int getCurrentConversationContactId() {
-        return mCurrentConversationContactId;
+        int conversationContactId = UNDEFINED_CONTACT_ID;
+
+        try {
+            TalkClientMessage message;
+            if (getCurrentMediaItem().getContentObject() instanceof  TalkClientDownload) {
+                int attachmentId = ((TalkClientDownload) getCurrentMediaItem().getContentObject()).getClientDownloadId();
+                message = XoApplication.getXoClient().getDatabase().findClientMessageByTalkClientDownloadId(attachmentId);
+                if (message != null) {
+                    conversationContactId = message.getSenderContact().getClientContactId();
+                }
+            } else if (getCurrentMediaItem().getContentObject() instanceof TalkClientUpload) {
+                int attachmentId = ((TalkClientUpload) getCurrentMediaItem().getContentObject()).getClientUploadId();
+                message = XoApplication.getXoClient().getDatabase().findClientMessageByTalkClientUploadId(attachmentId);
+                if (message != null) {
+                    conversationContactId = message.getSenderContact().getClientContactId();
+                }
+            }
+        } catch (SQLException e) {
+            LOG.error(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return conversationContactId;
     }
 
     public PlaylistType getPlaylistType() {
         return mPlaylistType;
     }
 
-    public void setMedia(AudioAttachmentItem item, int conversationContactId) {
+    public void setMedia(AudioAttachmentItem item) {
         mPlaylist.clear();
         mPlaylist.add(0, item);
-        mCurrentConversationContactId = conversationContactId;
         mPlaylistType = PlaylistType.SINGLE_MEDIA;
     }
 
     public void setMediaList(List<AudioAttachmentItem> itemList, int conversationContactId) {
         mPlaylist.clear();
         mPlaylist.addAll(itemList);
-        mCurrentConversationContactId = conversationContactId;
 
         if (conversationContactId == UNDEFINED_CONTACT_ID) {
             mPlaylistType = PlaylistType.ALL_MEDIA;
@@ -540,7 +549,16 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         mLocalBroadcastManager.sendBroadcast(intent);
     }
 
-    public AudioAttachmentItem getCurrentMediaItem() {
-        return mPlaylist.current();
+
+    private void removeNotification() {
+        stopForeground(true);
+    }
+
+    private void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    private void setStopped(boolean stopped) {
+        this.stopped = stopped;
     }
 }
