@@ -295,7 +295,6 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
         } else {
             mContentTransferControl.setOnClickListener(null);
-            configureContextMenu();
             displayAttachment(contentObject);
         }
 
@@ -317,6 +316,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
     protected void displayAttachment(IContentObject contentObject) {
         mContentTransferProgress.setVisibility(View.GONE);
         mContentWrapper.setVisibility(View.VISIBLE);
+        configureContextMenu();
     }
 
     /**
