@@ -84,16 +84,8 @@ public class ContentRegistry {
         initializeSelector(new MusicSelector(mContext));
         initializeSelector(new ContactSelector(mContext));
         initializeSelector(new MapsLocationSelector(mContext));
-//        initializeSelector(new DataSelector(mContext));
 
         mClipboardSelector = new ClipboardSelector(mContext);
-
-//        mAttachmentViewCaches.add(new ImageViewCache());
-//        mAttachmentViewCaches.add(new VideoViewCache());
-//        mAttachmentViewCaches.add(new ButtonAudioViewCache());
-//        mAttachmentViewCaches.add(new ContactViewCache());
-//        mAttachmentViewCaches.add(new LocationViewCache());
-//        mAttachmentViewCaches.add(new DataViewCache());
     }
 
     /**
@@ -119,6 +111,8 @@ public class ContentRegistry {
         if(mediaType != null) {
             if(mediaType.equals("image")) {
                 mediaTypeString = "Image";
+            } else if (mediaType.equals("audio")) {
+                mediaTypeString = "Audio";
             } else if(mediaType.equals("video")) {
                 mediaTypeString = "Video";
             } else if(mediaType.equals("contact")) {
@@ -147,41 +141,6 @@ public class ContentRegistry {
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
-
-    /**
-     * Creates a View for displaying the given content
-     *
-     * This should be called by OldContentView when the displayed object changes.
-     *
-     * @param activity the view will be used in
-     * @param contentObject to display
-     * @param view that will host the returned view
-     * @return a View set up for the given content
-     */
-//    public View createViewForContent(Activity activity, IContentObject contentObject, OldContentView view, boolean isLightTheme) {
-//        OldContentViewCache contentViewCache = selectViewCacheForContent(contentObject);
-//        if(contentViewCache != null) {
-//            return contentViewCache.getViewForObject(activity, view, contentObject, isLightTheme);
-//        }
-//        return null;
-//    }
-
-    /**
-     * Selects the viewer for a content object
-     *
-     * First viewer that can show the content will be chosen.
-     *
-     * @param contentObject that needs a view constructed
-     * @return a matching content viewer
-     */
-//    public OldContentViewCache selectViewCacheForContent(IContentObject contentObject) {
-//        for(OldContentViewCache viewCache: mAttachmentViewCaches) {
-//            if(viewCache.canViewObject(contentObject)) {
-//                return viewCache;
-//            }
-//        }
-//        return null;
-//    }
 
     /**
      * Starts avatar selection

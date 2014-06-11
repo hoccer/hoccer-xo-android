@@ -34,7 +34,7 @@
                 android:layout_centerInParent="true">
 
             <com.hoccer.xo.android.view.chat.attachments.AttachmentTransferControlView
-                    android:id="@+id/content_transfer_control"
+                    android:id="@+id/atcv_content_transfer_control"
                     android:layout_width="170dp"
                     android:layout_height="170dp"
                     android:layout_gravity="center"
@@ -48,7 +48,7 @@
                     TransferWheel:enableStates="true"/>
 
             <TextView
-                    android:id="@+id/content_description_text"
+                    android:id="@+id/tv_content_description_text"
                     android:text="Image (2 MB)"
                     android:textColor="#004ce5"
                     android:layout_width="wrap_content"
