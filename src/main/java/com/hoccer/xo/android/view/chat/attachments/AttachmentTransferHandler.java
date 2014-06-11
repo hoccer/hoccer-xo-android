@@ -121,7 +121,7 @@ public class AttachmentTransferHandler implements View.OnClickListener, IXoTrans
                 mTransferAction = TransferAction.REQUEST_DOWNLOAD;
                 break;
             case DOWNLOAD_DETECTING:
-                //mTransferControl.setEnabled(false); // TODO: is this needed / balanced?
+                //mContentTransferControl.setEnabled(false); // TODO: is this needed / balanced?
                 break;
             case DOWNLOAD_DECRYPTING:
             case DOWNLOAD_DOWNLOADING:
@@ -132,7 +132,7 @@ public class AttachmentTransferHandler implements View.OnClickListener, IXoTrans
                 mTransferAction = TransferAction.REQUEST_UPLOAD;
                 break;
             case UPLOAD_REGISTERING:
-                //mTransferControl.setEnabled(false); // TODO: is this needed / balanced?
+                //mContentTransferControl.setEnabled(false); // TODO: is this needed / balanced?
                 break;
             case UPLOAD_ENCRYPTING:
             case UPLOAD_UPLOADING:
