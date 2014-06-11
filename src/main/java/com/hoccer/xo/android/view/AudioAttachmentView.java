@@ -50,14 +50,15 @@ public class AudioAttachmentView extends LinearLayout implements View.OnClickLis
     }
 
     private void updateAudioView() {
-        mTitleTextView.setText(mAudioAttachmentItem.getMetaData().getTitleOrFilename(mAudioAttachmentItem.getFilePath()));
+        mTitleTextView.setText(mAudioAttachmentItem.getMetaData().getTitleOrFilename(mAudioAttachmentItem.getFilePath()).trim());
 
         String artist = mAudioAttachmentItem.getMetaData().getArtist();
         if (artist == null || artist.isEmpty()){
             artist = getResources().getString(R.string.media_meta_data_unknown_artist);
         }
 
-        mArtistTextView.setText(artist);
+        mArtistTextView.setText(artist.trim());
+
         if (mCurrentTask != null && mCurrentTask.getStatus() != AsyncTask.Status.FINISHED) {
             mCurrentTask.cancel(true);
         }

@@ -1,7 +1,9 @@
 package com.hoccer.xo.android.view;
 
+import android.app.AlertDialog;
 import android.content.*;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.ImageButton;
@@ -29,9 +31,16 @@ public class AudioPlayerView
     private Context mContext;
     private ServiceConnection mConnection;
     private IContentObject contentObject;
+    private boolean mIsPlayable = false;
 
     public void setContentObject(IContentObject contentObject) {
         this.contentObject = contentObject;
+        AudioAttachmentItem audioItem = AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject);
+        if (audioItem == null) {
+            mIsPlayable = false;
+        } else {
+            mIsPlayable = true;
+        }
     }
 
     public AudioPlayerView(Context context) {
@@ -40,7 +49,9 @@ public class AudioPlayerView
     }
 
     private void initialize(Context context) {
-        addView(inflate(context, R.layout.content_audio, null));
+        View v =  inflate(context, R.layout.content_audio, null);
+        addView(v);
+
         mContext = context;
     }
 
@@ -104,10 +115,19 @@ public class AudioPlayerView
 
     @Override
     public void onClick(View view) {
-        if (isActive()) {
-            pausePlaying();
+        if (mIsPlayable) {
+            if (isActive()) {
+                pausePlaying();
+            } else {
+                startPlaying();
+            }
         } else {
-            startPlaying();
+            AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+            alertDialog.setMessage(mContext.getResources().getString(R.string.content_not_supported_audio_msg));
+            alertDialog.setTitle(mContext.getString(R.string.content_not_supported_audio_title));
+            DialogInterface.OnClickListener nullListener = null;
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", nullListener);
+            alertDialog.show();
         }
     }
 
