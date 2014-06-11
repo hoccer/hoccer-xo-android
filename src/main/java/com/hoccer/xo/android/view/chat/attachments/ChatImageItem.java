@@ -40,7 +40,6 @@ public class ChatImageItem extends ChatMessageItem {
     protected void displayAttachment(final IContentObject contentObject) {
         super.displayAttachment(contentObject);
         mAttachmentView.setPadding(0, 0, 0, 0);
-        mAttachmentView.setBackgroundDrawable(null);
         // add view lazily
         if (mContentWrapper.getChildCount() == 0) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -68,7 +67,10 @@ public class ChatImageItem extends ChatMessageItem {
             mask = R.drawable.bubble_green;
         }
         imageView.setVisibility(View.INVISIBLE);
-        ThumbnailManager.getInstance(mContext).displayThumbnailForImage(contentObject.getContentDataUrl(), imageView, mask, tag);
+        if (contentObject.getContentDataUrl() != null) {
+            mAttachmentView.setBackgroundDrawable(null);
+            ThumbnailManager.getInstance(mContext).displayThumbnailForImage(contentObject.getContentDataUrl(), imageView, mask, tag);
+        }
     }
 
     private void displayImage(IContentObject contentObject) {
