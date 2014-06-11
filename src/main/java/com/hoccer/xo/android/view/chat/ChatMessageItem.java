@@ -16,6 +16,7 @@ import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.ContentState;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.talk.model.TalkDelivery;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.view.chat.attachments.AttachmentTransferControlView;
@@ -45,7 +46,6 @@ public class ChatMessageItem implements AttachmentTransferListener {
     protected RelativeLayout mAttachmentView;
     protected LinearLayout mContentWrapper;
     protected AttachmentTransferControlView mTransferControl;
-
 
     public ChatMessageItem(Context context, TalkClientMessage message) {
         super();
@@ -111,7 +111,8 @@ public class ChatMessageItem implements AttachmentTransferListener {
     /**
      * Configures a given message layout using data from a given TalkClientMessage object.
      * <p/>
-     * Subtypes will have to overwrite this method to enhance the configuration of the message layout.
+     * Subtypes will have to overwrite this method to enhance the configuration of the message
+     * layout.
      *
      * @param view The given layout
      */
@@ -131,13 +132,19 @@ public class ChatMessageItem implements AttachmentTransferListener {
             messageName.setVisibility(View.VISIBLE);
             messageName.setText(mMessage.getSenderContact().getName());
 
-            messageText.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_grey));
-            messageText.setTextColor(mContext.getResources().getColorStateList(android.R.color.black));
-            messageText.setLinkTextColor(mContext.getResources().getColorStateList(android.R.color.black));
+            messageText.setBackgroundDrawable(
+                    mContext.getResources().getDrawable(R.drawable.bubble_grey));
+            messageText
+                    .setTextColor(mContext.getResources().getColorStateList(android.R.color.black));
+            messageText.setLinkTextColor(
+                    mContext.getResources().getColorStateList(android.R.color.black));
 
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) messageText.getLayoutParams();
-            float marginLeft = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, mContext.getResources().getDisplayMetrics());
-            float marginRight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, mContext.getResources().getDisplayMetrics());
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) messageText
+                    .getLayoutParams();
+            float marginLeft = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10,
+                    mContext.getResources().getDisplayMetrics());
+            float marginRight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30,
+                    mContext.getResources().getDisplayMetrics());
             layoutParams.leftMargin = (int) marginLeft;
             layoutParams.rightMargin = (int) marginRight;
             messageText.setLayoutParams(layoutParams);
@@ -146,13 +153,19 @@ public class ChatMessageItem implements AttachmentTransferListener {
             avatarView.setVisibility(View.GONE);
             messageName.setVisibility(View.GONE);
 
-            messageText.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_green));
-            messageText.setTextColor(mContext.getResources().getColorStateList(android.R.color.white));
-            messageText.setLinkTextColor(mContext.getResources().getColorStateList(android.R.color.white));
+            messageText.setBackgroundDrawable(
+                    mContext.getResources().getDrawable(getBackgroundResource()));
+            messageText.setTextColor(
+                    mContext.getResources().getColorStateList(android.R.color.white));
+            messageText.setLinkTextColor(
+                    mContext.getResources().getColorStateList(android.R.color.white));
 
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) messageText.getLayoutParams();
-            float marginLeft = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, mContext.getResources().getDisplayMetrics());
-            float marginRight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, mContext.getResources().getDisplayMetrics());
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) messageText
+                    .getLayoutParams();
+            float marginLeft = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30,
+                    mContext.getResources().getDisplayMetrics());
+            float marginRight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10,
+                    mContext.getResources().getDisplayMetrics());
             layoutParams.leftMargin = (int) marginLeft;
             layoutParams.rightMargin = (int) marginRight;
             messageText.setLayoutParams(layoutParams);
@@ -162,6 +175,24 @@ public class ChatMessageItem implements AttachmentTransferListener {
         messageText.setText(mMessage.getText());
 
         mMessageText = messageText;
+    }
+
+
+    public int getBackgroundResource() {
+        String currentState = mMessage.getOutgoingDelivery().getMessageId();
+        if(currentState == null) {
+            return R.drawable.bubble_green;
+        }
+        if (currentState.equals(TalkDelivery.STATE_DELIVERING)) {
+            return R.drawable.bubble_grey;
+        } else if(currentState.equals(TalkDelivery.STATE_DELIVERED)) {
+            return R.drawable.bubble_green;
+        } else if(currentState.equals(TalkDelivery.STATE_ABORTED)) {
+
+        } else if(currentState.equals(TalkDelivery.STATE_FAILED)) {
+
+        }
+        return R.drawable.bubble_green;
     }
 
     private String getMessageTimestamp(TalkClientMessage message) {
@@ -350,13 +381,16 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
         ChatMessageItem that = (ChatMessageItem) o;
 
-        if (mMessage != null ? !mMessage.equals(that.mMessage) : that.mMessage != null) return false;
+        if(mMessage != null && that.getMessage() != null) {
+            return mMessage.equals(that.getMessage());
+        }
 
-        return true;
+        return false;
     }
 
     @Override
     public int hashCode() {
         return mMessage != null ? mMessage.hashCode() : 0;
     }
+
 }

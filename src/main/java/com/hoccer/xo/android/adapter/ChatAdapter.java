@@ -1,8 +1,5 @@
 package com.hoccer.xo.android.adapter;
 
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
 import com.hoccer.talk.client.IXoMessageListener;
 import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -13,14 +10,25 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
-import com.hoccer.xo.android.view.chat.attachments.*;
+import com.hoccer.xo.android.view.chat.attachments.ChatAudioItem;
+import com.hoccer.xo.android.view.chat.attachments.ChatContactItem;
+import com.hoccer.xo.android.view.chat.attachments.ChatDataItem;
+import com.hoccer.xo.android.view.chat.attachments.ChatImageItem;
+import com.hoccer.xo.android.view.chat.attachments.ChatItemType;
+import com.hoccer.xo.android.view.chat.attachments.ChatLocationItem;
+import com.hoccer.xo.android.view.chat.attachments.ChatVideoItem;
+
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class represents an adapter which loads data from a given conversation and configures the chat view.
+ * This class represents an adapter which loads data from a given conversation and configures the
+ * chat view.
  * <p/>
  * When loading the all messages from the data base this adaptor performs batching.
  * The size of a batch is defined by the constant LOAD_MESSAGES.
@@ -36,7 +44,8 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
 
     /**
      * Defines the distance from the bottom-most item in the chat view - in number of items.
-     * If you scroll up beyond this limit the chat view will not automatically scroll to the bottom when a new message is displayed.
+     * If you scroll up beyond this limit the chat view will not automatically scroll to the bottom
+     * when a new message is displayed.
      */
     private static final int AUTO_SCROLL_LIMIT = 5;
 
@@ -63,7 +72,8 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     private void initialize() {
         int totalMessageCount = 0;
         try {
-            totalMessageCount = (int) mDatabase.getMessageCountByContactId(mContact.getClientContactId());
+            totalMessageCount = (int) mDatabase
+                    .getMessageCountByContactId(mContact.getClientContactId());
         } catch (SQLException e) {
             LOG.error("SQLException while loading message count: " + mContact.getClientId(), e);
         }
@@ -79,7 +89,8 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
             if (offset < 0) {
                 offset = 0;
             }
-            final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
+            final List<TalkClientMessage> messagesBatch = mDatabase
+                    .findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
             for (int i = 0; i < messagesBatch.size(); i++) {
                 ChatMessageItem messageItem = getItemForMessage(messagesBatch.get(i));
                 mChatMessageItems.set(offset + i, messageItem);
@@ -91,7 +102,8 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
                 }
             });
         } catch (SQLException e) {
-            LOG.error("SQLException while batch retrieving messages for contact: " + mContact.getClientId(), e);
+            LOG.error("SQLException while batch retrieving messages for contact: " + mContact
+                    .getClientId(), e);
         }
     }
 
