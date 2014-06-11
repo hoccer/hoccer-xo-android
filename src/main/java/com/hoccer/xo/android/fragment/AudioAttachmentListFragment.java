@@ -175,18 +175,47 @@ public class AudioAttachmentListFragment extends XoListFragment {
         }
     }
 
-    private void deleteAudioAttachment(int i) {
-        AudioAttachmentItem audioAttachmentItem = mAttachmentListAdapter.getItem(i);
+    private void deleteAudioAttachment(int pos) {
+        AudioAttachmentItem item = mAttachmentListAdapter.getItem(pos);
 
-        if (deleteFile(audioAttachmentItem.getFilePath())) {
+        if (isPlaying(item.getFilePath())) {
+            mMediaPlayerService.playNextByRepeatMode();
+            mMediaPlayerService.removeMedia(pos);
+        }
+
+        if (deleteFile(item.getFilePath())) {
             try {
-                XoApplication.getXoClient().getDatabase().deleteMessageByTalkClientDownloadId(((TalkClientDownload) audioAttachmentItem.getContentObject()).getClientDownloadId());
+                XoApplication.getXoClient().getDatabase().deleteMessageByTalkClientDownloadId(((TalkClientDownload) item.getContentObject()).getClientDownloadId());
             } catch (SQLException e) {
-                LOG.error("Error deleting message with client download id of " + ((TalkClientDownload) audioAttachmentItem.getContentObject()).getClientDownloadId());
+                LOG.error("Error deleting message with client download id of " + ((TalkClientDownload) item.getContentObject()).getClientDownloadId());
                 e.printStackTrace();
             }
-            mAttachmentListAdapter.removeItem(i);
+            mAttachmentListAdapter.removeItem(pos);
         }
+    }
+    private boolean isPlaying(String filePath) {
+        if (mMediaPlayerService != null) {
+            switch (mMediaPlayerService.getPlaylistType()) {
+                case ALL_MEDIA: {
+                    if (mFilteredContactId == ALL_CONTACTS_ID && !mMediaPlayerService.isStopped()) {
+                        if (filePath.equals(mMediaPlayerService.getCurrentMediaItem().getFilePath())) {
+                            return true;
+                        }
+                    }
+                }
+                break;
+                case CONVERSATION_MEDIA: {
+                    if (mFilteredContactId == mMediaPlayerService.getCurrentConversationContactId()
+                            && !mMediaPlayerService.isStopped()) {
+                        if (filePath.equals(mMediaPlayerService.getCurrentMediaItem().getFilePath())) {
+                            return true;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        return false;
     }
 
     private boolean deleteFile(String filePath) {
@@ -222,39 +251,11 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
             AudioAttachmentItem selectedItem = mAttachmentListAdapter.getItem(position);
 
-            AudioAttachmentItem currentlyPlayedItem = mMediaPlayerService.getCurrentMediaItem();
-
-            switch (mMediaPlayerService.getPlaylistType()) {
-                case ALL_MEDIA: {
-                    if (mFilteredContactId == ALL_CONTACTS_ID && !mMediaPlayerService.isStopped()) {
-                        if (selectedItem.equals(currentlyPlayedItem)) {
-                            updateMediaList();
-                            break;
-                        }
-                    }
-
-                    setMediaList();
-                    mMediaPlayerService.play(position);
-                }
-                break;
-                case CONVERSATION_MEDIA: {
-                    if (mFilteredContactId == mMediaPlayerService.getCurrentConversationContactId()
-                            && !mMediaPlayerService.isStopped()) {
-                        if (selectedItem.equals(currentlyPlayedItem)) {
-                            updateMediaList();
-                            break;
-                        }
-                    }
-
-                    setMediaList();
-                    mMediaPlayerService.play(position);
-                }
-                break;
-                case SINGLE_MEDIA: {
-                    setMediaList();
-                    mMediaPlayerService.play(position);
-                }
-                break;
+            if (isPlaying(selectedItem.getFilePath())) {
+                updateMediaList();
+            } else {
+                setMediaList();
+                mMediaPlayerService.play(position);
             }
 
             getXoActivity().showFullscreenPlayer();
