@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.SparseBooleanArray;
 import android.view.*;
 import android.widget.AbsListView;
@@ -32,6 +33,7 @@ import java.util.List;
 
 public class AudioAttachmentListFragment extends XoListFragment {
 
+    public static final String AUDIO_ATTACHMENT_REMOVED_ACTION = "com.hoccer.xo.android.fragment.AUDIO_ATTACHMENT_REMOVED_ACTION";
     private MediaPlayerService mMediaPlayerService;
 
     public static final int ALL_CONTACTS_ID = -1;
@@ -180,19 +182,25 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
         if (isPlaying(item.getFilePath())) {
             mMediaPlayerService.playNextByRepeatMode();
-            mMediaPlayerService.removeMedia(pos);
         }
 
         if (deleteFile(item.getFilePath())) {
             try {
                 XoApplication.getXoClient().getDatabase().deleteMessageByTalkClientDownloadId(((TalkClientDownload) item.getContentObject()).getClientDownloadId());
+                mAttachmentListAdapter.removeItem(pos);
+
+                if (mMediaPlayerService != null && !mMediaPlayerService.isPaused())
+                mMediaPlayerService.removeMedia(pos);
+
+                Intent intent = new Intent(AUDIO_ATTACHMENT_REMOVED_ACTION);
+                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
             } catch (SQLException e) {
                 LOG.error("Error deleting message with client download id of " + ((TalkClientDownload) item.getContentObject()).getClientDownloadId());
                 e.printStackTrace();
             }
-            mAttachmentListAdapter.removeItem(pos);
         }
     }
+
     private boolean isPlaying(String filePath) {
         if (mMediaPlayerService != null) {
             switch (mMediaPlayerService.getPlaylistType()) {

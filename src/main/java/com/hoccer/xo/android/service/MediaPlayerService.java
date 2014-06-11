@@ -89,18 +89,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         createHeadsetHandlerReceiver();
     }
 
-    private void createHeadsetHandlerReceiver(){
+    private void createHeadsetHandlerReceiver() {
 
-        mHeadsetStateBroadcastReceiver =  new BroadcastReceiver()
-        {
+        mHeadsetStateBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                if (intent.getAction().equals( android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
+                if (intent.getAction().equals(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
 
                     int headSetState = intent.getIntExtra("state", 0);
 
-                    if (headSetState == 0){
+                    if (headSetState == 0) {
                         pause();
                     }
                 }
@@ -416,7 +415,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
-                    if (isStopped()){
+                    if (isStopped()) {
                         setStopped(false);
                         setPaused(true);
                     }
@@ -510,7 +509,9 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
     }
 
     public void removeMedia(int pos) {
-        mPlaylist.remove(pos);
+        if (mPlaylist.size() > 0) {
+            mPlaylist.remove(pos);
+        }
     }
 
     public MediaPlaylist.RepeatMode getRepeatMode() {
