@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:TransferWheel="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <LinearLayout
+            android:id="@+id/ll_content_wrapper"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+    </LinearLayout>
+
+    <RelativeLayout
+            android:id="@+id/rl_content_transfer_progress"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_centerInParent="true">
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_centerInParent="true">
+
+            <com.hoccer.xo.android.view.chat.attachments.AttachmentTransferControlView
+                    android:id="@+id/atcv_content_transfer_control"
+                    android:layout_width="170dp"
+                    android:layout_height="170dp"
+                    android:layout_gravity="center"
+                    TransferWheel:outerWheelSize="2dp"
+                    TransferWheel:innerWheelSize="8dp"
+                    TransferWheel:wheelDiameter="120dp"
+                    TransferWheel:wheelColor="#004ce5"
+                    TransferWheel:text="Uploading..."
+                    TransferWheel:textMargin="20dp"
+                    TransferWheel:textSize="30"
+                    TransferWheel:enableStates="true"/>
+
+            <TextView
+                    android:id="@+id/tv_content_description_text"
+                    android:text="Image (2 MB)"
+                    android:textColor="#004ce5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    tools:ignore="HardcodedText"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

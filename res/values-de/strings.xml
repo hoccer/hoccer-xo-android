@@ -56,7 +56,7 @@
 
     <!-- Messaging fragment -->
     <string name="messaging_loading">Lädt...</string>
-    <string name="messaging_no_messages"></string>
+    <string name="messaging_no_messages">Keine Nachrichten</string>
     <string name="messaging_invited_join">Gruppe beitreten</string>
     <string name="menu_copy_attachment">Kopieren</string>
 
@@ -238,6 +238,7 @@
     <string name="placeholder_conversations_text">Lade deine Freunde zum Chatten ein!</string>
     <string name="placeholder_nearby_text">Warten auf andere Nearby-Nutzer...</string>
     <string name="actionbar_default_title">Hoccer</string>
+    <string name="content_audio_caption">Musik</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>
