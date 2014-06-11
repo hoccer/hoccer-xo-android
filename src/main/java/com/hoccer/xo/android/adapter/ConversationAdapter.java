@@ -1,5 +1,10 @@
 package com.hoccer.xo.android.adapter;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +21,8 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentView;
 import com.hoccer.xo.android.content.IContentViewListener;
+import com.hoccer.xo.android.fragment.AudioAttachmentListFragment;
+import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
 
@@ -53,6 +60,7 @@ public class ConversationAdapter extends XoAdapter
     private ScheduledFuture<?> mReloadFuture;
 
     private int mHistoryCount = 0;
+    private BroadcastReceiver mReceiver;
 
     public ConversationAdapter(XoActivity activity) {
         super(activity);
@@ -65,9 +73,11 @@ public class ConversationAdapter extends XoAdapter
             mContact = contact;
             mReloadHappened = false;
             mMessages.clear();
-            notifyDataSetChanged();
             requestReload();
         }
+
+        LOG.error("#foo converseWithContact()");
+        notifyDataSetChanged();
     }
 
     @Override
@@ -76,6 +86,8 @@ public class ConversationAdapter extends XoAdapter
         super.onCreate();
         getXoClient().registerMessageListener(this);
         getXoClient().registerTransferListener(this);
+
+        createBroadcastReceiver();
     }
 
     @Override
@@ -85,6 +97,9 @@ public class ConversationAdapter extends XoAdapter
         cancelReload();
         getXoClient().unregisterMessageListener(this);
         getXoClient().unregisterTransferListener(this);
+
+        LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mReceiver);
+        mReceiver = null;
     }
 
     @Override
@@ -468,6 +483,19 @@ public class ConversationAdapter extends XoAdapter
                 getXoClient().markAsSeen(message);
             }
         });
+    }
+
+    private void createBroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(AudioAttachmentListFragment.AUDIO_ATTACHMENT_REMOVED_ACTION)) {
+                    requestReload();
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(AudioAttachmentListFragment.AUDIO_ATTACHMENT_REMOVED_ACTION);
+        LocalBroadcastManager.getInstance(mActivity).registerReceiver(mReceiver, filter);
     }
 
 
