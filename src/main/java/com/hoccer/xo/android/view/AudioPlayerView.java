@@ -77,25 +77,28 @@ public class AudioPlayerView
 
             int conversationContactId = -1;
 
-            if (contentObject instanceof TalkClientDownload) {
-                int talkClientDownloadId = ((TalkClientDownload) contentObject).getClientDownloadId();
-                TalkClientMessage message = null;
-                try {
-                    message = XoApplication.getXoClient().getDatabase().findClientMessageByTalkClientDownloadId(talkClientDownloadId);
-                } catch (SQLException e) {
-                    LOG.error(e.getMessage());
-                    e.printStackTrace();
-                }
-
-                if (message != null) {
-                    conversationContactId = message.getConversationContact().getClientContactId();
-                }
+            if (mMediaPlayerService.isPaused() && mMediaPlayerService.getCurrentMediaItem() != null && contentObject.getContentDataUrl().equals(mMediaPlayerService.getCurrentMediaItem().getFilePath())) {
+                mMediaPlayerService.play();
             } else {
-                conversationContactId = XoApplication.getXoClient().getSelfContact().getClientContactId();
-            }
+                if (contentObject instanceof TalkClientDownload) {
+                    int talkClientDownloadId = ((TalkClientDownload) contentObject).getClientDownloadId();
+                    TalkClientMessage message = null;
+                    try {
+                        message = XoApplication.getXoClient().getDatabase().findClientMessageByTalkClientDownloadId(talkClientDownloadId);
+                    } catch (SQLException e) {
+                        LOG.error(e.getMessage());
+                        e.printStackTrace();
+                    }
 
-            mMediaPlayerService.setMedia(AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject), conversationContactId);
-            mMediaPlayerService.play(0);
+                    if (message != null) {
+                        conversationContactId = message.getConversationContact().getClientContactId();
+                    }
+                } else {
+                    conversationContactId = XoApplication.getXoClient().getSelfContact().getClientContactId();
+                }
+                mMediaPlayerService.setMedia(AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject), conversationContactId);
+                mMediaPlayerService.play(0);
+            }
         }
     }
 
