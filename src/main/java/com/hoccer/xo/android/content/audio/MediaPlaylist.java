@@ -115,8 +115,19 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
         LOG.error("Adding items at current position is not supported.");
     }
 
+    public void remove(int index) {
+        mAudioAttachmentItems.remove(index);
+        if (index <= mCurrentIndex) {
+            mCurrentIndex--;
+        }
+        resetPlaylistIndexes();
+    }
+
     public void add(int index, AudioAttachmentItem item) {
         mAudioAttachmentItems.add(index, item);
+        if (index <= mCurrentIndex) {
+            mCurrentIndex++;
+        }
         resetPlaylistIndexes();
     }
 
