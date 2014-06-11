@@ -66,7 +66,7 @@ public class ThumbnailManager {
      */
     public void displayThumbnailForImage(String uri, ImageView imageView, int maskResource, String tag) {
 
-        String taggedUri = taggedFilename(uri, tag);
+        String taggedUri = taggedThumbnailUri(uri, tag);
 
         Bitmap bitmap = null;
         if (uri != null) {
@@ -86,30 +86,28 @@ public class ThumbnailManager {
         }
     }
 
-    private String taggedFilename(String filename, String tag) {
-        int index = filename.lastIndexOf(".");
-        String taggedFilename = filename.substring(0, index) + String.valueOf(tag) + filename.substring(index);
-        return taggedFilename;
+    private String taggedThumbnailUri(String uri, String tag) {
+        String thumbnailFilename = uri.substring(uri.lastIndexOf("/") + 1, uri.length());
+        int index = thumbnailFilename.lastIndexOf(".");
+        String taggedFilename = thumbnailFilename.substring(0, index) + String.valueOf(tag) + thumbnailFilename.substring(index);
+        return XoApplication.getThumbnailDirectory() + taggedFilename;
     }
 
     private Bitmap loadThumbnailForImage(String uri, String tag) {
-        String thumbnailFilename = uri.substring(uri.lastIndexOf("/") + 1, uri.length());
-        thumbnailFilename = taggedFilename(thumbnailFilename, tag);
-        File thumbnail = new File(XoApplication.getThumbnailDirectory(), thumbnailFilename);
+        String thumbnailUri = taggedThumbnailUri(uri, tag);
+        File thumbnail = new File(thumbnailUri);
         Bitmap bitmap = null;
         if (thumbnail.exists()) {
             bitmap = BitmapFactory.decodeFile(thumbnail.getAbsolutePath());
             if (bitmap != null) {
-                mMemoryLruCache.put(thumbnailFilename, bitmap);
+                mMemoryLruCache.put(thumbnailUri, bitmap);
             }
         }
         return bitmap;
     }
 
-    private void saveToThumbnailDirectory(Bitmap bitmap, String filename, String tag) {
-        filename = filename.substring(filename.lastIndexOf("/") + 1, filename.length());
-        filename = taggedFilename(filename, tag);
-        File destination = new File(XoApplication.getThumbnailDirectory(), filename);
+    private void saveToThumbnailDirectory(Bitmap bitmap, String uri, String tag) {
+        File destination = new File(taggedThumbnailUri(uri, tag));
         try {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(destination));
         } catch (FileNotFoundException e) {
@@ -246,7 +244,7 @@ public class ThumbnailManager {
             if (thumbnail == null) {
                 return null;
             }
-            String thumbnailUri = taggedFilename(uri, mTag);
+            String thumbnailUri = taggedThumbnailUri(uri, mTag);
             mMemoryLruCache.put(thumbnailUri, thumbnail);
             return thumbnail;
         }
