@@ -45,12 +45,11 @@ public class AudioAttachmentView extends LinearLayout implements View.OnClickLis
     public void setMediaItem(AudioAttachmentItem audioAttachmentItem) {
         if (mAudioAttachmentItem == null || !mAudioAttachmentItem.getFilePath().equals(audioAttachmentItem.getFilePath())) {
             mAudioAttachmentItem = audioAttachmentItem;
-            updateView();
+            updateAudioView();
         }
-
     }
 
-    private void updateView() {
+    private void updateAudioView() {
         mTitleTextView.setText(mAudioAttachmentItem.getMetaData().getTitleOrFilename(mAudioAttachmentItem.getFilePath()));
 
         String artist = mAudioAttachmentItem.getMetaData().getArtist();
@@ -68,7 +67,6 @@ public class AudioAttachmentView extends LinearLayout implements View.OnClickLis
         } else {
             AudioAttachmentView.this.mArtworkImageView.setImageDrawable(mAudioAttachmentItem.getMetaData().getArtwork());
         }
-
     }
 
     public boolean isActive() {
@@ -80,7 +78,7 @@ public class AudioAttachmentView extends LinearLayout implements View.OnClickLis
         }
     }
 
-    private void updatePlayPauseView() {
+    public void updatePlayPauseView() {
         View view = findViewById(R.id.iv_playing_status);
         if (isActive()) {
             view.setVisibility(View.VISIBLE);

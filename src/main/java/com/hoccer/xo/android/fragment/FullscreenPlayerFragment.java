@@ -97,6 +97,14 @@ public class FullscreenPlayerFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (mMediaPlayerService != null){
+            updateTrackData();
+        }
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         mTimeProgressHandler.removeCallbacks(mUpdateTimeTask);
@@ -313,10 +321,10 @@ public class FullscreenPlayerFragment extends Fragment {
             if (mMediaPlayerService != null) {
                 switch (v.getId()) {
                     case R.id.bt_player_skip_back:
-                        mMediaPlayerService.skipBackwards();
+                        mMediaPlayerService.playPrevious();
                         break;
                     case R.id.bt_player_skip_forward:
-                        mMediaPlayerService.skipForward();
+                        mMediaPlayerService.playNext();
                         break;
                     case R.id.bt_player_repeat:
                         updateRepeatMode();

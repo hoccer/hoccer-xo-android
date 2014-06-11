@@ -91,6 +91,7 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         }
 
         audioRowView.setMediaItem(mAudioAttachmentItems.get(position));
+        audioRowView.updatePlayPauseView();
 
         if (mSelections != null) {
             audioRowView.getChildAt(0).setSelected(mSelections.get(position));
