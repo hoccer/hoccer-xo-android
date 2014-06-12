@@ -182,6 +182,9 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
         if (isPlaying(item)) {
             mMediaPlayerService.playNextByRepeatMode();
+        } else if (isPaused(item)) {
+            mMediaPlayerService.stop();
+            mMediaPlayerService.updatePosition(pos);
         }
 
         if (deleteFile(item.getFilePath())) {
@@ -202,8 +205,17 @@ public class AudioAttachmentListFragment extends XoListFragment {
         }
     }
 
+    private boolean isPaused(AudioAttachmentItem item) {
+        if (mMediaPlayerService != null && mMediaPlayerService.isPaused()) {
+            if (item.equals(mMediaPlayerService.getCurrentMediaItem())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean isPlaying(AudioAttachmentItem item) {
-        if (mMediaPlayerService != null && !mMediaPlayerService.isStopped()) {
+        if (mMediaPlayerService != null && !mMediaPlayerService.isStopped() && !mMediaPlayerService.isPaused()) {
             if (item.equals(mMediaPlayerService.getCurrentMediaItem())) {
                 return true;
             }
@@ -237,7 +249,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
     }
 
     private class OnAttachmentClickHandler implements AdapterView.OnItemClickListener {
-        //TODO if files have been added, the position of the currently playing song needs to be changed!
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -248,6 +259,9 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
             if (isPlaying(selectedItem)) {
                 mMediaPlayerService.updatePosition(position);
+            } else if (isPaused(selectedItem)) {
+                mMediaPlayerService.updatePosition(position);
+                mMediaPlayerService.play();
             } else {
                 setMediaList();
                 mMediaPlayerService.play(position);
