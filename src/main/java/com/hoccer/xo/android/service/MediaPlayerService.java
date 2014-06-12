@@ -31,14 +31,6 @@ import java.util.List;
 
 public class MediaPlayerService extends Service implements MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
-    public enum PlaylistType {
-        ALL_MEDIA,
-        CONVERSATION_MEDIA,
-        SINGLE_MEDIA;
-    }
-
-    private PlaylistType mPlaylistType = PlaylistType.ALL_MEDIA;
-
     public static final int UNDEFINED_CONTACT_ID = -1;
 
     public static final int MUSIC_PLAYER_NOTIFICATION_ID = 1;
@@ -497,25 +489,14 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         return conversationContactId;
     }
 
-    public PlaylistType getPlaylistType() {
-        return mPlaylistType;
-    }
-
     public void setMedia(AudioAttachmentItem item) {
         mPlaylist.clear();
         mPlaylist.add(0, item);
-        mPlaylistType = PlaylistType.SINGLE_MEDIA;
     }
 
     public void setMediaList(List<AudioAttachmentItem> itemList, int conversationContactId) {
         mPlaylist.clear();
         mPlaylist.addAll(itemList);
-
-        if (conversationContactId == UNDEFINED_CONTACT_ID) {
-            mPlaylistType = PlaylistType.ALL_MEDIA;
-        } else {
-            mPlaylistType = PlaylistType.CONVERSATION_MEDIA;
-        }
     }
 
     public void addMedia(AudioAttachmentItem item) {
