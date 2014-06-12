@@ -23,15 +23,10 @@ import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 public class AvatarView extends LinearLayout implements IXoContactListener {
 
     private Context mContext;
-
     private String mDefaultAvatarImageUrl;
-
     private DisplayImageOptions mDefaultOptions;
-
     private float mCornerRadius = 0.0f;
-
     private AspectImageView mAvatarImage;
-
     private View mPresenceIndicator;
 
     private TalkClientContact mContact;
@@ -85,6 +80,7 @@ public class AvatarView extends LinearLayout implements IXoContactListener {
 
     private void updateAvatar() {
         if(mContact == null) {
+            resetAvatar();
             return;
         }
         IContentObject avatar = mContact.getAvatar();
@@ -102,6 +98,10 @@ public class AvatarView extends LinearLayout implements IXoContactListener {
             }
         }
         setAvatarImage(avatarUri);
+    }
+
+    private void resetAvatar() {
+        setAvatarImage(null);
     }
 
     @Override
@@ -164,25 +164,6 @@ public class AvatarView extends LinearLayout implements IXoContactListener {
                     mPresenceIndicator.setVisibility(View.INVISIBLE);
                     return;
                 }
-                /*
-                if (presence != null) {
-                    if (presence.getClientStatus() != null && !presence.getClientStatus().equals("I am.")) {
-                        if (presence.getClientStatus()
-                                .equals(TalkPresence.CONN_STATUS_ONLINE)) {
-                            mPresenceIndicator.setVisibility(View.VISIBLE);
-                        } else {
-                            mPresenceIndicator.setVisibility(View.INVISIBLE);
-                        }
-                    } else if (presence.getConnectionStatus() != null) {
-                        if (presence.getConnectionStatus()
-                                .equals(TalkPresence.CONN_STATUS_ONLINE)) {
-                            mPresenceIndicator.setVisibility(View.VISIBLE);
-                        } else {
-                            mPresenceIndicator.setVisibility(View.INVISIBLE);
-                        }
-                    }
-                }
-                */
                 if (presence != null) {
                     if (presence.isPresent()) {
                         mPresenceIndicator.setVisibility(View.VISIBLE);

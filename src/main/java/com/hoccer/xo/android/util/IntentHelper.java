@@ -31,7 +31,7 @@ public class IntentHelper {
     public static boolean isOiFileManagerIntent(Intent intent) {
 
         if (Intent.ACTION_SEND.equals(intent.getAction()) && intent.hasExtra(Intent.EXTRA_STREAM)) {
-            Uri streamUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+            Uri streamUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
 
             if (streamUri == null) {
                 return false;

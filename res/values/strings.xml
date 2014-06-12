@@ -64,7 +64,7 @@
 
     <!-- Messaging fragment -->
     <string name="messaging_loading">Loading...</string>
-    <string name="messaging_no_messages"></string>
+    <string name="messaging_no_messages">No Messages</string>
     <string name="messaging_invited_join">Join group</string>
     <string name="menu_copy_attachment">Copy</string>
 
@@ -285,5 +285,6 @@
     <string name="placeholder_conversations_text">Invite friends to chat with!</string>
     <string name="placeholder_nearby_text">Waiting for others nearby...</string>
     <string name="actionbar_default_title">Hoccer</string>
+    <string name="content_audio_caption">Music</string>
 
 </resources>

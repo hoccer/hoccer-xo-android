@@ -9,7 +9,7 @@ import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.content.clipboard.Clipboard;
+import com.hoccer.xo.android.content.Clipboard;
 import com.hoccer.xo.android.fragment.ClipboardPreviewFragment;
 import com.hoccer.xo.release.R;
 
