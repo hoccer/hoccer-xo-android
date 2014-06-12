@@ -7,4 +7,5 @@
     <dimen name="media_player_text_medium">14sp</dimen>
     <dimen name="media_player_text_large">18sp</dimen>
     <dimen name="media_player_text_small">12sp</dimen>
+    <dimen name="media_player_play_button_size">50dp</dimen>
 </resources>
