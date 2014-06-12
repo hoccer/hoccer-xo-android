@@ -682,8 +682,7 @@ public class XoClientService extends Service {
                 cancelMessageNotification();
                 return;
             }
-            if (services.get(0).topActivity.getShortClassName().toString()
-                .equalsIgnoreCase(MessagingActivity.class.getName().toString())) {
+            if (services.get(0).topActivity.getShortClassName().equalsIgnoreCase(MessagingActivity.class.getName())) {
                     m_clientIdReceiver.setContactId(unseenMessages.get(0).getConversationContact().getClientContactId());
                     m_clientIdReceiver.setNotificationData(unseenMessages, notify);
                     Intent intent = new Intent();
