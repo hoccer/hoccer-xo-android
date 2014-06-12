@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.widget.*;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -68,9 +67,16 @@ public class FullscreenPlayerFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mPlayButton = (ToggleButton) getView().findViewById(R.id.bt_player_play);
+
+        if(android.os.Build.MODEL.equals("Nexus 4")) {
+            mPlayButton = (ToggleButton) getView().findViewById(R.id.bt_player_play_nexus);
+        }
+        else{
+            mPlayButton = (ToggleButton) getView().findViewById(R.id.bt_player_play);
+        }
+
         mSkipForwardButton = (ImageButton) getView().findViewById(R.id.bt_player_skip_forward);
         mSkipBackButton = (ImageButton) getView().findViewById(R.id.bt_player_skip_back);
         mRepeatButton = (ImageButton) getView().findViewById(R.id.bt_player_repeat);
@@ -88,12 +94,6 @@ public class FullscreenPlayerFragment extends Fragment {
         mTrackProgressBar.setProgress(0);
         mTrackProgressBar.setMax(100);
 
-        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                adjustViewSizes();
-            }
-        });
     }
 
     @Override
@@ -162,43 +162,47 @@ public class FullscreenPlayerFragment extends Fragment {
             mCurrentLoadArtworkTask.cancel(true);
         }
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AudioAttachmentItem currentItem = mMediaPlayerService.getCurrentMediaItem();
-                String trackArtist = currentItem.getMetaData().getArtist();
-                String trackTitle = currentItem.getMetaData().getTitle();
-                int totalDuration = mMediaPlayerService.getTotalDuration();
+        if(getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    AudioAttachmentItem currentItem = mMediaPlayerService.getCurrentMediaItem();
+                    String trackArtist = currentItem.getMetaData().getArtist();
+                    String trackTitle = currentItem.getMetaData().getTitle();
+                    int totalDuration = mMediaPlayerService.getTotalDuration();
 
-                if (trackTitle == null || trackTitle.isEmpty()) {
-                    File file = new File(currentItem.getFilePath());
-                    trackTitle = file.getName();
+                    if (trackTitle == null || trackTitle.isEmpty()) {
+                        File file = new File(currentItem.getFilePath());
+                        trackTitle = file.getName();
+                    }
+
+                    mTrackTitleLabel.setText(trackTitle.trim());
+                    if (trackArtist == null || trackArtist.isEmpty()) {
+                        trackArtist = getActivity().getResources().getString(R.string.media_meta_data_unknown_artist);
+                    }
+
+                    mTrackArtistLabel.setText(trackArtist.trim());
+                    mTrackProgressBar.setMax(totalDuration);
+                    mTrackProgressBar.setProgress(mMediaPlayerService.getCurrentPosition());
+
+                    mTotalDurationLabel.setText(getStringFromTimeStamp(totalDuration));
+                    mPlaylistIndexLabel.setText(Integer.toString(mMediaPlayerService.getCurrentTrackNumber() + 1));
+                    mPlaylistSizeLabel.setText(Integer.toString(mMediaPlayerService.getMediaListSize()));
+
+                    if (currentItem.getMetaData().getArtwork() == null) {
+                        mCurrentLoadArtworkTask = new LoadArtworkTask();
+                        mCurrentLoadArtworkTask.execute(currentItem);
+                    } else {
+                        mArtworkView.setImageDrawable(currentItem.getMetaData().getArtwork());
+                    }
+
+                    adjustViewSizes();
+                    updatePlayState();
+
+                    mPlayButton.setVisibility(View.VISIBLE);
                 }
-
-                mTrackTitleLabel.setText(trackTitle.trim());
-                if (trackArtist == null || trackArtist.isEmpty()) {
-                    trackArtist = getActivity().getResources().getString(R.string.media_meta_data_unknown_artist);
-                }
-
-                mTrackArtistLabel.setText(trackArtist.trim());
-                mTrackProgressBar.setMax(totalDuration);
-                mTrackProgressBar.setProgress(mMediaPlayerService.getCurrentPosition());
-
-                mTotalDurationLabel.setText(getStringFromTimeStamp(totalDuration));
-                mPlaylistIndexLabel.setText(Integer.toString(mMediaPlayerService.getCurrentTrackNumber() + 1));
-                mPlaylistSizeLabel.setText(Integer.toString(mMediaPlayerService.getMediaListSize()));
-
-                if (currentItem.getMetaData().getArtwork() == null) {
-                    mCurrentLoadArtworkTask = new LoadArtworkTask();
-                    mCurrentLoadArtworkTask.execute(currentItem);
-                } else {
-                    mArtworkView.setImageDrawable(currentItem.getMetaData().getArtwork());
-                }
-
-                adjustViewSizes();
-                updatePlayState();
-            }
-        });
+            });
+        }
 
         if (mUpdateTimeTask == null) {
             mUpdateTimeTask = new UpdateTimeTask();
@@ -260,17 +264,9 @@ public class FullscreenPlayerFragment extends Fragment {
         int margin = getActivity().getResources().getDimensionPixelSize(R.dimen.media_player_layout_margin);
         int expectedViewHeight = getView().getMeasuredWidth() - (margin * 4);
 
-        if (mArtworkContainer.getHeight() != expectedViewHeight) {
-            RelativeLayout.LayoutParams coverArtLayoutParams = (RelativeLayout.LayoutParams) mArtworkContainer.getLayoutParams();
-            coverArtLayoutParams.height = expectedViewHeight;
-            coverArtLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            mArtworkContainer.setLayoutParams(coverArtLayoutParams);
-        }
-
-        RelativeLayout.LayoutParams playBtnLayoutParams = (RelativeLayout.LayoutParams) mPlayButton.getLayoutParams();
-        playBtnLayoutParams.width = mPlayButton.getMeasuredHeight();
-        mPlayButton.setLayoutParams(playBtnLayoutParams);
-
+        RelativeLayout.LayoutParams coverArtLayoutParams = (RelativeLayout.LayoutParams) mArtworkContainer.getLayoutParams();
+        coverArtLayoutParams.height = expectedViewHeight;
+        coverArtLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
     }
 
     private void updateRepeatMode() {
@@ -354,18 +350,10 @@ public class FullscreenPlayerFragment extends Fragment {
             if (mMediaPlayerService != null) {
                 switch (buttonView.getId()) {
                     case R.id.bt_player_play:
-                        boolean isPlaying = (mMediaPlayerService.isPaused() || mMediaPlayerService.isStopped()) ? false : true;
-                        if (!isChecked && isPlaying) {
-                            mMediaPlayerService.pause();
-                            mBlinkAnimation.start();
-                        } else if (isChecked && !isPlaying){
-                            mMediaPlayerService.play();
-                            if (mBlinkAnimation.isRunning()) {
-                                mBlinkAnimation.cancel();
-                            }
-
-                            mCurrentTimeLabel.setTextColor(getResources().getColor(R.color.xo_media_player_secondary_text));
-                        }
+                        togglePlayPauseButton(isChecked);
+                        break;
+                    case R.id.bt_player_play_nexus:
+                        togglePlayPauseButton(isChecked);
                         break;
                     case R.id.bt_player_shuffle:
                         if (isChecked && !mMediaPlayerService.isShuffleActive()) {
@@ -376,6 +364,21 @@ public class FullscreenPlayerFragment extends Fragment {
                         break;
                 }
             }
+        }
+    }
+
+    private void togglePlayPauseButton(boolean isChecked){
+        boolean isPlaying = (mMediaPlayerService.isPaused() || mMediaPlayerService.isStopped()) ? false : true;
+        if (!isChecked && isPlaying) {
+            mMediaPlayerService.pause();
+            mBlinkAnimation.start();
+        } else if (isChecked && !isPlaying){
+            mMediaPlayerService.play();
+            if (mBlinkAnimation.isRunning()) {
+                mBlinkAnimation.cancel();
+            }
+
+            mCurrentTimeLabel.setTextColor(getResources().getColor(R.color.xo_media_player_secondary_text));
         }
     }
 
