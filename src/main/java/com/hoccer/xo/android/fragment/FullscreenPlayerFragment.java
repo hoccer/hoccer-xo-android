@@ -174,47 +174,44 @@ public class FullscreenPlayerFragment extends Fragment {
             mCurrentLoadArtworkTask.cancel(true);
         }
 
-        if(getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    AudioAttachmentItem currentItem = mMediaPlayerService.getCurrentMediaItem();
-                    String trackArtist = currentItem.getMetaData().getArtist();
-                    String trackTitle = currentItem.getMetaData().getTitle();
-                    int totalDuration = mMediaPlayerService.getTotalDuration();
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AudioAttachmentItem currentItem = mMediaPlayerService.getCurrentMediaItem();
+                String trackArtist = currentItem.getMetaData().getArtist();
+                String trackTitle = currentItem.getMetaData().getTitle();
+                int totalDuration = mMediaPlayerService.getTotalDuration();
 
-                    if (trackTitle == null || trackTitle.isEmpty()) {
-                        File file = new File(currentItem.getFilePath());
-                        trackTitle = file.getName();
-                    }
-
-                    mTrackTitleLabel.setText(trackTitle.trim());
-                    if (trackArtist == null || trackArtist.isEmpty()) {
-                        trackArtist = getActivity().getResources().getString(R.string.media_meta_data_unknown_artist);
-                    }
-
-                    mTrackArtistLabel.setText(trackArtist.trim());
-                    mTrackProgressBar.setMax(totalDuration);
-                    mTrackProgressBar.setProgress(mMediaPlayerService.getCurrentPosition());
-
-                    mTotalDurationLabel.setText(getStringFromTimeStamp(totalDuration));
-                    mPlaylistIndexLabel.setText(Integer.toString(mMediaPlayerService.getCurrentTrackNumber() + 1));
-                    mPlaylistSizeLabel.setText(Integer.toString(mMediaPlayerService.getMediaListSize()));
-
-                    if (currentItem.getMetaData().getArtwork() == null) {
-                        mCurrentLoadArtworkTask = new LoadArtworkTask();
-                        mCurrentLoadArtworkTask.execute(currentItem);
-                    } else {
-                        mArtworkView.setImageDrawable(currentItem.getMetaData().getArtwork());
-                    }
-
-                    adjustViewSizes();
-                    updatePlayState();
-
-                    mPlayButton.setVisibility(View.VISIBLE);
+                if (trackTitle == null || trackTitle.isEmpty()) {
+                    File file = new File(currentItem.getFilePath());
+                    trackTitle = file.getName();
                 }
-            });
-        }
+
+                mTrackTitleLabel.setText(trackTitle.trim());
+                if (trackArtist == null || trackArtist.isEmpty()) {
+                    trackArtist = getActivity().getResources().getString(R.string.media_meta_data_unknown_artist);
+                }
+
+                mTrackArtistLabel.setText(trackArtist.trim());
+                mTrackProgressBar.setMax(totalDuration);
+
+                mTotalDurationLabel.setText(getStringFromTimeStamp(totalDuration));
+                mPlaylistIndexLabel.setText(Integer.toString(mMediaPlayerService.getCurrentTrackNumber() + 1));
+                mPlaylistSizeLabel.setText(Integer.toString(mMediaPlayerService.getMediaListSize()));
+
+                if (currentItem.getMetaData().getArtwork() == null) {
+                    mCurrentLoadArtworkTask = new LoadArtworkTask();
+                    mCurrentLoadArtworkTask.execute(currentItem);
+                } else {
+                    mArtworkView.setImageDrawable(currentItem.getMetaData().getArtwork());
+                }
+
+                adjustViewSizes();
+                updatePlayState();
+
+                mPlayButton.setVisibility(View.VISIBLE);
+            }
+        });
 
         if (mUpdateTimeTask == null) {
             mUpdateTimeTask = new UpdateTimeTask();
