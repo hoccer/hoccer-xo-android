@@ -26,7 +26,11 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
     }
 
     public int getCurrentTrackNumber() {
-        return mPlaylistIndexes.get(mCurrentIndex);
+        if (mPlaylistIndexes != null && mPlaylistIndexes.size() > 0) {
+            return mPlaylistIndexes.get(mCurrentIndex);
+        } else {
+            return 0;
+        }
     }
 
     public int size() {
@@ -88,6 +92,7 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
 
     public void clear() {
         mAudioAttachmentItems.clear();
+        mCurrentIndex = 0;
     }
 
     @Override
@@ -115,8 +120,21 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
         LOG.error("Adding items at current position is not supported.");
     }
 
+    public void remove(int index) {
+        mAudioAttachmentItems.remove(index);
+
+        if (0 < mCurrentIndex && mCurrentIndex >= index) {
+            mCurrentIndex--;
+        }
+        resetPlaylistIndexes();
+    }
+
     public void add(int index, AudioAttachmentItem item) {
         mAudioAttachmentItems.add(index, item);
+
+        if (mAudioAttachmentItems.size() > 1 && index <= mCurrentIndex) {
+            mCurrentIndex++;
+        }
         resetPlaylistIndexes();
     }
 
@@ -151,7 +169,7 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
     }
 
     private void resetPlaylistIndexes() {
-        int currentTrackNumber = mPlaylistIndexes != null ? getCurrentTrackNumber() : 0;
+        int currentTrackNumber = getCurrentTrackNumber();
         mPlaylistIndexes = new ArrayList<Integer>();
         for (int i = 0; i < mAudioAttachmentItems.size(); i++) {
             mPlaylistIndexes.add(i);

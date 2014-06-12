@@ -1,6 +1,8 @@
 package com.hoccer.xo.android.content;
 
 import android.net.Uri;
+import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
 import org.apache.log4j.Logger;
 
@@ -64,10 +66,21 @@ public class AudioAttachmentItem {
 
     @Override
     public boolean equals(Object obj) {
+        boolean isEqual = false;
+
         if (obj != null && obj instanceof AudioAttachmentItem) {
-            return this.getFilePath().equals(((AudioAttachmentItem) obj).getFilePath());
+
+            IContentObject contentObject = ((AudioAttachmentItem) obj).getContentObject();
+
+            if (contentObject instanceof TalkClientDownload && this.getContentObject() instanceof TalkClientDownload) {
+                isEqual = ((TalkClientDownload) this.getContentObject()).getClientDownloadId() ==
+                        ((TalkClientDownload) contentObject).getClientDownloadId();
+            } else if (contentObject instanceof TalkClientUpload && this.getContentObject() instanceof TalkClientUpload) {
+                isEqual = ((TalkClientUpload) this.getContentObject()).getClientUploadId() ==
+                        ((TalkClientUpload) contentObject).getClientUploadId();
+            }
         }
 
-        return false;
+        return isEqual;
     }
 }

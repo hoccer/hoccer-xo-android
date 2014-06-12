@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.SparseBooleanArray;
 import android.view.*;
 import android.widget.AbsListView;
@@ -32,6 +33,7 @@ import java.util.List;
 
 public class AudioAttachmentListFragment extends XoListFragment {
 
+    public static final String AUDIO_ATTACHMENT_REMOVED_ACTION = "com.hoccer.xo.android.fragment.AUDIO_ATTACHMENT_REMOVED_ACTION";
     private MediaPlayerService mMediaPlayerService;
 
     public static final int ALL_CONTACTS_ID = -1;
@@ -175,18 +177,50 @@ public class AudioAttachmentListFragment extends XoListFragment {
         }
     }
 
-    private void deleteAudioAttachment(int i) {
-        AudioAttachmentItem audioAttachmentItem = mAttachmentListAdapter.getItem(i);
+    private void deleteAudioAttachment(int pos) {
+        AudioAttachmentItem item = mAttachmentListAdapter.getItem(pos);
 
-        if (deleteFile(audioAttachmentItem.getFilePath())) {
+        if (isPlaying(item)) {
+            mMediaPlayerService.playNextByRepeatMode();
+        } else if (isPaused(item)) {
+            mMediaPlayerService.stop();
+            mMediaPlayerService.updatePosition(pos);
+        }
+
+        if (deleteFile(item.getFilePath())) {
             try {
-                XoApplication.getXoClient().getDatabase().deleteMessageByTalkClientDownloadId(((TalkClientDownload) audioAttachmentItem.getContentObject()).getClientDownloadId());
+                XoApplication.getXoClient().getDatabase().deleteMessageByTalkClientDownloadId(((TalkClientDownload) item.getContentObject()).getClientDownloadId());
+                mAttachmentListAdapter.removeItem(pos);
+
+                if (mMediaPlayerService != null && !mMediaPlayerService.isPaused()) {
+                    mMediaPlayerService.removeMedia(pos);
+                }
+
+                Intent intent = new Intent(AUDIO_ATTACHMENT_REMOVED_ACTION);
+                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
             } catch (SQLException e) {
-                LOG.error("Error deleting message with client download id of " + ((TalkClientDownload) audioAttachmentItem.getContentObject()).getClientDownloadId());
+                LOG.error("Error deleting message with client download id of " + ((TalkClientDownload) item.getContentObject()).getClientDownloadId());
                 e.printStackTrace();
             }
-            mAttachmentListAdapter.removeItem(i);
         }
+    }
+
+    private boolean isPaused(AudioAttachmentItem item) {
+        if (mMediaPlayerService != null && mMediaPlayerService.isPaused()) {
+            if (item.equals(mMediaPlayerService.getCurrentMediaItem())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isPlaying(AudioAttachmentItem item) {
+        if (mMediaPlayerService != null && !mMediaPlayerService.isStopped() && !mMediaPlayerService.isPaused()) {
+            if (item.equals(mMediaPlayerService.getCurrentMediaItem())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean deleteFile(String filePath) {
@@ -215,46 +249,22 @@ public class AudioAttachmentListFragment extends XoListFragment {
     }
 
     private class OnAttachmentClickHandler implements AdapterView.OnItemClickListener {
-        //TODO if files have been added the position of the currently playing song needs to be changed!
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             AudioAttachmentItem selectedItem = mAttachmentListAdapter.getItem(position);
 
-            AudioAttachmentItem currentlyPlayedItem = mMediaPlayerService.getCurrentMediaItem();
+            setMediaList();
 
-            switch (mMediaPlayerService.getPlaylistType()) {
-                case ALL_MEDIA: {
-                    if (mFilteredContactId == ALL_CONTACTS_ID && !mMediaPlayerService.isStopped()) {
-                        if (selectedItem.equals(currentlyPlayedItem)) {
-                            updateMediaList();
-                            break;
-                        }
-                    }
-
-                    setMediaList();
-                    mMediaPlayerService.play(position);
-                }
-                break;
-                case CONVERSATION_MEDIA: {
-                    if (mFilteredContactId == mMediaPlayerService.getCurrentConversationContactId()
-                            && !mMediaPlayerService.isStopped()) {
-                        if (selectedItem.equals(currentlyPlayedItem)) {
-                            updateMediaList();
-                            break;
-                        }
-                    }
-
-                    setMediaList();
-                    mMediaPlayerService.play(position);
-                }
-                break;
-                case SINGLE_MEDIA: {
-                    setMediaList();
-                    mMediaPlayerService.play(position);
-                }
-                break;
+            if (isPlaying(selectedItem)) {
+                mMediaPlayerService.updatePosition(position);
+            } else if (isPaused(selectedItem)) {
+                mMediaPlayerService.updatePosition(position);
+                mMediaPlayerService.play();
+            } else {
+                setMediaList();
+                mMediaPlayerService.play(position);
             }
 
             getXoActivity().showFullscreenPlayer();
@@ -266,14 +276,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 itemList.add(audioAttachmentItem);
             }
             mMediaPlayerService.setMediaList(itemList, mAttachmentListAdapter.getConversationContactId());
-        }
-
-        private void updateMediaList() {
-            int numberOfMediaItemsToAdd = mAttachmentListAdapter.getCount() - mMediaPlayerService.getMediaListSize();
-
-            for (int i = 0; i < numberOfMediaItemsToAdd; ++i) {
-                mMediaPlayerService.addMedia(mAttachmentListAdapter.getItem(i));
-            }
         }
     }
 

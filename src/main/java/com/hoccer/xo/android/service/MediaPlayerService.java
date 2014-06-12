@@ -16,23 +16,20 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.RemoteViews;
+import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientMessage;
+import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class MediaPlayerService extends Service implements MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
-
-    public enum PlaylistType {
-        ALL_MEDIA,
-        CONVERSATION_MEDIA,
-        SINGLE_MEDIA;
-    }
-
-    private PlaylistType mPlaylistType = PlaylistType.ALL_MEDIA;
 
     public static final int UNDEFINED_CONTACT_ID = -1;
 
@@ -50,9 +47,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
     private boolean paused = false;
     private boolean stopped = true;
 
-    private int mCurrentConversationContactId;
-    private String mCurrentMediaFilePath;
-    private String mTempMediaFilePath;
+    private AudioAttachmentItem mCurrentAudioAttachmentItem;
+    private AudioAttachmentItem mTempAudioAttachmentItem;
 
     private PendingIntent mResultPendingIntent;
 
@@ -89,18 +85,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         createHeadsetHandlerReceiver();
     }
 
-    private void createHeadsetHandlerReceiver(){
+    private void createHeadsetHandlerReceiver() {
 
-        mHeadsetStateBroadcastReceiver =  new BroadcastReceiver()
-        {
+        mHeadsetStateBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                if (intent.getAction().equals( android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
+                if (intent.getAction().equals(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
 
                     int headSetState = intent.getIntExtra("state", 0);
 
-                    if (headSetState == 0){
+                    if (headSetState == 0) {
                         pause();
                     }
                 }
@@ -157,7 +152,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         return true;
     }
 
-    public boolean isApplicationSentToBackground(Context context) {
+    private boolean isApplicationSentToBackground(Context context) {
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
         if (!tasks.isEmpty()) {
@@ -175,7 +170,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(UPDATE_PLAYSTATE_ACTION)) {
                     if (isPaused()) {
-                        play(mPlaylist.current());
+                        play(mCurrentAudioAttachmentItem);
                     } else {
                         pause();
                     }
@@ -260,7 +255,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
     private void updateMetaDataView(RemoteViews views) {
         String title = getString(R.string.media_meta_data_unknown_title);
         String artist = getString(R.string.media_meta_data_unknown_artist);
-        AudioAttachmentItem item = mPlaylist.current();
+        AudioAttachmentItem item = mCurrentAudioAttachmentItem;
         String metaDataTitle = item.getMetaData().getTitle();
         String metaDataArtist = item.getMetaData().getArtist();
         boolean metaDataAvailable = false;
@@ -284,11 +279,11 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         }
     }
 
-    private void resetAndPrepareMediaPlayer(String mediaFilePath) {
-        mTempMediaFilePath = mediaFilePath;
+    private void resetAndPrepareMediaPlayer(AudioAttachmentItem audioAttachmentItem) {
+        mTempAudioAttachmentItem = audioAttachmentItem;
         try {
             mMediaPlayer.reset();
-            mMediaPlayer.setDataSource(mediaFilePath.replace("file:///", "/"));
+            mMediaPlayer.setDataSource(audioAttachmentItem.getFilePath().replace("file:///", "/"));
             mMediaPlayer.prepareAsync();
         } catch (Exception e) {
             LOG.error("setFile: exception setting data source", e);
@@ -327,7 +322,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
                 play(audioAttachmentItem);
             }
         });
-        resetAndPrepareMediaPlayer(audioAttachmentItem.getFilePath());
+        resetAndPrepareMediaPlayer(audioAttachmentItem);
     }
 
     private void startPlaying() {
@@ -337,7 +332,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
             setPaused(false);
             setStopped(false);
             if (!canResume()) {
-                mCurrentMediaFilePath = mTempMediaFilePath;
+                mCurrentAudioAttachmentItem = mTempAudioAttachmentItem;
                 broadcastTrackChanged();
             }
             if (isNotificationActive()) {
@@ -361,7 +356,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         play(audioAttachmentItem);
     }
 
-    private void playNext() {
+    public void playNextByRepeatMode() {
         AudioAttachmentItem audioAttachmentItem = mPlaylist.nextByRepeatMode();
         if (audioAttachmentItem != null) {
             playNewTrack(audioAttachmentItem);
@@ -370,13 +365,13 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         }
     }
 
-    public void skipForward() {
+    public void playNext() {
         if (mPlaylist.size() > 0) {
             playNewTrack(mPlaylist.next());
         }
     }
 
-    public void skipBackwards() {
+    public void playPrevious() {
         if (mPlaylist.size() > 0) {
             playNewTrack(mPlaylist.previous());
         }
@@ -416,41 +411,28 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
             mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
-                    if (isStopped()){
+                    if (isStopped()) {
                         setStopped(false);
                         setPaused(true);
                     }
                     mMediaPlayer.seekTo(position);
                 }
             });
-            resetAndPrepareMediaPlayer(mPlaylist.current().getFilePath());
+            resetAndPrepareMediaPlayer(mCurrentAudioAttachmentItem);
         } else {
             mMediaPlayer.seekTo(position);
         }
     }
 
-    private void removeNotification() {
-        stopForeground(true);
-    }
-
-    private void setPaused(boolean paused) {
-        this.paused = paused;
-    }
-
-    private void setStopped(boolean stopped) {
-        this.stopped = stopped;
-    }
-
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        LOG.debug("onError(" + what + "," + extra + ")");
         LOG.debug("onError(" + what + "," + extra + ")");
         return false;
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        playNext();
+        playNextByRepeatMode();
     }
 
     public boolean isPaused() {
@@ -469,7 +451,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         return (isStopped()) ? 0 : mPlaylist.getCurrentTrackNumber();
     }
 
-
     public int getCurrentTrackNumber() {
         return mPlaylist.getCurrentTrackNumber();
     }
@@ -478,35 +459,58 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         return mMediaPlayer.getCurrentPosition();
     }
 
+    public AudioAttachmentItem getCurrentMediaItem() {
+        return mCurrentAudioAttachmentItem;
+    }
+
     public int getCurrentConversationContactId() {
-        return mCurrentConversationContactId;
+        int conversationContactId = UNDEFINED_CONTACT_ID;
+
+        try {
+            TalkClientMessage message;
+            if (getCurrentMediaItem().getContentObject() instanceof  TalkClientDownload) {
+                int attachmentId = ((TalkClientDownload) getCurrentMediaItem().getContentObject()).getClientDownloadId();
+                message = XoApplication.getXoClient().getDatabase().findClientMessageByTalkClientDownloadId(attachmentId);
+                if (message != null) {
+                    conversationContactId = message.getSenderContact().getClientContactId();
+                }
+            } else if (getCurrentMediaItem().getContentObject() instanceof TalkClientUpload) {
+                int attachmentId = ((TalkClientUpload) getCurrentMediaItem().getContentObject()).getClientUploadId();
+                message = XoApplication.getXoClient().getDatabase().findClientMessageByTalkClientUploadId(attachmentId);
+                if (message != null) {
+                    conversationContactId = message.getSenderContact().getClientContactId();
+                }
+            }
+        } catch (SQLException e) {
+            LOG.error(e.getMessage());
+            e.printStackTrace();
+        }
+
+        return conversationContactId;
     }
 
-    public PlaylistType getPlaylistType() {
-        return mPlaylistType;
-    }
-
-    public void setMedia(AudioAttachmentItem item, int conversationContactId) {
+    public void setMedia(AudioAttachmentItem item) {
         mPlaylist.clear();
         mPlaylist.add(0, item);
-        mCurrentConversationContactId = conversationContactId;
-        mPlaylistType = PlaylistType.SINGLE_MEDIA;
     }
 
     public void setMediaList(List<AudioAttachmentItem> itemList, int conversationContactId) {
         mPlaylist.clear();
         mPlaylist.addAll(itemList);
-        mCurrentConversationContactId = conversationContactId;
-
-        if (conversationContactId == UNDEFINED_CONTACT_ID) {
-            mPlaylistType = PlaylistType.ALL_MEDIA;
-        } else {
-            mPlaylistType = PlaylistType.CONVERSATION_MEDIA;
-        }
     }
 
     public void addMedia(AudioAttachmentItem item) {
         mPlaylist.add(0, item);
+    }
+
+    public void removeMedia(int pos) {
+        if (mPlaylist.size() > 0) {
+            mPlaylist.remove(pos);
+        }
+    }
+
+    public void updatePosition(int pos) {
+        mPlaylist.setCurrentTrackNumber(pos);
     }
 
     public MediaPlaylist.RepeatMode getRepeatMode() {
@@ -540,7 +544,17 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         mLocalBroadcastManager.sendBroadcast(intent);
     }
 
-    public AudioAttachmentItem getCurrentMediaItem() {
-        return mPlaylist.current();
+
+    private void removeNotification() {
+        stopForeground(true);
     }
+
+    private void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    private void setStopped(boolean stopped) {
+        this.stopped = stopped;
+    }
+
 }

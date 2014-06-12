@@ -3,20 +3,15 @@ package com.hoccer.xo.android.view.chat.attachments;
 import android.app.AlertDialog;
 import android.content.*;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.IContentObject;
-import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.android.view.IViewListener;
@@ -24,16 +19,16 @@ import com.hoccer.xo.android.view.chat.AudioPlayerView;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
-import java.sql.SQLException;
 
 
 public class ChatAudioItem extends ChatMessageItem implements IViewListener {
 
     private MediaPlayerService mMediaPlayerService;
-    private BroadcastReceiver mReceiver;
-    private boolean mIsPlayable = false;
-    private ServiceConnection mConnection;
     private ImageButton mPlayPauseButton;
+    private BroadcastReceiver mReceiver;
+    private ServiceConnection mConnection;
+    private AudioAttachmentItem mAudioContentObject;
+    private boolean mIsPlayable = false;
 
     public ChatAudioItem(Context context, TalkClientMessage message) {
         super(context, message);
@@ -94,8 +89,8 @@ public class ChatAudioItem extends ChatMessageItem implements IViewListener {
             });
             mContentWrapper.addView(audioLayout);
 
-            AudioAttachmentItem audioItem = AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject);
-            if (audioItem == null) {
+            mAudioContentObject = AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject);
+            if (mAudioContentObject == null) {
                 mIsPlayable = false;
             } else {
                 mIsPlayable = true;
@@ -130,28 +125,12 @@ public class ChatAudioItem extends ChatMessageItem implements IViewListener {
 
     private void startPlaying() {
         if (isBound()) {
-
-            int conversationContactId = -1;
-
-            if (getContent() instanceof TalkClientDownload) {
-                int talkClientDownloadId = ((TalkClientDownload) getContent()).getClientDownloadId();
-                TalkClientMessage message = null;
-                try {
-                    message = XoApplication.getXoClient().getDatabase().findClientMessageByTalkClientDownloadId(talkClientDownloadId);
-                } catch (SQLException e) {
-                    LOG.error(e.getMessage());
-                    e.printStackTrace();
-                }
-
-                if (message != null) {
-                    conversationContactId = message.getConversationContact().getClientContactId();
-                }
+            if (mMediaPlayerService.isPaused() && mMediaPlayerService.getCurrentMediaItem() != null && mAudioContentObject.equals(mMediaPlayerService.getCurrentMediaItem())) {
+                mMediaPlayerService.play();
             } else {
-                conversationContactId = XoApplication.getXoClient().getSelfContact().getClientContactId();
+                mMediaPlayerService.setMedia(mAudioContentObject);
+                mMediaPlayerService.play(0);
             }
-
-            mMediaPlayerService.setMedia(AudioAttachmentItem.create(getContent().getContentDataUrl(), getContent()), conversationContactId);
-            mMediaPlayerService.play(0);
         }
     }
 
@@ -160,14 +139,15 @@ public class ChatAudioItem extends ChatMessageItem implements IViewListener {
     }
 
     public boolean isActive() {
-        if (getContent() != null && isBound()) {
-            AudioAttachmentItem currentItem = mMediaPlayerService.getCurrentMediaItem();
-            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && getContent().getContentDataUrl().equals(currentItem.getFilePath());
-        } else {
-            return false;
+        boolean isActive = false;
+        if (mAudioContentObject != null && isBound()) {
+            isActive = !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && mAudioContentObject.equals(mMediaPlayerService.getCurrentMediaItem());
         }
+
+        return isActive;
     }
 
+    @Override
     public void onAttachedToWindow() {
         Intent intent = new Intent(mContext, MediaPlayerService.class);
         mContext.startService(intent);
@@ -176,6 +156,7 @@ public class ChatAudioItem extends ChatMessageItem implements IViewListener {
         createBroadcastReceiver();
     }
 
+    @Override
     public void onDetachedFromWindow() {
         mContext.unbindService(mConnection);
         LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mReceiver);

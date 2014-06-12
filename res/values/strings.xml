@@ -141,6 +141,7 @@
 
     <!-- FullscreenPlayer -->
     <string name="track_number_filler">of</string>
+    <string name="deleted_contact_name">Removed Contact</string>
 
     <!-- Attachment type selection dialog -->
     <string name="selectattachment_title">Select attachment</string>

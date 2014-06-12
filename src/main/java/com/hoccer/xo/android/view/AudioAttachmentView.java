@@ -45,16 +45,15 @@ public class AudioAttachmentView extends LinearLayout implements View.OnClickLis
     public void setMediaItem(AudioAttachmentItem audioAttachmentItem) {
         if (mAudioAttachmentItem == null || !mAudioAttachmentItem.getFilePath().equals(audioAttachmentItem.getFilePath())) {
             mAudioAttachmentItem = audioAttachmentItem;
-            updateView();
+            updateAudioView();
         }
-
     }
 
-    private void updateView() {
+    private void updateAudioView() {
         mTitleTextView.setText(mAudioAttachmentItem.getMetaData().getTitleOrFilename(mAudioAttachmentItem.getFilePath()).trim());
 
         String artist = mAudioAttachmentItem.getMetaData().getArtist();
-        if (artist == null || artist.isEmpty()){
+        if (artist == null || artist.isEmpty()) {
             artist = getResources().getString(R.string.media_meta_data_unknown_artist);
         }
 
@@ -69,19 +68,18 @@ public class AudioAttachmentView extends LinearLayout implements View.OnClickLis
         } else {
             AudioAttachmentView.this.mArtworkImageView.setImageDrawable(mAudioAttachmentItem.getMetaData().getArtwork());
         }
-
     }
 
     public boolean isActive() {
         if (isBound()) {
             AudioAttachmentItem currentItem = mMediaPlayerService.getCurrentMediaItem();
-            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && ((mAudioAttachmentItem.getFilePath()).equals(currentItem.getFilePath()));
+            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && (mAudioAttachmentItem.equals(currentItem));
         } else {
             return false;
         }
     }
 
-    private void updatePlayPauseView() {
+    public void updatePlayPauseView() {
         View view = findViewById(R.id.iv_playing_status);
         if (isActive()) {
             view.setVisibility(View.VISIBLE);

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--default-->
 <resources>
     <dimen name="xo_message_corner_radius">10dp</dimen>
     <dimen name="default_attachment_icon_dim">40dp</dimen>
@@ -6,4 +7,5 @@
     <dimen name="media_player_text_medium">12sp</dimen>
     <dimen name="media_player_text_large">14sp</dimen>
     <dimen name="media_player_text_small">10sp</dimen>
+    <dimen name="media_player_play_button_size">50dp</dimen>
 </resources>
