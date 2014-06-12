@@ -2,6 +2,11 @@ package com.hoccer.xo.android.fragment;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -9,6 +14,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,10 +62,14 @@ public class FullscreenPlayerFragment extends Fragment {
     private MediaPlayerService mMediaPlayerService;
     private LoadArtworkTask mCurrentLoadArtworkTask;
 
+    private BroadcastReceiver mBroadcastReceiver;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupBlinkAnimation();
+
+        createBroadcastReceiver();
     }
 
     @Override
@@ -99,6 +110,7 @@ public class FullscreenPlayerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         if (mMediaPlayerService != null){
             updateTrackData();
         }
@@ -421,5 +433,32 @@ public class FullscreenPlayerFragment extends Fragment {
                 mArtworkView.setImageDrawable(artwork);
             }
         }
+    }
+
+    private void createBroadcastReceiver() {
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if ( !isAttached()){
+                    Log.d( "FullscreenPlayerFragment", "Fragment is not yet attached. No Need to update.");
+                    return;
+                }
+
+                if (intent.getAction().equals(MediaPlayerService.PLAYSTATE_CHANGED_ACTION)) {
+                    updatePlayState();
+                }
+                else if (intent.getAction().equals(MediaPlayerService.TRACK_CHANGED_ACTION)) {
+                    updateTrackData();
+                }
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
+        intentFilter.addAction(MediaPlayerService.TRACK_CHANGED_ACTION);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, intentFilter);
+    }
+
+    private boolean isAttached(){
+        return getActivity() != null;
     }
 }
