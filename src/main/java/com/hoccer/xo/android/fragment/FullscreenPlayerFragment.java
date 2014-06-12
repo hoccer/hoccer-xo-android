@@ -113,6 +113,7 @@ public class FullscreenPlayerFragment extends Fragment {
 
         if (mMediaPlayerService != null){
             updateTrackData();
+            updatePlayState();
         }
     }
 
@@ -139,10 +140,10 @@ public class FullscreenPlayerFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if ((mPlayButton.isChecked() && mMediaPlayerService.isPaused()) || (mPlayButton.isChecked() && mMediaPlayerService.isStopped())) {
+                    if ((mMediaPlayerService.isPaused()) || mMediaPlayerService.isStopped()) {
                         mPlayButton.setChecked(false);
                         mBlinkAnimation.start();
-                    } else if (!mPlayButton.isChecked() && !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
+                    } else if (!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
                         if (mBlinkAnimation.isRunning()) {
                             mBlinkAnimation.cancel();
                         }
@@ -151,7 +152,6 @@ public class FullscreenPlayerFragment extends Fragment {
                         mPlayButton.setChecked(true);
                     }
                 }
-
             });
         }
     }
@@ -218,6 +218,9 @@ public class FullscreenPlayerFragment extends Fragment {
             mTimeProgressHandler.post(mUpdateTimeTask);
         }
 
+    }
+
+    private void updatePauseAnimation() {
     }
 
     private void setupViewListeners() {
