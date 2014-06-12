@@ -213,8 +213,8 @@
         <!-- Play Button Nexus-->
         <ToggleButton
                 android:id="@+id/bt_player_play_nexus"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="@dimen/media_player_play_button_size"
+                android:layout_height="@dimen/media_player_play_button_size"
                 android:background="@drawable/btn_player_play"
                 android:visibility="invisible"
                 android:text=""

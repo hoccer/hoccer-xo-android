@@ -81,7 +81,8 @@ public class FullscreenPlayerFragment extends Fragment {
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if(android.os.Build.MODEL.equals("Nexus 4")) {
+        // every Nexus with a foot bar has a problem due to the shrinked layout. Nexus S, though, has no problem...
+        if(android.os.Build.MODEL.equals("Nexus 4") || android.os.Build.MODEL.equals("Nexus 5")) {
             mPlayButton = (ToggleButton) getView().findViewById(R.id.bt_player_play_nexus);
         }
         else{
