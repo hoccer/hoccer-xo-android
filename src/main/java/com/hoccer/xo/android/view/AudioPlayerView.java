@@ -3,21 +3,15 @@ package com.hoccer.xo.android.view;
 import android.app.AlertDialog;
 import android.content.*;
 import android.os.IBinder;
-import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import com.hoccer.talk.client.model.TalkClientDownload;
-import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.IContentObject;
-import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
-
-import java.sql.SQLException;
 
 public class AudioPlayerView
         extends LinearLayout
@@ -78,8 +72,12 @@ public class AudioPlayerView
 
     private void startPlaying() {
         if (isBound()) {
-            mMediaPlayerService.setMedia(mAudioContentObject);
-            mMediaPlayerService.play(0);
+            if (mMediaPlayerService.isPaused() && mMediaPlayerService.getCurrentMediaItem() != null && mAudioContentObject.equals(mMediaPlayerService.getCurrentMediaItem())) {
+                mMediaPlayerService.play();
+            } else {
+                mMediaPlayerService.setMedia(mAudioContentObject);
+                mMediaPlayerService.play(0);
+            }
         }
     }
 
