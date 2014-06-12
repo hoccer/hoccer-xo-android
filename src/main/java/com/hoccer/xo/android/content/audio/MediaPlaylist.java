@@ -121,10 +121,14 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
     }
 
     public void remove(int index) {
-        mAudioAttachmentItems.remove(index);
+        if (mAudioAttachmentItems.size() > 1) {
+            mAudioAttachmentItems.remove(index);
 
-        if (0 < mCurrentIndex && mCurrentIndex >= index) {
-            mCurrentIndex--;
+            if (0 < mCurrentIndex && mCurrentIndex >= index) {
+                mCurrentIndex--;
+            }
+        } else {
+            mAudioAttachmentItems.clear();
         }
         resetPlaylistIndexes();
     }

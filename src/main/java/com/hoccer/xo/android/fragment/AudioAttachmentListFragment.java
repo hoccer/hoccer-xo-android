@@ -171,7 +171,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
         SparseBooleanArray checked = getListView().getCheckedItemPositions();
 
         int count = getListView().getCount();
-        for( int pos = count - 1; pos >= 0; --pos){
+        for (int pos = count - 1; pos >= 0; --pos) {
             if (checked.get(pos)) {
                 deleteAudioAttachment(pos);
             }
@@ -185,7 +185,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
             mMediaPlayerService.playNextByRepeatMode();
         } else if (isPaused(item)) {
             mMediaPlayerService.stop();
-            mMediaPlayerService.updatePosition(pos);
         }
 
         if (deleteFile(item.getFilePath())) {
@@ -193,9 +192,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 XoApplication.getXoClient().getDatabase().deleteMessageByTalkClientDownloadId(((TalkClientDownload) item.getContentObject()).getClientDownloadId());
                 mAttachmentListAdapter.removeItem(pos);
 
-                if (mMediaPlayerService != null && !mMediaPlayerService.isPaused()) {
-                    mMediaPlayerService.removeMedia(pos);
-                }
+                mMediaPlayerService.removeMedia(pos);
 
                 Intent intent = new Intent(AUDIO_ATTACHMENT_REMOVED_ACTION);
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
