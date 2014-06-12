@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -81,7 +82,7 @@ public class FullscreenPlayerFragment extends Fragment {
         boolean hasMenuKey = ViewConfiguration.get(getActivity()).hasPermanentMenuKey();
         boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
 
-        if(!hasMenuKey && !hasBackKey) {
+        if(!hasMenuKey && !hasBackKey && !Build.MODEL.equals("Nexus 7")) {
             mPlayButton = (ToggleButton) getView().findViewById(R.id.bt_player_play_navigationbar);
         }
         else{
