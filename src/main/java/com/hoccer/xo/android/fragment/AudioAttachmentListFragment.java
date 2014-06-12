@@ -169,10 +169,11 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
     private void deleteSelectedAttachments() {
         SparseBooleanArray checked = getListView().getCheckedItemPositions();
-        LOG.error("#foo " + checked);
-        for (int i = 0; i < getListView().getCount(); i++) {
-            if (checked.get(i)) {
-                deleteAudioAttachment(i);
+
+        int count = getListView().getCount();
+        for( int pos = count - 1; pos >= 0; --pos){
+            if (checked.get(pos)) {
+                deleteAudioAttachment(pos);
             }
         }
     }
