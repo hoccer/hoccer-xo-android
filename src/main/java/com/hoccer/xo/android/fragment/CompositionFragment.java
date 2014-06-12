@@ -188,19 +188,24 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             return;
         }
 
+        boolean shouldSend = false;
         String messageText = mTextEdit.getText().toString();
-
-        if (messageText != null && !messageText.equals("")) {
+        if (messageText != null && !messageText.isEmpty()) {
             mLastMessage = messageText;
+            shouldSend = true;
         }
 
         TalkClientUpload upload = null;
         if (mAttachment != null) {
             upload = SelectedContent.createAttachmentUpload(mAttachment);
+            shouldSend = true;
         }
-        getXoClient()
-                .requestDelivery(getXoClient().composeClientMessage(mContact, messageText, upload));
-        clearComposedMessage();
+
+        if(shouldSend) {
+            getXoClient()
+                    .requestDelivery(getXoClient().composeClientMessage(mContact, messageText, upload));
+            clearComposedMessage();
+        }
     }
 
     private void showAlertSendMessageNotPossible() {
