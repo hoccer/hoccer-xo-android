@@ -189,7 +189,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 XoApplication.getXoClient().getDatabase().deleteMessageByTalkClientDownloadId(((TalkClientDownload) item.getContentObject()).getClientDownloadId());
                 mAttachmentListAdapter.removeItem(pos);
 
-                if (mMediaPlayerService != null && !mMediaPlayerService.isPaused()){
+                if (mMediaPlayerService != null && !mMediaPlayerService.isPaused()) {
                     mMediaPlayerService.removeMedia(pos);
                 }
 
@@ -203,31 +203,9 @@ public class AudioAttachmentListFragment extends XoListFragment {
     }
 
     private boolean isPlaying(AudioAttachmentItem item) {
-        if (mMediaPlayerService != null) {
-            switch (mMediaPlayerService.getPlaylistType()) {
-                case ALL_MEDIA: {
-                    if (mFilteredContactId == ALL_CONTACTS_ID && !mMediaPlayerService.isStopped()) {
-                        if (item.equals(mMediaPlayerService.getCurrentMediaItem())) {
-                            return true;
-                        }
-                    }
-                }
-                break;
-                case CONVERSATION_MEDIA: {
-                    if (mFilteredContactId == mMediaPlayerService.getCurrentConversationContactId()
-                            && !mMediaPlayerService.isStopped()) {
-                        if (item.equals(mMediaPlayerService.getCurrentMediaItem())) {
-                            return true;
-                        }
-                    }
-                }
-                break;
-                case SINGLE_MEDIA: {
-                    if (item.equals(mMediaPlayerService.getCurrentMediaItem())) {
-                        return true;
-                    }
-                }
-                break;
+        if (mMediaPlayerService != null && !mMediaPlayerService.isStopped()) {
+            if (item.equals(mMediaPlayerService.getCurrentMediaItem())) {
+                return true;
             }
         }
         return false;
@@ -267,7 +245,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
             AudioAttachmentItem selectedItem = mAttachmentListAdapter.getItem(position);
 
             setMediaList();
-            
+
             if (isPlaying(selectedItem)) {
                 mMediaPlayerService.updatePosition(position);
             } else {
