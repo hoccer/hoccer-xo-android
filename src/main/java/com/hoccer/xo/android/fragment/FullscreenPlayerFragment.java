@@ -2,7 +2,6 @@ package com.hoccer.xo.android.fragment;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,9 +15,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.view.animation.Animation;
 import android.widget.*;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -81,9 +78,11 @@ public class FullscreenPlayerFragment extends Fragment {
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // every Nexus with a foot bar has a problem due to the shrinked layout. Nexus S, though, has no problem...
-        if(android.os.Build.MODEL.equals("Nexus 4") || android.os.Build.MODEL.equals("Nexus 5")) {
-            mPlayButton = (ToggleButton) getView().findViewById(R.id.bt_player_play_nexus);
+        boolean hasMenuKey = ViewConfiguration.get(getActivity()).hasPermanentMenuKey();
+        boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
+
+        if(!hasMenuKey && !hasBackKey) {
+            mPlayButton = (ToggleButton) getView().findViewById(R.id.bt_player_play_navigationbar);
         }
         else{
             mPlayButton = (ToggleButton) getView().findViewById(R.id.bt_player_play);
@@ -365,7 +364,7 @@ public class FullscreenPlayerFragment extends Fragment {
                     case R.id.bt_player_play:
                         togglePlayPauseButton(isChecked);
                         break;
-                    case R.id.bt_player_play_nexus:
+                    case R.id.bt_player_play_navigationbar:
                         togglePlayPauseButton(isChecked);
                         break;
                     case R.id.bt_player_shuffle:
