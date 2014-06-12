@@ -67,17 +67,17 @@ public class AudioAttachmentItem {
     @Override
     public boolean equals(Object obj) {
         boolean isEqual = false;
+
         if (obj != null && obj instanceof AudioAttachmentItem) {
-            if (((AudioAttachmentItem) obj).getContentObject() instanceof TalkClientDownload &&
-                    this.getContentObject() instanceof TalkClientDownload) {
-                    isEqual = ((TalkClientDownload) this.getContentObject()).getClientDownloadId() ==
-                            ((TalkClientDownload)((AudioAttachmentItem) obj).getContentObject()).getClientDownloadId();
-            } else if (((AudioAttachmentItem) obj).getContentObject() instanceof TalkClientUpload &&
-                    this.getContentObject() instanceof TalkClientUpload) {
+
+            IContentObject contentObject = ((AudioAttachmentItem) obj).getContentObject();
+
+            if (contentObject instanceof TalkClientDownload && this.getContentObject() instanceof TalkClientDownload) {
+                isEqual = ((TalkClientDownload) this.getContentObject()).getClientDownloadId() ==
+                        ((TalkClientDownload) contentObject).getClientDownloadId();
+            } else if (contentObject instanceof TalkClientUpload && this.getContentObject() instanceof TalkClientUpload) {
                 isEqual = ((TalkClientUpload) this.getContentObject()).getClientUploadId() ==
-                        ((TalkClientUpload)((AudioAttachmentItem) obj).getContentObject()).getClientUploadId();
-            } else {
-                isEqual = this.getFilePath().equals(((AudioAttachmentItem) obj).getFilePath());
+                        ((TalkClientUpload) contentObject).getClientUploadId();
             }
         }
 
