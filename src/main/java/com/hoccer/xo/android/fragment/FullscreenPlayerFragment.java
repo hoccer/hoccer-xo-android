@@ -167,6 +167,8 @@ public class FullscreenPlayerFragment extends Fragment {
         }
         if (talkClientContact != null){
             mConversationNameLabel.setText(talkClientContact.getName());
+        } else {
+            mConversationNameLabel.setText(R.string.deleted_contact_name);
         }
     }
 
@@ -453,6 +455,7 @@ public class FullscreenPlayerFragment extends Fragment {
                 }
                 else if (intent.getAction().equals(MediaPlayerService.TRACK_CHANGED_ACTION)) {
                     updateTrackData();
+                    updateConversationName();
                 }
             }
         };
