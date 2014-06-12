@@ -528,6 +528,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         }
     }
 
+    public void updatePosition(int pos) {
+        mPlaylist.setCurrentTrackNumber(pos);
+    }
+
     public MediaPlaylist.RepeatMode getRepeatMode() {
         return mPlaylist.getRepeatMode();
     }

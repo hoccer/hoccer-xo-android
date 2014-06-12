@@ -180,7 +180,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
     private void deleteAudioAttachment(int pos) {
         AudioAttachmentItem item = mAttachmentListAdapter.getItem(pos);
 
-        if (isPlaying(item.getFilePath())) {
+        if (isPlaying(item)) {
             mMediaPlayerService.playNextByRepeatMode();
         }
 
@@ -189,8 +189,9 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 XoApplication.getXoClient().getDatabase().deleteMessageByTalkClientDownloadId(((TalkClientDownload) item.getContentObject()).getClientDownloadId());
                 mAttachmentListAdapter.removeItem(pos);
 
-                if (mMediaPlayerService != null && !mMediaPlayerService.isPaused())
-                mMediaPlayerService.removeMedia(pos);
+                if (mMediaPlayerService != null && !mMediaPlayerService.isPaused()){
+                    mMediaPlayerService.removeMedia(pos);
+                }
 
                 Intent intent = new Intent(AUDIO_ATTACHMENT_REMOVED_ACTION);
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
@@ -201,12 +202,12 @@ public class AudioAttachmentListFragment extends XoListFragment {
         }
     }
 
-    private boolean isPlaying(String filePath) {
+    private boolean isPlaying(AudioAttachmentItem item) {
         if (mMediaPlayerService != null) {
             switch (mMediaPlayerService.getPlaylistType()) {
                 case ALL_MEDIA: {
                     if (mFilteredContactId == ALL_CONTACTS_ID && !mMediaPlayerService.isStopped()) {
-                        if (filePath.equals(mMediaPlayerService.getCurrentMediaItem().getFilePath())) {
+                        if (item.equals(mMediaPlayerService.getCurrentMediaItem())) {
                             return true;
                         }
                     }
@@ -215,9 +216,15 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 case CONVERSATION_MEDIA: {
                     if (mFilteredContactId == mMediaPlayerService.getCurrentConversationContactId()
                             && !mMediaPlayerService.isStopped()) {
-                        if (filePath.equals(mMediaPlayerService.getCurrentMediaItem().getFilePath())) {
+                        if (item.equals(mMediaPlayerService.getCurrentMediaItem())) {
                             return true;
                         }
+                    }
+                }
+                break;
+                case SINGLE_MEDIA: {
+                    if (item.equals(mMediaPlayerService.getCurrentMediaItem())) {
+                        return true;
                     }
                 }
                 break;
@@ -252,15 +259,17 @@ public class AudioAttachmentListFragment extends XoListFragment {
     }
 
     private class OnAttachmentClickHandler implements AdapterView.OnItemClickListener {
-        //TODO if files have been added the position of the currently playing song needs to be changed!
+        //TODO if files have been added, the position of the currently playing song needs to be changed!
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             AudioAttachmentItem selectedItem = mAttachmentListAdapter.getItem(position);
 
-            if (isPlaying(selectedItem.getFilePath())) {
-                updateMediaList();
+            setMediaList();
+            
+            if (isPlaying(selectedItem)) {
+                mMediaPlayerService.updatePosition(position);
             } else {
                 setMediaList();
                 mMediaPlayerService.play(position);
@@ -275,14 +284,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 itemList.add(audioAttachmentItem);
             }
             mMediaPlayerService.setMediaList(itemList, mAttachmentListAdapter.getConversationContactId());
-        }
-
-        private void updateMediaList() {
-            int numberOfMediaItemsToAdd = mAttachmentListAdapter.getCount() - mMediaPlayerService.getMediaListSize();
-
-            for (int i = 0; i < numberOfMediaItemsToAdd; ++i) {
-                mMediaPlayerService.addMedia(mAttachmentListAdapter.getItem(i));
-            }
         }
     }
 

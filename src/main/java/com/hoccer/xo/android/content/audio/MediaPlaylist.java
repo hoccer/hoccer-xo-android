@@ -26,7 +26,11 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
     }
 
     public int getCurrentTrackNumber() {
-        return mPlaylistIndexes.get(mCurrentIndex);
+        if (mPlaylistIndexes != null && mPlaylistIndexes.size() > 0) {
+            return mPlaylistIndexes.get(mCurrentIndex);
+        } else {
+            return 0;
+        }
     }
 
     public int size() {
@@ -165,7 +169,7 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
     }
 
     private void resetPlaylistIndexes() {
-        int currentTrackNumber = mPlaylistIndexes != null ? getCurrentTrackNumber() : 0;
+        int currentTrackNumber = getCurrentTrackNumber();
         mPlaylistIndexes = new ArrayList<Integer>();
         for (int i = 0; i < mAudioAttachmentItems.size(); i++) {
             mPlaylistIndexes.add(i);
