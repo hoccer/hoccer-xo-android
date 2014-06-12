@@ -450,6 +450,7 @@ public class FullscreenPlayerFragment extends Fragment {
                 }
                 else if (intent.getAction().equals(MediaPlayerService.TRACK_CHANGED_ACTION)) {
                     updateTrackData();
+                    updateConversationName();
                 }
             }
         };

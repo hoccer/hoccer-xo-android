@@ -140,6 +140,7 @@
 
     <!-- FullscreenPlayer -->
     <string name="track_number_filler">von</string>
+    <string name="deleted_contact_name">Entfernter Kontakt</string>
 
     <!-- Attachment type selection dialog -->
     <string name="selectattachment_title">Anhang auswählen</string>
