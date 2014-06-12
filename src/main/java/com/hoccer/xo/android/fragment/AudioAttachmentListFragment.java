@@ -62,13 +62,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        getActivity().onCreateOptionsMenu(menu);
-
-
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
