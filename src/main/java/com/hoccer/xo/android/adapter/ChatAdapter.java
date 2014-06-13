@@ -14,7 +14,6 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientUpload;
-import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentMediaTypes;
@@ -237,26 +236,30 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(AudioAttachmentListFragment.AUDIO_ATTACHMENT_REMOVED_ACTION)) {
-                    TalkClientMessage message = null;
-                    int downloadId = intent.getIntExtra(AudioAttachmentListFragment.TALK_CLIENT_DOWNLOAD_ID_EXTRA, -1);
-                    if (downloadId != -1) {
-                        try {
-                            message = getXoClient().getDatabase().findMessageByDownloadId(downloadId);
-                            XoApplication.getXoClient().getDatabase().deleteMessageById(message.getClientMessageId());
-                        } catch (SQLException e) {
-                            LOG.error("No message found.");
-                            e.printStackTrace();
-                            return;
-                        }
-                    }
-                    if (message != null) {
-                        onMessageRemoved(message);
+                    int messageId = intent.getIntExtra(AudioAttachmentListFragment.TALK_CLIENT_MESSAGE_ID_EXTRA, -1);
+                    if (messageId != -1) {
+                        removeMessageById(messageId);
                     }
                 }
             }
         };
         IntentFilter filter = new IntentFilter(AudioAttachmentListFragment.AUDIO_ATTACHMENT_REMOVED_ACTION);
         LocalBroadcastManager.getInstance(mActivity).registerReceiver(mReceiver, filter);
+    }
+
+    private void removeMessageById(final int messageId) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (ChatMessageItem messageItem : mChatMessageItems) {
+                    if (messageItem.getMessage().getClientMessageId() == messageId) {
+                        mChatMessageItems.remove(messageItem);
+                        notifyDataSetChanged();
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     @Override
