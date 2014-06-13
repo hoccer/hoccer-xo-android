@@ -10,13 +10,15 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.widget.*;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -26,6 +28,7 @@ import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.android.service.MediaPlayerService;
+import com.hoccer.xo.android.view.ArtworkImageView;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -50,7 +53,7 @@ public class FullscreenPlayerFragment extends Fragment {
     private TextView mPlaylistIndexLabel;
     private TextView mPlaylistSizeLabel;
     private TextView mConversationNameLabel;
-    private ImageView mArtworkView;
+    private ArtworkImageView mArtworkImageView;
     private FrameLayout mArtworkContainer;
 
     private Handler mTimeProgressHandler = new Handler();
@@ -72,22 +75,15 @@ public class FullscreenPlayerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.fragment_fullscreen_player, container);
+
+        View view = inflater.inflate(R.layout.fragment_fullscreen_player, container);
+
+        return view;
     }
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        boolean hasMenuKey = ViewConfiguration.get(getActivity()).hasPermanentMenuKey();
-        boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
-
-        if(!hasMenuKey && !hasBackKey && !Build.MODEL.equals("Nexus 7")) {
-            mPlayButton = (ToggleButton) getView().findViewById(R.id.bt_player_play_navigationbar);
-        }
-        else{
-            mPlayButton = (ToggleButton) getView().findViewById(R.id.bt_player_play);
-        }
 
         mSkipForwardButton = (ImageButton) getView().findViewById(R.id.bt_player_skip_forward);
         mSkipBackButton = (ImageButton) getView().findViewById(R.id.bt_player_skip_back);
@@ -101,18 +97,27 @@ public class FullscreenPlayerFragment extends Fragment {
         mPlaylistIndexLabel = (TextView) getView().findViewById(R.id.tv_player_current_track_no);
         mPlaylistSizeLabel = (TextView) getView().findViewById(R.id.tv_player_playlist_size);
         mConversationNameLabel = (TextView) getView().findViewById(R.id.tv_conversation_name);
-        mArtworkView = (ImageView) getView().findViewById(R.id.iv_player_artwork);
+        mArtworkImageView = (ArtworkImageView) getView().findViewById(R.id.iv_player_artwork);
         mArtworkContainer = (FrameLayout) getView().findViewById(R.id.fl_player_artwork);
         mTrackProgressBar.setProgress(0);
         mTrackProgressBar.setMax(100);
+        mPlayButton = (ToggleButton) view.findViewById(R.id.bt_player_play);
 
+        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                adjustViewSizes();
+            }
+        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        if (mMediaPlayerService != null){
+        if (mMediaPlayerService != null) {
             updateTrackData();
             updatePlayState();
         }
@@ -206,10 +211,9 @@ public class FullscreenPlayerFragment extends Fragment {
                     mCurrentLoadArtworkTask = new LoadArtworkTask();
                     mCurrentLoadArtworkTask.execute(currentItem);
                 } else {
-                    mArtworkView.setImageDrawable(currentItem.getMetaData().getArtwork());
+                    mArtworkImageView.setImageDrawable(currentItem.getMetaData().getArtwork());
                 }
 
-                adjustViewSizes();
                 updatePlayState();
 
                 mPlayButton.setVisibility(View.VISIBLE);
@@ -221,9 +225,6 @@ public class FullscreenPlayerFragment extends Fragment {
             mTimeProgressHandler.post(mUpdateTimeTask);
         }
 
-    }
-
-    private void updatePauseAnimation() {
     }
 
     private void setupViewListeners() {
@@ -275,13 +276,11 @@ public class FullscreenPlayerFragment extends Fragment {
         return String.format("%2d:%02d", minutes, seconds);
     }
 
-    private void adjustViewSizes() {
-        int margin = getActivity().getResources().getDimensionPixelSize(R.dimen.media_player_layout_margin);
-        int expectedViewHeight = getView().getMeasuredWidth() - (margin * 4);
 
-        RelativeLayout.LayoutParams coverArtLayoutParams = (RelativeLayout.LayoutParams) mArtworkContainer.getLayoutParams();
-        coverArtLayoutParams.height = expectedViewHeight;
-        coverArtLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+    private void adjustViewSizes() {
+        RelativeLayout.LayoutParams playBtnLayoutParams = (RelativeLayout.LayoutParams) mPlayButton.getLayoutParams();
+        playBtnLayoutParams.width = mPlayButton.getMeasuredHeight();
+        mPlayButton.setLayoutParams(playBtnLayoutParams);
     }
 
     private void updateRepeatMode() {
@@ -367,9 +366,6 @@ public class FullscreenPlayerFragment extends Fragment {
                     case R.id.bt_player_play:
                         togglePlayPauseButton(isChecked);
                         break;
-                    case R.id.bt_player_play_navigationbar:
-                        togglePlayPauseButton(isChecked);
-                        break;
                     case R.id.bt_player_shuffle:
                         if (isChecked && !mMediaPlayerService.isShuffleActive()) {
                             mMediaPlayerService.setShuffleActive(true);
@@ -424,7 +420,7 @@ public class FullscreenPlayerFragment extends Fragment {
 
         protected Drawable doInBackground(AudioAttachmentItem... params) {
             mAudioAttachmentItem = params[0];
-            byte[] artworkRaw = MediaMetaData.getArtwork( mAudioAttachmentItem.getFilePath());
+            byte[] artworkRaw = MediaMetaData.getArtwork(mAudioAttachmentItem.getFilePath());
             if (artworkRaw != null) {
                 return new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(artworkRaw, 0, artworkRaw.length));
             } else {
@@ -436,7 +432,7 @@ public class FullscreenPlayerFragment extends Fragment {
             super.onPostExecute(artwork);
             if (!this.isCancelled()) {
                 mAudioAttachmentItem.getMetaData().setArtwork(artwork);
-                mArtworkView.setImageDrawable(artwork);
+                mArtworkImageView.setImageDrawable(artwork);
             }
         }
     }
@@ -445,15 +441,14 @@ public class FullscreenPlayerFragment extends Fragment {
         mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if ( !isAttached()){
-                    Log.d( "FullscreenPlayerFragment", "Fragment is not yet attached. No Need to update.");
+                if (!isAttached()) {
+                    Log.d("FullscreenPlayerFragment", "Fragment is not yet attached. No Need to update.");
                     return;
                 }
 
                 if (intent.getAction().equals(MediaPlayerService.PLAYSTATE_CHANGED_ACTION)) {
                     updatePlayState();
-                }
-                else if (intent.getAction().equals(MediaPlayerService.TRACK_CHANGED_ACTION)) {
+                } else if (intent.getAction().equals(MediaPlayerService.TRACK_CHANGED_ACTION)) {
                     updateTrackData();
                     updateConversationName();
                 }
@@ -465,7 +460,7 @@ public class FullscreenPlayerFragment extends Fragment {
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, intentFilter);
     }
 
-    private boolean isAttached(){
+    private boolean isAttached() {
         return getActivity() != null;
     }
 }
