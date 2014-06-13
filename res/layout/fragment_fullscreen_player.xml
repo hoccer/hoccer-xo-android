@@ -60,20 +60,21 @@
               android:textSize="@dimen/media_player_text_medium"/>
 
 <FrameLayout android:id="@+id/fl_player_artwork"
-             android:layout_width="fill_parent"
-             android:layout_height="fill_parent"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
              android:layout_below="@id/rl_player_playlist_track_container"
              android:gravity="center"
              android:layout_marginLeft="@dimen/media_player_layout_margin"
              android:layout_marginRight="@dimen/media_player_layout_margin"
              android:layout_marginTop="@dimen/media_player_layout_margin">
 
-    <ImageView
-               android:layout_width="match_parent"
+    <com.hoccer.xo.android.view.ArtworkImageView
+            android:layout_width="match_parent"
                android:layout_height="match_parent"
                android:src="@drawable/media_cover_art_default"/>
 
-    <ImageView android:id="@+id/iv_player_artwork"
+    <com.hoccer.xo.android.view.ArtworkImageView
+               android:id="@+id/iv_player_artwork"
                android:layout_width="match_parent"
                android:layout_height="match_parent"
                android:src="@null"/>
@@ -205,18 +206,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/btn_player_play"
-                android:visibility="invisible"
-                android:text=""
-                android:textOff=""
-                android:textOn=""
-                android:layout_centerInParent="true"/>
-        <!-- Play Button Nexus-->
-        <ToggleButton
-                android:id="@+id/bt_player_play_navigationbar"
-                android:layout_width="@dimen/media_player_play_button_size"
-                android:layout_height="@dimen/media_player_play_button_size"
-                android:background="@drawable/btn_player_play"
-                android:visibility="invisible"
                 android:text=""
                 android:textOff=""
                 android:textOn=""
