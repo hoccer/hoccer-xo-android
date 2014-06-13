@@ -34,6 +34,8 @@ import java.util.List;
 public class AudioAttachmentListFragment extends XoListFragment {
 
     public static final String AUDIO_ATTACHMENT_REMOVED_ACTION = "com.hoccer.xo.android.fragment.AUDIO_ATTACHMENT_REMOVED_ACTION";
+    public static final String TALK_CLIENT_DOWNLOAD_ID_EXTRA = "com.hoccer.xo.android.fragment.TALK_CLIENT_DOWNLOAD_ID_EXTRA";
+
     private MediaPlayerService mMediaPlayerService;
 
     public static final int ALL_CONTACTS_ID = -1;
@@ -182,12 +184,15 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
         if (deleteFile(item.getFilePath())) {
             try {
-                XoApplication.getXoClient().getDatabase().deleteMessageByTalkClientDownloadId(((TalkClientDownload) item.getContentObject()).getClientDownloadId());
+                int downloadId = ((TalkClientDownload) item.getContentObject()).getClientDownloadId();
+                XoApplication.getXoClient().getDatabase().deleteTalkClientDownloadbyId(downloadId);
+
                 mAttachmentListAdapter.removeItem(pos);
 
                 mMediaPlayerService.removeMedia(pos);
 
                 Intent intent = new Intent(AUDIO_ATTACHMENT_REMOVED_ACTION);
+                intent.putExtra(TALK_CLIENT_DOWNLOAD_ID_EXTRA, downloadId);
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
             } catch (SQLException e) {
                 LOG.error("Error deleting message with client download id of " + ((TalkClientDownload) item.getContentObject()).getClientDownloadId());

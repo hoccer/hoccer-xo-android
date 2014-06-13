@@ -1,26 +1,26 @@
 package com.hoccer.xo.android.adapter;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
 import com.hoccer.talk.client.IXoMessageListener;
 import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientUpload;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentMediaTypes;
+import com.hoccer.xo.android.fragment.AudioAttachmentListFragment;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
-import com.hoccer.xo.android.view.chat.attachments.ChatAudioItem;
-import com.hoccer.xo.android.view.chat.attachments.ChatContactItem;
-import com.hoccer.xo.android.view.chat.attachments.ChatDataItem;
-import com.hoccer.xo.android.view.chat.attachments.ChatImageItem;
-import com.hoccer.xo.android.view.chat.attachments.ChatItemType;
-import com.hoccer.xo.android.view.chat.attachments.ChatLocationItem;
-import com.hoccer.xo.android.view.chat.attachments.ChatVideoItem;
-
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
+import com.hoccer.xo.android.view.chat.attachments.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -59,6 +59,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     private List<ChatMessageItem> mChatMessageItems;
 
     private ListView mListView;
+    private BroadcastReceiver mReceiver;
 
 
     public ChatAdapter(ListView listView, XoActivity activity, TalkClientContact contact) {
@@ -112,6 +113,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         super.onCreate();
         getXoClient().registerMessageListener(this);
         getXoClient().registerTransferListener(this);
+        createBroadcastReceiver();
     }
 
     @Override
@@ -119,6 +121,8 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         super.onDestroy();
         getXoClient().unregisterMessageListener(this);
         getXoClient().unregisterTransferListener(this);
+        LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mReceiver);
+        mReceiver = null;
     }
 
     @Override
@@ -225,6 +229,34 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
                 getXoClient().markAsSeen(message);
             }
         });
+    }
+
+
+    private void createBroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(AudioAttachmentListFragment.AUDIO_ATTACHMENT_REMOVED_ACTION)) {
+                    TalkClientMessage message = null;
+                    int downloadId = intent.getIntExtra(AudioAttachmentListFragment.TALK_CLIENT_DOWNLOAD_ID_EXTRA, -1);
+                    if (downloadId != -1) {
+                        try {
+                            message = getXoClient().getDatabase().findMessageByDownloadId(downloadId);
+                            XoApplication.getXoClient().getDatabase().deleteMessageById(message.getClientMessageId());
+                        } catch (SQLException e) {
+                            LOG.error("No message found.");
+                            e.printStackTrace();
+                            return;
+                        }
+                    }
+                    if (message != null) {
+                        onMessageRemoved(message);
+                    }
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(AudioAttachmentListFragment.AUDIO_ATTACHMENT_REMOVED_ACTION);
+        LocalBroadcastManager.getInstance(mActivity).registerReceiver(mReceiver, filter);
     }
 
     @Override
