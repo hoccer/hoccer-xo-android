@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.content;
 
+import android.graphics.drawable.Drawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.util.Log;
@@ -19,6 +20,7 @@ public class MediaMetaData {
     private String mMimeType = null;
     private boolean mHasAudio = false;
     private boolean mHasVideo = false;
+    private Drawable mArtwork = null;
 
     private MediaMetaData() {
     }
@@ -55,6 +57,10 @@ public class MediaMetaData {
         return mHasVideo;
     }
 
+    public Drawable getArtwork() {
+        return mArtwork;
+    }
+
     private void setTitle(String pTitle) {
         this.mTitle = pTitle;
     }
@@ -79,50 +85,46 @@ public class MediaMetaData {
         mHasVideo = pHasVideo;
     }
 
+    public void setArtwork(Drawable artwork) {
+        mArtwork = artwork;
+    }
+
     public static MediaMetaData create(String pMediaFilePath) throws IllegalArgumentException {
 
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
 
         MediaMetaData metaData = new MediaMetaData();
 
-        try {
-            retriever.setDataSource(pMediaFilePath);
-            ArrayList<String> data = new ArrayList<String>();
-            for( int i = 0; i < 100; i++)
-                data.add(retriever.extractMetadata(i));
+        retriever.setDataSource(pMediaFilePath);
 
-            String album = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
-            if(album == null) {
-                album = retriever.extractMetadata(25); // workaround bug on Galaxy S3 and S4
-            }
-            metaData.setAlbumTitle(album);
-
-            String artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-            if(artist == null) {
-                artist = retriever.extractMetadata(26); // workaround bug on Galaxy S3 and S4
-            }
-            metaData.setArtist(artist);
-
-            String title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
-            if(title == null) {
-                title = retriever.extractMetadata(31); // workaround bug on Galaxy S3 and S4
-            }
-            metaData.setTitle(title);
-
-            metaData.setMimeType(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE));
-
-            if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO) != null) {
-                metaData.setHasAudio(true);
-            }
-
-            if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO) != null) {
-                metaData.setHasVideo(true);
-            }
-        } catch(IllegalArgumentException e) {
-            Logger logger = Logger.getLogger(MediaMetaData.class);
-            logger.error("Error reading metadata from file: " + pMediaFilePath);
-            e.printStackTrace();
+        String album = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
+        if(album == null) {
+            album = retriever.extractMetadata(25); // workaround bug on Galaxy S3 and S4
         }
+        metaData.setAlbumTitle(album);
+
+        String artist = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+        if(artist == null) {
+            artist = retriever.extractMetadata(26); // workaround bug on Galaxy S3 and S4
+        }
+        metaData.setArtist(artist);
+
+        String title = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+        if(title == null) {
+            title = retriever.extractMetadata(31); // workaround bug on Galaxy S3 and S4
+        }
+        metaData.setTitle(title);
+
+        metaData.setMimeType(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE));
+
+        if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO) != null) {
+            metaData.setHasAudio(true);
+        }
+
+        if (retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO) != null) {
+            metaData.setHasVideo(true);
+        }
+
         return metaData;
     }
 
@@ -148,4 +150,5 @@ public class MediaMetaData {
 
         return retriever.getEmbeddedPicture();
     }
+
 }

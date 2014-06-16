@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.hoccer.xo.release"
 
-          android:versionCode="34"
-          android:versionName="2.1.3">
+          android:versionCode="35"
+          android:versionName="2.1.4">
 
     <!-- We run on 4.0 (14) and up, we use features from up to 4.2 (17) -->
     <uses-sdk
@@ -125,7 +125,7 @@
         <!-- MusicViewer activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.AudioAttachmentListActivity"
-                android:label="@string/audio_attachment_list_unknown"
+                android:label="Hoccer"
                 android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:screenOrientation="portrait"
                 android:windowSoftInputMode="stateHidden"
@@ -226,7 +226,7 @@
 
         <!-- Maps selection activity -->
         <activity
-                android:name="com.hoccer.xo.android.content.location.MapsLocationActivity"
+                android:name="com.hoccer.xo.android.activity.MapsLocationActivity"
                 android:label="@string/selectlocation_title">
         </activity>
 
@@ -257,7 +257,7 @@
                 android:exported="true">
             <!-- Priority 999 is the maximum priority allowed for applications -->
             <intent-filter android:priority="999">
-                <action android:name="android.provider.Telephony.SMS_RECEIVED"></action>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
         </receiver>
 

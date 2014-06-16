@@ -24,10 +24,9 @@
     <com.hoccer.xo.android.view.OverscrollListView
             android:id="@android:id/list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_above="@id/cv_composition"
-            android:transcriptMode="normal"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:transcriptMode="disabled"
             android:stackFromBottom="true"
             android:smoothScrollbar="false"
             android:dividerHeight="10dp"
@@ -41,8 +40,7 @@
         <TextView
                 android:id="@+id/messaging_empty"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/messaging_loading"/>
+                android:layout_height="wrap_content"/>
     </LinearLayout>
 
 

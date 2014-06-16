@@ -1,10 +1,21 @@
 package com.hoccer.xo.android.activity;
 
+import android.graphics.Color;
+import android.view.*;
+import android.widget.LinearLayout;
+import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.XoConfiguration;
+import com.hoccer.xo.android.view.chat.attachments.AttachmentTransferControlView;
+import com.hoccer.xo.release.R;
+
+import net.hockeyapp.android.CrashManager;
+
+import org.apache.log4j.Logger;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,16 +24,8 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.view.*;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
-import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.android.XoConfiguration;
-import com.hoccer.xo.android.view.AttachmentTransferControlView;
-import com.hoccer.xo.release.R;
-import net.hockeyapp.android.CrashManager;
-import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.sql.SQLException;

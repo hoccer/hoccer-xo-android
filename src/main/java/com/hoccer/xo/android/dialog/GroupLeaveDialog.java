@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 
 public class GroupLeaveDialog extends DialogFragment {
 
-    private static final Logger LOG = Logger.getLogger(GroupDeleteDialog.class);
+    private static final Logger LOG = Logger.getLogger(GroupLeaveDialog.class);
 
     XoActivity mActivity;
 

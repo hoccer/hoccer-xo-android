@@ -13,6 +13,8 @@
     <string name="common_done">Fertig</string>
     <string name="common_decline">Ablehnen</string>
     <string name="common_accept">Annehmen</string>
+    <string name="common_delete">Löschen</string>
+
 
     <!-- Menu entries -->
     <string name="menu_my_profile">Mein Profil</string>
@@ -39,6 +41,9 @@
         Möchtest du die Einladung annehmen?
     </string>
 
+    <!-- Deleting attachments -->
+    <string name="attachment_confirm_delete_dialog_message">Willst du die ausgewählten Anhänge wirklich löschen?</string>
+
     <!-- AudioAttachmentList Fragment -->
     <string name="audio_attachment_list_all">Alle</string>
     <string name="audio_attachment_list_unknown">Unbekannt</string>
@@ -61,7 +66,7 @@
 
     <!-- Messaging fragment -->
     <string name="messaging_loading">Lädt...</string>
-    <string name="messaging_no_messages"></string>
+    <string name="messaging_no_messages">Keine Nachrichten</string>
     <string name="messaging_invited_join">Gruppe beitreten</string>
     <string name="menu_copy_attachment">Kopieren</string>
 
@@ -122,6 +127,9 @@
     <string name="content_data">Dokument</string>
     <string name="content_clipboard">Aus Zwischenablage</string>
 
+    <string name="content_not_supported_audio_title">Nicht unterstütztes Format</string>
+    <string name="content_not_supported_audio_msg">Dieser Audio-Anhang kann nicht wiedergegeben werden.</string>
+
     <!-- Client states (used in status fragment) -->
     <string name="client_state_idle">Idle</string>
     <string name="client_state_inactive">Inaktiv</string>
@@ -135,6 +143,7 @@
 
     <!-- FullscreenPlayer -->
     <string name="track_number_filler">von</string>
+    <string name="deleted_contact_name">Entfernter Kontakt</string>
 
     <!-- Attachment type selection dialog -->
     <string name="selectattachment_title">Anhang auswählen</string>
@@ -252,6 +261,7 @@
     <string name="placeholder_conversations_text">Lade deine Freunde zum Chatten ein!</string>
     <string name="placeholder_nearby_text">Warten auf andere Nearby-Nutzer...</string>
     <string name="actionbar_default_title">Hoccer</string>
+    <string name="content_audio_caption">Musik</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>

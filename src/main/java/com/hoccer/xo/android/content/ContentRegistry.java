@@ -12,18 +12,7 @@ import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.content.audio.AudioViewCache;
-import com.hoccer.xo.android.content.audio.MusicSelector;
-import com.hoccer.xo.android.content.clipboard.ClipboardSelector;
-import com.hoccer.xo.android.content.data.DataViewCache;
-import com.hoccer.xo.android.content.image.ImageSelector;
-import com.hoccer.xo.android.content.image.ImageViewCache;
-import com.hoccer.xo.android.content.image.VideoSelector;
-import com.hoccer.xo.android.content.image.VideoViewCache;
-import com.hoccer.xo.android.content.location.LocationViewCache;
-import com.hoccer.xo.android.content.location.MapsLocationSelector;
-import com.hoccer.xo.android.content.vcard.ContactSelector;
-import com.hoccer.xo.android.content.vcard.ContactViewCache;
+import com.hoccer.xo.android.content.contentselectors.*;
 import com.hoccer.xo.android.util.IntentHelper;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -32,8 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-//import com.hoccer.xo.android.content.audio.ButtonAudioViewCache;
 
 /**
  * Content registry
@@ -77,9 +64,6 @@ public class ContentRegistry {
     /** Active attachment selectors (only the supported ones)  */
     List<IContentSelector> mAttachmentSelectors = new ArrayList<IContentSelector>();
 
-    /** Active attachment viewer providers (only the supported ones) */
-    List<ContentViewCache> mAttachmentViewCaches = new ArrayList<ContentViewCache>();
-
     private ClipboardSelector mClipboardSelector;
 
     private ContentRegistry(Context context) {
@@ -100,17 +84,8 @@ public class ContentRegistry {
         initializeSelector(new MusicSelector(mContext));
         initializeSelector(new ContactSelector(mContext));
         initializeSelector(new MapsLocationSelector(mContext));
-//        initializeSelector(new DataSelector(mContext));
 
         mClipboardSelector = new ClipboardSelector(mContext);
-
-        mAttachmentViewCaches.add(new ImageViewCache());
-        mAttachmentViewCaches.add(new VideoViewCache());
-//        mAttachmentViewCaches.add(new ButtonAudioViewCache());
-        mAttachmentViewCaches.add(new AudioViewCache());
-        mAttachmentViewCaches.add(new ContactViewCache());
-        mAttachmentViewCaches.add(new LocationViewCache());
-        mAttachmentViewCaches.add(new DataViewCache());
     }
 
     /**
@@ -165,41 +140,6 @@ public class ContentRegistry {
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
-    }
-
-    /**
-     * Creates a View for displaying the given content
-     *
-     * This should be called by ContentView when the displayed object changes.
-     *
-     * @param activity the view will be used in
-     * @param contentObject to display
-     * @param view that will host the returned view
-     * @return a View set up for the given content
-     */
-    public View createViewForContent(Activity activity, IContentObject contentObject, ContentView view, boolean isLightTheme) {
-        ContentViewCache contentViewCache = selectViewCacheForContent(contentObject);
-        if(contentViewCache != null) {
-            return contentViewCache.getViewForObject(activity, view, contentObject, isLightTheme);
-        }
-        return null;
-    }
-
-    /**
-     * Selects the viewer for a content object
-     *
-     * First viewer that can show the content will be chosen.
-     *
-     * @param contentObject that needs a view constructed
-     * @return a matching content viewer
-     */
-    public ContentViewCache selectViewCacheForContent(IContentObject contentObject) {
-        for(ContentViewCache viewCache: mAttachmentViewCaches) {
-            if(viewCache.canViewObject(contentObject)) {
-                return viewCache;
-            }
-        }
-        return null;
     }
 
     /**
@@ -344,8 +284,7 @@ public class ContentRegistry {
     public IContentObject createSelectedAttachment(ContentSelection selection, Intent intent) {
         IContentSelector selector = selection.getSelector();
         if(selector != null) {
-            IContentObject object = selector.createObjectFromSelectionResult(selection.getActivity(), intent);
-            return object;
+            return selector.createObjectFromSelectionResult(selection.getActivity(), intent);
         }
         return null;
     }

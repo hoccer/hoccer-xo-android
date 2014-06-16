@@ -47,26 +47,41 @@ public class AttachmentListFilterAdapter extends XoAdapter {
         return mFilterItems.get(position).getContactId();
     }
 
+    public int getPosition(int contactId){
+        for (FilterItem item : mFilterItems) {
+            if (item.getContactId() == contactId) {
+                return mFilterItems.indexOf(item);
+            }
+        }
+
+        return 0;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        TextView filterLabel;
+        View filterView;
+
         if (convertView == null) {
-            filterLabel = (TextView) mLayoutInflater.inflate(R.layout.spinner_contact_item, null);
-            return filterLabel;
+            filterView = mLayoutInflater.inflate(R.layout.spinner_contact_item, null);
         } else {
-            filterLabel = (TextView) convertView;
+            filterView = convertView;
         }
+
+        TextView filterLabel = (TextView) filterView.findViewById(R.id.tv_spinner_contact);
         filterLabel.setText(mFilterItems.get(position).getFilterLabel());
-        return filterLabel;
+        return filterView;
     }
 
     private void loadContactsToFilter() {
         try {
             List<TalkClientContact> contacts = getXoClient().getDatabase().findAllClientContacts();
+
             for (TalkClientContact contact : contacts) {
+
                 if (shouldShow(contact)) {
                     mFilterItems.add(new FilterItem(contact));
                 }
+
             }
         } catch (SQLException e) {
             // TODO: proper exception handling
@@ -78,16 +93,21 @@ public class AttachmentListFilterAdapter extends XoAdapter {
 
     private boolean shouldShow(TalkClientContact contact) {
         if (contact.isGroup()) {
+
             if (contact.isGroupInvolved() && contact.isGroupExisting() && !contact.getGroupPresence().isTypeNearby()) {
                 return true;
             }
+
         } else if (contact.isClient()) {
+
             if (contact.isClientRelated()) {
                 return true;
             }
+
         } else if (contact.isEverRelated()) {
             return true;
         }
+
         return false;
     }
 
@@ -118,6 +138,10 @@ public class AttachmentListFilterAdapter extends XoAdapter {
             }
 
             return AudioAttachmentListFragment.ALL_CONTACTS_ID;
+        }
+
+        TalkClientContact getContact() {
+            return mContact;
         }
 
     }

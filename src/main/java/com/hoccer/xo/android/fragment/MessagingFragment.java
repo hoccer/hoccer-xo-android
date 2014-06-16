@@ -9,20 +9,21 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.content.IContentObject;
-import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.android.adapter.ConversationAdapter;
+import com.hoccer.xo.android.adapter.ChatAdapter;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
-import com.hoccer.xo.android.gesture.Gestures;
-import com.hoccer.xo.android.gesture.MotionInterpreter;
-import com.hoccer.xo.android.view.CompositionView;
-import com.hoccer.xo.android.view.OnOverscrollListener;
 import com.hoccer.xo.android.view.OverscrollListView;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
-import java.sql.SQLException;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 /**
  * Fragment for conversations
@@ -122,7 +123,6 @@ public class MessagingFragment extends XoListFragment
 
     @Override
     public void onResume() {
-        LOG.debug("onResume()");
         super.onResume();
 
         if (mContact.isDeleted()) {

@@ -13,6 +13,8 @@
     <string name="common_done">Done</string>
     <string name="common_decline">Decline</string>
     <string name="common_accept">Accept</string>
+    <string name="common_delete">Delete</string>
+
 
     <!-- Menu entries -->
     <string name="menu_my_profile">My profile</string>
@@ -39,6 +41,10 @@
         Do you wish to accept?
     </string>
 
+    <!-- Deleting attachments -->
+    <string name="attachment_confirm_delete_dialog_message">Delete selected attachments and related chat messages?
+    </string>
+
     <!-- AudioAttachmentList Fragment -->
     <string name="audio_attachment_list_all">All</string>
     <string name="audio_attachment_list_unknown">Unknown</string>
@@ -62,7 +68,7 @@
 
     <!-- Messaging fragment -->
     <string name="messaging_loading">Loading...</string>
-    <string name="messaging_no_messages"></string>
+    <string name="messaging_no_messages">No Messages</string>
     <string name="messaging_invited_join">Join group</string>
     <string name="menu_copy_attachment">Copy</string>
 
@@ -123,6 +129,9 @@
     <string name="content_data">Data</string>
     <string name="content_clipboard">Clipboard</string>
 
+    <string name="content_not_supported_audio_title">Unsupported Format</string>
+    <string name="content_not_supported_audio_msg">This audio attachment cannot be played back.</string>
+
     <!-- Client states (used in status fragment) -->
     <string name="client_state_idle">Idle</string>
     <string name="client_state_inactive">Inactive</string>
@@ -136,6 +145,7 @@
 
     <!-- FullscreenPlayer -->
     <string name="track_number_filler">of</string>
+    <string name="deleted_contact_name">Removed Contact</string>
 
     <!-- Attachment type selection dialog -->
     <string name="selectattachment_title">Select attachment</string>
@@ -280,5 +290,6 @@
     <string name="placeholder_conversations_text">Invite friends to chat with!</string>
     <string name="placeholder_nearby_text">Waiting for others nearby...</string>
     <string name="actionbar_default_title">Hoccer</string>
+    <string name="content_audio_caption">Music</string>
 
 </resources>

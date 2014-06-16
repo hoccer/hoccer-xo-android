@@ -68,19 +68,14 @@ public class FullscreenPlayerActivity extends FragmentActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(MediaPlayerService.PLAYSTATE_CHANGED_ACTION)) {
-                    mPlayerFragment.updatePlayState();
                     if (mMediaPlayerService.isStopped()) {
                         finish();
                     }
-                }
-                if (intent.getAction().equals(MediaPlayerService.TRACK_CHANGED_ACTION)) {
-                    mPlayerFragment.updateTrackData();
                 }
             }
         };
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
-        intentFilter.addAction(MediaPlayerService.TRACK_CHANGED_ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, intentFilter);
     }
 

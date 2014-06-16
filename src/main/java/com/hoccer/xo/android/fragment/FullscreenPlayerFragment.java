@@ -2,12 +2,19 @@ package com.hoccer.xo.android.fragment;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
-import android.graphics.Bitmap;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +22,13 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.widget.*;
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.model.TalkClient;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
-import com.hoccer.xo.android.content.MediaItem;
+import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
 import com.hoccer.xo.android.service.MediaPlayerService;
+import com.hoccer.xo.android.view.ArtworkImageView;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -46,29 +53,38 @@ public class FullscreenPlayerFragment extends Fragment {
     private TextView mPlaylistIndexLabel;
     private TextView mPlaylistSizeLabel;
     private TextView mConversationNameLabel;
-    private ImageView mArtworkView;
+    private ArtworkImageView mArtworkImageView;
+    private FrameLayout mArtworkContainer;
 
     private Handler mTimeProgressHandler = new Handler();
     private Runnable mUpdateTimeTask;
     private ValueAnimator mBlinkAnimation;
     private MediaPlayerService mMediaPlayerService;
+    private LoadArtworkTask mCurrentLoadArtworkTask;
+
+    private BroadcastReceiver mBroadcastReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupBlinkAnimation();
+
+        createBroadcastReceiver();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.fragment_fullscreen_player, container);
+
+        View view = inflater.inflate(R.layout.fragment_fullscreen_player, container);
+
+        return view;
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mPlayButton = (ToggleButton) getView().findViewById(R.id.bt_player_play);
+
         mSkipForwardButton = (ImageButton) getView().findViewById(R.id.bt_player_skip_forward);
         mSkipBackButton = (ImageButton) getView().findViewById(R.id.bt_player_skip_back);
         mRepeatButton = (ImageButton) getView().findViewById(R.id.bt_player_repeat);
@@ -81,16 +97,30 @@ public class FullscreenPlayerFragment extends Fragment {
         mPlaylistIndexLabel = (TextView) getView().findViewById(R.id.tv_player_current_track_no);
         mPlaylistSizeLabel = (TextView) getView().findViewById(R.id.tv_player_playlist_size);
         mConversationNameLabel = (TextView) getView().findViewById(R.id.tv_conversation_name);
-        mArtworkView = (ImageView) getView().findViewById(R.id.iv_player_artwork);
+        mArtworkImageView = (ArtworkImageView) getView().findViewById(R.id.iv_player_artwork);
+        mArtworkContainer = (FrameLayout) getView().findViewById(R.id.fl_player_artwork);
         mTrackProgressBar.setProgress(0);
         mTrackProgressBar.setMax(100);
+        mPlayButton = (ToggleButton) view.findViewById(R.id.bt_player_play);
 
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                resizeCoverArtView();
+                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                adjustViewSizes();
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mMediaPlayerService != null) {
+            updateTrackData();
+            updatePlayState();
+        }
     }
 
     @Override
@@ -116,10 +146,10 @@ public class FullscreenPlayerFragment extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if ((mPlayButton.isChecked() && mMediaPlayerService.isPaused()) || (mPlayButton.isChecked() && mMediaPlayerService.isStopped())) {
+                    if ((mMediaPlayerService.isPaused()) || mMediaPlayerService.isStopped()) {
                         mPlayButton.setChecked(false);
                         mBlinkAnimation.start();
-                    } else if (!mPlayButton.isChecked() && !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
+                    } else if (!mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped()) {
                         if (mBlinkAnimation.isRunning()) {
                             mBlinkAnimation.cancel();
                         }
@@ -142,46 +172,51 @@ public class FullscreenPlayerFragment extends Fragment {
         }
         if (talkClientContact != null){
             mConversationNameLabel.setText(talkClientContact.getName());
+        } else {
+            mConversationNameLabel.setText(R.string.deleted_contact_name);
         }
     }
 
     public void updateTrackData() {
+        if (mCurrentLoadArtworkTask != null && mCurrentLoadArtworkTask.getStatus() != AsyncTask.Status.FINISHED) {
+            mCurrentLoadArtworkTask.cancel(true);
+        }
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                MediaItem currentItem = mMediaPlayerService.getCurrentMediaItem();
-                String trackArtist = currentItem.getMetaData().getArtist().trim();
-                String trackTitle = currentItem.getMetaData().getTitle().trim();
+                AudioAttachmentItem currentItem = mMediaPlayerService.getCurrentMediaItem();
+                String trackArtist = currentItem.getMetaData().getArtist();
+                String trackTitle = currentItem.getMetaData().getTitle();
                 int totalDuration = mMediaPlayerService.getTotalDuration();
-                byte[] cover = MediaMetaData.getArtwork(currentItem.getFilePath());
-
 
                 if (trackTitle == null || trackTitle.isEmpty()) {
                     File file = new File(currentItem.getFilePath());
                     trackTitle = file.getName();
                 }
 
-                mTrackTitleLabel.setText(trackTitle);
+                mTrackTitleLabel.setText(trackTitle.trim());
                 if (trackArtist == null || trackArtist.isEmpty()) {
                     trackArtist = getActivity().getResources().getString(R.string.media_meta_data_unknown_artist);
                 }
-                mTrackArtistLabel.setText(trackArtist);
+
+                mTrackArtistLabel.setText(trackArtist.trim());
                 mTrackProgressBar.setMax(totalDuration);
-                mTrackProgressBar.setProgress(mMediaPlayerService.getCurrentPosition());
 
                 mTotalDurationLabel.setText(getStringFromTimeStamp(totalDuration));
                 mPlaylistIndexLabel.setText(Integer.toString(mMediaPlayerService.getCurrentTrackNumber() + 1));
                 mPlaylistSizeLabel.setText(Integer.toString(mMediaPlayerService.getMediaListSize()));
 
-                if (cover != null) {
-                    Bitmap coverBitmap = BitmapFactory.decodeByteArray(cover, 0, cover.length);
-                    mArtworkView.setImageBitmap(coverBitmap);
+                if (currentItem.getMetaData().getArtwork() == null) {
+                    mCurrentLoadArtworkTask = new LoadArtworkTask();
+                    mCurrentLoadArtworkTask.execute(currentItem);
                 } else {
-                    mArtworkView.setImageResource(R.drawable.media_cover_art_default);
+                    mArtworkImageView.setImageDrawable(currentItem.getMetaData().getArtwork());
                 }
 
-                resizeCoverArtView();
                 updatePlayState();
+
+                mPlayButton.setVisibility(View.VISIBLE);
             }
         });
 
@@ -241,15 +276,11 @@ public class FullscreenPlayerFragment extends Fragment {
         return String.format("%2d:%02d", minutes, seconds);
     }
 
-    private void resizeCoverArtView() {
-        int margin = getActivity().getResources().getDimensionPixelSize(R.dimen.media_player_layout_margin);
-        int measuredViewHeight = getView().getMeasuredWidth() - (margin * 4);
-        if (mArtworkView.getHeight() != measuredViewHeight) {
-            RelativeLayout.LayoutParams coverArtLayoutParams = (RelativeLayout.LayoutParams) mArtworkView.getLayoutParams();
-            coverArtLayoutParams.height = measuredViewHeight;
-            coverArtLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            mArtworkView.setLayoutParams(coverArtLayoutParams);
-        }
+
+    private void adjustViewSizes() {
+        RelativeLayout.LayoutParams playBtnLayoutParams = (RelativeLayout.LayoutParams) mPlayButton.getLayoutParams();
+        playBtnLayoutParams.width = mPlayButton.getMeasuredHeight();
+        mPlayButton.setLayoutParams(playBtnLayoutParams);
     }
 
     private void updateRepeatMode() {
@@ -301,10 +332,10 @@ public class FullscreenPlayerFragment extends Fragment {
             if (mMediaPlayerService != null) {
                 switch (v.getId()) {
                     case R.id.bt_player_skip_back:
-                        mMediaPlayerService.skipBackwards();
+                        mMediaPlayerService.playPrevious();
                         break;
                     case R.id.bt_player_skip_forward:
-                        mMediaPlayerService.skipForward();
+                        mMediaPlayerService.playNext();
                         break;
                     case R.id.bt_player_repeat:
                         updateRepeatMode();
@@ -333,18 +364,7 @@ public class FullscreenPlayerFragment extends Fragment {
             if (mMediaPlayerService != null) {
                 switch (buttonView.getId()) {
                     case R.id.bt_player_play:
-                        boolean isPlaying = (mMediaPlayerService.isPaused() || mMediaPlayerService.isStopped()) ? false : true;
-                        if (!isChecked && isPlaying) {
-                            mMediaPlayerService.pause();
-                            mBlinkAnimation.start();
-                        } else if (isChecked && !isPlaying){
-                            mMediaPlayerService.play();
-                            if (mBlinkAnimation.isRunning()) {
-                                mBlinkAnimation.cancel();
-                            }
-
-                            mCurrentTimeLabel.setTextColor(getResources().getColor(R.color.xo_media_player_secondary_text));
-                        }
+                        togglePlayPauseButton(isChecked);
                         break;
                     case R.id.bt_player_shuffle:
                         if (isChecked && !mMediaPlayerService.isShuffleActive()) {
@@ -355,6 +375,21 @@ public class FullscreenPlayerFragment extends Fragment {
                         break;
                 }
             }
+        }
+    }
+
+    private void togglePlayPauseButton(boolean isChecked){
+        boolean isPlaying = (mMediaPlayerService.isPaused() || mMediaPlayerService.isStopped()) ? false : true;
+        if (!isChecked && isPlaying) {
+            mMediaPlayerService.pause();
+            mBlinkAnimation.start();
+        } else if (isChecked && !isPlaying){
+            mMediaPlayerService.play();
+            if (mBlinkAnimation.isRunning()) {
+                mBlinkAnimation.cancel();
+            }
+
+            mCurrentTimeLabel.setTextColor(getResources().getColor(R.color.xo_media_player_secondary_text));
         }
     }
 
@@ -377,5 +412,55 @@ public class FullscreenPlayerFragment extends Fragment {
                 LOG.error(e);
             }
         }
+    }
+
+    private class LoadArtworkTask extends AsyncTask<AudioAttachmentItem, Void, Drawable> {
+
+        private AudioAttachmentItem mAudioAttachmentItem;
+
+        protected Drawable doInBackground(AudioAttachmentItem... params) {
+            mAudioAttachmentItem = params[0];
+            byte[] artworkRaw = MediaMetaData.getArtwork(mAudioAttachmentItem.getFilePath());
+            if (artworkRaw != null) {
+                return new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(artworkRaw, 0, artworkRaw.length));
+            } else {
+                return null;
+            }
+        }
+
+        protected void onPostExecute(Drawable artwork) {
+            super.onPostExecute(artwork);
+            if (!this.isCancelled()) {
+                mAudioAttachmentItem.getMetaData().setArtwork(artwork);
+                mArtworkImageView.setImageDrawable(artwork);
+            }
+        }
+    }
+
+    private void createBroadcastReceiver() {
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (!isAttached()) {
+                    Log.d("FullscreenPlayerFragment", "Fragment is not yet attached. No Need to update.");
+                    return;
+                }
+
+                if (intent.getAction().equals(MediaPlayerService.PLAYSTATE_CHANGED_ACTION)) {
+                    updatePlayState();
+                } else if (intent.getAction().equals(MediaPlayerService.TRACK_CHANGED_ACTION)) {
+                    updateTrackData();
+                    updateConversationName();
+                }
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
+        intentFilter.addAction(MediaPlayerService.TRACK_CHANGED_ACTION);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mBroadcastReceiver, intentFilter);
+    }
+
+    private boolean isAttached() {
+        return getActivity() != null;
     }
 }

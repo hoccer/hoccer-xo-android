@@ -8,15 +8,16 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.PopupMenu;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActionbarActivity;
-import com.hoccer.xo.android.content.ContentView;
-import com.hoccer.xo.android.content.clipboard.Clipboard;
-import com.hoccer.xo.android.fragment.AudioAttachmentListFragment;
-import com.hoccer.xo.android.fragment.GroupProfileFragment;
+import com.hoccer.xo.android.content.Clipboard;
+import com.hoccer.xo.android.fragment.CompositionFragment;
 import com.hoccer.xo.android.fragment.MessagingFragment;
-import com.hoccer.xo.android.fragment.SingleProfileFragment;
+import com.hoccer.xo.android.gesture.Gestures;
+import com.hoccer.xo.android.gesture.MotionInterpreter;
+import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
 public class MessagingActivity extends XoActionbarActivity {
@@ -100,13 +101,13 @@ public class MessagingActivity extends XoActionbarActivity {
     }
 
     @Override
-    public void showPopupForContentView(ContentView contentView) {
-        IContentObject contentObject = contentView.getContent();
+    public void showPopupForMessageItem(ChatMessageItem messageItem, View messageItemView) {
+        IContentObject contentObject = messageItem.getContent();
 
         if (contentObject.isContentAvailable()) {
             mClipboardAttachment = contentObject;
 
-            PopupMenu popup = new PopupMenu(this, contentView);
+            PopupMenu popup = new PopupMenu(this, messageItemView);
             popup.getMenuInflater().inflate(R.menu.popup_menu_messaging, popup.getMenu());
             popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
 

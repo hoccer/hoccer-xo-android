@@ -1,11 +1,11 @@
 package com.hoccer.xo.android.content.audio;
 
-import com.hoccer.xo.android.content.MediaItem;
+import com.hoccer.xo.android.content.AudioAttachmentItem;
 import org.apache.log4j.Logger;
 
 import java.util.*;
 
-public class MediaPlaylist implements ListIterator<MediaItem> {
+public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
 
     public static enum RepeatMode {
         REPEAT_TITLE, REPEAT_ALL, NO_REPEAT;
@@ -13,7 +13,7 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
 
     private static final Logger LOG = Logger.getLogger(MediaPlaylist.class);
 
-    private List<MediaItem> mMediaItems = new ArrayList<MediaItem>();
+    private List<AudioAttachmentItem> mAudioAttachmentItems = new ArrayList<AudioAttachmentItem>();
     private List<Integer> mPlaylistIndexes;
 
     private RepeatMode mRepeatMode = RepeatMode.NO_REPEAT;
@@ -26,16 +26,20 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
     }
 
     public int getCurrentTrackNumber() {
-        return mPlaylistIndexes.get(mCurrentIndex);
+        if (mPlaylistIndexes != null && mPlaylistIndexes.size() > 0) {
+            return mPlaylistIndexes.get(mCurrentIndex);
+        } else {
+            return 0;
+        }
     }
 
     public int size() {
-        return mMediaItems.size();
+        return mAudioAttachmentItems.size();
     }
 
     @Override
     public boolean hasPrevious() {
-        if (!mMediaItems.isEmpty()) {
+        if (!mAudioAttachmentItems.isEmpty()) {
             if (previousIndex() >= 0) {
                 return true;
             }
@@ -54,28 +58,28 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
     }
 
     @Override
-    public MediaItem previous() {
+    public AudioAttachmentItem previous() {
         --mCurrentIndex;
         if (mCurrentIndex < 0) {
             mCurrentIndex = mPlaylistIndexes.size() - 1;
         }
-        return mMediaItems.get(mPlaylistIndexes.get(mCurrentIndex));
+        return mAudioAttachmentItems.get(mPlaylistIndexes.get(mCurrentIndex));
     }
 
     @Override
-    public MediaItem next() {
+    public AudioAttachmentItem next() {
         ++mCurrentIndex;
         if (mCurrentIndex >= mPlaylistIndexes.size()) {
             mCurrentIndex = 0;
         }
-        return mMediaItems.get(mPlaylistIndexes.get(mCurrentIndex));
+        return mAudioAttachmentItems.get(mPlaylistIndexes.get(mCurrentIndex));
     }
 
-    public MediaItem nextByRepeatMode() {
+    public AudioAttachmentItem nextByRepeatMode() {
         switch (mRepeatMode) {
             case NO_REPEAT:
                 if (hasNext()) {
-                    return mMediaItems.get(mPlaylistIndexes.get(++mCurrentIndex));
+                    return mAudioAttachmentItems.get(mPlaylistIndexes.get(++mCurrentIndex));
                 }
                 break;
             case REPEAT_ALL:
@@ -87,7 +91,8 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
     }
 
     public void clear() {
-        mMediaItems.clear();
+        mAudioAttachmentItems.clear();
+        mCurrentIndex = 0;
     }
 
     @Override
@@ -106,28 +111,45 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
     }
 
     @Override
-    public void set(MediaItem item) {
+    public void set(AudioAttachmentItem item) {
         LOG.error("Setting items at current position is not supported.");
     }
 
     @Override
-    public void add(MediaItem item) {
+    public void add(AudioAttachmentItem item) {
         LOG.error("Adding items at current position is not supported.");
     }
 
-    public void add(int index, MediaItem item) {
-        mMediaItems.add(index, item);
+    public void remove(int index) {
+        if (mAudioAttachmentItems.size() > 1) {
+            mAudioAttachmentItems.remove(index);
+
+            if (0 < mCurrentIndex && mCurrentIndex >= index) {
+                mCurrentIndex--;
+            }
+        } else {
+            mAudioAttachmentItems.clear();
+        }
         resetPlaylistIndexes();
     }
 
-    public void addAll(List<MediaItem> items) {
-        mMediaItems.addAll(items);
+    public void add(int index, AudioAttachmentItem item) {
+        mAudioAttachmentItems.add(index, item);
+
+        if (mAudioAttachmentItems.size() > 1 && index <= mCurrentIndex) {
+            mCurrentIndex++;
+        }
         resetPlaylistIndexes();
     }
 
-    public MediaItem current() {
-        if ((mCurrentIndex >= 0) && (mCurrentIndex < mMediaItems.size())) {
-            return mMediaItems.get(mPlaylistIndexes.get(mCurrentIndex));
+    public void addAll(List<AudioAttachmentItem> items) {
+        mAudioAttachmentItems.addAll(items);
+        resetPlaylistIndexes();
+    }
+
+    public AudioAttachmentItem current() {
+        if ((mCurrentIndex >= 0) && (mCurrentIndex < mAudioAttachmentItems.size())) {
+            return mAudioAttachmentItems.get(mPlaylistIndexes.get(mCurrentIndex));
         } else {
             return null;
         }
@@ -151,9 +173,9 @@ public class MediaPlaylist implements ListIterator<MediaItem> {
     }
 
     private void resetPlaylistIndexes() {
-        int currentTrackNumber = mPlaylistIndexes != null ? getCurrentTrackNumber() : 0;
+        int currentTrackNumber = getCurrentTrackNumber();
         mPlaylistIndexes = new ArrayList<Integer>();
-        for (int i = 0; i < mMediaItems.size(); i++) {
+        for (int i = 0; i < mAudioAttachmentItems.size(); i++) {
             mPlaylistIndexes.add(i);
         }
 

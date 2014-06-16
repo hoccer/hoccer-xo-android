@@ -185,9 +185,6 @@ public class GroupProfileFragment extends XoFragment
     }
 
     private void configureOptionsMenuItems(Menu menu) {
-        MenuItem profileItem = menu.findItem(R.id.menu_my_profile);
-        profileItem.setVisible(true);
-
         MenuItem editGroupItem = menu.findItem(R.id.menu_group_profile_edit);
         MenuItem rejectInvitationItem = menu.findItem(R.id.menu_group_profile_reject_invitation);
         MenuItem joinGroupItem = menu.findItem(R.id.menu_group_profile_join);
