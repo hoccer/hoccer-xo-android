@@ -252,7 +252,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
             @Override
             public void run() {
                 for (ChatMessageItem messageItem : mChatMessageItems) {
-                    if (messageItem.getMessage().getClientMessageId() == messageId) {
+                    if (messageItem != null && messageItem.getMessage().getClientMessageId() == messageId) {
                         mChatMessageItems.remove(messageItem);
                         notifyDataSetChanged();
                         break;

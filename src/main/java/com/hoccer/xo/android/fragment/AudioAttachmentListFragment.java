@@ -1,10 +1,8 @@
 package com.hoccer.xo.android.fragment;
 
 import android.app.ActionBar;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.app.AlertDialog;
+import android.content.*;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -103,7 +101,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_delete_attachment:
-                        deleteSelectedAttachments();
+                        showConfirmDeleteDialog();
                         mode.finish();
                         return true;
                     default:
@@ -167,10 +165,26 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
         int count = getListView().getCount();
         for (int pos = count - 1; pos >= 0; --pos) {
-            if (checked.get(pos)) {
+            if (checked.valueAt(pos)) {
                 deleteAudioAttachment(pos);
             }
         }
+    }
+
+    private void showConfirmDeleteDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.attachment_confirm_delete_dialog_message);
+        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                deleteSelectedAttachments();
+            }
+        });
+        builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void deleteAudioAttachment(int pos) {
