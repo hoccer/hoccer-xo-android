@@ -86,8 +86,12 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
      */
     public synchronized void loadNextMessages(int offset) {
         try {
-            offset = Math.max(offset, 0);
-            final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), BATCH_SIZE, offset);
+            long batchSize = BATCH_SIZE;
+            if(offset < 0) {
+                batchSize = batchSize + offset;
+                offset = 0;
+            }
+            final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), batchSize, offset);
             for (int i = 0; i < messagesBatch.size(); i++) {
                 ChatMessageItem messageItem = getItemForMessage(messagesBatch.get(i));
                 mChatMessageItems.set(offset + i, messageItem);
