@@ -1,5 +1,8 @@
 package com.hoccer.xo.android.adapter;
 
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
 import com.hoccer.talk.client.IXoMessageListener;
 import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.model.TalkClientContact;
@@ -10,17 +13,7 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
-import com.hoccer.xo.android.view.chat.attachments.ChatAudioItem;
-import com.hoccer.xo.android.view.chat.attachments.ChatContactItem;
-import com.hoccer.xo.android.view.chat.attachments.ChatDataItem;
-import com.hoccer.xo.android.view.chat.attachments.ChatImageItem;
-import com.hoccer.xo.android.view.chat.attachments.ChatItemType;
-import com.hoccer.xo.android.view.chat.attachments.ChatLocationItem;
-import com.hoccer.xo.android.view.chat.attachments.ChatVideoItem;
-
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
+import com.hoccer.xo.android.view.chat.attachments.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -31,7 +24,7 @@ import java.util.List;
  * chat view.
  * <p/>
  * When loading the all messages from the data base this adaptor performs batching.
- * The size of a batch is defined by the constant LOAD_MESSAGES.
+ * The size of a batch is defined by the constant BATCH_SIZE.
  * <p/>
  * To configure list items it uses instances of ChatMessageItem and its subtypes.
  */
@@ -40,7 +33,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     /**
      * Number of TalkClientMessage objects in a batch
      */
-    private static final long LOAD_MESSAGES = 10L;
+    private static final long BATCH_SIZE = 10L;
 
     /**
      * Defines the distance from the bottom-most item in the chat view - in number of items.
@@ -72,8 +65,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     private void initialize() {
         int totalMessageCount = 0;
         try {
-            totalMessageCount = (int) mDatabase
-                    .getMessageCountByContactId(mContact.getClientContactId());
+            totalMessageCount = (int) mDatabase.getMessageCountByContactId(mContact.getClientContactId());
         } catch (SQLException e) {
             LOG.error("SQLException while loading message count: " + mContact.getClientId(), e);
         }
@@ -81,16 +73,24 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         for (int i = 0; i < totalMessageCount; i++) {
             mChatMessageItems.add(null);
         }
-        loadNextMessages(mChatMessageItems.size() - (int) LOAD_MESSAGES);
+        loadNextMessages(mChatMessageItems.size() - (int) BATCH_SIZE);
     }
 
-    public synchronized void loadNextMessages(int offset) {
+    /**
+     * Loads a range of TalkClientMessage objects from database starting at a given position.
+     * Range is defined by constant BATCH_SIZE.
+     *
+     * Creates the appropriate ChatMessageItem for each TalkClientMessage and adds it to mChatMessageItems.
+     *
+     * @param startPosition Index of the first TalkClientMessage object
+     */
+    public synchronized void loadNextMessages(int startPosition) {
         try {
-            offset = Math.max(offset, 0);
-            final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
+            startPosition = Math.max(startPosition, 0);
+            final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), BATCH_SIZE, startPosition);
             for (int i = 0; i < messagesBatch.size(); i++) {
                 ChatMessageItem messageItem = getItemForMessage(messagesBatch.get(i));
-                mChatMessageItems.set(offset + i, messageItem);
+                mChatMessageItems.set(startPosition + i, messageItem);
             }
             runOnUiThread(new Runnable() {
                 @Override
@@ -125,7 +125,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     @Override
     public ChatMessageItem getItem(int position) {
         if (mChatMessageItems.get(position) == null) {
-            int offset = position - (int)LOAD_MESSAGES + 1;
+            int offset = position - (int) BATCH_SIZE + 1;
             loadNextMessages(offset);
         }
         return mChatMessageItems.get(position);
