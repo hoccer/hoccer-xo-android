@@ -77,20 +77,20 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     }
 
     /**
-     * Loads a range of TalkClientMessage objects from database starting at a given position.
+     * Loads a range of TalkClientMessage objects from database starting at a given offset.
      * Range is defined by constant BATCH_SIZE.
      *
      * Creates the appropriate ChatMessageItem for each TalkClientMessage and adds it to mChatMessageItems.
      *
-     * @param startPosition Index of the first TalkClientMessage object
+     * @param offset Index of the first TalkClientMessage object
      */
-    public synchronized void loadNextMessages(int startPosition) {
+    public synchronized void loadNextMessages(int offset) {
         try {
-            startPosition = Math.max(startPosition, 0);
-            final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), BATCH_SIZE, startPosition);
+            offset = Math.max(offset, 0);
+            final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), BATCH_SIZE, offset);
             for (int i = 0; i < messagesBatch.size(); i++) {
                 ChatMessageItem messageItem = getItemForMessage(messagesBatch.get(i));
-                mChatMessageItems.set(startPosition + i, messageItem);
+                mChatMessageItems.set(offset + i, messageItem);
             }
             runOnUiThread(new Runnable() {
                 @Override
