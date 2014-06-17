@@ -86,11 +86,8 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
 
     public synchronized void loadNextMessages(int offset) {
         try {
-            if (offset < 0) {
-                offset = 0;
-            }
-            final List<TalkClientMessage> messagesBatch = mDatabase
-                    .findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
+            offset = Math.max(offset, 0);
+            final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
             for (int i = 0; i < messagesBatch.size(); i++) {
                 ChatMessageItem messageItem = getItemForMessage(messagesBatch.get(i));
                 mChatMessageItems.set(offset + i, messageItem);
@@ -102,8 +99,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
                 }
             });
         } catch (SQLException e) {
-            LOG.error("SQLException while batch retrieving messages for contact: " + mContact
-                    .getClientId(), e);
+            LOG.error("SQLException while batch retrieving messages for contact: " + mContact.getClientId(), e);
         }
     }
 
@@ -129,7 +125,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     @Override
     public ChatMessageItem getItem(int position) {
         if (mChatMessageItems.get(position) == null) {
-            int offset = (position / (int) LOAD_MESSAGES) * (int) LOAD_MESSAGES;
+            int offset = position - (int)LOAD_MESSAGES + 1;
             loadNextMessages(offset);
         }
         return mChatMessageItems.get(position);
