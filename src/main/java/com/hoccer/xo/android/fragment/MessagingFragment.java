@@ -9,28 +9,27 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.adapter.ChatAdapter;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
+import com.hoccer.xo.android.gesture.Gestures;
+import com.hoccer.xo.android.gesture.MotionInterpreter;
+import com.hoccer.xo.android.view.CompositionView;
+import com.hoccer.xo.android.view.OnOverscrollListener;
 import com.hoccer.xo.android.view.OverscrollListView;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.SearchView;
-import android.widget.TextView;
+import java.sql.SQLException;
 
 /**
  * Fragment for conversations
  */
 public class MessagingFragment extends XoListFragment
         implements SearchView.OnQueryTextListener,
-        XoAdapter.AdapterReloadListener, OnOverscrollListener, View.OnTouchListener, IXoContactListener {
+        XoAdapter.AdapterReloadListener, View.OnTouchListener, IXoContactListener {
 
     private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
 
@@ -45,7 +44,7 @@ public class MessagingFragment extends XoListFragment
 
     private TalkClientContact mContact;
 
-    private ConversationAdapter mAdapter;
+    private ChatAdapter mAdapter;
 
     private View mOverscrollIndicator;
 
@@ -99,7 +98,6 @@ public class MessagingFragment extends XoListFragment
 
         mMessageList = (OverscrollListView) view.findViewById(android.R.id.list);
         mMessageList.setOverScrollMode(ListView.OVER_SCROLL_IF_CONTENT_SCROLLS);
-        mMessageList.addOverScrollListener(this);
         mMessageList.setOnTouchListener(this);
         mMessageList.setMaxOverScrollY(150);
         mEmptyText = (TextView) view.findViewById(R.id.messaging_empty);
@@ -132,7 +130,7 @@ public class MessagingFragment extends XoListFragment
         setHasOptionsMenu(true);
 
         if (mAdapter == null) {
-            mAdapter = new ConversationAdapter(getXoActivity());
+            mAdapter = new ChatAdapter(getListView(), getXoActivity(), mContact);
             mAdapter.setAdapterReloadListener(this);
             mAdapter.onCreate();
             mAdapter.requestReload();
@@ -140,10 +138,6 @@ public class MessagingFragment extends XoListFragment
 
         mMessageList.setAdapter(mAdapter);
         mAdapter.onResume();
-
-        if (mContact != null) {
-            mAdapter.converseWithContact(mContact);
-        }
 
         configureMotionInterpreterForContact(mContact);
         XoApplication.getXoClient().registerContactListener(this);
@@ -237,49 +231,8 @@ public class MessagingFragment extends XoListFragment
 //        mCompositionView.onAttachmentSelected(contentObject);
 //    }
 
-
-    @Override
-    public void onOverscroll(int deltaX, int deltaY, boolean clampedX, boolean clampedY) {
-        if (deltaY < OVERSCROLL_THRESHOLD && !mInOverscroll && clampedY) {
-            mInOverscroll = true;
-            mAdapter.loadNextMessages();
-        }
-    }
-
     public void setMessagingFragmentListener(IMessagingFragmentListener messagingFragmentListener) {
         this.mMessagingFragmentListener = messagingFragmentListener;
-    }
-
-    private void animateOverscroll() {
-        mOverscrollIndicator.setVisibility(View.VISIBLE);
-        mOverscrollIndicator.animate().scaleX(0.0f).setDuration(0).start();
-        mOverscrollIndicator.animate().scaleX(1.0f).setDuration(3000)
-                .setListener(new Animator.AnimatorListener() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        Log.d("zalem", "start animation");
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mOverscrollIndicator.setVisibility(View.GONE);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-
-                    }
-                }).start();
     }
 
     @Override
