@@ -50,51 +50,54 @@ public class ChatAudioItem extends ChatMessageItem implements IViewListener {
         super.displayAttachment(contentObject);
 
         // add view lazily
-        if (mContentWrapper.getChildCount() == 0) {
-            LinearLayout audioLayout = new AudioPlayerView(mContext, this);
-            TextView captionTextView = (TextView) audioLayout.findViewById(R.id.tv_content_audio_caption);
-            TextView fileNameTextView = (TextView) audioLayout.findViewById(R.id.tv_content_audio_name);
+        if (mContentWrapper.getChildCount() == 0)
+        {
+            mContentWrapper.addView(new AudioPlayerView(mContext, this));
+        }
+        LinearLayout audioLayout = (LinearLayout) mContentWrapper.getChildAt(0);
 
-            if(mMessage.isIncoming()) {
-                captionTextView.setTextColor(Color.BLACK);
-                fileNameTextView.setTextColor(Color.BLACK);
-            } else {
-                captionTextView.setTextColor(Color.WHITE);
-                fileNameTextView.setTextColor(Color.WHITE);
-            }
+        TextView captionTextView = (TextView) audioLayout.findViewById(R.id.tv_content_audio_caption);
+        TextView fileNameTextView = (TextView) audioLayout.findViewById(R.id.tv_content_audio_name);
 
-            String extension = contentObject.getContentDataUrl();
-            extension = extension.substring(extension.lastIndexOf("."), extension.length());
-            fileNameTextView.setText(contentObject.getFileName() + extension);
+        if(mMessage.isIncoming()) {
+            captionTextView.setTextColor(Color.BLACK);
+            fileNameTextView.setTextColor(Color.BLACK);
+        } else {
+            captionTextView.setTextColor(Color.WHITE);
+            fileNameTextView.setTextColor(Color.WHITE);
+        }
 
-            mPlayPauseButton = (ImageButton) audioLayout.findViewById(R.id.ib_content_audio_play);
-            mPlayPauseButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (mIsPlayable) {
-                        if (isActive()) {
-                            pausePlaying();
-                        } else {
-                            startPlaying();
-                        }
+        String extension = contentObject.getContentDataUrl();
+        extension = extension.substring(extension.lastIndexOf("."), extension.length());
+        fileNameTextView.setText(contentObject.getFileName() + extension);
+
+        mPlayPauseButton = (ImageButton) audioLayout.findViewById(R.id.ib_content_audio_play);
+        mPlayPauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mIsPlayable) {
+                    if (isActive()) {
+                        pausePlaying();
                     } else {
-                        AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
-                        alertDialog.setMessage(mContext.getResources().getString(R.string.content_not_supported_audio_msg));
-                        alertDialog.setTitle(mContext.getString(R.string.content_not_supported_audio_title));
-                        DialogInterface.OnClickListener nullListener = null;
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", nullListener);
-                        alertDialog.show();
+                        startPlaying();
                     }
+                } else {
+                    AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+                    alertDialog.setMessage(mContext.getResources().getString(R.string.content_not_supported_audio_msg));
+                    alertDialog.setTitle(mContext.getString(R.string.content_not_supported_audio_title));
+                    DialogInterface.OnClickListener nullListener = null;
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", nullListener);
+                    alertDialog.show();
                 }
-            });
-            mContentWrapper.addView(audioLayout);
-
-            mAudioContentObject = AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject);
-            if (mAudioContentObject == null) {
-                mIsPlayable = false;
-            } else {
-                mIsPlayable = true;
             }
+        });
+        updatePlayPauseView();
+
+        mAudioContentObject = AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject);
+        if (mAudioContentObject == null) {
+            mIsPlayable = false;
+        } else {
+            mIsPlayable = true;
         }
     }
 
