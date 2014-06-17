@@ -12,6 +12,7 @@ import android.view.*;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SpinnerAdapter;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
