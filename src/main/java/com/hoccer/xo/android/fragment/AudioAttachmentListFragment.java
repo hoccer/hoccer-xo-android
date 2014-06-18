@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.*;
 import android.widget.AbsListView;
@@ -118,7 +119,16 @@ public class AudioAttachmentListFragment extends XoListFragment {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_delete_attachment:
-                        showConfirmDeleteDialog();
+                        /*@Note Copy list in order to assure that the checked items are still available in the dialog.
+                         *     The checked items might already have been reset by the list.*/
+                        SparseBooleanArray checkedItemsCopy = new SparseBooleanArray();
+                        SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
+
+                        for( int i = 0; i < checkedItems.size(); ++i){
+                            checkedItems.append(checkedItems.keyAt(i), checkedItems.valueAt(i));
+                        }
+                        showConfirmDeleteDialog(checkedItemsCopy);
+
                         mode.finish();
                         return true;
                     default:
@@ -177,23 +187,25 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
     }
 
-    private void deleteSelectedAttachments() {
-        SparseBooleanArray checked = getListView().getCheckedItemPositions();
+    private void deleteSelectedAttachments(SparseBooleanArray checked) {
 
         int count = getListView().getCount();
         for (int pos = count - 1; pos >= 0; --pos) {
-            if (checked.valueAt(pos)) {
+
+            int indexOfKey = checked.indexOfKey(pos);
+
+            if ( indexOfKey >= 0){
                 deleteAudioAttachment(pos);
             }
         }
     }
 
-    private void showConfirmDeleteDialog() {
+    private void showConfirmDeleteDialog(final SparseBooleanArray checkedItems) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.attachment_confirm_delete_dialog_message);
         builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                deleteSelectedAttachments();
+                deleteSelectedAttachments( checkedItems);
             }
         });
         builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
