@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -58,6 +59,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     private List<ChatMessageItem> mChatMessageItems;
 
     private ListView mListView;
+    private List < Integer > mLastVisibleViews = new ArrayList<Integer>();
     private BroadcastReceiver mReceiver;
 
 
@@ -101,6 +103,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
             final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), batchSize, offset);
             for (int i = 0; i < messagesBatch.size(); i++) {
                 ChatMessageItem messageItem = getItemForMessage(messagesBatch.get(i));
+
                 mChatMessageItems.set(offset + i, messageItem);
             }
             runOnUiThread(new Runnable() {
@@ -150,9 +153,42 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         return position;
     }
 
+    private void removeInvisibleItems(int position){
+
+        int firstVisible = mListView.getFirstVisiblePosition();
+        int lastVisible = mListView.getLastVisiblePosition();
+
+        for (int i = 0; i < mLastVisibleViews.size(); ++i) {
+
+            int current = mLastVisibleViews.get(i);
+
+            if ((current < firstVisible) || (current > lastVisible)) {
+                getItem(current).setVisibility(false);
+            }
+        }
+
+        getItem(position).setVisibility(true);
+
+        int offset = 0;
+        mLastVisibleViews.clear();
+        while (firstVisible + offset <= lastVisible) {
+            mLastVisibleViews.add(firstVisible + offset);
+            offset++;
+        }
+    }
+
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
+
+        mListView.post(new Runnable() {
+            @Override
+            public void run() {
+                removeInvisibleItems(position);
+            }
+        });
+
         ChatMessageItem chatItem = getItem(position);
+
         if (!chatItem.getMessage().isSeen()) {
             markMessageAsSeen(chatItem.getMessage());
         }
@@ -161,6 +197,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         } else {
             convertView = chatItem.recycleViewForMessage(convertView);
         }
+
         return convertView;
     }
 
@@ -211,6 +248,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
 
     private ChatMessageItem getItemForMessage(TalkClientMessage message) {
         ChatItemType itemType = getListItemTypeForMessage(message);
+
         if (itemType == ChatItemType.ChatItemWithImage) {
             return new ChatImageItem(mActivity, message);
         } else if (itemType == ChatItemType.ChatItemWithVideo) {
