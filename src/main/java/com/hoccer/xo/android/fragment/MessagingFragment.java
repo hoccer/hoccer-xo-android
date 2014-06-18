@@ -29,7 +29,7 @@ import java.sql.SQLException;
  */
 public class MessagingFragment extends XoListFragment
         implements SearchView.OnQueryTextListener,
-        XoAdapter.AdapterReloadListener, View.OnTouchListener, IXoContactListener {
+        XoAdapter.AdapterReloadListener, IXoContactListener {
 
     private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
 
@@ -97,11 +97,7 @@ public class MessagingFragment extends XoListFragment
         super.onViewCreated(view, savedInstanceState);
 
         mMessageList = (OverscrollListView) view.findViewById(android.R.id.list);
-        mMessageList.setOverScrollMode(ListView.OVER_SCROLL_IF_CONTENT_SCROLLS);
-        mMessageList.setOnTouchListener(this);
-        mMessageList.setMaxOverScrollY(150);
         mEmptyText = (TextView) view.findViewById(R.id.messaging_empty);
-        mOverscrollIndicator = view.findViewById(R.id.overscroll_indicator);
         mCompositionView = ((CompositionView) view.findViewById(R.id.cv_composition));
         mCompositionView.setCompositionViewListener(new CompositionView.ICompositionViewListener() {
             @Override
@@ -130,14 +126,12 @@ public class MessagingFragment extends XoListFragment
         setHasOptionsMenu(true);
 
         if (mAdapter == null) {
-            mAdapter = new ChatAdapter(getListView(), getXoActivity(), mContact);
+            mAdapter = new ChatAdapter(mMessageList, getXoActivity(), mContact);
             mAdapter.setAdapterReloadListener(this);
             mAdapter.onCreate();
-            mAdapter.requestReload();
         }
 
         mMessageList.setAdapter(mAdapter);
-        mAdapter.onResume();
 
         configureMotionInterpreterForContact(mContact);
         XoApplication.getXoClient().registerContactListener(this);
@@ -233,14 +227,6 @@ public class MessagingFragment extends XoListFragment
 
     public void setMessagingFragmentListener(IMessagingFragmentListener messagingFragmentListener) {
         this.mMessagingFragmentListener = messagingFragmentListener;
-    }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            mInOverscroll = false;
-        }
-        return false;
     }
 
     @Override
