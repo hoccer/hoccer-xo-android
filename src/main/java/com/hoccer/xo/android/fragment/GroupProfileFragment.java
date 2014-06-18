@@ -180,6 +180,8 @@ public class GroupProfileFragment extends XoFragment
         LOG.debug("onCreateOptionsMenu()");
         super.onCreateOptionsMenu(menu, menuInflater);
 
+        menuInflater.inflate(R.menu.fragment_group_profile, menu);
+
         mOptionsMenu = menu;
         configureOptionsMenuItems(menu);
     }
