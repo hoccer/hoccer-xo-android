@@ -34,7 +34,7 @@ public class GroupProfileFragment extends XoFragment
     public static final String ARG_CREATE_GROUP = "ARG_CREATE_GROUP";
     public static final String ARG_CLIENT_CONTACT_ID = "ARG_CLIENT_CONTACT_ID";
 
-    private static final Logger LOG = Logger.getLogger(SingleProfileFragment.class);
+    private static final Logger LOG = Logger.getLogger(GroupProfileFragment.class);
 
     public enum Mode {
         PROFILE,
@@ -215,6 +215,7 @@ public class GroupProfileFragment extends XoFragment
                 }
             }
         }
+
     }
 
     @Override
