@@ -62,16 +62,9 @@ public class MessagingActivity extends XoActionbarActivity {
         filter.addAction("CHECK_ID_IN_CONVERSATION");
         m_checkIdReceiver = new getContactIdInConversation();
         registerReceiver(m_checkIdReceiver, filter);
-    }
-
-    @Override
-    protected void onResume() {
-        LOG.debug("onResume()");
-        super.onResume();
-
-        Intent intent = getIntent();
 
         // handle converse intent
+        Intent intent = getIntent();
         if (intent != null && intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
             mContactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
             m_checkIdReceiver.setId(mContactId);
