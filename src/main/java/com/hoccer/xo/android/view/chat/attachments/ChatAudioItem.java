@@ -1,11 +1,12 @@
 package com.hoccer.xo.android.view.chat.attachments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
 import android.graphics.Color;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -15,7 +16,6 @@ import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
-import com.hoccer.xo.android.view.chat.AudioPlayerView;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
@@ -52,7 +52,9 @@ public class ChatAudioItem extends ChatMessageItem {
         // add view lazily
         if (mContentWrapper.getChildCount() == 0)
         {
-            mContentWrapper.addView(new AudioPlayerView(mContext));
+            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            View v =  inflater.inflate(R.layout.content_audio, null);
+            mContentWrapper.addView(v);
         }
         LinearLayout audioLayout = (LinearLayout) mContentWrapper.getChildAt(0);
 
