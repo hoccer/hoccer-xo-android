@@ -71,9 +71,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
         mFilterAdapter = new AttachmentListFilterAdapter(getXoActivity());
         SpinnerAdapter spinnerAdapter = mFilterAdapter;
         ab.setListNavigationCallbacks(spinnerAdapter, new AttachmentListFilterHandler());
-
-        menu.findItem(R.id.menu_profile_single).setVisible(false);
-        menu.findItem(R.id.menu_profile_group).setVisible(false);
     }
 
     @Override
