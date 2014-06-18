@@ -197,6 +197,11 @@ public abstract class ContactsAdapter extends XoAdapter
     @Override
     public void onDownloadFinished(TalkClientDownload download) {
     }
+
+    @Override
+    public void onDownloadFailed(TalkClientDownload download) {
+    }
+
     @Override
     public void onDownloadStateChanged(TalkClientDownload download) {
         if(download.isAvatar() && download.getState() == TalkClientDownload.State.COMPLETE) {
@@ -212,6 +217,10 @@ public abstract class ContactsAdapter extends XoAdapter
     @Override
     public void onUploadFinished(TalkClientUpload upload) {
     }
+
+    public void onUploadFailed(TalkClientUpload upload) {
+    }
+
     @Override
     public void onUploadStateChanged(TalkClientUpload upload) {
         if(upload.isAvatar()) {

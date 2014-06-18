@@ -775,6 +775,11 @@ public class XoClientService extends Service {
         }
 
         @Override
+        public void onDownloadFailed(TalkClientDownload downlad) {
+
+        }
+
+        @Override
         public void onUploadStarted(TalkClientUpload upload) {
         }
 
@@ -784,6 +789,10 @@ public class XoClientService extends Service {
 
         @Override
         public void onUploadFinished(TalkClientUpload upload) {
+        }
+
+        @Override
+        public void onUploadFailed(TalkClientUpload upload) {
         }
 
         @Override

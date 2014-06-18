@@ -270,6 +270,11 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
     }
 
     @Override
+    public void onDownloadFailed(TalkClientDownload downlad) {
+
+    }
+
+    @Override
     public void onDownloadStateChanged(TalkClientDownload download) {
 
     }
@@ -288,6 +293,11 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     @Override
     public void onUploadFinished(TalkClientUpload upload) {
+
+    }
+
+    @Override
+    public void onUploadFailed(TalkClientUpload upload) {
 
     }
 

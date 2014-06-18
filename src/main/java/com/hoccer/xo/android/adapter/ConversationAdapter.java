@@ -265,6 +265,9 @@ public class ConversationAdapter extends XoAdapter
     }
 
     @Override
+    public void onDownloadFailed(TalkClientDownload download) {}
+
+    @Override
     public void onDownloadStateChanged(TalkClientDownload download) {
         update();
     }
@@ -282,6 +285,11 @@ public class ConversationAdapter extends XoAdapter
     @Override
     public void onUploadFinished(TalkClientUpload upload) {
         update();
+    }
+
+    @Override
+    public void onUploadFailed(TalkClientUpload upload) {
+
     }
 
     @Override
