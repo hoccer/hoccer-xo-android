@@ -137,7 +137,7 @@ public class MessagingActivity extends XoActionbarActivity {
     public void showMessagingFragment() {
 
         Bundle bundle = new Bundle();
-        bundle.putInt(SingleProfileFragment.ARG_CLIENT_CONTACT_ID, mContactId);
+        bundle.putInt(MessagingFragment.ARG_CLIENT_CONTACT_ID, mContactId);
 
         mMessagingFragment = new MessagingFragment();
         mMessagingFragment.setArguments(bundle);
@@ -167,7 +167,11 @@ public class MessagingActivity extends XoActionbarActivity {
 
     private void showAudioAttachmentListFragment() {
 
+        Bundle bundle = new Bundle();
+        bundle.putInt(AudioAttachmentListFragment.ARG_CLIENT_CONTACT_ID, mContactId);
+
         mAudioAttachmentListFragment = new AudioAttachmentListFragment();
+        mAudioAttachmentListFragment.setArguments(bundle);
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fl_messaging_fragment_container, mAudioAttachmentListFragment);

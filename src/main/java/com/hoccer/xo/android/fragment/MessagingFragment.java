@@ -31,10 +31,10 @@ public class MessagingFragment extends XoListFragment
         implements SearchView.OnQueryTextListener,
         XoAdapter.AdapterReloadListener, IXoContactListener {
 
-    private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
+    public static final String ARG_CLIENT_CONTACT_ID = "com.hoccer.xo.android.fragment.ARG_CLIENT_CONTACT_ID";
 
+    private static final Logger LOG = Logger.getLogger(MessagingFragment.class);
     private static final int OVERSCROLL_THRESHOLD = -5;
-    private static final String ARG_CLIENT_CONTACT_ID = "ARG_CLIENT_CONTACT_ID";
 
     private OverscrollListView mMessageList;
 

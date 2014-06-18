@@ -32,6 +32,7 @@ import java.util.List;
 
 public class AudioAttachmentListFragment extends XoListFragment {
 
+    public static final String ARG_CLIENT_CONTACT_ID = "com.hoccer.xo.android.fragment.ARG_CLIENT_CONTACT_ID";
     public static final String AUDIO_ATTACHMENT_REMOVED_ACTION = "com.hoccer.xo.android.fragment.AUDIO_ATTACHMENT_REMOVED_ACTION";
     public static final String TALK_CLIENT_MESSAGE_ID_EXTRA = "com.hoccer.xo.android.fragment.TALK_CLIENT_MESSAGE_ID_EXTRA";
 
@@ -77,12 +78,16 @@ public class AudioAttachmentListFragment extends XoListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Intent contactIntent = getActivity().getIntent();
-        if (contactIntent != null) {
-            if (contactIntent.hasExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID)) {
-                mFilteredContactId = contactIntent
-                        .getIntExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID, ALL_CONTACTS_ID);
+        if (getArguments() != null) {
+            int clientContactId = getArguments().getInt(ARG_CLIENT_CONTACT_ID);
+            if (clientContactId == -1) {
+                LOG.error("invalid contact id");
+            } else {
+                mFilteredContactId = clientContactId;
             }
+
+        } else {
+            LOG.error("Creating SingleProfileFragment without arguments is not supported.");
         }
 
         loadAttachments();
