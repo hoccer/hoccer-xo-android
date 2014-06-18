@@ -169,7 +169,6 @@ public class MessagingFragment extends XoListFragment
             menu.findItem(R.id.menu_audio_attachment_list).setVisible(true);
             getActivity().getActionBar().setTitle(mContact.getName());
         }
-        menu.findItem(R.id.menu_profile_single).setVisible(true);
     }
 
     @Override
