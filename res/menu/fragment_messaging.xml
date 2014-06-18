@@ -15,7 +15,7 @@
         android:id="@+id/menu_profile_single"
         android:title="@string/menu_profile"
         android:icon="@drawable/ic_dark_social_person"
-        android:visible="true"
+        android:visible="false"
         android:showAsAction="ifRoom"
         android:orderInCategory="200"/>
 
