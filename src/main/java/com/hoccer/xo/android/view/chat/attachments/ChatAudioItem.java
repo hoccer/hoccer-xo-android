@@ -5,6 +5,7 @@ import android.content.*;
 import android.graphics.Color;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -14,14 +15,13 @@ import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
-import com.hoccer.xo.android.view.IViewListener;
 import com.hoccer.xo.android.view.chat.AudioPlayerView;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
 
 
-public class ChatAudioItem extends ChatMessageItem implements IViewListener {
+public class ChatAudioItem extends ChatMessageItem {
 
     private MediaPlayerService mMediaPlayerService;
     private ImageButton mPlayPauseButton;
@@ -52,7 +52,7 @@ public class ChatAudioItem extends ChatMessageItem implements IViewListener {
         // add view lazily
         if (mContentWrapper.getChildCount() == 0)
         {
-            mContentWrapper.addView(new AudioPlayerView(mContext, this));
+            mContentWrapper.addView(new AudioPlayerView(mContext));
         }
         LinearLayout audioLayout = (LinearLayout) mContentWrapper.getChildAt(0);
 
@@ -91,14 +91,11 @@ public class ChatAudioItem extends ChatMessageItem implements IViewListener {
                 }
             }
         });
-        updatePlayPauseView();
 
         mAudioContentObject = AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject);
-        if (mAudioContentObject == null) {
-            mIsPlayable = false;
-        } else {
-            mIsPlayable = true;
-        }
+
+        mIsPlayable = mAudioContentObject != null;
+        updatePlayPauseView();
     }
 
     private void bindService(Intent intent) {
@@ -150,8 +147,7 @@ public class ChatAudioItem extends ChatMessageItem implements IViewListener {
         return isActive;
     }
 
-    @Override
-    public void onAttachedToWindow() {
+    private void initializeMediaPlayerService(){
         Intent intent = new Intent(mContext, MediaPlayerService.class);
         mContext.startService(intent);
         bindService(intent);
@@ -159,11 +155,25 @@ public class ChatAudioItem extends ChatMessageItem implements IViewListener {
         createBroadcastReceiver();
     }
 
-    @Override
-    public void onDetachedFromWindow() {
+    private void destroyMediaPlayerService(){
         mContext.unbindService(mConnection);
         LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mReceiver);
         mReceiver = null;
+    }
+
+    @Override
+    public void setVisibility(boolean visible) {
+        if ( mVisible == visible){
+            return;
+        }
+
+        super.setVisibility(visible);
+
+        if( mVisible){
+            initializeMediaPlayerService();
+        }else{
+            destroyMediaPlayerService();
+        }
     }
 
     private void createBroadcastReceiver() {
