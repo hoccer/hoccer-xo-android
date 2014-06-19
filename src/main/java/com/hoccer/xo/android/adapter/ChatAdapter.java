@@ -40,7 +40,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     /**
      * Number of TalkClientMessage objects in a batch
      */
-    private static final long LOAD_MESSAGES = 10L;
+    protected static final long LOAD_MESSAGES = 10L;
 
     /**
      * Defines the distance from the bottom-most item in the chat view - in number of items.
@@ -54,9 +54,9 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
      */
     private boolean shouldAutoScroll = true;
 
-    private TalkClientContact mContact;
+    protected TalkClientContact mContact;
 
-    private List<ChatMessageItem> mChatMessageItems;
+    protected List<ChatMessageItem> mChatMessageItems;
 
     private ListView mListView;
 
@@ -69,7 +69,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         initialize();
     }
 
-    private void initialize() {
+    protected void initialize() {
         int totalMessageCount = 0;
         try {
             totalMessageCount = (int) mDatabase
@@ -199,7 +199,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         return chatItemType;
     }
 
-    private ChatMessageItem getItemForMessage(TalkClientMessage message) {
+    protected ChatMessageItem getItemForMessage(TalkClientMessage message) {
         ChatItemType itemType = getListItemTypeForMessage(message);
         if (itemType == ChatItemType.ChatItemWithImage) {
             return new ChatImageItem(mActivity, message);

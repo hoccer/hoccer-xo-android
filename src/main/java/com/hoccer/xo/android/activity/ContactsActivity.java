@@ -15,7 +15,7 @@ import android.support.v4.view.ViewPager;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.adapter.ContactsPageAdapter;
 import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.fragment.NearbyContactsFragment;
+import com.hoccer.xo.android.fragment.NearbyChatFragment;
 import com.hoccer.xo.release.R;
 
 public class ContactsActivity extends XoActivity {
@@ -88,7 +88,7 @@ public class ContactsActivity extends XoActivity {
     private void refreshEnvironmentUpdater() {
         int position = mViewPager.getCurrentItem();
         Fragment fragment = mAdapter.getItem(position);
-        if (fragment instanceof NearbyContactsFragment) {
+        if (fragment instanceof NearbyChatFragment) {
             if (mEnvironmentUpdatesEnabled) {
                 if (checkIfGpsIsTurnedOn()) {
                     XoApplication.startNearbySession();

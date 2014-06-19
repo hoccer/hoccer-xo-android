@@ -162,6 +162,14 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     public void converseWithContact(TalkClientContact contact) {
         LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
         mContact = contact;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mTextEdit.setEnabled(true);
+                mSendButton.setEnabled(true);
+                mAddAttachmentButton.setEnabled(true);
+            }
+        });
     }
 
     private boolean isComposed() {
@@ -247,6 +255,12 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             getXoSoundPool().playThrowSound();
             sendComposedMessage();
         }
+    }
+
+    public void blockInput() {
+        mTextEdit.setEnabled(false);
+        mSendButton.setEnabled(false);
+        mAddAttachmentButton.setEnabled(false);
     }
 
     private class AddAttachmentOnClickListener implements View.OnClickListener {
