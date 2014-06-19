@@ -201,7 +201,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener, V
                 mTransferProgress.setEnabled(false);
                 if(mContent instanceof TalkClientDownload) {
                     TalkClientDownload download = (TalkClientDownload)mContent;
-                    XoApplication.getXoClient().cancelDownload(download);
+                    XoApplication.getXoClient().getTransferAgent().pauseDownload(download);
                 }
                 break;
             case REQUEST_UPLOAD:
@@ -215,7 +215,7 @@ public class ContentView extends LinearLayout implements View.OnClickListener, V
                 mTransferProgress.setEnabled(false);
                 if(mContent instanceof TalkClientUpload) {
                     TalkClientUpload upload = (TalkClientUpload)mContent;
-                    XoApplication.getXoClient().getTransferAgent().cancelUpload(upload);
+                    XoApplication.getXoClient().getTransferAgent().pauseUpload(upload);
                 }
             }
         }
