@@ -154,7 +154,6 @@
                 android:name="com.hoccer.xo.android.activity.SingleProfileActivity"
                 android:label="@string/actionbar_default_title"
                 android:screenOrientation="portrait"
-                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:windowSoftInputMode="stateHidden">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
