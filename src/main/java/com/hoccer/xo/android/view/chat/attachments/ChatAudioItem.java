@@ -137,7 +137,9 @@ public class ChatAudioItem extends ChatMessageItem {
     }
 
     public void updatePlayPauseView() {
-        mPlayPauseButton.setImageResource((isActive()) ? R.drawable.ic_dark_pause : R.drawable.ic_dark_play);
+        if ( mPlayPauseButton != null) {
+            mPlayPauseButton.setImageResource((isActive()) ? R.drawable.ic_dark_pause : R.drawable.ic_dark_play);
+        }
     }
 
     public boolean isActive() {
