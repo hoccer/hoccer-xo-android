@@ -266,6 +266,6 @@
     <string name="placeholder_conversations_text">Invite friends to chat with!</string>
     <string name="placeholder_nearby_text">Waiting for others nearby...</string>
     <string name="actionbar_default_title">Hoccer</string>
-    <string name="friend_request_description">möchte dein Freund sein.</string>
+    <string name="friend_request_description">wants to be your friend.</string>
 
 </resources>
