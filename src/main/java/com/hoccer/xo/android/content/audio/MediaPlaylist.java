@@ -14,7 +14,7 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
     private static final Logger LOG = Logger.getLogger(MediaPlaylist.class);
 
     private List<AudioAttachmentItem> mAudioAttachmentItems = new ArrayList<AudioAttachmentItem>();
-    private List<Integer> mPlaylistIndexes;
+    private List<Integer> mPlaylistIndexes  = new ArrayList<Integer>();
 
     private RepeatMode mRepeatMode = RepeatMode.NO_REPEAT;
     private int mCurrentIndex = 0;
@@ -92,6 +92,7 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
 
     public void clear() {
         mAudioAttachmentItems.clear();
+        mPlaylistIndexes.clear();
         mCurrentIndex = 0;
     }
 
@@ -120,29 +121,29 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
         LOG.error("Adding items at current position is not supported.");
     }
 
-    public void remove(int index) {
-        if (mAudioAttachmentItems.size() > 1) {
-            mAudioAttachmentItems.remove(index);
+    public void remove(int attachmentIndex) {
+        if (mAudioAttachmentItems.size() > attachmentIndex) {
+            mAudioAttachmentItems.remove(attachmentIndex);
 
-            if (0 < mCurrentIndex && mCurrentIndex >= index) {
+            int playlistIndex = mPlaylistIndexes.indexOf(attachmentIndex);
+            mPlaylistIndexes.remove(playlistIndex);
+
+            if(mCurrentIndex == playlistIndex) {
+                next();
+            } else if (mCurrentIndex > playlistIndex) {
                 mCurrentIndex--;
             }
-        } else {
-            mAudioAttachmentItems.clear();
         }
+    }
+
+    public void setTrack(AudioAttachmentItem item) {
+        clear();
+        mAudioAttachmentItems.add(item);
         resetPlaylistIndexes();
     }
 
-    public void add(int index, AudioAttachmentItem item) {
-        mAudioAttachmentItems.add(index, item);
-
-        if (mAudioAttachmentItems.size() > 1 && index <= mCurrentIndex) {
-            mCurrentIndex++;
-        }
-        resetPlaylistIndexes();
-    }
-
-    public void addAll(List<AudioAttachmentItem> items) {
+    public void setTrackList(List<AudioAttachmentItem> items) {
+        clear();
         mAudioAttachmentItems.addAll(items);
         resetPlaylistIndexes();
     }
