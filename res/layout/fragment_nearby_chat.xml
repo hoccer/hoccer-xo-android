@@ -7,6 +7,17 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+    <com.hoccer.xo.android.view.OverscrollListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:transcriptMode="disabled"
+            android:stackFromBottom="true"
+            android:smoothScrollbar="false"
+            android:dividerHeight="10dp"
+            android:layout_marginBottom="50dp"
+            android:divider="@null"/>
+
     <ImageView
             android:id="@+id/iv_contacts_placeholder"
             android:layout_width="match_parent"
@@ -28,17 +39,6 @@
             android:textColor="@color/common_signin_btn_light_text_disabled"
             android:textSize="8pt"
             android:text="@string/placeholder_conversations_text"/>
-
-    <com.hoccer.xo.android.view.OverscrollListView
-            android:id="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:transcriptMode="disabled"
-            android:stackFromBottom="true"
-            android:smoothScrollbar="false"
-            android:dividerHeight="10dp"
-            android:layout_marginBottom="50dp"
-            android:divider="@null"/>
 
     <RelativeLayout
             android:id="@+id/fragment_container"
