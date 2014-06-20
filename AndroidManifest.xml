@@ -261,8 +261,6 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.hoccer.xo.android.content.audio.HeadsetHandlerReceiver"/>
-
         <service android:name="com.hoccer.xo.android.service.MediaPlayerService"/>
 
     </application>
