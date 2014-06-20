@@ -4,6 +4,7 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.adapter.NearbyContactsAdapter;
 import com.hoccer.xo.android.adapter.OnItemCountChangedListener;
 import com.hoccer.xo.android.base.XoListFragment;
+import com.hoccer.xo.android.util.ColorSchemeManager;
 import com.hoccer.xo.release.R;
 
 import org.apache.log4j.Logger;
@@ -24,6 +25,7 @@ public class NearbyContactsFragment extends XoListFragment {
     private ListView mContactList;
 
     private ImageView mPlaceholderImage;
+    private ImageView mPlaceholderImageFrame;
 
     private TextView mPlaceholderText;
 
@@ -31,10 +33,13 @@ public class NearbyContactsFragment extends XoListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         mContactList = (ListView) view.findViewById(android.R.id.list);
+        mPlaceholderImageFrame = (ImageView) view.findViewById(R.id.iv_contacts_placeholder_frame);
+        mPlaceholderImageFrame.setBackgroundDrawable(getResources().getDrawable(R.drawable.placeholder_nearby));
         mPlaceholderImage = (ImageView) view.findViewById(R.id.iv_contacts_placeholder);
-        mPlaceholderImage.setImageResource(R.drawable.placeholder_nearby);
+        mPlaceholderImage.setBackgroundDrawable(ColorSchemeManager.fillBackground(getXoActivity(), R.drawable.placeholder_nearby_point, true));
         mPlaceholderText = (TextView) view.findViewById(R.id.tv_contacts_placeholder);
         mPlaceholderText.setText(R.string.placeholder_nearby_text);
+
         return view;
     }
 
@@ -74,11 +79,13 @@ public class NearbyContactsFragment extends XoListFragment {
     }
 
     private void showPlaceholder() {
+        mPlaceholderImageFrame.setVisibility(View.VISIBLE);
         mPlaceholderImage.setVisibility(View.VISIBLE);
         mPlaceholderText.setVisibility(View.VISIBLE);
     }
 
     private void hidePlaceholder() {
+        mPlaceholderImageFrame.setVisibility(View.GONE);
         mPlaceholderImage.setVisibility(View.GONE);
         mPlaceholderText.setVisibility(View.GONE);
     }

@@ -10,11 +10,11 @@
 
     <ImageView
             android:id="@+id/profile_group_profile_image"
-            android:src="@drawable/avatar_default_group_large"
             android:scaleType="centerCrop"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_gravity="center_horizontal"
+            android:src="@drawable/avatar_default_group_large"
             style="@style/AppBaseTheme.Group.ProfilePicture"/>
 
     <TextView

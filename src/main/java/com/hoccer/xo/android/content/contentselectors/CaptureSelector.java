@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.SelectedContent;
+import com.hoccer.xo.android.util.ColorSchemeManager;
 import com.hoccer.xo.release.R;
 
 public class CaptureSelector implements IContentSelector {
@@ -17,7 +18,7 @@ public class CaptureSelector implements IContentSelector {
 
     public CaptureSelector(Context context) {
         mName = context.getResources().getString(R.string.content_capture);
-        mIcon = context.getResources().getDrawable(R.drawable.ic_attachment_select_video);
+        mIcon = ColorSchemeManager.fillBackground(context, R.drawable.ic_attachment_select_video, true);
     }
 
     @Override

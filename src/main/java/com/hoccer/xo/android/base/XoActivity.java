@@ -1,17 +1,29 @@
 package com.hoccer.xo.android.base;
 
-import android.app.*;
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.TaskStackBuilder;
 import android.content.*;
+import android.database.Cursor;
+import android.graphics.*;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.*;
+import android.provider.MediaStore;
+import android.provider.Telephony;
 import android.support.v4.app.FragmentActivity;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.view.*;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
 import com.hoccer.talk.client.IXoAlertListener;
 import com.hoccer.talk.client.XoClient;
 import com.hoccer.talk.client.XoClientConfiguration;
@@ -24,29 +36,17 @@ import com.hoccer.xo.android.XoSoundPool;
 import com.hoccer.xo.android.activity.*;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
-import com.hoccer.xo.android.content.*;
+import com.hoccer.xo.android.content.ContentRegistry;
+import com.hoccer.xo.android.content.ContentSelection;
 import com.hoccer.xo.android.content.contentselectors.ImageSelector;
 import com.hoccer.xo.android.database.AndroidTalkDatabase;
 import com.hoccer.xo.android.service.IXoClientService;
 import com.hoccer.xo.android.service.XoClientService;
-import com.hoccer.xo.android.view.chat.attachments.AttachmentTransferControlView;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
+import com.hoccer.xo.android.view.chat.attachments.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
-
 import net.hockeyapp.android.CrashManager;
-
 import org.apache.log4j.Logger;
-
-import android.annotation.SuppressLint;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-
-import android.provider.MediaStore;
-import android.provider.Telephony;
-import android.view.*;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -279,6 +279,9 @@ public abstract class XoActivity extends FragmentActivity {
         // get and configure the action bar
         mActionBar = getActionBar();
         mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+
+
+//        getActionBar().setBackgroundDrawable(com.hoccer.xo.android.util.ColorSchemeManager.replaceBackground(this, R.drawable.ab_solid_appbasetheme));
 
         // get the barcode scanning service
         mBarcodeService = new IntentIntegrator(this);

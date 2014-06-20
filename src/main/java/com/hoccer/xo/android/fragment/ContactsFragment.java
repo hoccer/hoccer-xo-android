@@ -6,6 +6,7 @@ import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.OnItemCountChangedListener;
 import com.hoccer.xo.android.base.XoListFragment;
+import com.hoccer.xo.android.util.ColorSchemeManager;
 import com.hoccer.xo.release.R;
 
 import org.apache.log4j.Logger;
@@ -36,6 +37,7 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
 
     private TextView mPlaceholderText;
 
+    private ImageView mPlaceholderImageFrame;
     private ImageView mPlaceholderImage;
 
     @Override
@@ -44,7 +46,10 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
         LOG.debug("onCreateView()");
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         mContactList = (ListView) view.findViewById(android.R.id.list);
-        mPlaceholderImage = (ImageView) view.findViewById(R.id.iv_contacts_placeholder);
+        mPlaceholderImageFrame = (ImageView) view.findViewById(R.id.iv_contacts_placeholder_frame);
+        mPlaceholderImageFrame.setBackgroundDrawable(getResources().getDrawable(R.drawable.placeholder_chats));
+        mPlaceholderImage= (ImageView) view.findViewById(R.id.iv_contacts_placeholder);
+        mPlaceholderImage.setBackgroundDrawable(ColorSchemeManager.fillBackground(getXoActivity(), R.drawable.placeholder_chats_head, true));
         mPlaceholderText = (TextView) view.findViewById(R.id.tv_contacts_placeholder);
         return view;
     }
@@ -140,11 +145,13 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
     }
 
     private void showPlaceholder() {
+        mPlaceholderImageFrame.setVisibility(View.VISIBLE);
         mPlaceholderImage.setVisibility(View.VISIBLE);
         mPlaceholderText.setVisibility(View.VISIBLE);
     }
 
     private void hidePlaceholder() {
+        mPlaceholderImageFrame.setVisibility(View.GONE);
         mPlaceholderImage.setVisibility(View.GONE);
         mPlaceholderText.setVisibility(View.GONE);
     }

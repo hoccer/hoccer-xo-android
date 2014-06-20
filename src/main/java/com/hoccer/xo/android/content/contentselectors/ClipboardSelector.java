@@ -11,6 +11,7 @@ import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.activity.ClipboardPreviewActivity;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.Clipboard;
+import com.hoccer.xo.android.util.ColorSchemeManager;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -27,7 +28,7 @@ public class ClipboardSelector implements IContentSelector {
 
     public ClipboardSelector(Context context) {
         mName = context.getResources().getString(R.string.content_clipboard);
-        mIcon = context.getResources().getDrawable(R.drawable.ic_attachment_select_data);
+        mIcon = ColorSchemeManager.fillBackground(context, R.drawable.ic_attachment_select_data, true);
         mClipboard = Clipboard.get(context);
     }
 

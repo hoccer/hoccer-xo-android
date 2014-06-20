@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.SelectedContent;
+import com.hoccer.xo.android.util.ColorSchemeManager;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -21,7 +22,7 @@ public class RingtoneSelector implements IContentSelector {
 
     public RingtoneSelector(Context context) {
         mName = context.getResources().getString(R.string.content_ringtone);
-        mIcon = context.getResources().getDrawable(R.drawable.ic_attachment_select_music);
+        mIcon = ColorSchemeManager.fillBackground(context, R.drawable.ic_attachment_select_music, true);
     }
 
     @Override

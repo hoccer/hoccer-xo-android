@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.SelectedContent;
+import com.hoccer.xo.android.util.ColorSchemeManager;
 import com.hoccer.xo.release.R;
 
 public class MusicSelector implements IContentSelector {
@@ -17,7 +18,7 @@ public class MusicSelector implements IContentSelector {
 
     public MusicSelector(Context context) {
         mName = context.getResources().getString(R.string.content_music);
-        mIcon = context.getResources().getDrawable(R.drawable.ic_attachment_select_music);
+        mIcon = ColorSchemeManager.fillBackground(context, R.drawable.ic_attachment_select_music, true);
     }
 
     @Override

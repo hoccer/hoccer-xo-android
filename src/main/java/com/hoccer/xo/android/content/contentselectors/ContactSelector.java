@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.SelectedContent;
+import com.hoccer.xo.android.util.ColorSchemeManager;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -23,7 +25,7 @@ public class ContactSelector implements IContentSelector {
 
     public ContactSelector(Context context) {
         mName = context.getResources().getString(R.string.content_contact);
-        mIcon = context.getResources().getDrawable(R.drawable.ic_attachment_select_contact);
+        mIcon= ColorSchemeManager.fillBackground(context, R.drawable.ic_attachment_select_contact, true);
     }
 
     @Override

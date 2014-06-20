@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import com.hoccer.xo.android.util.ColorSchemeManager;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -30,7 +31,7 @@ public class ImageSelector implements IContentSelector {
 
     public ImageSelector(Context context) {
         mName = context.getResources().getString(R.string.content_images);
-        mIcon = context.getResources().getDrawable(R.drawable.ic_attachment_select_image);
+        mIcon = ColorSchemeManager.fillBackground(context, R.drawable.ic_attachment_select_image, true);
     }
 
     @Override

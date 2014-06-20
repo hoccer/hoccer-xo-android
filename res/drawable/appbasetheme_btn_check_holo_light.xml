@@ -34,7 +34,8 @@
 
     <item android:state_checked="true" android:state_focused="true"
           android:state_enabled="true"
-          android:drawable="@drawable/appbasetheme_btn_check_on_focused_holo_light" />
+          android:drawable="@drawable/appbasetheme_btn_check_on_focused_holo_light"
+            android:tint="#ff00ff"/>
     <item android:state_checked="false" android:state_focused="true"
           android:state_enabled="true"
           android:drawable="@drawable/appbasetheme_btn_check_off_focused_holo_light" />

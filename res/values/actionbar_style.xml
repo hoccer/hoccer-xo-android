@@ -4,7 +4,7 @@
 
 
     <style name="ActionBar.Solid.AppBaseTheme" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@drawable/ab_solid_appbasetheme</item>
+        <item name="android:background">@drawable/ab_solid_appbasetheme </item>
         <item name="android:backgroundStacked">@color/xo_tab_color</item>
         <item name="android:backgroundSplit">@drawable/ab_bottom_solid_appbasetheme</item>
         <item name="android:progressBarStyle">@style/ProgressBar.AppBaseTheme</item>

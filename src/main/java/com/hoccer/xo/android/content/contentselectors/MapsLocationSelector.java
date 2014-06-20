@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import com.hoccer.xo.android.activity.MapsLocationActivity;
 import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.SelectedContent;
+import com.hoccer.xo.android.util.ColorSchemeManager;
 import com.hoccer.xo.release.R;
 
 public class MapsLocationSelector implements IContentSelector {
@@ -15,7 +16,7 @@ public class MapsLocationSelector implements IContentSelector {
 
     public MapsLocationSelector(Context context) {
         mName = context.getResources().getString(R.string.content_location);
-        mIcon = context.getResources().getDrawable(R.drawable.ic_attachment_select_location);
+        mIcon = ColorSchemeManager.fillBackground(context, R.drawable.ic_attachment_select_location, true);
     }
 
     @Override
