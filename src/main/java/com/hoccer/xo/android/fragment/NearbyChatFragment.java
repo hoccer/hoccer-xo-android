@@ -39,7 +39,6 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
         mCompositionFragment = new CompositionFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.add(R.id.fragment_container, mCompositionFragment).commit();
-        hidePlaceholder();
         return view;
     }
 
@@ -53,7 +52,7 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
     @Override
     public void onResume() {
         super.onResume();
-        mCompositionFragment.blockInput();
+        showPlaceholder();
         converseWithContact();
     }
 
@@ -68,14 +67,27 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
         super.onDestroy();
     }
 
-    private void showPlaceholder() {
-        mPlaceholderImage.setVisibility(View.VISIBLE);
-        mPlaceholderText.setVisibility(View.VISIBLE);
+    public void showPlaceholder() {
+        mCompositionFragment.blockInput();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mPlaceholderImage.setVisibility(View.VISIBLE);
+                mPlaceholderText.setVisibility(View.VISIBLE);
+                mList.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void hidePlaceholder() {
-        mPlaceholderImage.setVisibility(View.GONE);
-        mPlaceholderText.setVisibility(View.GONE);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mPlaceholderImage.setVisibility(View.GONE);
+                mPlaceholderText.setVisibility(View.GONE);
+                mList.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     public void converseWithContact() {
@@ -92,6 +104,7 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
         try {
             List<TalkClientContact> nearbyGroups = getXoDatabase().findAllNearbyGroups();
             if (nearbyGroups.size() > 0) {
+                hidePlaceholder();
                 mNearbyAdapter.setConverseContact(nearbyGroups.get(0));
                 mCompositionFragment.converseWithContact(nearbyGroups.get(0));
             }
@@ -139,4 +152,6 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
     public void onGroupMembershipChanged(TalkClientContact contact) {
         checkIfNearbyIsActive();
     }
+
+
 }

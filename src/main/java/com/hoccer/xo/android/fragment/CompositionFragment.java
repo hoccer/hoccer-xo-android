@@ -165,6 +165,10 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mTextEdit.setVisibility(View.VISIBLE);
+                mSendButton.setVisibility(View.VISIBLE);
+                mAddAttachmentButton.setVisibility(View.VISIBLE);
+
                 mTextEdit.setEnabled(true);
                 mSendButton.setEnabled(true);
                 mAddAttachmentButton.setEnabled(true);
@@ -258,6 +262,10 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     public void blockInput() {
+        mTextEdit.setVisibility(View.GONE);
+        mSendButton.setVisibility(View.GONE);
+        mAddAttachmentButton.setVisibility(View.GONE);
+
         mTextEdit.setEnabled(false);
         mSendButton.setEnabled(false);
         mAddAttachmentButton.setEnabled(false);
