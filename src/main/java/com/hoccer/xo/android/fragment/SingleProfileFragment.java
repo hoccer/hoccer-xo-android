@@ -29,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -74,7 +75,52 @@ public class SingleProfileFragment extends XoFragment
         mNameText = (TextView) v.findViewById(R.id.tv_profile_name);
         mKeyText = (TextView) v.findViewById(R.id.tv_profile_key);
         mEditName = (EditText) v.findViewById(R.id.et_profile_name);
+
         return v;
+    }
+
+    private void initInviteButton(final TalkClientContact contact) {
+        Button inviteButton = (Button) getView().findViewById(R.id.btn_profile_invite);
+        if(contact == null || contact.isSelf() || contact.isGroup()) {
+            inviteButton.setVisibility(View.GONE);
+            return;
+        } else {
+            inviteButton.setVisibility(View.VISIBLE);
+        }
+
+        try {
+            getXoDatabase().refreshClientContact(contact);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if(contact.getClientRelationship() == null || contact.getClientRelationship().getState().equals(TalkRelationship.STATE_NONE)) {
+            inviteButton.setText("als Freund hinzufügen");
+            inviteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getXoActivity().getXoClient().getServerRpc().inviteFriend(contact.getClientId());
+                }
+            });
+        } else if(contact.getClientRelationship().getState().equals(TalkRelationship.STATE_INVITED)) {
+            inviteButton.setText("Freundschaftsanfrage zurückziehen");
+            inviteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getXoActivity().getXoClient().getServerRpc().disinviteFriend(contact.getClientId());
+                }
+            });
+        } else if(contact.getClientRelationship().getState().equals(TalkRelationship.STATE_INVITED_ME)) {
+            inviteButton.setText("Freundschaftsanfrage akzeptieren");
+            inviteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getXoActivity().getXoClient().getServerRpc().acceptFriend(contact.getClientId());
+                }
+            });
+        } else {
+            inviteButton.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -263,6 +309,8 @@ public class SingleProfileFragment extends XoFragment
         mNameText.setText(name);
 
         mKeyText.setText(getFingerprint());
+
+        initInviteButton(contact);
     }
 
     public String getFingerprint() {

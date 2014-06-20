@@ -22,7 +22,7 @@ public class FriendRequestAdapter extends XoAdapter {
 
     public FriendRequestAdapter(XoActivity activity) {
         super(activity);
-        mItems = activity.getXoDatabase().findAllOutstandingFriendrequests();
+        mItems = activity.getXoDatabase().findAllPendingFriendRequests();
     }
 
     @Override

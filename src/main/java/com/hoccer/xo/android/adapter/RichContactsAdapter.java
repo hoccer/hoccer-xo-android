@@ -4,6 +4,7 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.talk.model.TalkRelationship;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
@@ -31,6 +32,15 @@ public class RichContactsAdapter extends ContactsAdapter {
     public RichContactsAdapter(XoActivity activity) {
         super(activity);
         setShowTokens(true);
+        setFilter(new Filter() {
+            @Override
+            public boolean shouldShow(TalkClientContact contact) {
+                if(contact.getClientRelationship().getState().equals(TalkRelationship.STATE_FRIEND)) {
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override

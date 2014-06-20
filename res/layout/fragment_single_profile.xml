@@ -70,11 +70,21 @@
                 android:layout_marginRight="45dp"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"/>
 
+        <Button
+                android:id="@+id/btn_profile_invite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_below="@+id/tv_profile_name"
+                android:text="als Freund hinzufügen"
+                android:visibility="gone"/>
+
         <TextView
                 android:id="@+id/tv_profile_key_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_profile_name"
+                android:layout_below="@+id/btn_profile_invite"
                 android:layout_marginTop="25dp"
                 android:text="@string/profile_key_text"
                 android:layout_marginLeft="45dp"

@@ -1,10 +1,13 @@
 package com.hoccer.xo.android.fragment;
 
+import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
+import com.hoccer.xo.android.adapter.FriendRequestAdapter;
 import com.hoccer.xo.android.adapter.OnItemCountChangedListener;
+import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.release.R;
 
@@ -14,6 +17,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,7 +30,8 @@ import java.sql.SQLException;
  * This currently shows only contact data but should also be able to show
  * recent conversations for use as a "conversations" view.
  */
-public class ContactsFragment extends XoListFragment implements OnItemCountChangedListener {
+public class ContactsFragment extends XoListFragment implements OnItemCountChangedListener,
+        IXoContactListener {
 
     private static final Logger LOG = Logger.getLogger(ContactsFragment.class);
 
@@ -53,6 +58,29 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
     public void onResume() {
         LOG.debug("onResume()");
         super.onResume();
+        initContactListAdapter();
+        initFriendRequestAdapter();
+        getXoActivity().getXoClient().registerContactListener(this);
+    }
+
+    private void initFriendRequestAdapter() {
+        ListView friendRequestListView = (ListView) getView().findViewById(R.id.lv_contacts_friendrequests);
+        if(getXoDatabase().hasPendingFriendRequests()) {
+            friendRequestListView.setAdapter(new FriendRequestAdapter(getXoActivity()));
+            friendRequestListView.setVisibility(View.VISIBLE);
+        } else {
+            friendRequestListView.setVisibility(View.GONE);
+        }
+        friendRequestListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                getXoActivity().showContactProfile(
+                        (TalkClientContact) adapterView.getItemAtPosition(i));
+            }
+        });
+    }
+
+    private void initContactListAdapter() {
         if (mAdapter == null) {
             // create list adapter
             mAdapter = getXoActivity().makeContactListAdapter();
@@ -94,6 +122,7 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
             mAdapter.onDestroy();
             mAdapter = null;
         }
+        getXoActivity().getXoClient().unregisterContactListener(this);
     }
 
     // XXX @Override
@@ -147,5 +176,32 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
     private void hidePlaceholder() {
         mPlaceholderImage.setVisibility(View.GONE);
         mPlaceholderText.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onContactAdded(TalkClientContact contact) {
+    }
+
+    @Override
+    public void onContactRemoved(TalkClientContact contact) {
+    }
+
+    @Override
+    public void onClientPresenceChanged(TalkClientContact contact) {
+
+    }
+
+    @Override
+    public void onClientRelationshipChanged(TalkClientContact contact) {
+        initFriendRequestAdapter();
+    }
+
+    @Override
+    public void onGroupPresenceChanged(TalkClientContact contact) {
+
+    }
+
+    @Override
+    public void onGroupMembershipChanged(TalkClientContact contact) {
     }
 }
