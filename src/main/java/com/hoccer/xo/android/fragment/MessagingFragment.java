@@ -12,6 +12,7 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.adapter.ChatAdapter;
+import com.hoccer.xo.android.base.IMessagingFragmentManager;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.android.gesture.Gestures;
@@ -51,16 +52,6 @@ public class MessagingFragment extends XoListFragment
     private CompositionView mCompositionView;
 
     private boolean mInOverscroll = false;
-
-    public interface IMessagingFragmentListener {
-        public void onShowSingleProfileFragment();
-
-        public void onShowGroupProfileFragment();
-
-        public void onShowAudioAttachmentListFragment();
-    }
-
-    private IMessagingFragmentListener mMessagingFragmentListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -174,20 +165,22 @@ public class MessagingFragment extends XoListFragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
+
+        IMessagingFragmentManager mgr = (IMessagingFragmentManager)getActivity();
         switch (item.getItemId()) {
             case R.id.menu_profile_single:
-                if (mContact != null) {
-                    mMessagingFragmentListener.onShowSingleProfileFragment();
+                if (mContact != null && mgr != null) {
+                    mgr.showSingleProfileFragment();
                 }
                 break;
             case R.id.menu_profile_group:
-                if (mContact != null) {
-                    mMessagingFragmentListener.onShowGroupProfileFragment();
+                if (mContact != null && mgr != null) {
+                    mgr.showGroupProfileFragment();
                 }
                 break;
             case R.id.menu_audio_attachment_list:
-                if (mContact != null) {
-                    mMessagingFragmentListener.onShowAudioAttachmentListFragment();
+                if (mContact != null && mgr != null) {
+                    mgr.showAudioAttachmentListFragment();
                 }
             default:
                 return super.onOptionsItemSelected(item);
@@ -223,10 +216,6 @@ public class MessagingFragment extends XoListFragment
 //    public void clipBoardItemSelected(IContentObject contentObject) {
 //        mCompositionView.onAttachmentSelected(contentObject);
 //    }
-
-    public void setMessagingFragmentListener(IMessagingFragmentListener messagingFragmentListener) {
-        this.mMessagingFragmentListener = messagingFragmentListener;
-    }
 
     @Override
     public void onAttachmentSelected(IContentObject contentObject) {

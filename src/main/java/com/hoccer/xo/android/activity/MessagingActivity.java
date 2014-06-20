@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.xo.android.base.IMessagingFragmentManager;
 import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.content.Clipboard;
 import com.hoccer.xo.android.fragment.AudioAttachmentListFragment;
@@ -20,7 +21,7 @@ import com.hoccer.xo.android.fragment.SingleProfileFragment;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
-public class MessagingActivity extends XoActionbarActivity {
+public class MessagingActivity extends XoActionbarActivity implements IMessagingFragmentManager {
 
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 
@@ -71,7 +72,7 @@ public class MessagingActivity extends XoActionbarActivity {
             if (mContactId == -1) {
                 LOG.error("invalid contact id");
             } else {
-                showMessagingFragment();
+                showMessageFragment();
             }
         }
     }
@@ -114,7 +115,7 @@ public class MessagingActivity extends XoActionbarActivity {
         }
     }
 
-    public void popupItemSelected(MenuItem item) {
+    private void popupItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_copy_attachment:
                 Clipboard clipboard = Clipboard.get(this);
@@ -134,39 +135,21 @@ public class MessagingActivity extends XoActionbarActivity {
         mMessagingFragment.applicationWillEnterBackground();
     }
 
-    public void showMessagingFragment() {
-
+    @Override
+    public void showMessageFragment() {
         Bundle bundle = new Bundle();
         bundle.putInt(MessagingFragment.ARG_CLIENT_CONTACT_ID, mContactId);
 
         mMessagingFragment = new MessagingFragment();
         mMessagingFragment.setArguments(bundle);
 
-        mMessagingFragment.setMessagingFragmentListener(new MessagingFragment.IMessagingFragmentListener() {
-
-            @Override
-            public void onShowSingleProfileFragment() {
-                showSingleProfileFragment();
-            }
-
-            @Override
-            public void onShowGroupProfileFragment() {
-                showGroupProfileFragment();
-            }
-
-            @Override
-            public void onShowAudioAttachmentListFragment() {
-                showAudioAttachmentListFragment();
-            }
-        });
-
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fl_messaging_fragment_container, mMessagingFragment);
         ft.commit();
     }
 
-    private void showAudioAttachmentListFragment() {
-
+    @Override
+    public void showAudioAttachmentListFragment() {
         Bundle bundle = new Bundle();
         bundle.putInt(AudioAttachmentListFragment.ARG_CLIENT_CONTACT_ID, mContactId);
 
@@ -179,57 +162,31 @@ public class MessagingActivity extends XoActionbarActivity {
         ft.commit();
     }
 
-    private void showGroupProfileFragment() {
-
-        Bundle bundle = new Bundle();
-        bundle.putInt(GroupProfileFragment.ARG_CLIENT_CONTACT_ID, mContactId);
-
-        mGroupProfileFragment = new GroupProfileFragment();
-        mGroupProfileFragment.setArguments(bundle);
-
-        mGroupProfileFragment.setGroupProfileFragmentListener(new GroupProfileFragment.IGroupProfileFragmentListener() {
-            @Override
-            public void onShowMessageFragment() {
-                showMessagingFragment();
-            }
-
-            @Override
-            public void onShowAudioAttachmentListFragment() {
-                showAudioAttachmentListFragment();
-            }
-
-        });
-
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fl_messaging_fragment_container, mGroupProfileFragment);
-//        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-    private void showSingleProfileFragment() {
-
+    @Override
+    public void showSingleProfileFragment() {
         Bundle bundle = new Bundle();
         bundle.putInt(SingleProfileFragment.ARG_CLIENT_CONTACT_ID, mContactId);
 
         mSingleProfileFragment = new SingleProfileFragment();
         mSingleProfileFragment.setArguments(bundle);
 
-        mSingleProfileFragment.setSingleProfileFragmentListener(new SingleProfileFragment.ISingleProfileFragmentListener() {
-            @Override
-            public void onShowMessageFragment() {
-                showMessagingFragment();
-            }
-
-            @Override
-            public void onShowAudioAttachmentListFragment() {
-                showAudioAttachmentListFragment();
-            }
-
-        });
-
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fl_messaging_fragment_container, mSingleProfileFragment);
         ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    @Override
+    public void showGroupProfileFragment() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(GroupProfileFragment.ARG_CLIENT_CONTACT_ID, mContactId);
+
+        mGroupProfileFragment = new GroupProfileFragment();
+        mGroupProfileFragment.setArguments(bundle);
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fl_messaging_fragment_container, mGroupProfileFragment);
+//        ft.addToBackStack(null);
         ft.commit();
     }
 

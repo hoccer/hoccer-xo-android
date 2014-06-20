@@ -19,6 +19,7 @@ import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.activity.ContactsActivity;
 import com.hoccer.xo.android.activity.SingleProfileActivity;
+import com.hoccer.xo.android.base.IMessagingFragmentManager;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.release.R;
@@ -56,14 +57,6 @@ public class SingleProfileFragment extends XoFragment
     private boolean isRegistered = true;
 
     private Menu mMenu;
-
-    public interface ISingleProfileFragmentListener {
-        public void onShowMessageFragment();
-
-        public void onShowAudioAttachmentListFragment();
-    }
-
-    private ISingleProfileFragmentListener mSingleProfileFragmentListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -178,7 +171,10 @@ public class SingleProfileFragment extends XoFragment
                     getActivity().startActionMode(this);
                     return true;
                 case R.id.menu_audio_attachment_list:
-                    mSingleProfileFragmentListener.onShowAudioAttachmentListFragment();
+                    IMessagingFragmentManager mgr = (IMessagingFragmentManager)getActivity();
+                    if(mgr != null) {
+                        mgr.showAudioAttachmentListFragment();
+                    }
                     return true;
             }
         }
@@ -346,10 +342,6 @@ public class SingleProfileFragment extends XoFragment
         mNameText.setText(name);
 
         mKeyText.setText(getFingerprint());
-    }
-
-    public void setSingleProfileFragmentListener(ISingleProfileFragmentListener singleProfileFragmentListener) {
-        this.mSingleProfileFragmentListener = singleProfileFragmentListener;
     }
 
     public String getFingerprint() {
