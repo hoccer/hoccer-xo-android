@@ -58,14 +58,6 @@ public class GroupProfileFragment extends XoFragment
 
     private Menu mOptionsMenu;
 
-    public interface IGroupProfileFragmentListener {
-        public void onShowMessageFragment();
-
-        public void onShowAudioAttachmentListFragment();
-    }
-
-    private IGroupProfileFragmentListener mIGroupProfileFragmentListener;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         LOG.debug("onCreate()");
@@ -259,10 +251,6 @@ public class GroupProfileFragment extends XoFragment
         mGroupNameText.setText(newGroupName);
 
         getXoClient().setGroupName(mGroup, newGroupName);
-    }
-
-    public void setGroupProfileFragmentListener(IGroupProfileFragmentListener groupProfileFragmentListener) {
-        this.mIGroupProfileFragmentListener = groupProfileFragmentListener;
     }
 
     private void updateAvatar(TalkClientContact contact) {
