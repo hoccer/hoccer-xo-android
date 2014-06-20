@@ -49,6 +49,8 @@ public class ChatMessageItem implements AttachmentTransferListener {
     protected LinearLayout mContentWrapper;
     protected AttachmentTransferControlView mContentTransferControl;
 
+    protected boolean mVisible = false;
+
     public ChatMessageItem(Context context, TalkClientMessage message) {
         super();
         mContext = context;
@@ -99,6 +101,10 @@ public class ChatMessageItem implements AttachmentTransferListener {
      */
     public ChatItemType getType() {
         return ChatItemType.ChatItemWithText;
+    }
+
+    public void setVisibility(boolean visible){
+        mVisible = visible;
     }
 
     /**

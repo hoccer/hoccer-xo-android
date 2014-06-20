@@ -1,10 +1,12 @@
 package com.hoccer.xo.android.view.chat.attachments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
 import android.graphics.Color;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -14,14 +16,12 @@ import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
-import com.hoccer.xo.android.view.IViewListener;
-import com.hoccer.xo.android.view.chat.AudioPlayerView;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
 
 
-public class ChatAudioItem extends ChatMessageItem implements IViewListener {
+public class ChatAudioItem extends ChatMessageItem {
 
     private MediaPlayerService mMediaPlayerService;
     private ImageButton mPlayPauseButton;
@@ -50,52 +50,54 @@ public class ChatAudioItem extends ChatMessageItem implements IViewListener {
         super.displayAttachment(contentObject);
 
         // add view lazily
-        if (mContentWrapper.getChildCount() == 0) {
-            LinearLayout audioLayout = new AudioPlayerView(mContext, this);
-            TextView captionTextView = (TextView) audioLayout.findViewById(R.id.tv_content_audio_caption);
-            TextView fileNameTextView = (TextView) audioLayout.findViewById(R.id.tv_content_audio_name);
-
-            if(mMessage.isIncoming()) {
-                captionTextView.setTextColor(Color.BLACK);
-                fileNameTextView.setTextColor(Color.BLACK);
-            } else {
-                captionTextView.setTextColor(Color.WHITE);
-                fileNameTextView.setTextColor(Color.WHITE);
-            }
-
-            String extension = contentObject.getContentDataUrl();
-            extension = extension.substring(extension.lastIndexOf("."), extension.length());
-            fileNameTextView.setText(contentObject.getFileName() + extension);
-
-            mPlayPauseButton = (ImageButton) audioLayout.findViewById(R.id.ib_content_audio_play);
-            mPlayPauseButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (mIsPlayable) {
-                        if (isActive()) {
-                            pausePlaying();
-                        } else {
-                            startPlaying();
-                        }
-                    } else {
-                        AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
-                        alertDialog.setMessage(mContext.getResources().getString(R.string.content_not_supported_audio_msg));
-                        alertDialog.setTitle(mContext.getString(R.string.content_not_supported_audio_title));
-                        DialogInterface.OnClickListener nullListener = null;
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", nullListener);
-                        alertDialog.show();
-                    }
-                }
-            });
-            mContentWrapper.addView(audioLayout);
-
-            mAudioContentObject = AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject);
-            if (mAudioContentObject == null) {
-                mIsPlayable = false;
-            } else {
-                mIsPlayable = true;
-            }
+        if (mContentWrapper.getChildCount() == 0)
+        {
+            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+            View v =  inflater.inflate(R.layout.content_audio, null);
+            mContentWrapper.addView(v);
         }
+        LinearLayout audioLayout = (LinearLayout) mContentWrapper.getChildAt(0);
+
+        TextView captionTextView = (TextView) audioLayout.findViewById(R.id.tv_content_audio_caption);
+        TextView fileNameTextView = (TextView) audioLayout.findViewById(R.id.tv_content_audio_name);
+
+        if(mMessage.isIncoming()) {
+            captionTextView.setTextColor(Color.BLACK);
+            fileNameTextView.setTextColor(Color.BLACK);
+        } else {
+            captionTextView.setTextColor(Color.WHITE);
+            fileNameTextView.setTextColor(Color.WHITE);
+        }
+
+        String extension = contentObject.getContentDataUrl();
+        extension = extension.substring(extension.lastIndexOf("."), extension.length());
+        fileNameTextView.setText(contentObject.getFileName() + extension);
+
+        mPlayPauseButton = (ImageButton) audioLayout.findViewById(R.id.ib_content_audio_play);
+        mPlayPauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mIsPlayable) {
+                    if (isActive()) {
+                        pausePlaying();
+                    } else {
+                        startPlaying();
+                    }
+                } else {
+                    AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+                    alertDialog.setMessage(mContext.getResources().getString(R.string.content_not_supported_audio_msg));
+                    alertDialog.setTitle(mContext.getString(R.string.content_not_supported_audio_title));
+                    DialogInterface.OnClickListener nullListener = null;
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", nullListener);
+                    alertDialog.show();
+                }
+            }
+        });
+
+        mAudioContentObject = AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject);
+
+        mIsPlayable = mAudioContentObject != null;
+        updatePlayPauseView();
     }
 
     private void bindService(Intent intent) {
@@ -147,8 +149,7 @@ public class ChatAudioItem extends ChatMessageItem implements IViewListener {
         return isActive;
     }
 
-    @Override
-    public void onAttachedToWindow() {
+    private void initializeMediaPlayerService(){
         Intent intent = new Intent(mContext, MediaPlayerService.class);
         mContext.startService(intent);
         bindService(intent);
@@ -156,11 +157,25 @@ public class ChatAudioItem extends ChatMessageItem implements IViewListener {
         createBroadcastReceiver();
     }
 
-    @Override
-    public void onDetachedFromWindow() {
+    private void destroyMediaPlayerService(){
         mContext.unbindService(mConnection);
         LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mReceiver);
         mReceiver = null;
+    }
+
+    @Override
+    public void setVisibility(boolean visible) {
+        if ( mVisible == visible){
+            return;
+        }
+
+        super.setVisibility(visible);
+
+        if( mVisible){
+            initializeMediaPlayerService();
+        }else{
+            destroyMediaPlayerService();
+        }
     }
 
     private void createBroadcastReceiver() {

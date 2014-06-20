@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -30,7 +31,7 @@ import java.util.List;
  * chat view.
  * <p/>
  * When loading the all messages from the data base this adaptor performs batching.
- * The size of a batch is defined by the constant LOAD_MESSAGES.
+ * The size of a batch is defined by the constant BATCH_SIZE.
  * <p/>
  * To configure list items it uses instances of ChatMessageItem and its subtypes.
  */
@@ -39,7 +40,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     /**
      * Number of TalkClientMessage objects in a batch
      */
-    private static final long LOAD_MESSAGES = 10L;
+    private static final long BATCH_SIZE = 10L;
 
     /**
      * Defines the distance from the bottom-most item in the chat view - in number of items.
@@ -58,6 +59,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     private List<ChatMessageItem> mChatMessageItems;
 
     private ListView mListView;
+    private List < Integer > mLastVisibleViews = new ArrayList<Integer>();
     private BroadcastReceiver mReceiver;
 
 
@@ -72,8 +74,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     private void initialize() {
         int totalMessageCount = 0;
         try {
-            totalMessageCount = (int) mDatabase
-                    .getMessageCountByContactId(mContact.getClientContactId());
+            totalMessageCount = (int) mDatabase.getMessageCountByContactId(mContact.getClientContactId());
         } catch (SQLException e) {
             LOG.error("SQLException while loading message count: " + mContact.getClientId(), e);
         }
@@ -81,18 +82,28 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         for (int i = 0; i < totalMessageCount; i++) {
             mChatMessageItems.add(null);
         }
-        loadNextMessages(mChatMessageItems.size() - (int) LOAD_MESSAGES);
+        loadNextMessages(mChatMessageItems.size() - (int) BATCH_SIZE);
     }
 
+    /**
+     * Loads a range of TalkClientMessage objects from database starting at a given offset.
+     * Range is defined by constant BATCH_SIZE.
+     *
+     * Creates the appropriate ChatMessageItem for each TalkClientMessage and adds it to mChatMessageItems.
+     *
+     * @param offset Index of the first TalkClientMessage object
+     */
     public synchronized void loadNextMessages(int offset) {
         try {
-            if (offset < 0) {
+            long batchSize = BATCH_SIZE;
+            if(offset < 0) {
+                batchSize = batchSize + offset;
                 offset = 0;
             }
-            final List<TalkClientMessage> messagesBatch = mDatabase
-                    .findMessagesByContactId(mContact.getClientContactId(), LOAD_MESSAGES, offset);
+            final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), batchSize, offset);
             for (int i = 0; i < messagesBatch.size(); i++) {
                 ChatMessageItem messageItem = getItemForMessage(messagesBatch.get(i));
+
                 mChatMessageItems.set(offset + i, messageItem);
             }
             runOnUiThread(new Runnable() {
@@ -102,8 +113,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
                 }
             });
         } catch (SQLException e) {
-            LOG.error("SQLException while batch retrieving messages for contact: " + mContact
-                    .getClientId(), e);
+            LOG.error("SQLException while batch retrieving messages for contact: " + mContact.getClientId(), e);
         }
     }
 
@@ -132,7 +142,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     @Override
     public ChatMessageItem getItem(int position) {
         if (mChatMessageItems.get(position) == null) {
-            int offset = (position / (int) LOAD_MESSAGES) * (int) LOAD_MESSAGES;
+            int offset = position - (int) BATCH_SIZE + 1;
             loadNextMessages(offset);
         }
         return mChatMessageItems.get(position);
@@ -143,9 +153,42 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         return position;
     }
 
+    private void removeInvisibleItems(int position){
+
+        int firstVisible = mListView.getFirstVisiblePosition();
+        int lastVisible = mListView.getLastVisiblePosition();
+
+        for (int i = 0; i < mLastVisibleViews.size(); ++i) {
+
+            int current = mLastVisibleViews.get(i);
+
+            if ((current < firstVisible) || (current > lastVisible)) {
+                getItem(current).setVisibility(false);
+            }
+        }
+
+        getItem(position).setVisibility(true);
+
+        int offset = 0;
+        mLastVisibleViews.clear();
+        while (firstVisible + offset <= lastVisible) {
+            mLastVisibleViews.add(firstVisible + offset);
+            offset++;
+        }
+    }
+
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
+
+        mListView.post(new Runnable() {
+            @Override
+            public void run() {
+                removeInvisibleItems(position);
+            }
+        });
+
         ChatMessageItem chatItem = getItem(position);
+
         if (!chatItem.getMessage().isSeen()) {
             markMessageAsSeen(chatItem.getMessage());
         }
@@ -154,6 +197,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         } else {
             convertView = chatItem.recycleViewForMessage(convertView);
         }
+
         return convertView;
     }
 
@@ -204,6 +248,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
 
     private ChatMessageItem getItemForMessage(TalkClientMessage message) {
         ChatItemType itemType = getListItemTypeForMessage(message);
+
         if (itemType == ChatItemType.ChatItemWithImage) {
             return new ChatImageItem(mActivity, message);
         } else if (itemType == ChatItemType.ChatItemWithVideo) {
