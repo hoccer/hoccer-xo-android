@@ -7,11 +7,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.*;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SpinnerAdapter;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
@@ -31,6 +33,7 @@ import java.util.List;
 
 public class AudioAttachmentListFragment extends XoListFragment {
 
+    public static final String ARG_CLIENT_CONTACT_ID = "com.hoccer.xo.android.fragment.ARG_CLIENT_CONTACT_ID";
     public static final String AUDIO_ATTACHMENT_REMOVED_ACTION = "com.hoccer.xo.android.fragment.AUDIO_ATTACHMENT_REMOVED_ACTION";
     public static final String TALK_CLIENT_MESSAGE_ID_EXTRA = "com.hoccer.xo.android.fragment.TALK_CLIENT_MESSAGE_ID_EXTRA";
 
@@ -62,15 +65,28 @@ public class AudioAttachmentListFragment extends XoListFragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        ActionBar ab = getActivity().getActionBar();
+        ab.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        ab.setDisplayShowTitleEnabled(false);
+        mFilterAdapter = new AttachmentListFilterAdapter(getXoActivity());
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Intent contactIntent = getActivity().getIntent();
-        if (contactIntent != null) {
-            if (contactIntent.hasExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID)) {
-                mFilteredContactId = contactIntent
-                        .getIntExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID, ALL_CONTACTS_ID);
+        if (getArguments() != null) {
+            int clientContactId = getArguments().getInt(ARG_CLIENT_CONTACT_ID);
+            if (clientContactId == -1) {
+                LOG.error("invalid contact id");
+            } else {
+                mFilteredContactId = clientContactId;
             }
+
+        } else {
+            LOG.error("Creating SingleProfileFragment without arguments is not supported.");
         }
 
         loadAttachments();
@@ -101,7 +117,16 @@ public class AudioAttachmentListFragment extends XoListFragment {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_delete_attachment:
-                        showConfirmDeleteDialog();
+                        /*@Note Copy list in order to assure that the checked items are still available in the dialog.
+                         *     The checked items might already have been reset by the list.*/
+                        SparseBooleanArray checkedItemsCopy = new SparseBooleanArray();
+                        SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
+
+                        for( int i = 0; i < checkedItems.size(); ++i){
+                            checkedItemsCopy.append(checkedItems.keyAt(i), checkedItems.valueAt(i));
+                        }
+                        showConfirmDeleteDialog(checkedItemsCopy);
+
                         mode.finish();
                         return true;
                     default:
@@ -111,7 +136,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-
             }
         });
 
@@ -129,7 +153,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
         mFilterAdapter = new AttachmentListFilterAdapter(getXoActivity());
         ab.setListNavigationCallbacks(mFilterAdapter, new AttachmentListFilterHandler());
         ab.setSelectedNavigationItem(mFilterAdapter.getPosition(mFilteredContactId));
-
     }
 
     @Override
@@ -138,7 +161,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
         ActionBar ab = getActivity().getActionBar();
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         ab.setDisplayShowTitleEnabled(true);
-
     }
 
     @Override
@@ -157,26 +179,27 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 mFilteredContactId);
         XoApplication.getXoClient().registerTransferListener(mAttachmentListAdapter);
         setListAdapter(mAttachmentListAdapter);
-
     }
 
-    private void deleteSelectedAttachments() {
-        SparseBooleanArray checked = getListView().getCheckedItemPositions();
+    private void deleteSelectedAttachments(SparseBooleanArray checked) {
 
         int count = getListView().getCount();
         for (int pos = count - 1; pos >= 0; --pos) {
-            if (checked.valueAt(pos)) {
+
+            int indexOfKey = checked.indexOfKey(pos);
+
+            if ( indexOfKey >= 0){
                 deleteAudioAttachment(pos);
             }
         }
     }
 
-    private void showConfirmDeleteDialog() {
+    private void showConfirmDeleteDialog(final SparseBooleanArray checkedItems) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.attachment_confirm_delete_dialog_message);
         builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                deleteSelectedAttachments();
+                deleteSelectedAttachments( checkedItems);
             }
         });
         builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {

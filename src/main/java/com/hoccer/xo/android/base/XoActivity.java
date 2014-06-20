@@ -720,14 +720,6 @@ public abstract class XoActivity extends FragmentActivity {
         startActivity(new Intent(this, PairingActivity.class));
     }
 
-    public void showAudioAttachmentList(TalkClientContact contact) {
-        LOG.debug("showAudioAttachmentList(" + contact.getClientContactId() + ")");
-        Intent intent = new Intent(this, AudioAttachmentListActivity.class);
-        intent.putExtra(AudioAttachmentListActivity.EXTRA_CLIENT_CONTACT_ID,
-                contact.getClientContactId());
-        startActivity(intent);
-    }
-
     public void showAudioAttachmentList() {
         LOG.debug("showAudioAttachmentList()");
         Intent intent = new Intent(this, AudioAttachmentListActivity.class);

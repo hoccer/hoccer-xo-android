@@ -153,7 +153,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         return position;
     }
 
-    private void removeInvisibleItems(int position){
+    private void removeInvisibleItems(){
 
         int firstVisible = mListView.getFirstVisiblePosition();
         int lastVisible = mListView.getLastVisiblePosition();
@@ -166,8 +166,6 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
                 getItem(current).setVisibility(false);
             }
         }
-
-        getItem(position).setVisibility(true);
 
         int offset = 0;
         mLastVisibleViews.clear();
@@ -183,7 +181,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         mListView.post(new Runnable() {
             @Override
             public void run() {
-                removeInvisibleItems(position);
+                removeInvisibleItems();
             }
         });
 
@@ -197,6 +195,8 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         } else {
             convertView = chatItem.recycleViewForMessage(convertView);
         }
+
+        chatItem.setVisibility(true);
 
         return convertView;
     }
