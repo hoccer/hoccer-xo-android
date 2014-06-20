@@ -15,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.adapter.ContactsPageAdapter;
 import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.fragment.ContactsFragment;
 import com.hoccer.xo.android.fragment.NearbyChatFragment;
 import com.hoccer.xo.release.R;
 
@@ -134,6 +135,10 @@ public class ContactsActivity extends XoActivity {
 
         @Override
         public void onPageSelected(int position) {
+            Fragment fragment = mAdapter.getItem(position);
+            if (fragment instanceof ContactsFragment) {
+                mAdapter.showNearbyPlaceholder();
+            }
             refreshEnvironmentUpdater();
         }
 
