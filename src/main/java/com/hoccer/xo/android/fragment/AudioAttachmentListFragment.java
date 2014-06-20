@@ -71,8 +71,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         ab.setDisplayShowTitleEnabled(false);
         mFilterAdapter = new AttachmentListFilterAdapter(getXoActivity());
-        SpinnerAdapter spinnerAdapter = mFilterAdapter;
-        ab.setListNavigationCallbacks(spinnerAdapter, new AttachmentListFilterHandler());
     }
 
     @Override
@@ -138,7 +136,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-
             }
         });
 
@@ -156,7 +153,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
         mFilterAdapter = new AttachmentListFilterAdapter(getXoActivity());
         ab.setListNavigationCallbacks(mFilterAdapter, new AttachmentListFilterHandler());
         ab.setSelectedNavigationItem(mFilterAdapter.getPosition(mFilteredContactId));
-
     }
 
     @Override
@@ -165,7 +161,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
         ActionBar ab = getActivity().getActionBar();
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         ab.setDisplayShowTitleEnabled(true);
-
     }
 
     @Override
@@ -184,7 +179,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 mFilteredContactId);
         XoApplication.getXoClient().registerTransferListener(mAttachmentListAdapter);
         setListAdapter(mAttachmentListAdapter);
-
     }
 
     private void deleteSelectedAttachments(SparseBooleanArray checked) {
