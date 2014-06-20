@@ -28,7 +28,7 @@ public class NearbyChatAdapter extends ChatAdapter {
         for (int i = 0; i < totalMessageCount; i++) {
             mChatMessageItems.add(null);
         }
-        loadNextMessages(mChatMessageItems.size() - (int) LOAD_MESSAGES);
+        loadNextMessages(mChatMessageItems.size() - (int) BATCH_SIZE);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class NearbyChatAdapter extends ChatAdapter {
             if (offset < 0) {
                 offset = 0;
             }
-            final List<TalkClientMessage> messagesBatch = mDatabase.findNearbyMessages(LOAD_MESSAGES, offset);
+            final List<TalkClientMessage> messagesBatch = mDatabase.findNearbyMessages(BATCH_SIZE, offset);
             for (int i = 0; i < messagesBatch.size(); i++) {
                 ChatMessageItem messageItem = getItemForMessage(messagesBatch.get(i));
                 mChatMessageItems.set(offset + i, messageItem);
