@@ -14,6 +14,7 @@ public class XoDialogs {
 
     public final static String DIALOG_NAME = "NameDialog";
     public final static String DIALOG_TOKEN = "TokenDialog";
+    public final static String DIALOG_CONTACT_BLOCK = "ContactBlockDialog";
     public final static String DIALOG_CONTACT_DELETE = "ContactDeleteDialog";
     public final static String DIALOG_CONTACT_DEPAIR = "ContactDepairDialog";
     public final static String DIALOG_GROUP_DELETE = "GroupDeleteDialog";
@@ -22,6 +23,11 @@ public class XoDialogs {
     public final static String DIALOG_GROUP_KICK = "GroupKickDialog";
     public final static String DIALOG_GROUP_INVITE = "GroupManageDialog";
     public final static String DIALOG_GROUP_MANAGE = "GroupManageDialog";
+
+    public static void confirmBlockContact(XoActivity activity, TalkClientContact contact) {
+        new ContactBlockDialog(activity, contact)
+                .show(activity.getFragmentManager(), DIALOG_CONTACT_BLOCK);
+    }
 
     public static void confirmDeleteContact(XoActivity activity, TalkClientContact contact) {
         new ContactDeleteDialog(activity, contact)

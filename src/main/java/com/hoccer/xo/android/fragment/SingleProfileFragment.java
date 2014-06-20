@@ -1,7 +1,5 @@
 package com.hoccer.xo.android.fragment;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -56,6 +54,8 @@ public class SingleProfileFragment extends XoFragment
     private EditText mEditName;
 
     private boolean isRegistered = true;
+
+    private Menu mMenu;
 
     public interface ISingleProfileFragmentListener {
         public void onShowMessageFragment();
@@ -156,29 +156,31 @@ public class SingleProfileFragment extends XoFragment
                 }
             }
         }
+
+        mMenu = menu;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_profile_block:
-                doBlockUnblockAction();
-                break;
-            case R.id.menu_profile_unblock:
-                doBlockUnblockAction();
-                break;
-            case R.id.menu_profile_delete:
-                if (mContact != null) {
+
+        if (mContact != null) {
+            switch (item.getItemId()) {
+                case R.id.menu_profile_block:
+                    XoDialogs.confirmBlockContact(getXoActivity(), mContact);
+                    return true;
+                case R.id.menu_profile_unblock:
+                    getXoClient().unblockContact(mContact);
+                    return true;
+                case R.id.menu_profile_delete:
                     XoDialogs.confirmDeleteContact(getXoActivity(), mContact);
-                }
-                break;
-            case R.id.menu_profile_edit:
-                getActivity().startActionMode(this);
-                break;
-            case R.id.menu_audio_attachment_list:
-                if (mContact != null) {
+                    return true;
+                case R.id.menu_profile_edit:
+                    getActivity().startActionMode(this);
+                    return true;
+                case R.id.menu_audio_attachment_list:
                     mSingleProfileFragmentListener.onShowAudioAttachmentListFragment();
-                }
+                    return true;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -189,21 +191,6 @@ public class SingleProfileFragment extends XoFragment
         if (v.getId() == R.id.profile_avatar_image) {
             if (mContact != null && mContact.isEditable()) {
                 getXoActivity().selectAvatar();
-            }
-        }
-    }
-
-    private void doBlockUnblockAction() {
-        if (mContact != null && mContact.isClient()) {
-            TalkRelationship relationship = mContact.getClientRelationship();
-            if (relationship != null) {
-                if (relationship.isBlocked()) {
-                    unblockContact();
-                } else {
-                    blockContact();
-                }
-
-                mSingleProfileFragmentListener.onShowMessageFragment();
             }
         }
     }
@@ -388,35 +375,6 @@ public class SingleProfileFragment extends XoFragment
         return builder.toString();
     }
 
-    private void blockContact() {
-        LOG.debug("blockContact()");
-        AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
-        builder.setNegativeButton(R.string.common_no, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        builder.setPositiveButton(R.string.common_yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (mContact != null) {
-                    getXoClient().blockContact(mContact);
-                }
-            }
-        });
-        builder.setTitle(R.string.dialog_block_user_title);
-        builder.setMessage(R.string.dialog_block_user_message);
-        builder.create().show();
-    }
-
-    private void unblockContact() {
-        LOG.debug("unblockContact()");
-        if (mContact != null) {
-            getXoClient().unblockContact(mContact);
-        }
-    }
-
     public void refreshContact(TalkClientContact newContact) {
         LOG.debug("refreshContact()");
         if (mMode == Mode.PROFILE) {
@@ -473,6 +431,7 @@ public class SingleProfileFragment extends XoFragment
     public void onClientRelationshipChanged(TalkClientContact contact) {
         if (isMyContact(contact)) {
             refreshContact(contact);
+            getActivity().invalidateOptionsMenu();
             updateActionBar();
             finishActivityIfContactDeleted();
         }
