@@ -3,7 +3,6 @@ package com.hoccer.xo.android.util;
 import android.content.Context;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import com.hoccer.xo.release.R;
 
 public abstract class ColorSchemeManager{
@@ -30,8 +29,6 @@ public abstract class ColorSchemeManager{
         Drawable myBG = activity.getResources().getDrawable(bgId);
 
         myBG.setColorFilter(colorFilter);
-
-        Log.e("bla", "Repaint");
 
         return myBG;
     }
