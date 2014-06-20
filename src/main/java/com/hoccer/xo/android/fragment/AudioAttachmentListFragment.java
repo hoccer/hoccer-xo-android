@@ -123,7 +123,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
                         SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
 
                         for( int i = 0; i < checkedItems.size(); ++i){
-                            checkedItems.append(checkedItems.keyAt(i), checkedItems.valueAt(i));
+                            checkedItemsCopy.append(checkedItems.keyAt(i), checkedItems.valueAt(i));
                         }
                         showConfirmDeleteDialog(checkedItemsCopy);
 
