@@ -122,7 +122,7 @@
                     android:value="com.hoccer.xo.android.activity.MessagingActivity"/>
         </activity>
 
-        <!-- MusicViewer activity -->
+        <!-- AudioAttachmentList activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.AudioAttachmentListActivity"
                 android:label="@string/actionbar_default_title"
