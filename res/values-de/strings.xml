@@ -27,6 +27,7 @@
     <string name="menu_about">Über uns</string>
     <string name="menu_reconnect">erneut verbinden</string>
     <string name="menu_quit">schließen</string>
+    <string name="menu_clear_conversation">Chat löschen</string>
 
     <!-- Contacts fragment -->
     <string name="contacts_category_friends">Freunde</string>

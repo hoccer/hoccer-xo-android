@@ -27,6 +27,7 @@
     <string name="menu_about">About</string>
     <string name="menu_reconnect">Reconnect</string>
     <string name="menu_quit">Quit</string>
+    <string name="menu_clear_conversation">Clear conversation</string>
 
     <!-- Contacts fragment -->
     <string name="contacts_category_friends">Friends</string>

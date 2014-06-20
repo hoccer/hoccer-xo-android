@@ -1,32 +1,28 @@
 package com.hoccer.xo.android.fragment;
 
+import android.os.Bundle;
+import android.view.*;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import com.hoccer.talk.client.IXoContactListener;
+import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.FriendRequestAdapter;
 import com.hoccer.xo.android.adapter.OnItemCountChangedListener;
-import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.release.R;
-
 import org.apache.log4j.Logger;
-
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import java.sql.SQLException;
 
 /**
  * Fragment that shows a list of contacts
- *
+ * <p/>
  * This currently shows only contact data but should also be able to show
  * recent conversations for use as a "conversations" view.
  */
@@ -35,6 +31,7 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
 
     private static final Logger LOG = Logger.getLogger(ContactsFragment.class);
 
+    private XoClientDatabase mDatabase;
     private ContactsAdapter mAdapter;
 
     private ListView mContactList;
@@ -44,14 +41,34 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
     private ImageView mPlaceholderImage;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mDatabase = getXoActivity().getXoDatabase();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         LOG.debug("onCreateView()");
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         mContactList = (ListView) view.findViewById(android.R.id.list);
         mPlaceholderImage = (ImageView) view.findViewById(R.id.iv_contacts_placeholder);
         mPlaceholderText = (TextView) view.findViewById(R.id.tv_contacts_placeholder);
+
+        registerForContextMenu(mContactList);
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        LOG.debug("onPause()");
+        super.onPause();
+        if (mAdapter != null) {
+            mAdapter.onPause();
+            mAdapter.onDestroy();
+            mAdapter = null;
+        }
+        getXoActivity().getXoClient().unregisterContactListener(this);
     }
 
     @Override
@@ -63,9 +80,42 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
         getXoActivity().getXoClient().registerContactListener(this);
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        Object object = mAdapter.getItem(info.position);
+        if (object instanceof TalkClientContact) {
+            MenuInflater inflater = getActivity().getMenuInflater();
+            inflater.inflate(R.menu.context_menu_contacts, menu);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case R.id.menu_clear_conversation:
+                TalkClientContact contact = (TalkClientContact) mAdapter.getItem(info.position);
+                clearConversationForContact(contact);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    private void clearConversationForContact(TalkClientContact contact) {
+        try {
+            mDatabase.deleteAllMessagesFromContactId(contact.getClientContactId());
+            mAdapter.notifyDataSetChanged();
+        } catch (SQLException e) {
+            LOG.error("SQLException while clearing conversation with contact " + contact.getClientContactId(), e);
+        }
+    }
+
     private void initFriendRequestAdapter() {
         ListView friendRequestListView = (ListView) getView().findViewById(R.id.lv_contacts_friendrequests);
-        if(getXoDatabase().hasPendingFriendRequests()) {
+        if (getXoDatabase().hasPendingFriendRequests()) {
             friendRequestListView.setAdapter(new FriendRequestAdapter(getXoActivity()));
             friendRequestListView.setVisibility(View.VISIBLE);
         } else {
@@ -113,18 +163,6 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
         onItemCountChanged(mAdapter.getCount());
     }
 
-    @Override
-    public void onPause() {
-        LOG.debug("onPause()");
-        super.onPause();
-        if (mAdapter != null) {
-            mAdapter.onPause();
-            mAdapter.onDestroy();
-            mAdapter = null;
-        }
-        getXoActivity().getXoClient().unregisterContactListener(this);
-    }
-
     // XXX @Override
     public void onGroupCreationSucceeded(int contactId) {
         LOG.debug("onGroupCreationSucceeded(" + contactId + ")");
@@ -161,7 +199,7 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
 
     @Override
     public void onItemCountChanged(int count) {
-        if(count > 0) {
+        if (count > 0) {
             hidePlaceholder();
         } else if (count < 1) {
             showPlaceholder();

@@ -270,7 +270,7 @@ public abstract class ContactsAdapter extends XoAdapter
             }
             offset += mClientContacts.size();
         }
-        return "";
+        return null;
     }
 
     @Override
