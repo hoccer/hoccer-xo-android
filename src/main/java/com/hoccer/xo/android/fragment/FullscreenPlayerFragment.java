@@ -337,9 +337,11 @@ public class FullscreenPlayerFragment extends Fragment {
             if (mMediaPlayerService != null) {
                 switch (v.getId()) {
                     case R.id.bt_player_skip_back:
+                        mTrackProgressBar.setProgress(0);
                         mMediaPlayerService.playPrevious();
                         break;
                     case R.id.bt_player_skip_forward:
+                        mTrackProgressBar.setProgress(0);
                         mMediaPlayerService.playNext();
                         break;
                     case R.id.bt_player_repeat:
