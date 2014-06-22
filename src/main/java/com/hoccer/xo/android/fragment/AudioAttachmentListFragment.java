@@ -7,17 +7,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.*;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SpinnerAdapter;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.android.activity.AudioAttachmentListActivity;
 import com.hoccer.xo.android.adapter.AttachmentListAdapter;
 import com.hoccer.xo.android.adapter.AttachmentListFilterAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
@@ -118,14 +115,14 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 switch (item.getItemId()) {
                     case R.id.menu_delete_attachment:
                         /*@Note Copy list in order to assure that the checked items are still available in the dialog.
-                         *     The checked items might already have been reset by the list.*/
-                        SparseBooleanArray checkedItemsCopy = new SparseBooleanArray();
-                        SparseBooleanArray checkedItems = getListView().getCheckedItemPositions();
+                         *     The selected items might already have been reset by the list.*/
+                        SparseBooleanArray selectedItems = getListView().getCheckedItemPositions();
 
-                        for( int i = 0; i < checkedItems.size(); ++i){
-                            checkedItemsCopy.append(checkedItems.keyAt(i), checkedItems.valueAt(i));
+                        SparseBooleanArray selectedItemsCopy = new SparseBooleanArray();
+                        for( int i = 0; i < selectedItems.size(); ++i){
+                            selectedItemsCopy.append(selectedItems.keyAt(i), selectedItems.valueAt(i));
                         }
-                        showConfirmDeleteDialog(checkedItemsCopy);
+                        showConfirmDeleteDialog(selectedItemsCopy);
 
                         mode.finish();
                         return true;
@@ -181,25 +178,23 @@ public class AudioAttachmentListFragment extends XoListFragment {
         setListAdapter(mAttachmentListAdapter);
     }
 
-    private void deleteSelectedAttachments(SparseBooleanArray checked) {
+    private void deleteSelectedAttachments(SparseBooleanArray selectedItems) {
+        int attachmentCount = getListView().getCount();
 
-        int count = getListView().getCount();
-        for (int pos = count - 1; pos >= 0; --pos) {
-
-            int indexOfKey = checked.indexOfKey(pos);
-
-            if ( indexOfKey >= 0){
-                deleteAudioAttachment(pos);
+        // remove list items from back to front to avoid index invalidation
+        for (int index = attachmentCount - 1; index >= 0; --index) {
+            if(selectedItems.get(index)) {
+                deleteAudioAttachment(index);
             }
         }
     }
 
-    private void showConfirmDeleteDialog(final SparseBooleanArray checkedItems) {
+    private void showConfirmDeleteDialog(final SparseBooleanArray selectedItems) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.attachment_confirm_delete_dialog_message);
         builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                deleteSelectedAttachments( checkedItems);
+                deleteSelectedAttachments( selectedItems);
             }
         });
         builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
