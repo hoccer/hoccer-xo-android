@@ -50,11 +50,7 @@ public class XoDialogs {
         dialogFragment.show(activity.getFragmentManager(), tag);
     }
 
-    public final static String DIALOG_NAME = "NameDialog";
     public final static String DIALOG_TOKEN = "TokenDialog";
-    public final static String DIALOG_CONTACT_DEPAIR = "ContactDepairDialog";
-    public final static String DIALOG_GROUP_KICK = "GroupKickDialog";
-    public final static String DIALOG_GROUP_INVITE = "GroupManageDialog";
     public final static String DIALOG_GROUP_MANAGE = "GroupManageDialog";
 
     public static void selectGroupManage(XoActivity activity, TalkClientContact group) {
