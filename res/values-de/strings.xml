@@ -141,7 +141,7 @@
 
     <!-- Depair dialog -->
     <string name="depaircontact_title">Verbindung auflösen?</string>
-    <string name="depaircontact_question">Bist du sicher, dass du die Verbindung auflösen möchtest? Es können dann keine Nachrichten ausgetauscht werden, bis ihr euch erneut verbindet. 
+    <string name="depaircontact_question">Bist du sicher, dass du die Verbindung auflösen möchtest? Es können dann keine Nachrichten ausgetauscht werden, bis ihr euch erneut verbindet.
     </string>
 
     <!-- Group kick selection dialog -->
@@ -160,10 +160,10 @@
     <string name="delete_group_title">Gruppe löschen</string>
     <string name="delete_group_question">Bist du dir sicher, dass du die Gruppe löschen möchtest?</string>
     <string name="reject_invitation_title">Einladung ablehnen</string>
-    <string name="reject_invitation_question">Bist du dir sicher, dass du die Einladung ablehnen möchtest? Du musst erneut eingeladen werden, um wieder teilnehmen zu können. 
+    <string name="reject_invitation_question">Bist du dir sicher, dass du die Einladung ablehnen möchtest? Du musst erneut eingeladen werden, um wieder teilnehmen zu können.
     </string>
     <string name="leave_title">Gruppe verlassen</string>
-    <string name="leave_question">Bist du dir sicher, dass du die Gruppe verlassen möchtest? Du musst erneut eingeladen werden, um wieder teilnehmen zu können. 
+    <string name="leave_question">Bist du dir sicher, dass du die Gruppe verlassen möchtest? Du musst erneut eingeladen werden, um wieder teilnehmen zu können.
     </string>
     <string name="common_group">Gruppe</string>
     <string name="common_group_invite">Eingeladen</string>
@@ -173,7 +173,7 @@
     <string name="file_chooser_string">Datei auswählen</string>
     <string name="open_file">Datei öffnen</string>
     <string name="error_no_such_app">keine installierte App kann diese Datei öffnen</string>
-    <string name="error_no_videoplayer">Video nicht abspielbar. Bitte anderen Videoplayer installieren. 
+    <string name="error_no_videoplayer">Video nicht abspielbar. Bitte anderen Videoplayer installieren.
     </string>
     <string name="menu_group_delete_profile">Gruppe schließen</string>
     <string name="menu_group_edit_profile">Gruppe bearbeiten</string>
@@ -197,7 +197,7 @@
     <string name="dialog_attachment_choose_discard_option">Anhang verwerfen</string>
     <string name="dialog_attachment_title">Anhang bearbeiten</string>
     <string name="dialog_block_user_title">Kontakt blockieren</string>
-    <string name="dialog_block_user_message">Bist du dir sicher, dass du diesen Kontakt blockieren möchtest? Du wirst keine weiteren Nachrichten von diesem Kontakt erhalten. 
+    <string name="dialog_block_user_message">Bist du dir sicher, dass du diesen Kontakt blockieren möchtest? Du wirst keine weiteren Nachrichten von diesem Kontakt erhalten.
     </string>
 
     <!-- Preferences -->
