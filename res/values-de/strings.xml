@@ -157,8 +157,8 @@
     <string name="selectlocation_title">Standort auswählen</string>
 
     <!-- Group leave dialog -->
-    <string name="delete_group_title">Gruppe löschen</string>
-    <string name="delete_group_question">Bist du dir sicher, dass du die Gruppe löschen möchtest?</string>
+    <string name="dialog_delete_group_title">Gruppe löschen</string>
+    <string name="dialog_delete_group_message">Bist du dir sicher, dass du die Gruppe löschen möchtest?</string>
     <string name="reject_invitation_title">Einladung ablehnen</string>
     <string name="reject_invitation_question">Bist du dir sicher, dass du die Einladung ablehnen möchtest? Du musst erneut eingeladen werden, um wieder teilnehmen zu können.
     </string>

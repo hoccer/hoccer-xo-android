@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.fragment;
 
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -319,7 +320,7 @@ public class GroupProfileFragment extends XoFragment
         LOG.debug("refreshContact()");
 
         mGroup = newContact;
-        
+
         try {
             getXoDatabase().refreshClientContact(mGroup);
             if (mMode == Mode.PROFILE) {
@@ -515,7 +516,21 @@ public class GroupProfileFragment extends XoFragment
         LOG.debug("onOptionsItemSelected(" + menuItem.toString() + ")");
         switch (menuItem.getItemId()) {
             case R.id.menu_group_profile_delete:
-                XoDialogs.confirmDeleteGroup(getXoActivity(), mGroup);
+                XoDialogs.showYesNoDialog("GroupDeleteDialog",
+                        R.string.dialog_delete_group_title,
+                        R.string.dialog_delete_group_message,
+                        getXoActivity(),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                getXoActivity().getXoClient().deleteContact(mGroup);
+                            }
+                        },
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
                 break;
             case R.id.menu_group_profile_add_person:
                 manageGroupMembers();
