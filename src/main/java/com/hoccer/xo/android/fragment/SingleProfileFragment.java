@@ -94,28 +94,28 @@ public class SingleProfileFragment extends XoFragment
             e.printStackTrace();
         }
 
-        if(contact.getClientRelationship() == null || contact.getClientRelationship().getState().equals(TalkRelationship.STATE_NONE)) {
-            inviteButton.setText("als Freund hinzufügen");
+        if(contact.getClientRelationship() == null || (contact.getClientRelationship().getState() != null && contact.getClientRelationship().getState().equals(TalkRelationship.STATE_NONE))) {
+            inviteButton.setText(R.string.friend_request_add_as_friend);
             inviteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    getXoActivity().getXoClient().getServerRpc().inviteFriend(contact.getClientId());
+                    getXoActivity().getXoClient().inviteFriend(contact);
                 }
             });
-        } else if(contact.getClientRelationship().getState().equals(TalkRelationship.STATE_INVITED)) {
-            inviteButton.setText("Freundschaftsanfrage zurückziehen");
+        } else if(contact.getClientRelationship().getState() != null && contact.getClientRelationship().getState().equals(TalkRelationship.STATE_INVITED)) {
+            inviteButton.setText(R.string.friend_request_cancel_invitation);
             inviteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    getXoActivity().getXoClient().getServerRpc().disinviteFriend(contact.getClientId());
+                    getXoActivity().getXoClient().disinviteFriend(contact);
                 }
             });
-        } else if(contact.getClientRelationship().getState().equals(TalkRelationship.STATE_INVITED_ME)) {
-            inviteButton.setText("Freundschaftsanfrage akzeptieren");
+        } else if(contact.getClientRelationship().getState() != null && contact.getClientRelationship().getState().equals(TalkRelationship.STATE_INVITED_ME)) {
+            inviteButton.setText(R.string.friend_request_accept_invitation);
             inviteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    getXoActivity().getXoClient().getServerRpc().acceptFriend(contact.getClientId());
+                    getXoActivity().getXoClient().acceptFriend(contact);
                 }
             });
         } else {

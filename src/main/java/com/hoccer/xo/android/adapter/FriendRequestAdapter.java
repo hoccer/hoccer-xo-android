@@ -58,8 +58,13 @@ public class FriendRequestAdapter extends XoAdapter {
         avatarView.setContact(contact);
 
         nameView.setText(contact.getName());
-        descriptionView.setText(R.string.friend_request_description);
         timeView.setText("");
+
+        if (contact.getClientRelationship().invitedMe()) {
+            descriptionView.setText(R.string.friend_request_invited_me_description);
+        } else {
+            descriptionView.setText(R.string.friend_request_invited_by_you_description);
+        }
 
         return view;
     }

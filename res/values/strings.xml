@@ -92,6 +92,13 @@
     <string name="profile_user_unblock_button">Unblock this user</string>
     <string name="profile_user_depair_button">Depair this user</string>
     <string name="profile_user_delete_button">Delete this user</string>
+
+    <string name="friend_request_add_as_friend">Add as a friend</string>
+    <string name="friend_request_cancel_invitation">Cancel invitation</string>
+    <string name="friend_request_accept_invitation">Accept invitation</string>
+    <string name="friend_request_invited_me_description">wants to be your friend.</string>
+    <string name="friend_request_invited_by_you_description">has received an invitation from you.</string>
+
     <string name="group_name_hint">Group name</string>
     <string name="profile_group_members_title">Members</string>
     <string name="profile_group_create_button">Create group</string>
@@ -267,6 +274,5 @@
     <string name="placeholder_conversations_text">Invite friends to chat with!</string>
     <string name="placeholder_nearby_text">Waiting for others nearby...</string>
     <string name="actionbar_default_title">Hoccer</string>
-    <string name="friend_request_description">wants to be your friend.</string>
 
 </resources>

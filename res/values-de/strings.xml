@@ -91,6 +91,13 @@
     <string name="profile_user_unblock_button">User entblockieren</string>
     <string name="profile_user_depair_button">Verbindung aufheben</string>
     <string name="profile_user_delete_button">Kontakt löschen</string>
+
+    <string name="friend_request_add_as_friend">Als Freund hinzufügen</string>
+    <string name="friend_request_cancel_invitation">Freundschaftsanfrage zurückziehen</string>
+    <string name="friend_request_accept_invitation">Freundschaftsanfrage akzeptieren</string>
+    <string name="friend_request_invited_me_description">möchte dein Freund sein.</string>
+    <string name="friend_request_invited_by_you_description">hat eine Einladung von dir bekommen.</string>
+
     <string name="group_name_hint">Gruppenname</string>
     <string name="profile_group_members_title">Mitglieder</string>
     <string name="profile_group_create_button">Gruppe erstellen</string>
@@ -239,7 +246,6 @@
     <string name="placeholder_conversations_text">Lade deine Freunde zum Chatten ein!</string>
     <string name="placeholder_nearby_text">Warten auf andere Nearby-Nutzer...</string>
     <string name="actionbar_default_title">Hoccer</string>
-    <string name="friend_request_description">möchte dein Freund sein.</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>
