@@ -199,7 +199,22 @@ public class GroupProfileFragment extends XoFragment
                 getActivity().startActionMode(this);
                 break;
             case R.id.menu_group_profile_reject_invitation:
-                XoDialogs.confirmRejectInvitationGroup(getXoActivity(), mGroup);
+                XoDialogs.showYesNoDialog("RejectGroupInvitationDialog",
+                        R.string.dialog_reject_group_invitation_title,
+                        R.string.dialog_reject_group_invitation_message,
+                        getXoActivity(),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                getXoActivity().getXoClient().leaveGroup(mGroup.getGroupId());
+                                getXoActivity().finish();
+                            }
+                        },
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
                 break;
             case R.id.menu_group_profile_join:
                 joinGroup();

@@ -53,15 +53,9 @@ public class XoDialogs {
     public final static String DIALOG_NAME = "NameDialog";
     public final static String DIALOG_TOKEN = "TokenDialog";
     public final static String DIALOG_CONTACT_DEPAIR = "ContactDepairDialog";
-    public final static String DIALOG_GROUP_REJECT_INVITATION = "GroupRejectInvitationDialog";
     public final static String DIALOG_GROUP_KICK = "GroupKickDialog";
     public final static String DIALOG_GROUP_INVITE = "GroupManageDialog";
     public final static String DIALOG_GROUP_MANAGE = "GroupManageDialog";
-
-    public static void confirmRejectInvitationGroup(XoActivity activity, TalkClientContact group) {
-        new GroupRejectInvitationDialog(activity, group)
-                .show(activity.getFragmentManager(), DIALOG_GROUP_REJECT_INVITATION);
-    }
 
     public static void selectGroupManage(XoActivity activity, TalkClientContact group) {
         new GroupManageDialog(group)
