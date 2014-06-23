@@ -166,8 +166,8 @@
     <string name="reject_invitation_question">Are you sure you want to reject this invitation? You
         will have to be re-invited to participate again.
     </string>
-    <string name="leave_title">Leave group</string>
-    <string name="leave_question">Are you sure you want to leave this group? You will have to be
+    <string name="dialog_leave_group_title">Leave group</string>
+    <string name="dialog_leave_group_message">Are you sure you want to leave this group? You will have to be
         re-invited to participate again.
     </string>
     <string name="common_group">Group</string>

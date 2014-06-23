@@ -162,8 +162,8 @@
     <string name="reject_invitation_title">Einladung ablehnen</string>
     <string name="reject_invitation_question">Bist du dir sicher, dass du die Einladung ablehnen möchtest? Du musst erneut eingeladen werden, um wieder teilnehmen zu können.
     </string>
-    <string name="leave_title">Gruppe verlassen</string>
-    <string name="leave_question">Bist du dir sicher, dass du die Gruppe verlassen möchtest? Du musst erneut eingeladen werden, um wieder teilnehmen zu können.
+    <string name="dialog_leave_group_title">Gruppe verlassen</string>
+    <string name="dialog_leave_group_message">Bist du dir sicher, dass du die Gruppe verlassen möchtest? Du musst erneut eingeladen werden, um wieder teilnehmen zu können.
     </string>
     <string name="common_group">Gruppe</string>
     <string name="common_group_invite">Eingeladen</string>

@@ -205,7 +205,22 @@ public class GroupProfileFragment extends XoFragment
                 joinGroup();
                 break;
             case R.id.menu_group_profile_leave:
-                XoDialogs.confirmLeaveGroup(getXoActivity(), mGroup);
+                XoDialogs.showYesNoDialog("LeaveGroupDialog",
+                        R.string.dialog_leave_group_title,
+                        R.string.dialog_leave_group_message,
+                        getXoActivity(),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                getXoActivity().getXoClient().leaveGroup(mGroup.getGroupId());
+                                getXoActivity().finish();
+                            }
+                        },
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
                 break;
         }
         return super.onOptionsItemSelected(item);
