@@ -49,10 +49,10 @@ public class ChatAudioItem extends ChatMessageItem {
             int textColor = -1;
             int iconId = -1;
             if(mMessage.isIncoming()) {
-                textColor = Color.BLACK;
+                textColor = R.color.xo_incoming_message_textColor;
                 iconId = R.drawable.ic_dark_music;
             } else {
-                textColor = Color.WHITE;
+                textColor = R.color.xo_compose_message_textColor;
                 iconId = R.drawable.ic_light_music;
             }
 

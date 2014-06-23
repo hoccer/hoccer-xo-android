@@ -16,7 +16,7 @@
     </style>
 
     <style name="ActionBarTabText.Solid.AppBaseTheme" parent="@android:style/Widget.Holo.Light.ActionBar.TabText">
-        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColor">@color/xo_actionbar_tabtext_color</item>
     </style>
 
     <style name="PopupMenu.AppBaseTheme" parent="@android:style/Widget.Holo.ListPopupWindow">

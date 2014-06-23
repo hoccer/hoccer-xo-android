@@ -54,12 +54,10 @@ public class ChatVideoItem extends ChatMessageItem {
         int textColor = -1;
         int iconId = -1;
         if (mMessage.isIncoming()) {
-            textColor = Color.BLACK;
-            iconId = R.drawable.ic_dark_music;
+            textColor = R.color.xo_incoming_message_textColor;
             iconId = R.drawable.ic_dark_video;
         } else {
-            textColor = Color.WHITE;
-            iconId = R.drawable.ic_light_music;
+            textColor = R.color.xo_compose_message_textColor;
             iconId = R.drawable.ic_light_video;
         }
 

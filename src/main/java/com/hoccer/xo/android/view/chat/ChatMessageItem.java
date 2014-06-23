@@ -134,8 +134,9 @@ public class ChatMessageItem implements AttachmentTransferListener {
             }
             messageName.setVisibility(View.VISIBLE);
             messageName.setText(mMessage.getSenderContact().getName());
-            messageText.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_green));
-//            messageText.setBackgroundDrawable(ColorSchemeManager.fillBackground(mContext, R.drawable.bubble_green, true));
+//            messageText.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_green));
+            messageText.setBackgroundDrawable(ColorSchemeManager.fillBackground(mContext, R.drawable.bubble_green, true));
+//            LOG.error("repaint******************************");
 
             messageText
                     .setTextColor(mContext.getResources().getColorStateList(R.color.xo_incoming_message_textColor));
@@ -156,9 +157,9 @@ public class ChatMessageItem implements AttachmentTransferListener {
             avatarView.setVisibility(View.GONE);
             messageName.setVisibility(View.GONE);
 
-            messageText.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_grey));
-//            messageText.setBackgroundDrawable(ColorSchemeManager.fillBackground(mContext, R.drawable.bubble_grey, false));
-
+//            messageText.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_grey));
+            messageText.setBackgroundDrawable(ColorSchemeManager.fillBackground(mContext, R.drawable.bubble_grey, false));
+//            LOG.error("repaint------------------------------");
             messageText.setTextColor(
                     mContext.getResources().getColorStateList(R.color.xo_compose_message_textColor));
             messageText.setLinkTextColor(
@@ -239,7 +240,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
         // adjust layout for incoming / outgoing attachment
         if (mMessage.isIncoming()) {
-            mAttachmentView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_grey));
+            mAttachmentView.setBackgroundDrawable(ColorSchemeManager.fillBackground(mContext, R.drawable.bubble_grey, false));
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mAttachmentView.getLayoutParams();
             float marginLeft = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, mContext.getResources().getDisplayMetrics());
             float marginRight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, mContext.getResources().getDisplayMetrics());
@@ -247,7 +248,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
             layoutParams.rightMargin = (int) marginRight;
             mAttachmentView.setLayoutParams(layoutParams);
         } else {
-            mAttachmentView.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_green));
+            mAttachmentView.setBackgroundDrawable(ColorSchemeManager.fillBackground(mContext, R.drawable.bubble_green, true));
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mAttachmentView.getLayoutParams();
             float marginLeft = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, mContext.getResources().getDisplayMetrics());
             float marginRight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, mContext.getResources().getDisplayMetrics());
