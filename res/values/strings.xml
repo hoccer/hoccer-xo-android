@@ -39,7 +39,8 @@
     </string>
 
     <!-- Nearby location request -->
-    <string name="nearby_enable_location_service">This feature uses location service
+    <string name="dialog_enable_location_service_title">Location Services</string>
+    <string name="dialog_enable_location_service_message">This feature uses location service
         (GPS or Network location). Do you want to enable it?</string>
     <string name="nearby_yes">Yes</string>
     <string name="nearby_no">No</string>

@@ -39,7 +39,8 @@
     </string>
 
     <!-- Nearby location request -->
-    <string name="nearby_enable_location_service">Um diese Funktion nutzen zu können musst Du Ortungsdienste aktivieren. (GPS oder Netzwerkposition). Willst Du es aktivieren?</string>
+    <string name="dialog_enable_location_service_title">Ortungsdienste</string>
+    <string name="dialog_enable_location_service_message">Um diese Funktion nutzen zu können musst Du Ortungsdienste aktivieren. (GPS oder Netzwerkposition). Willst Du es aktivieren?</string>
     <string name="nearby_yes">Ja</string>
     <string name="nearby_no">Nein</string>
 
