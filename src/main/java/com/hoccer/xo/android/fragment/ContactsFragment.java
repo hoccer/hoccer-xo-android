@@ -40,6 +40,8 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
 
     private ImageView mPlaceholderImage;
 
+    private FriendRequestAdapter mFriendRequestAdapter = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,8 +118,11 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
     private void initFriendRequestAdapter() {
         ListView friendRequestListView = (ListView) getView().findViewById(R.id.lv_contacts_friendrequests);
         if (getXoDatabase().hasPendingFriendRequests()) {
-            friendRequestListView.setAdapter(new FriendRequestAdapter(getXoActivity()));
+            mFriendRequestAdapter = new FriendRequestAdapter(getXoActivity());
+            mFriendRequestAdapter.setOnItemCountChangedListener(this);
+            friendRequestListView.setAdapter(mFriendRequestAdapter);
             friendRequestListView.setVisibility(View.VISIBLE);
+            hidePlaceholder();
         } else {
             friendRequestListView.setVisibility(View.GONE);
         }
@@ -231,10 +236,13 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
 
     @Override
     public void onClientRelationshipChanged(TalkClientContact contact) {
+        if(mFriendRequestAdapter == null) {
+            return;
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                initFriendRequestAdapter();
+                mFriendRequestAdapter.notifyDataSetChanged();
             }
         });
     }
