@@ -234,11 +234,11 @@
         chatting. Download it now: http://hoccer.com/ Then add me as a contact: %1$s%2$s
         \nxo %3$s
     </string>
-    <string name="export_credentials_dialog_title">Export credentials</string>
+    <string name="dialog_export_credentials_title">Export credentials</string>
     <string name="export_credentials_success">Successfully saved your credentials.</string>
     <string name="export_credentials_failure">Error while saving your credentials.</string>
 
-    <string name="import_credentials_dialog_title">Import credentials</string>
+    <string name="dialog_import_credentials_title">Import credentials</string>
     <string name="import_credentials_success">Successfully imported your credentials.\nPlease restart the app.</string>
     <string name="import_credentials_failure">Error while importing your credentials.</string>
 

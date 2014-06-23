@@ -224,11 +224,11 @@
     <string name="sms_invitation_text">Hey! Ich nutze die Gratis-App HoccerXO zum sicheren Chatten! Jetzt herunterladen: http://hoccer.com/ Dann mich als Kontakt hinzufügen: %1$s%2$s
         \nxo %3$s
     </string>
-    <string name="export_credentials_dialog_title">Zugangsdaten exportieren</string>
+    <string name="dialog_export_credentials_title">Zugangsdaten exportieren</string>
     <string name="export_credentials_success">Zugangsdaten erfolgreich exportiert.</string>
     <string name="export_credentials_failure">Es ist ein Fehler beim exportieren der Zugangsdaten aufgetreten.</string>
 
-    <string name="import_credentials_dialog_title">Zugangsdaten importieren</string>
+    <string name="dialog_import_credentials_title">Zugangsdaten importieren</string>
     <string name="import_credentials_success">Zugangsdaten erfolgreich importiert.\nBitte starten Sie die App neu.</string>
     <string name="import_credentials_failure">Es ist ein Fehler beim importieren der Zugangsdaten aufgetreten.</string>
 
