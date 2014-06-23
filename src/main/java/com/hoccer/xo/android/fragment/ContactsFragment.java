@@ -144,7 +144,7 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
                             return true;
                         }
                     } else if (contact.isClient()) {
-                        if (contact.isClientRelated()) {
+                        if (contact.isClientRelated() && contact.getClientRelationship().isFriend()) {
                             return true;
                         }
                     } else if (contact.isEverRelated()) {
@@ -231,7 +231,12 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
 
     @Override
     public void onClientRelationshipChanged(TalkClientContact contact) {
-        initFriendRequestAdapter();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                initFriendRequestAdapter();
+            }
+        });
     }
 
     @Override

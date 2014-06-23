@@ -1,14 +1,5 @@
 package com.hoccer.xo.android.adapter;
 
-import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.client.model.TalkClientDownload;
-import com.hoccer.talk.client.model.TalkClientMessage;
-import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.talk.model.TalkRelationship;
-import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.view.AvatarView;
-import com.hoccer.xo.release.R;
-
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -16,6 +7,13 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.TextView;
+import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientDownload;
+import com.hoccer.talk.client.model.TalkClientMessage;
+import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.view.AvatarView;
+import com.hoccer.xo.release.R;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -32,15 +30,6 @@ public class RichContactsAdapter extends ContactsAdapter {
     public RichContactsAdapter(XoActivity activity) {
         super(activity);
         setShowTokens(true);
-        setFilter(new Filter() {
-            @Override
-            public boolean shouldShow(TalkClientContact contact) {
-                if(contact.getClientRelationship().getState().equals(TalkRelationship.STATE_FRIEND)) {
-                    return true;
-                }
-                return false;
-            }
-        });
     }
 
     @Override
@@ -130,8 +119,7 @@ public class RichContactsAdapter extends ContactsAdapter {
 
         long unseenMessages = 0;
         try {
-            unseenMessages = mDatabase
-                    .findUnseenMessageCountByContactId(contact.getClientContactId());
+            unseenMessages = mDatabase.findUnseenMessageCountByContactId(contact.getClientContactId());
         } catch (SQLException e) {
             LOG.error("sql error", e);
         }

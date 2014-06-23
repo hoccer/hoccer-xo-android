@@ -52,6 +52,8 @@ public class FriendRequestAdapter extends XoAdapter {
         TextView nameView = (TextView) view.findViewById(R.id.contact_name);
         TextView descriptionView = (TextView) view.findViewById(R.id.contact_last_message);
         TextView timeView = (TextView) view.findViewById(R.id.contact_time);
+        TextView unseenMessages = (TextView) view.findViewById(R.id.contact_unseen_messages);
+        unseenMessages.setVisibility(View.GONE);
 
         avatarView.setContact(contact);
 
