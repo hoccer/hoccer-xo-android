@@ -88,7 +88,23 @@ public class SingleProfileFragment extends XoFragment
                 break;
             case R.id.menu_profile_delete:
                 if (mContact != null) {
-                    XoDialogs.confirmDeleteContact(getXoActivity(), mContact);
+                    XoDialogs.showYesNoDialog("ContactDeleteDialog",
+                            R.string.dialog_delete_contact_title,
+                            R.string.dialog_delete_contact_message,
+                            getXoActivity(),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+                                    getXoActivity().getXoClient().deleteContact(mContact);
+                                    getXoActivity().hackReturnedFromDialog();
+                                }
+                            },
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+
+                                }
+                            });
                 }
                 break;
             case R.id.menu_profile_edit:

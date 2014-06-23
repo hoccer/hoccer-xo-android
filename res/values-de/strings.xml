@@ -135,8 +135,8 @@
     <string name="setname_title">Benutzername ändern</string>
 
     <!-- Contact deletion dialog -->
-    <string name="deletecontact_title">Kontakt wirklich löschen?</string>
-    <string name="deletecontact_question">Bist du sicher, dass du diesen Kontakt löschen möchtest? Alle Nachrichten werden dann unwiderruflich gelöscht. 
+    <string name="dialog_delete_contact_title">Kontakt wirklich löschen?</string>
+    <string name="dialog_delete_contact_message">Bist du sicher, dass du diesen Kontakt löschen möchtest? Alle Nachrichten werden dann unwiderruflich gelöscht.
     </string>
 
     <!-- Depair dialog -->
