@@ -16,17 +16,6 @@
 
 package com.google.android.gcm;
 
-import static com.google.android.gcm.GCMConstants.ERROR_SERVICE_NOT_AVAILABLE;
-import static com.google.android.gcm.GCMConstants.EXTRA_ERROR;
-import static com.google.android.gcm.GCMConstants.EXTRA_REGISTRATION_ID;
-import static com.google.android.gcm.GCMConstants.EXTRA_SPECIAL_MESSAGE;
-import static com.google.android.gcm.GCMConstants.EXTRA_TOTAL_DELETED;
-import static com.google.android.gcm.GCMConstants.EXTRA_UNREGISTERED;
-import static com.google.android.gcm.GCMConstants.INTENT_FROM_GCM_LIBRARY_RETRY;
-import static com.google.android.gcm.GCMConstants.INTENT_FROM_GCM_MESSAGE;
-import static com.google.android.gcm.GCMConstants.INTENT_FROM_GCM_REGISTRATION_CALLBACK;
-import static com.google.android.gcm.GCMConstants.VALUE_DELETED_MESSAGES;
-
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.PendingIntent;
@@ -38,6 +27,8 @@ import android.util.Log;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+
+import static com.google.android.gcm.GCMConstants.*;
 
 /**
  * Skeleton for application-specific {@link IntentService}s responsible for

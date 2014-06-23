@@ -12,13 +12,15 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.adapter.ContactsPageAdapter;
-import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.fragment.NearbyContactsFragment;
 import com.hoccer.xo.release.R;
 
-public class ContactsActivity extends XoActivity {
+public class ContactsActivity extends XoActionbarActivity {
 
     private ViewPager mViewPager;
     private ActionBar mActionBar;
@@ -123,6 +125,26 @@ public class ContactsActivity extends XoActivity {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu (Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        menu.findItem(R.id.menu_audio_attachment_list).setVisible(true);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.menu_audio_attachment_list:
+                showAudioAttachmentList();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private class ConversationsPageListener implements ViewPager.OnPageChangeListener {

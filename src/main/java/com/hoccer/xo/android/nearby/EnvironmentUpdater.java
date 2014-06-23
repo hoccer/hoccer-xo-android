@@ -1,12 +1,5 @@
 package com.hoccer.xo.android.nearby;
 
-import com.hoccer.talk.client.XoClient;
-import com.hoccer.talk.model.TalkEnvironment;
-import com.hoccer.xo.android.XoApplication;
-import com.hoccer.xo.android.error.EnvironmentUpdaterException;
-
-import org.apache.log4j.Logger;
-
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
@@ -14,6 +7,11 @@ import android.location.LocationManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import com.hoccer.talk.client.XoClient;
+import com.hoccer.talk.model.TalkEnvironment;
+import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.error.EnvironmentUpdaterException;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Date;

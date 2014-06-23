@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--XXHDPI-->
+<resources>
+    <dimen name="xo_message_corner_radius">10dp</dimen>
+    <dimen name="default_attachment_icon_dim">40dp</dimen>
+    <dimen name="media_player_layout_margin">8dp</dimen>
+    <dimen name="media_player_text_medium">16sp</dimen>
+    <dimen name="media_player_text_large">20sp</dimen>
+    <dimen name="media_player_text_small">14sp</dimen>
+    <dimen name="media_player_play_button_size">70dp</dimen>
+</resources>

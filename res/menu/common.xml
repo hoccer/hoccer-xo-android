@@ -3,6 +3,7 @@
 
     <item
         android:id="@+id/menu_my_profile"
+        android:visible="true"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/menu_my_profile"/>
@@ -14,21 +15,25 @@
         android:showAsAction="never"
         android:title="@string/menu_reconnect"/>
 
-    <!--<item-->
-        <!--android:id="@+id/menu_about"-->
-        <!--android:orderInCategory="910"-->
-        <!--android:showAsAction="never"-->
-        <!--android:title="@string/menu_about"/>-->
-
-    <!--<item-->
-        <!--android:id="@+id/menu_licenses"-->
-        <!--android:orderInCategory="911"-->
-        <!--android:showAsAction="never"-->
-        <!--android:title="@string/menu_licenses"/>-->
-
     <item
         android:id="@+id/menu_settings"
         android:orderInCategory="920"
         android:showAsAction="never"
         android:title="@string/menu_settings"/>
+
+    <item
+        android:id="@+id/menu_media_player"
+        android:icon="@drawable/ic_notification_music"
+        android:visible="false"
+        android:showAsAction="always"
+        android:orderInCategory="90"
+            android:title=""/>
+
+    <item
+        android:id="@+id/menu_audio_attachment_list"
+        android:visible="false"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/menu_music_viewer"/>
+
 </menu>

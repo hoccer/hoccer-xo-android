@@ -49,6 +49,8 @@ public class ChatMessageItem implements AttachmentTransferListener {
     protected LinearLayout mContentWrapper;
     protected AttachmentTransferControlView mContentTransferControl;
 
+    protected boolean mVisible = false;
+
     public ChatMessageItem(Context context, TalkClientMessage message) {
         super();
         mContext = context;
@@ -101,6 +103,10 @@ public class ChatMessageItem implements AttachmentTransferListener {
         return ChatItemType.ChatItemWithText;
     }
 
+    public void setVisibility(boolean visible){
+        mVisible = visible;
+    }
+
     /**
      * Creates a new empty message layout.
      *
@@ -134,9 +140,8 @@ public class ChatMessageItem implements AttachmentTransferListener {
             }
             messageName.setVisibility(View.VISIBLE);
             messageName.setText(mMessage.getSenderContact().getName());
-//            messageText.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_green));
-            messageText.setBackgroundDrawable(ColorSchemeManager.fillBackground(mContext, R.drawable.bubble_green, true));
-//            LOG.error("repaint******************************");
+
+            messageText.setBackgroundDrawable(ColorSchemeManager.fillBackground(mContext, R.drawable.bubble_grey, false));
 
             messageText
                     .setTextColor(mContext.getResources().getColorStateList(R.color.xo_incoming_message_textColor));
@@ -157,9 +162,8 @@ public class ChatMessageItem implements AttachmentTransferListener {
             avatarView.setVisibility(View.GONE);
             messageName.setVisibility(View.GONE);
 
-//            messageText.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.bubble_grey));
-            messageText.setBackgroundDrawable(ColorSchemeManager.fillBackground(mContext, R.drawable.bubble_grey, false));
-//            LOG.error("repaint------------------------------");
+            messageText.setBackgroundDrawable(ColorSchemeManager.fillBackground(mContext, R.drawable.bubble_green, true));
+
             messageText.setTextColor(
                     mContext.getResources().getColorStateList(R.color.xo_compose_message_textColor));
             messageText.setLinkTextColor(

@@ -1,6 +1,16 @@
 package com.hoccer.xo.android.fragment;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.*;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
@@ -11,22 +21,6 @@ import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.gesture.Gestures;
 import com.hoccer.xo.android.gesture.MotionGestureListener;
 import com.hoccer.xo.release.R;
-
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 public class CompositionFragment extends XoFragment implements View.OnClickListener,
         View.OnLongClickListener, MotionGestureListener {
@@ -51,7 +45,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         LOG.debug("onCreateView()");
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View v = inflater.inflate(R.layout.fragment_composition, container, false);
+        View v = inflater.inflate(R.layout.view_composition, container, false);
 
         setHasOptionsMenu(true);
 
@@ -151,7 +145,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             } else if(mediaType.equals(ContentMediaTypes.MediaTypeData)) {
                 imageResource = R.drawable.ic_dark_data;
             } else if(mediaType.equals(ContentMediaTypes.MediaTypeAudio)) {
-                imageResource = R.drawable.ic_dark_music;
+                imageResource = R.drawable.ic_dark_video;
             }
         } else {
             imageResource = android.R.drawable.stat_notify_error;

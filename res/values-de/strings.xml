@@ -13,6 +13,8 @@
     <string name="common_done">Fertig</string>
     <string name="common_decline">Ablehnen</string>
     <string name="common_accept">Annehmen</string>
+    <string name="common_delete">Löschen</string>
+
 
     <!-- Menu entries -->
     <string name="menu_my_profile">Mein Profil</string>
@@ -24,6 +26,7 @@
     <string name="menu_add_attachment">Anhang hinzufügen</string>
     <string name="menu_profile">Profil</string>
     <string name="menu_settings">Einstellungen</string>
+    <string name="menu_music_viewer">Musik</string>
     <string name="menu_about">Über uns</string>
     <string name="menu_reconnect">erneut verbinden</string>
     <string name="menu_quit">schließen</string>
@@ -37,6 +40,13 @@
     <string name="contacts_sms_invitation_description">hat dir eine SMS-Einladung geschickt.
         Möchtest du die Einladung annehmen?
     </string>
+
+    <!-- Deleting attachments -->
+    <string name="attachment_confirm_delete_dialog_message">Willst du die ausgewählten Anhänge wirklich löschen?</string>
+
+    <!-- AudioAttachmentList Fragment -->
+    <string name="audio_attachment_list_all">Alle</string>
+    <string name="audio_attachment_list_unknown">Unbekannt</string>
 
     <!-- Nearby location request -->
     <string name="nearby_enable_location_service">Um diese Funktion nutzen zu können musst Du Ortungsdienste aktivieren. (GPS oder Netzwerkposition). Willst Du es aktivieren?</string>
@@ -117,6 +127,9 @@
     <string name="content_data">Dokument</string>
     <string name="content_clipboard">Aus Zwischenablage</string>
 
+    <string name="content_not_supported_audio_title">Nicht unterstütztes Format</string>
+    <string name="content_not_supported_audio_msg">Dieser Audio-Anhang kann nicht wiedergegeben werden.</string>
+
     <!-- Client states (used in status fragment) -->
     <string name="client_state_idle">Idle</string>
     <string name="client_state_inactive">Inaktiv</string>
@@ -127,6 +140,10 @@
     <string name="client_state_login">Einloggen</string>
     <string name="client_state_connecting">Verbinden</string>
     <string name="client_state_unknown">unbekannt</string>
+
+    <!-- FullscreenPlayer -->
+    <string name="track_number_filler">von</string>
+    <string name="deleted_contact_name">Entfernter Kontakt</string>
 
     <!-- Attachment type selection dialog -->
     <string name="selectattachment_title">Anhang auswählen</string>
@@ -199,6 +216,12 @@
     <string name="dialog_block_user_title">Kontakt blockieren</string>
     <string name="dialog_block_user_message">Bist du dir sicher, dass du diesen Kontakt blockieren möchtest? Du wirst keine weiteren Nachrichten von diesem Kontakt erhalten. 
     </string>
+
+    <!-- Media Player -->
+    <string name="media_meta_data_unknown_title">Unbekannter Titel</string>
+    <string name="media_meta_data_unknown_artist">Unbekannter Interpret</string>
+    <string name="media_player_playlist_track_divider">von</string>
+    <string name="media_player_default_filter_label">Alle</string>
 
     <!-- Preferences -->
     <string name="preference_keysize_summary">RSA Schlüssel mit gewählter Schlüssellänge erneuern</string>

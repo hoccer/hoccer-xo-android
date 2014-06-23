@@ -16,13 +16,13 @@
 
 package com.google.android.gcm;
 
-import static com.google.android.gcm.GCMConstants.DEFAULT_INTENT_SERVICE_CLASS_NAME;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import static com.google.android.gcm.GCMConstants.DEFAULT_INTENT_SERVICE_CLASS_NAME;
 
 /**
  * {@link BroadcastReceiver} that receives GCM messages and delivers them to

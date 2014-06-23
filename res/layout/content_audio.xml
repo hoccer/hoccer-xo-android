@@ -32,7 +32,6 @@
 
         <ImageButton
                 android:id="@+id/ib_content_audio_play"
-                android:src="@drawable/ic_dark_music"
                 android:layout_width="@dimen/default_attachment_icon_dim"
                 android:layout_height="@dimen/default_attachment_icon_dim"
                 android:layout_alignParentRight="true"

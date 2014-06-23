@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+            android:id="@+id/menu_media_player"
+            android:title="@string/menu_profile"
+            android:icon="@drawable/ic_notification_music"
+            android:visible="false"
+            android:showAsAction="always"
+            android:orderInCategory="90"/>
+
+</menu>

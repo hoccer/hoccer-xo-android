@@ -3,12 +3,11 @@
     <color name="xo_main_background">#ffffff</color>
     <color name="xo_app_incoming_message_color">#ffc8c8c8</color>
     <color name="xo_incoming_message_background">#e3e3e3</color>
-    <color name="xo_incoming_message_textColor">#ffffff</color>
+    <color name="xo_incoming_message_textColor">#000000</color>
     <color name="xo_compose_message_background">#ffffff</color>
     <color name="xo_compose_message_divider">#ffbfbfbf</color>
-    <color name="xo_compose_message_textColor">#000000</color>
+    <color name="xo_compose_message_textColor">#ffffff</color>
     <color name="xo_app_main_color">#4dbfac</color>
-    <color name="xo_app_attachment_color">#004ce5</color>
     <color name="xo_presence">#ff0000</color>
     <color name="xo_group_members_divder">#ffbfbfbf</color>
     <color name="xo_content_description_text">#7e8498</color>
@@ -16,4 +15,7 @@
     <color name="xo_actionbar_tabtext_color">#000000</color>
     <color name="xo_content_horizontal_divider">#d1d6e4</color>
     <color name="xo_menu_text">#ffffff</color>
+    <color name="xo_media_player_secondary_text">#aaaaaaaa</color>
+    <color name="xo_app_attachment_incoming_color">#004ce5</color>
+    <color name="xo_app_attachment_outgoing_color">#004ce5</color>
 </resources>

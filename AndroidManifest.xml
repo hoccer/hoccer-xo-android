@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.hoccer.xo.release"
 
-          android:versionCode="31"
-          android:versionName="2.0.1">
+          android:versionCode="35"
+          android:versionName="2.1.4">
 
     <!-- We run on 4.0 (14) and up, we use features from up to 4.2 (17) -->
     <uses-sdk
@@ -122,6 +122,33 @@
                     android:value="com.hoccer.xo.android.activity.MessagingActivity"/>
         </activity>
 
+        <!-- AudioAttachmentList activity -->
+        <activity
+                android:name="com.hoccer.xo.android.activity.AudioAttachmentListActivity"
+                android:label="@string/actionbar_default_title"
+                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateHidden"
+                android:exported="true">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
+        </activity>
+
+        <!-- FullscreenPlayerActivity activity -->
+        <activity
+                android:name="com.hoccer.xo.android.activity.FullscreenPlayerActivity"
+                android:label="@string/actionbar_default_title"
+                android:screenOrientation="portrait"
+                android:parentActivityName="com.hoccer.xo.android.activity.AudioAttachmentListActivity"
+                android:windowSoftInputMode="stateHidden"
+                android:theme="@android:style/Theme.Black.NoTitleBar"
+                android:exported="true">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.hoccer.xo.android.activity.AudioAttachmentListActivity"/>
+        </activity>
+
         <!-- Single Profile activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.SingleProfileActivity"
@@ -138,6 +165,7 @@
                 android:name="com.hoccer.xo.android.activity.GroupProfileActivity"
                 android:label="@string/actionbar_default_title"
                 android:screenOrientation="portrait"
+                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:windowSoftInputMode="stateHidden">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
@@ -231,6 +259,8 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
         </receiver>
+
+        <service android:name="com.hoccer.xo.android.service.MediaPlayerService"/>
 
     </application>
 

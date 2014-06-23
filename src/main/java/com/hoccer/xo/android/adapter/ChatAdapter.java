@@ -1,5 +1,11 @@
 package com.hoccer.xo.android.adapter;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -12,6 +18,7 @@ import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.content.ContentMediaTypes;
+import com.hoccer.xo.android.fragment.AudioAttachmentListFragment;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.android.view.chat.attachments.*;
 
@@ -52,6 +59,8 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     private List<ChatMessageItem> mChatMessageItems;
 
     private ListView mListView;
+    private List < Integer > mLastVisibleViews = new ArrayList<Integer>();
+    private BroadcastReceiver mReceiver;
 
 
     public ChatAdapter(ListView listView, XoActivity activity, TalkClientContact contact) {
@@ -86,10 +95,15 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
      */
     public synchronized void loadNextMessages(int offset) {
         try {
-            offset = Math.max(offset, 0);
-            final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), BATCH_SIZE, offset);
+            long batchSize = BATCH_SIZE;
+            if(offset < 0) {
+                batchSize = batchSize + offset;
+                offset = 0;
+            }
+            final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), batchSize, offset);
             for (int i = 0; i < messagesBatch.size(); i++) {
                 ChatMessageItem messageItem = getItemForMessage(messagesBatch.get(i));
+
                 mChatMessageItems.set(offset + i, messageItem);
             }
             runOnUiThread(new Runnable() {
@@ -108,6 +122,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         super.onCreate();
         getXoClient().registerMessageListener(this);
         getXoClient().registerTransferListener(this);
+        createBroadcastReceiver();
     }
 
     @Override
@@ -115,6 +130,8 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         super.onDestroy();
         getXoClient().unregisterMessageListener(this);
         getXoClient().unregisterTransferListener(this);
+        LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mReceiver);
+        mReceiver = null;
     }
 
     @Override
@@ -136,9 +153,40 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         return position;
     }
 
+    private void removeInvisibleItems(){
+
+        int firstVisible = mListView.getFirstVisiblePosition();
+        int lastVisible = mListView.getLastVisiblePosition();
+
+        for (int i = 0; i < mLastVisibleViews.size(); ++i) {
+
+            int current = mLastVisibleViews.get(i);
+
+            if ((current < firstVisible) || (current > lastVisible)) {
+                getItem(current).setVisibility(false);
+            }
+        }
+
+        int offset = 0;
+        mLastVisibleViews.clear();
+        while (firstVisible + offset <= lastVisible) {
+            mLastVisibleViews.add(firstVisible + offset);
+            offset++;
+        }
+    }
+
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
+
+        mListView.post(new Runnable() {
+            @Override
+            public void run() {
+                removeInvisibleItems();
+            }
+        });
+
         ChatMessageItem chatItem = getItem(position);
+
         if (!chatItem.getMessage().isSeen()) {
             markMessageAsSeen(chatItem.getMessage());
         }
@@ -147,6 +195,9 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         } else {
             convertView = chatItem.recycleViewForMessage(convertView);
         }
+
+        chatItem.setVisibility(true);
+
         return convertView;
     }
 
@@ -197,6 +248,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
 
     private ChatMessageItem getItemForMessage(TalkClientMessage message) {
         ChatItemType itemType = getListItemTypeForMessage(message);
+
         if (itemType == ChatItemType.ChatItemWithImage) {
             return new ChatImageItem(mActivity, message);
         } else if (itemType == ChatItemType.ChatItemWithVideo) {
@@ -219,6 +271,38 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
             @Override
             public void run() {
                 getXoClient().markAsSeen(message);
+            }
+        });
+    }
+
+
+    private void createBroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(AudioAttachmentListFragment.AUDIO_ATTACHMENT_REMOVED_ACTION)) {
+                    int messageId = intent.getIntExtra(AudioAttachmentListFragment.TALK_CLIENT_MESSAGE_ID_EXTRA, -1);
+                    if (messageId != -1) {
+                        removeMessageById(messageId);
+                    }
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(AudioAttachmentListFragment.AUDIO_ATTACHMENT_REMOVED_ACTION);
+        LocalBroadcastManager.getInstance(mActivity).registerReceiver(mReceiver, filter);
+    }
+
+    private void removeMessageById(final int messageId) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (ChatMessageItem messageItem : mChatMessageItems) {
+                    if (messageItem != null && messageItem.getMessage().getClientMessageId() == messageId) {
+                        mChatMessageItems.remove(messageItem);
+                        notifyDataSetChanged();
+                        break;
+                    }
+                }
             }
         });
     }

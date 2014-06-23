@@ -1,32 +1,30 @@
 package com.hoccer.xo.android.activity;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.view.*;
+import android.support.v4.app.FragmentTransaction;
+import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.fragment.GroupProfileFragment;
-import com.hoccer.xo.android.fragment.StatusFragment;
 import com.hoccer.xo.release.R;
 
-import java.sql.SQLException;
-
 /**
- * Activity wrapping a group profile fragment
+ * Activity wrapping a single profile fragment
  */
-public class GroupProfileActivity extends XoActivity {
+public class GroupProfileActivity extends XoActionbarActivity
+        implements IXoContactListener {
 
-    /* use this extra to open in "group creation" mode */
+    /* use this extra to open in "client registration" mode */
     public static final String EXTRA_CLIENT_CREATE_GROUP = "clientCreateGroup";
+
     /* use this extra to show the given contact */
     public static final String EXTRA_CLIENT_CONTACT_ID = "clientContactId";
 
-    private GroupProfileFragment mGroupProfileFragment;
-    private StatusFragment mStatusFragment;
-    private int mContactId;
+    ActionBar mActionBar;
 
-    private Mode mMode;
+    GroupProfileFragment mGroupProfileFragment;
 
     @Override
     protected int getLayoutResource() {
@@ -35,7 +33,7 @@ public class GroupProfileActivity extends XoActivity {
 
     @Override
     protected int getMenuResource() {
-        return R.menu.fragment_group_profile;
+        return -1;
     }
 
     @Override
@@ -44,26 +42,24 @@ public class GroupProfileActivity extends XoActivity {
         super.onCreate(savedInstanceState);
 
         enableUpNavigation();
-        getActionBar();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        mGroupProfileFragment = (GroupProfileFragment) fragmentManager.findFragmentById(R.id.activity_group_profile_fragment);
-        mStatusFragment = (StatusFragment) fragmentManager.findFragmentById(R.id.activity_profile_status_fragment);
-        mStatusFragment.getView().setVisibility(View.VISIBLE);
+        mActionBar = getActionBar();
 
         Intent intent = getIntent();
+
         if (intent != null) {
             if (intent.hasExtra(EXTRA_CLIENT_CREATE_GROUP)) {
-                createGroup();
+                showCreateGroupProfileFragment();
             } else if (intent.hasExtra(EXTRA_CLIENT_CONTACT_ID)) {
-                mContactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
-                if (mContactId == -1) {
+                int contactId = intent.getIntExtra(EXTRA_CLIENT_CONTACT_ID, -1);
+                if (contactId == -1) {
                     LOG.error("invalid contact id");
                 } else {
-                    showProfile(refreshContact(mContactId));
+                    showGroupProfileFragment(contactId);
                 }
             }
         }
+
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -72,43 +68,96 @@ public class GroupProfileActivity extends XoActivity {
         LOG.debug("onResume()");
         super.onResume();
 
-        if (mMode == Mode.CREATE_SELF) {
-            mStatusFragment.getView().setVisibility(View.GONE);
-        }
+        getXoClient().registerContactListener(this);
     }
 
-    private TalkClientContact refreshContact(int contactId) {
-        LOG.debug("refreshContact(" + contactId + ")");
-        try {
-            return getXoDatabase().findClientContactById(contactId);
-        } catch (SQLException e) {
-            LOG.error("sql error", e);
-        }
-        return null;
-    }
+    @Override
+    protected void onPause() {
+        LOG.debug("onPause()");
+        super.onPause();
 
-    public void showProfile(TalkClientContact contact) {
-        LOG.debug("showProfile(" + contact.getClientContactId() + ")");
-        mMode = Mode.PROFILE;
-        mGroupProfileFragment.showProfile(contact);
-    }
-
-    public void createGroup() {
-        LOG.debug("createGroup()");
-        mMode = Mode.CREATE_SELF;
-        mGroupProfileFragment.createGroup();
+        getXoClient().unregisterContactListener(this);
     }
 
     @Override
     public void hackReturnedFromDialog() {
         LOG.debug("hackReturnedFromDialog()");
         super.hackReturnedFromDialog();
+        mGroupProfileFragment.updateActionBar();
+        mGroupProfileFragment.finishActivityIfContactDeleted();
         mGroupProfileFragment.refreshContact(mGroupProfileFragment.getContact());
     }
 
-    public enum Mode {
-        PROFILE,
-        CREATE_SELF
+    private boolean isMyContact(TalkClientContact contact) {
+        TalkClientContact myContact = mGroupProfileFragment.getContact();
+        return myContact != null && myContact.getClientContactId() == contact.getClientContactId();
     }
 
+    @Override
+    public void onContactAdded(TalkClientContact contact) {
+        // we don't care
+    }
+
+    @Override
+    public void onContactRemoved(TalkClientContact contact) {
+        if (isMyContact(contact)) {
+            finish();
+        }
+    }
+
+    @Override
+    public void onClientPresenceChanged(TalkClientContact contact) {
+        if (isMyContact(contact)) {
+            mGroupProfileFragment.updateActionBar();
+            mGroupProfileFragment.finishActivityIfContactDeleted();
+        }
+    }
+
+    @Override
+    public void onClientRelationshipChanged(TalkClientContact contact) {
+        if (isMyContact(contact)) {
+            mGroupProfileFragment.updateActionBar();
+            mGroupProfileFragment.finishActivityIfContactDeleted();
+        }
+    }
+
+    @Override
+    public void onGroupPresenceChanged(TalkClientContact contact) {
+        if (isMyContact(contact)) {
+            mGroupProfileFragment.updateActionBar();
+            mGroupProfileFragment.finishActivityIfContactDeleted();
+        }
+    }
+
+    @Override
+    public void onGroupMembershipChanged(TalkClientContact contact) {
+        if (isMyContact(contact)) {
+            mGroupProfileFragment.updateActionBar();
+            mGroupProfileFragment.finishActivityIfContactDeleted();
+        }
+    }
+
+    private void showGroupProfileFragment(int contactId) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(GroupProfileFragment.ARG_CLIENT_CONTACT_ID, contactId);
+
+        mGroupProfileFragment = new GroupProfileFragment();
+        mGroupProfileFragment.setArguments(bundle);
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fl_group_profile_fragment_container, mGroupProfileFragment);
+        ft.commit();
+    }
+
+    private void showCreateGroupProfileFragment() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(GroupProfileFragment.ARG_CREATE_GROUP, true);
+
+        mGroupProfileFragment = new GroupProfileFragment();
+        mGroupProfileFragment.setArguments(bundle);
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fl_group_profile_fragment_container, mGroupProfileFragment);
+        ft.commit();
+    }
 }

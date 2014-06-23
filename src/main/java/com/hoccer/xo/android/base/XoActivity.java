@@ -7,10 +7,9 @@ import android.app.Dialog;
 import android.app.TaskStackBuilder;
 import android.content.*;
 import android.database.Cursor;
-import android.graphics.*;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.*;
 import android.provider.MediaStore;
@@ -435,7 +434,6 @@ public abstract class XoActivity extends FragmentActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        LOG.debug("onCreateOptionsMenu()");
         getMenuInflater().inflate(R.menu.common, menu);
         int activityMenu = getMenuResource();
         if (activityMenu >= 0) {
@@ -724,6 +722,17 @@ public abstract class XoActivity extends FragmentActivity {
     public void showPairing() {
         LOG.debug("showPairing()");
         startActivity(new Intent(this, PairingActivity.class));
+    }
+
+    public void showAudioAttachmentList() {
+        LOG.debug("showAudioAttachmentList()");
+        Intent intent = new Intent(this, AudioAttachmentListActivity.class);
+        startActivity(intent);
+    }
+
+    public void showFullscreenPlayer() {
+        LOG.debug("showFullscreenPlayer()");
+        startActivity(new Intent(this, FullscreenPlayerActivity.class));
     }
 
     public void showAbout() {

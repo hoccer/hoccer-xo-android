@@ -13,6 +13,8 @@
     <string name="common_done">Done</string>
     <string name="common_decline">Decline</string>
     <string name="common_accept">Accept</string>
+    <string name="common_delete">Delete</string>
+
 
     <!-- Menu entries -->
     <string name="menu_my_profile">My profile</string>
@@ -24,6 +26,7 @@
     <string name="menu_add_attachment">Add attachment</string>
     <string name="menu_profile">Profile</string>
     <string name="menu_settings">Settings</string>
+    <string name="menu_music_viewer">Music</string>
     <string name="menu_about">About</string>
     <string name="menu_reconnect">Reconnect</string>
     <string name="menu_quit">Quit</string>
@@ -37,6 +40,14 @@
     <string name="contacts_sms_invitation_description">has sent you an invitation via SMS.
         Do you wish to accept?
     </string>
+
+    <!-- Deleting attachments -->
+    <string name="attachment_confirm_delete_dialog_message">Delete selected attachments and related chat messages?
+    </string>
+
+    <!-- AudioAttachmentList Fragment -->
+    <string name="audio_attachment_list_all">All</string>
+    <string name="audio_attachment_list_unknown">Unknown</string>
 
     <!-- Nearby location request -->
     <string name="nearby_enable_location_service">This feature uses location service
@@ -118,6 +129,9 @@
     <string name="content_data">Data</string>
     <string name="content_clipboard">Clipboard</string>
 
+    <string name="content_not_supported_audio_title">Unsupported Format</string>
+    <string name="content_not_supported_audio_msg">This audio attachment cannot be played back.</string>
+
     <!-- Client states (used in status fragment) -->
     <string name="client_state_idle">Idle</string>
     <string name="client_state_inactive">Inactive</string>
@@ -128,6 +142,10 @@
     <string name="client_state_login">Logging in</string>
     <string name="client_state_connecting">Connecting</string>
     <string name="client_state_unknown">Unknown</string>
+
+    <!-- FullscreenPlayer -->
+    <string name="track_number_filler">of</string>
+    <string name="deleted_contact_name">Removed Contact</string>
 
     <!-- Attachment type selection dialog -->
     <string name="selectattachment_title">Select attachment</string>
@@ -205,6 +223,12 @@
     <string name="dialog_block_user_message">Do you really want to block this contact? You will not
         receive any further messages from this contact.
     </string>
+
+    <!-- Media Player -->
+    <string name="media_meta_data_unknown_title">Unknown title</string>
+    <string name="media_meta_data_unknown_artist">Unknown artist</string>
+    <string name="media_player_playlist_track_divider">of</string>
+    <string name="media_player_default_filter_label">All</string>
 
     <!-- Preferences -->
     <string name="preference_keysize_summary">Renew RSA key with selected size</string>
