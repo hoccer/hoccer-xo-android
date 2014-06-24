@@ -1,6 +1,11 @@
 package com.hoccer.xo.android.adapter;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +18,10 @@ import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
+import com.hoccer.xo.android.fragment.AudioAttachmentListFragment;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.android.view.AudioAttachmentView;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -136,6 +143,9 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         if (download.getContentMediaType().equals(this.mContentMediaType)) {
             if ((mConversationContactId == MediaPlayerService.UNDEFINED_CONTACT_ID) || (mConversationContactId == contactId)) {
                 mAudioAttachmentItems.add(0, AudioAttachmentItem.create(download.getContentDataUrl(), download));
+
+                updateCheckedItems();
+
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -144,7 +154,23 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
                 });
             }
         }
+    }
 
+    private void updateCheckedItems() {
+        SparseBooleanArray updatedSelection = new SparseBooleanArray(mSelections.size());
+
+        for( int i = 0; i < mSelections.size(); ++i){
+            boolean b = mSelections.valueAt(i);
+            int k = mSelections.keyAt(i);
+            updatedSelection.put(k +1, b);
+        }
+
+        mSelections.clear();
+
+        //@Info Setting mSelection to updatedSelection won't work since the reference changes, which is not allowed
+        for( int i = 0; i < updatedSelection.size(); ++i){
+            mSelections.append(updatedSelection.keyAt(i), updatedSelection.valueAt(i));
+        }
     }
 
     @Override
