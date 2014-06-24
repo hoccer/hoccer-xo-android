@@ -52,8 +52,8 @@
 
     <!-- Composition fragment -->
     <string name="composition_text_hint">Nachricht eingeben</string>
-    <string name="composition_alert_empty_group_title">Nachricht kann nicht gesendet werden</string>
-    <string name="composition_alert_empty_group_text">Du kannst keine Nachrichten an die Gruppe verschicken, weil sie außer Dir keine Mitglieder hat. Du kannst aber deine Freunde in die Gruppe einladen.</string>
+    <string name="dialog_empty_group_title">Nachricht kann nicht gesendet werden</string>
+    <string name="dialog_empty_group_message">Du kannst keine Nachrichten an die Gruppe verschicken, weil sie außer Dir keine Mitglieder hat. Du kannst aber deine Freunde in die Gruppe einladen.</string>
 
     <!-- Messaging fragment -->
     <string name="messaging_loading">Lädt...</string>

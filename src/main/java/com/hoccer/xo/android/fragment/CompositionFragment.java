@@ -1,10 +1,10 @@
 package com.hoccer.xo.android.fragment;
 
-import android.app.Dialog;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoConfiguration;
+import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.SelectedContent;
@@ -222,18 +222,15 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     private void showAlertSendMessageNotPossible() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
-        builder.setTitle(R.string.composition_alert_empty_group_title);
-        builder.setMessage(R.string.composition_alert_empty_group_text);
-        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int index) {
-                dialog.dismiss();
-            }
-        });
-
-        Dialog dialog = builder.create();
-        dialog.show();
+        XoDialogs.showOkDialog("EmptyGroupDialog",
+                R.string.dialog_empty_group_title,
+                R.string.dialog_empty_group_message,
+                getXoActivity(),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int index) {
+                    }
+                });
     }
 
     @Override

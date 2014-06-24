@@ -53,8 +53,8 @@
 
     <!-- Composition fragment -->
     <string name="composition_text_hint">Type message</string>
-    <string name="composition_alert_empty_group_title">Can Not Send Message</string>
-    <string name="composition_alert_empty_group_text">You can not send a message to this group because there are no members except you. Please invite friends to this group.</string>
+    <string name="dialog_empty_group_title">Can Not Send Message</string>
+    <string name="dialog_empty_group_message">You can not send a message to this group because there are no members except you. Please invite friends to this group.</string>
 
     <!-- Messaging fragment -->
     <string name="messaging_loading">Loading...</string>
