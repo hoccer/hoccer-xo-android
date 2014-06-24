@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.PorterDuff;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -23,6 +24,7 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.gesture.Gestures;
 import com.hoccer.xo.android.gesture.MotionGestureListener;
+import com.hoccer.xo.android.util.ColorSchemeManager;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -69,22 +71,23 @@ public class CompositionView extends LinearLayout implements View.OnClickListene
         int imageResource = -1;
         if (mediaType != null) {
             if (mediaType.equals("image")) {
-                imageResource = R.drawable.ic_dark_image;
+                imageResource = R.drawable.ic_light_image;
             } else if (mediaType.equals("video")) {
-                imageResource = R.drawable.ic_dark_video;
+                imageResource = R.drawable.ic_light_video;
             } else if (mediaType.equals("vcard")) {
-                imageResource = R.drawable.ic_dark_contact;
+                imageResource = R.drawable.ic_light_contact;
             } else if (mediaType.equals("geolocation")) {
-                imageResource = R.drawable.ic_dark_location;
+                imageResource = R.drawable.ic_light_location;
             } else if (mediaType.equals("data")) {
-                imageResource = R.drawable.ic_dark_data;
+                imageResource = R.drawable.ic_light_data;
             } else if (mediaType.equals("audio")) {
-                imageResource = R.drawable.ic_dark_video;
+                imageResource = R.drawable.ic_light_video;
             }
         } else {
             imageResource = android.R.drawable.stat_notify_error;
         }
-        mAddAttachmentButton.setImageResource(imageResource);
+        mAddAttachmentButton.setBackground(ColorSchemeManager.fillAttachmentForeground(mContext, imageResource, true));
+        mAddAttachmentButton.setImageResource(android.R.color.transparent);
 
         mSendButton.setEnabled(isComposed());
     }
@@ -195,6 +198,7 @@ public class CompositionView extends LinearLayout implements View.OnClickListene
         }
 
         mAddAttachmentButton = (ImageButton) findViewById(R.id.btn_messaging_composer_add_attachment);
+        mAddAttachmentButton.setBackground(null);
         mAddAttachmentButton.setOnClickListener(new AddAttachmentOnClickListener());
 
     }
@@ -207,6 +211,7 @@ public class CompositionView extends LinearLayout implements View.OnClickListene
 
     private void clearAttachment() {
         mAddAttachmentButton.setOnClickListener(new AddAttachmentOnClickListener());
+        mAddAttachmentButton.setBackground(null);
         mAddAttachmentButton.setImageResource(R.drawable.ic_light_content_attachment);
         mAttachment = null;
     }

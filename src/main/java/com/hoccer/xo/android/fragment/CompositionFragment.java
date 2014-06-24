@@ -3,6 +3,7 @@ package com.hoccer.xo.android.fragment;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,6 +21,7 @@ import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.gesture.Gestures;
 import com.hoccer.xo.android.gesture.MotionGestureListener;
+import com.hoccer.xo.android.util.ColorSchemeManager;
 import com.hoccer.xo.release.R;
 
 public class CompositionFragment extends XoFragment implements View.OnClickListener,
@@ -135,22 +137,23 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         int imageResource = -1;
         if(mediaType != null) {
             if(mediaType.equals(ContentMediaTypes.MediaTypeImage)) {
-                imageResource = R.drawable.ic_dark_image;
+                imageResource = R.drawable.ic_light_image;
             } else if(mediaType.equals(ContentMediaTypes.MediaTypeVideo)) {
-                imageResource = R.drawable.ic_dark_video;
+                imageResource = R.drawable.ic_light_video;
             } else if(mediaType.equals(ContentMediaTypes.MediaTypeVCard)) {
-                imageResource = R.drawable.ic_dark_contact;
+                imageResource = R.drawable.ic_light_contact;
             } else if(mediaType.equals(ContentMediaTypes.MediaTypeGeolocation)) {
-                imageResource = R.drawable.ic_dark_location;
+                imageResource = R.drawable.ic_light_location;
             } else if(mediaType.equals(ContentMediaTypes.MediaTypeData)) {
-                imageResource = R.drawable.ic_dark_data;
+                imageResource = R.drawable.ic_light_data;
             } else if(mediaType.equals(ContentMediaTypes.MediaTypeAudio)) {
-                imageResource = R.drawable.ic_dark_video;
+                imageResource = R.drawable.ic_light_video;
             }
         } else {
             imageResource = android.R.drawable.stat_notify_error;
         }
-        mAddAttachmentButton.setImageResource(imageResource);
+        mAddAttachmentButton.setBackground(ColorSchemeManager.fillAttachmentForeground(getXoActivity(), imageResource, true));
+        mAddAttachmentButton.setImageResource(android.R.color.transparent);
     }
 
     public void converseWithContact(TalkClientContact contact) {
@@ -170,6 +173,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
     private void clearAttachment() {
         mAddAttachmentButton.setOnClickListener(new AddAttachmentOnClickListener());
+        mAddAttachmentButton.setBackground(null);
         mAddAttachmentButton.setImageResource(R.drawable.ic_light_content_attachment);
         mAttachment = null;
     }
