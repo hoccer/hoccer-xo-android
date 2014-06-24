@@ -72,8 +72,8 @@
     <string name="pairing_token_generating">Erzeugen...</string>
     <string name="pairing_token_send_sms">Einladen via SMS</string>
     <string name="pairing_success">Kontakt wurde erfolgreich hinzugefügt</string>
-    <string name="pairing_failure">Der Kontakt konnte nicht hinzugefügt werden</string>
-    <string name="pairing_failure_description">Der eingegebene Code ist ungültig.</string>
+    <string name="dialog_pairing_failed_title">Der Kontakt konnte nicht hinzugefügt werden</string>
+    <string name="dialog_pairing_failed_message">Der eingegebene Code ist ungültig.</string>
 
     <!-- Profile fragment -->
     <string name="profile_avatar_set_button">Mein Bild ändern</string>

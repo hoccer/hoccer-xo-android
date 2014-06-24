@@ -1,6 +1,5 @@
 package com.hoccer.xo.android.fragment;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
@@ -16,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import com.hoccer.talk.client.IXoPairingListener;
 import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.release.R;
 
@@ -236,17 +236,15 @@ public class PairingFragment extends XoFragment implements View.OnClickListener,
     }
 
     private void showPairingFailure() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
-        builder.setTitle(R.string.pairing_failure);
-        builder.setMessage(R.string.pairing_failure_description);
-
-        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int index) {
-                dialog.dismiss();
-            }
-        });
-        final AlertDialog dialog = builder.create();
-        dialog.show();
+        XoDialogs.showOkDialog("PairingFailedDialog",
+                R.string.dialog_pairing_failed_title,
+                R.string.dialog_pairing_failed_message,
+                getXoActivity(),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int index) {
+                        dialog.dismiss();
+                    }
+                });
     }
 }

@@ -73,8 +73,8 @@
     <string name="pairing_token_generating">Generating...</string>
     <string name="pairing_token_send_sms">Send via SMS</string>
     <string name="pairing_success">Pairing succeeded</string>
-    <string name="pairing_failure">Pairing failed</string>
-    <string name="pairing_failure_description">The code you have entered is invalid.</string>
+    <string name="dialog_pairing_failed_title">Pairing failed</string>
+    <string name="dialog_pairing_failed_message">The code you have entered is invalid.</string>
 
     <!-- Profile fragment -->
     <string name="profile_avatar_set_button">Change my image</string>
