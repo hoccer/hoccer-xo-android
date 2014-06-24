@@ -156,7 +156,6 @@ public class MessagingFragment extends XoListFragment
                 .setListener(new Animator.AnimatorListener() {
                     @Override
                     public void onAnimationStart(Animator animation) {
-                        Log.d("zalem", "start animation");
                     }
 
                     @Override
