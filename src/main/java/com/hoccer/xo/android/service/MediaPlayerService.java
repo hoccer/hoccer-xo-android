@@ -62,7 +62,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
     private MediaPlaylist mPlaylist = new MediaPlaylist();
 
     public class MediaPlayerBinder extends Binder {
-
         public MediaPlayerService getService() {
             return MediaPlayerService.this;
         }
