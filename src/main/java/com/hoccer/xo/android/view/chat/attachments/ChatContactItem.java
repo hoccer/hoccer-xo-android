@@ -67,8 +67,6 @@ public class ChatContactItem extends ChatMessageItem {
 
         contactName.setTextColor(textColor);
         contactDescription.setTextColor(textColor);
-        showButton.setBackgroundDrawable(ColorSchemeManager.fillAttachmentForeground(mContext, R.drawable.ic_light_contact, mMessage.isIncoming()));
-        importButton.setBackgroundDrawable(showButton.getBackground());
 
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override

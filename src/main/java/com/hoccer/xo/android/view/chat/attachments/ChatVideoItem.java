@@ -55,7 +55,6 @@ public class ChatVideoItem extends ChatMessageItem {
 
         videoTitle.setTextColor(textColor);
         videoDescription.setTextColor(textColor);
-        playButton.setBackgroundDrawable(ColorSchemeManager.fillAttachmentForeground(mContext, R.drawable.ic_light_location, mMessage.isIncoming()));
 
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
