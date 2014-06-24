@@ -9,10 +9,6 @@ import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.xo.android.base.XoActivity;
-import com.hoccer.xo.android.dialog.*;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -83,18 +79,4 @@ public class XoDialogs {
         };
         dialogFragment.show(activity.getFragmentManager(), tag);
     }
-
-    public final static String DIALOG_TOKEN = "TokenDialog";
-    public final static String DIALOG_GROUP_MANAGE = "GroupManageDialog";
-
-    public static void selectGroupManage(XoActivity activity, TalkClientContact group) {
-        new GroupManageDialog(group)
-                .show(activity.getFragmentManager(), DIALOG_GROUP_MANAGE);
-    }
-
-    public static void showTokenDialog(XoActivity activity, TalkClientSmsToken token) {
-        new TokenDialog(activity, token)
-                .show(activity.getFragmentManager(), DIALOG_TOKEN);
-    }
-
 }

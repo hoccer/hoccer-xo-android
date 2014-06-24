@@ -19,6 +19,7 @@ import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.GroupContactsAdapter;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.SelectedContent;
+import com.hoccer.xo.android.dialog.GroupManageDialog;
 import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
@@ -398,7 +399,8 @@ public class GroupProfileFragment extends XoFragment
 
     private void manageGroupMembers() {
         LOG.debug("manageGroupMembers()");
-        XoDialogs.selectGroupManage(getXoActivity(), mGroup);
+        new GroupManageDialog(mGroup)
+                .show(getXoActivity().getFragmentManager(), "GroupManageDialog");
     }
 
     private void joinGroup() {

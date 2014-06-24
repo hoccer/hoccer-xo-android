@@ -33,7 +33,7 @@
     <string name="contacts_category_groups">Groups</string>
     <string name="contacts_empty_info">You have no contacts.</string>
     <string name="contacts_empty_pairing">Add a contact</string>
-    <string name="contacts_sms_invitation">Invitation</string>
+    <string name="dialog_token_invitation_title">Invitation</string>
     <string name="contacts_sms_invitation_description">has sent you an invitation via SMS.
         Do you wish to accept?
     </string>
@@ -155,7 +155,7 @@
     <string name="invite_title">Invite to group</string>
 
     <!-- Group manage selection dialog -->
-    <string name="manage_title">Manage Members</string>
+    <string name="dialog_manage_group_title">Manage Members</string>
 
     <!-- Location selection activity -->
     <string name="selectlocation_title">Select location</string>

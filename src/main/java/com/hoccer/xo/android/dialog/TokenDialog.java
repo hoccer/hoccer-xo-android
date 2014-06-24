@@ -55,7 +55,7 @@ public class TokenDialog extends DialogFragment implements DialogInterface.OnCli
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        builder.setTitle(R.string.contacts_sms_invitation);
+        builder.setTitle(R.string.dialog_token_invitation_title);
         builder.setCancelable(true);
         builder.setNegativeButton(R.string.common_decline, this);
         builder.setPositiveButton(R.string.common_accept, this);
