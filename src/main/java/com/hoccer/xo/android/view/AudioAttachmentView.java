@@ -105,9 +105,7 @@ public class AudioAttachmentView extends LinearLayout implements View.OnClickLis
                     }
                     @Override
                     public void onAction(String action, MediaPlayerService service) {
-                        if (action.equals(MediaPlayerService.PLAYSTATE_CHANGED_ACTION)) {
-                            updatePlayPauseView();
-                        }
+                        updatePlayPauseView();
                     }
                 });
     }

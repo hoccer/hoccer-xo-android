@@ -143,9 +143,7 @@ public class ChatAudioItem extends ChatMessageItem {
                     }
                     @Override
                     public void onAction(String action, MediaPlayerService service) {
-                        if (action.equals(MediaPlayerService.PLAYSTATE_CHANGED_ACTION)) {
-                            updatePlayPauseView();
-                        }
+                        updatePlayPauseView();
                     }
                 });
     }
