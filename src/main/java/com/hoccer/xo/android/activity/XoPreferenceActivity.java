@@ -91,8 +91,7 @@ public class XoPreferenceActivity extends PreferenceActivity
         mWaitingDialog = new Dialog(this);
         mWaitingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mWaitingDialog.setContentView(view);
-        mWaitingDialog.getWindow()
-                .setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        mWaitingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         mWaitingDialog.setCanceledOnTouchOutside(false);
         if (!isFinishing()) {
             mWaitingDialog.show();
