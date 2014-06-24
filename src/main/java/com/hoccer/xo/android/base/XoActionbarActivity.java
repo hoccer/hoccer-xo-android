@@ -2,8 +2,6 @@ package com.hoccer.xo.android.base;
 
 import android.content.*;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
@@ -18,9 +16,7 @@ import com.hoccer.xo.release.R;
  */
 public abstract class XoActionbarActivity extends XoActivity {
 
-    private MediaPlayerService mMediaPlayerService;
     private Menu mMenu;
-
     private MediaPlayerServiceConnector mMediaPlayerServiceConnector;
 
     @Override
@@ -33,7 +29,6 @@ public abstract class XoActionbarActivity extends XoActivity {
                 new MediaPlayerServiceConnector.Listener() {
                     @Override
                     public void onConnected(MediaPlayerService service) {
-                        mMediaPlayerService = service;
                         updateActionBarIcons();
                     }
                     @Override
@@ -81,10 +76,11 @@ public abstract class XoActionbarActivity extends XoActivity {
     }
 
     private void updateActionBarIcons() {
-        if (mMediaPlayerService != null && mMenu != null) {
+        if (mMediaPlayerServiceConnector.isConnected() && mMenu != null) {
             MenuItem mediaPlayerItem = mMenu.findItem(R.id.menu_media_player);
 
-            if (mMediaPlayerService.isStopped() || mMediaPlayerService.isPaused()) {
+            MediaPlayerService service = mMediaPlayerServiceConnector.getService();
+            if (service.isStopped() || service.isPaused()) {
                 mediaPlayerItem.setVisible(false);
             } else {
                 mediaPlayerItem.setVisible(true);

@@ -1,6 +1,5 @@
 package com.hoccer.xo.android.service;
 
-import android.app.Activity;
 import android.content.*;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -45,6 +44,7 @@ public class MediaPlayerServiceConnector {
             mContext.unbindService(mMediaPlayerServiceConnection);
             LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mBroadcastReceiver);
             mBroadcastReceiver = null;
+            mMediaPlayerService = null;
         }
     }
 
@@ -66,8 +66,8 @@ public class MediaPlayerServiceConnector {
             public void onServiceConnected(ComponentName name, IBinder service) {
                 MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
                 mMediaPlayerService = binder.getService();
-                mListener.onConnected(mMediaPlayerService);
                 mIsConnected = true;
+                mListener.onConnected(mMediaPlayerService);
             }
 
             @Override
@@ -77,6 +77,10 @@ public class MediaPlayerServiceConnector {
         };
 
         mContext.bindService(intent, mMediaPlayerServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public MediaPlayerService getService() {
+        return mMediaPlayerService;
     }
 
     public boolean isConnected() {
