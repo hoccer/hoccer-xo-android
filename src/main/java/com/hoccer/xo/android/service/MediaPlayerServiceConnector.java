@@ -10,7 +10,7 @@ import android.support.v4.content.LocalBroadcastManager;
  */
 public class MediaPlayerServiceConnector {
 
-    private Activity mActivity;
+    private Context mContext;
     private String mIntent;
     private Listener mListener;
 
@@ -26,15 +26,15 @@ public class MediaPlayerServiceConnector {
         void onAction(String action, MediaPlayerService service);
     }
 
-    public void connect(Activity activity, String intent, Listener listener) {
+    public void connect(Context context, String intent, Listener listener) {
         disconnect();
 
-        mActivity = activity;
+        mContext = context;
         mIntent = intent;
         mListener = listener;
 
-        Intent serviceIntent = new Intent(activity, MediaPlayerService.class);
-        activity.startService(serviceIntent);
+        Intent serviceIntent = new Intent(context, MediaPlayerService.class);
+        context.startService(serviceIntent);
         bindMediaPlayerService(serviceIntent);
         createMediaPlayerBroadcastReceiver();
     }
@@ -42,8 +42,8 @@ public class MediaPlayerServiceConnector {
     public void disconnect() {
         if(mIsConnected)
         {
-            mActivity.unbindService(mMediaPlayerServiceConnection);
-            LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mBroadcastReceiver);
+            mContext.unbindService(mMediaPlayerServiceConnection);
+            LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mBroadcastReceiver);
             mBroadcastReceiver = null;
         }
     }
@@ -56,7 +56,7 @@ public class MediaPlayerServiceConnector {
             }
         };
         IntentFilter filter = new IntentFilter(mIntent);
-        LocalBroadcastManager.getInstance(mActivity).registerReceiver(mBroadcastReceiver, filter);
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(mBroadcastReceiver, filter);
     }
 
     private void bindMediaPlayerService(Intent intent) {
@@ -76,7 +76,7 @@ public class MediaPlayerServiceConnector {
             }
         };
 
-        mActivity.bindService(intent, mMediaPlayerServiceConnection, Context.BIND_AUTO_CREATE);
+        mContext.bindService(intent, mMediaPlayerServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     public boolean isConnected() {
