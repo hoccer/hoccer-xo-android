@@ -243,7 +243,6 @@ public class PairingFragment extends XoFragment implements View.OnClickListener,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int index) {
-                        dialog.dismiss();
                     }
                 });
     }
