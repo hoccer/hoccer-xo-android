@@ -144,11 +144,13 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
             if ((mConversationContactId == MediaPlayerService.UNDEFINED_CONTACT_ID) || (mConversationContactId == contactId)) {
                 mAudioAttachmentItems.add(0, AudioAttachmentItem.create(download.getContentDataUrl(), download));
 
-                updateCheckedItems();
-
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if( mSelections != null && mSelections.size() > 0) {
+                            updateCheckedItems();
+                        }
+
                         notifyDataSetChanged();
                     }
                 });
