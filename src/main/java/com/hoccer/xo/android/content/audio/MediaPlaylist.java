@@ -14,7 +14,7 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
     private static final Logger LOG = Logger.getLogger(MediaPlaylist.class);
 
     private List<AudioAttachmentItem> mAudioAttachmentItems = new ArrayList<AudioAttachmentItem>();
-    private List<Integer> mPlaylistIndexes  = new ArrayList<Integer>();
+    private List<Integer> mPlaylistIndexes = new ArrayList<Integer>();
 
     private RepeatMode mRepeatMode = RepeatMode.NO_REPEAT;
     private int mCurrentIndex = 0;
@@ -122,15 +122,13 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
     }
 
     public void remove(int attachmentIndex) {
-        if (mAudioAttachmentItems.size() > attachmentIndex) {
+        if (attachmentIndex < mAudioAttachmentItems.size()) {
             mAudioAttachmentItems.remove(attachmentIndex);
 
             int playlistIndex = mPlaylistIndexes.indexOf(attachmentIndex);
             mPlaylistIndexes.remove(playlistIndex);
 
-            if(mCurrentIndex == playlistIndex) {
-                next();
-            } else if (mCurrentIndex > playlistIndex) {
+            if (mCurrentIndex > playlistIndex) {
                 mCurrentIndex--;
             }
         }
