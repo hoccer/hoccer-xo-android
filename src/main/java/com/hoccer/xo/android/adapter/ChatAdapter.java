@@ -132,6 +132,11 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         getXoClient().unregisterTransferListener(this);
         LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mReceiver);
         mReceiver = null;
+
+        for(int i = 0; i < mLastVisibleViews.size(); ++i){
+            int viewIndex = mLastVisibleViews.get(i);
+            getItem(viewIndex).setVisibility(false);
+        }
     }
 
     @Override
