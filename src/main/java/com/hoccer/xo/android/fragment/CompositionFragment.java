@@ -1,11 +1,12 @@
 package com.hoccer.xo.android.fragment;
 
-import android.app.Dialog;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoConfiguration;
+import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.base.XoFragment;
+import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.gesture.Gestures;
 import com.hoccer.xo.android.gesture.MotionGestureListener;
@@ -139,17 +140,17 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
         int imageResource = -1;
         if(mediaType != null) {
-            if(mediaType.equals("image")) {
+            if(mediaType.equals(ContentMediaTypes.MediaTypeImage)) {
                 imageResource = R.drawable.ic_dark_image;
-            } else if(mediaType.equals("video")) {
+            } else if(mediaType.equals(ContentMediaTypes.MediaTypeVideo)) {
                 imageResource = R.drawable.ic_dark_video;
-            } else if(mediaType.equals("vcard")) {
+            } else if(mediaType.equals(ContentMediaTypes.MediaTypeVCard)) {
                 imageResource = R.drawable.ic_dark_contact;
-            } else if(mediaType.equals("geolocation")) {
+            } else if(mediaType.equals(ContentMediaTypes.MediaTypeGeolocation)) {
                 imageResource = R.drawable.ic_dark_location;
-            } else if(mediaType.equals("data")) {
+            } else if(mediaType.equals(ContentMediaTypes.MediaTypeData)) {
                 imageResource = R.drawable.ic_dark_data;
-            } else if(mediaType.equals("audio")) {
+            } else if(mediaType.equals(ContentMediaTypes.MediaTypeAudio)) {
                 imageResource = R.drawable.ic_dark_music;
             }
         } else {
@@ -161,6 +162,18 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     public void converseWithContact(TalkClientContact contact) {
         LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
         mContact = contact;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mTextEdit.setVisibility(View.VISIBLE);
+                mSendButton.setVisibility(View.VISIBLE);
+                mAddAttachmentButton.setVisibility(View.VISIBLE);
+
+                mTextEdit.setEnabled(true);
+                mSendButton.setEnabled(true);
+                mAddAttachmentButton.setEnabled(true);
+            }
+        });
     }
 
     private boolean isComposed() {
@@ -209,18 +222,15 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     private void showAlertSendMessageNotPossible() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
-        builder.setTitle(R.string.composition_alert_empty_group_title);
-        builder.setMessage(R.string.composition_alert_empty_group_text);
-        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int index) {
-                dialog.dismiss();
-            }
-        });
-
-        Dialog dialog = builder.create();
-        dialog.show();
+        XoDialogs.showOkDialog("EmptyGroupDialog",
+                R.string.dialog_empty_group_title,
+                R.string.dialog_empty_group_message,
+                getXoActivity(),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int index) {
+                    }
+                });
     }
 
     @Override
@@ -246,6 +256,16 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             getXoSoundPool().playThrowSound();
             sendComposedMessage();
         }
+    }
+
+    public void blockInput() {
+        mTextEdit.setVisibility(View.GONE);
+        mSendButton.setVisibility(View.GONE);
+        mAddAttachmentButton.setVisibility(View.GONE);
+
+        mTextEdit.setEnabled(false);
+        mSendButton.setEnabled(false);
+        mAddAttachmentButton.setEnabled(false);
     }
 
     private class AddAttachmentOnClickListener implements View.OnClickListener {
