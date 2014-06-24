@@ -32,7 +32,6 @@
 
     <ImageButton
             android:id="@+id/ib_content_location"
-            android:src="@drawable/ic_dark_location"
             android:layout_alignParentRight="true"
             android:scaleType="fitXY"
             android:layout_width="@dimen/default_attachment_icon_dim"
