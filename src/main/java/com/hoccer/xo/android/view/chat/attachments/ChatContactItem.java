@@ -14,6 +14,7 @@ import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.ContentDisposition;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.util.ColorSchemeManager;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 import ezvcard.Ezvcard;
@@ -62,20 +63,12 @@ public class ChatContactItem extends ChatMessageItem {
         ImageButton showButton = (ImageButton) mContentWrapper.findViewById(R.id.ib_vcard_show_button);
         ImageButton importButton = (ImageButton) mContentWrapper.findViewById(R.id.ib_vcard_import_button);
 
-        int textColor = -1;
-        int iconId = -1;
-        if (mMessage.isIncoming()) {
-            textColor = mContext.getResources().getColor(R.color.xo_incoming_message_textColor);
-            iconId = R.drawable.ic_dark_contact;
-        } else {
-            textColor = mContext.getResources().getColor(R.color.xo_compose_message_textColor);
-            iconId = R.drawable.ic_light_contact;
-        }
+        int textColor = (mMessage.isIncoming()) ? mContext.getResources().getColor(R.color.xo_incoming_message_textColor) : mContext.getResources().getColor(R.color.xo_compose_message_textColor);
 
         contactName.setTextColor(textColor);
         contactDescription.setTextColor(textColor);
-        showButton.setImageResource(iconId);
-        importButton.setImageResource(iconId);
+        showButton.setBackgroundDrawable(ColorSchemeManager.fillAttachmentForeground(mContext, R.drawable.ic_light_contact, mMessage.isIncoming()));
+        importButton.setBackgroundDrawable(showButton.getBackground());
 
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override

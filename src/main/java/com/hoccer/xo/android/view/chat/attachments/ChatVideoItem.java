@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.util.ColorSchemeManager;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
@@ -50,20 +51,11 @@ public class ChatVideoItem extends ChatMessageItem {
         TextView videoDescription = (TextView) mContentWrapper.findViewById(R.id.tv_video_description);
         ImageButton playButton = (ImageButton) mContentWrapper.findViewById(R.id.ib_content_open);
 
-
-        int textColor = -1;
-        int iconId = -1;
-        if (mMessage.isIncoming()) {
-            textColor = mContext.getResources().getColor(R.color.xo_incoming_message_textColor);
-            iconId = R.drawable.ic_dark_video;
-        } else {
-            textColor = mContext.getResources().getColor(R.color.xo_compose_message_textColor);
-            iconId = R.drawable.ic_light_video;
-        }
+        int textColor = (mMessage.isIncoming()) ? mContext.getResources().getColor(R.color.xo_incoming_message_textColor) : mContext.getResources().getColor(R.color.xo_compose_message_textColor);
 
         videoTitle.setTextColor(textColor);
         videoDescription.setTextColor(textColor);
-        playButton.setImageResource(iconId);
+        playButton.setBackgroundDrawable(ColorSchemeManager.fillAttachmentForeground(mContext, R.drawable.ic_light_location, mMessage.isIncoming()));
 
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
