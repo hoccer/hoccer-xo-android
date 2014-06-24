@@ -12,17 +12,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class FriendRequestAdapter extends XoAdapter {
 
 
-    private final List<TalkClientContact> mItems;
+    private List<TalkClientContact> mItems = null;
+
+    private OnItemCountChangedListener mListener;
 
     public FriendRequestAdapter(XoActivity activity) {
         super(activity);
-        mItems = activity.getXoDatabase().findAllPendingFriendRequests();
+        mItems = new ArrayList<TalkClientContact>();
+        loadPendingFreidnRequests();
+    }
+
+    private void loadPendingFreidnRequests() {
+        int countBefore = getCount();
+        mItems = mActivity.getXoDatabase().findAllPendingFriendRequests();
+        if(mListener != null && countBefore != getCount()) {
+            mListener.onItemCountChanged(getCount());
+        }
     }
 
     @Override
@@ -42,7 +54,7 @@ public class FriendRequestAdapter extends XoAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        TalkClientContact contact = mItems.get(i);
+        TalkClientContact contact = getItem(i);
         if(view == null) {
             LayoutInflater inflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.item_contact_client, null);
@@ -67,5 +79,15 @@ public class FriendRequestAdapter extends XoAdapter {
         }
 
         return view;
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        loadPendingFreidnRequests();
+        super.notifyDataSetChanged();
+    }
+
+    public void setOnItemCountChangedListener(OnItemCountChangedListener listener) {
+        mListener = listener;
     }
 }
