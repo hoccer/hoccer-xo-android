@@ -68,7 +68,7 @@ public class ChatVideoItem extends ChatMessageItem {
         videoDescription.setTextColor(textColor);
 
         String tag = (mMessage.getMessageId() != null) ? mMessage.getMessageId() : mMessage.getMessageTag();
-        thumbnailView.setVisibility(View.VISIBLE);
+        thumbnailView.setVisibility(View.INVISIBLE);
 
         if (contentObject.getContentDataUrl() != null) {
             mAttachmentView.setBackgroundDrawable(null);
