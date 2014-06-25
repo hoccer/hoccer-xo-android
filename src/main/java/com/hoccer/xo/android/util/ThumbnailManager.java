@@ -15,13 +15,10 @@ import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v4.util.LruCache;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -272,37 +269,37 @@ public class ThumbnailManager {
     public void displayThumbnailForVideo(String uri, RelativeLayout rootView, int maskResource, String tag) {
         String taggedUri = taggedThumbnailUri(uri, tag);
 
-        /*Bitmap bitmap = null;
+        Bitmap bitmap = null;
         if (uri != null) {
             bitmap = (Bitmap) mMemoryLruCache.get(taggedUri);
         }
         if (bitmap == null) {
-            bitmap = loadThumbnailForImage(uri, tag);
-        }*/
-        boolean success = initImageView(uri, rootView, maskResource);
+            bitmap = loadThumbnail(uri, maskResource, tag);
+            //bitmap = loadThumbnailForImage(uri, tag);
+        }
 
-        //if (bitmap != null) {
-        if ( success){
-            //rootView.setImageBitmap(bitmap);
-            //rootView.setVisibility(View.VISIBLE);
-            //initImageView(uri, rootView, makeResource);
+        ImageView thumbnailView = (ImageView) rootView.findViewById(R.id.iv_video_preview);
+
+        if ( bitmap != null){
+            thumbnailView.setImageBitmap(bitmap);
+            thumbnailView.setVisibility(View.VISIBLE);
         } else {
-            ImageView thumbnailView = (ImageView) rootView.findViewById(R.id.iv_video_preview);
             thumbnailView.setImageDrawable(mStubDrawable);
             if (uri != null) {
                 //queueThumbnailCreation(uri, rootView, maskResource, tag);
-                makeThumbnail(uri);
+                makeThumbnail(uri, tag);
             }
         }
     }
 
-    private void makeThumbnail(String uri) {
+    private void makeThumbnail(String uri, String tag) {
         String filePath = getRealPathFromURI(Uri.parse(uri), mContext) + ".png";
         File f = new File(filePath);
         if (!f.exists()) {
             String path = getRealPathFromURI(Uri.parse(uri), mContext);
             Bitmap bm = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
             writeThumbnailToFile(bm, filePath);
+            //saveToThumbnailDirectory(bm, uri, tag);
         }
     }
 
@@ -321,39 +318,41 @@ public class ThumbnailManager {
         }
     }
 
-    // SHOW IMAGE --------------------------------------------------------------------------------------------
+    private Bitmap loadThumbnail(String uri, int maskResource, String tag) {
+        String filePath = getRealPathFromURI(Uri.parse(uri), mContext);
+        String fileName = filePath + ".png";
 
-    private boolean initImageView(String uri, RelativeLayout rootView, int maskResource) {
-        String filePath = getRealPathFromURI(Uri.parse(uri), (Activity)mContext);
         File imgFile = new File(filePath + ".png");
 
         if (imgFile.exists()) {
-            ImageView preview = (ImageView) rootView.findViewById(R.id.iv_video_preview);
-            return loadImage(preview, filePath + ".png", (Activity)mContext, maskResource);
-        }
-        return false;
-    }
+            //String thumbnailUri = taggedThumbnailUri(fileName, tag);
+            //File thumbnail = new File(thumbnailUri);
+            //if (thumbnail.exists()) {
+                BitmapFactory.Options opt = new BitmapFactory.Options();
+                opt.inSampleSize = 2;
+                Bitmap original = BitmapFactory.decodeFile(fileName, opt);
+                if (original == null) {
+                    return null;
+                }else{
+                    String thumbnailUri = taggedThumbnailUri(uri, tag);
+                    mMemoryLruCache.put(thumbnailUri, original);
+                }
 
-    private boolean loadImage(ImageView view, String fileName, Activity activity, int maskResource) {
-        BitmapFactory.Options opt = new BitmapFactory.Options();
-        opt.inSampleSize = 2;
-        Bitmap original = BitmapFactory.decodeFile(fileName, opt);
-        if (original == null) {
-            return false;
+                Bitmap mask = getNinePatchMask(maskResource, original.getWidth(), original.getHeight(), mContext);
+                Bitmap result = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
+                Bitmap overlay = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
+                overlay.eraseColor(0x88000000);
+                Canvas c = new Canvas(result);
+                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+                c.drawBitmap(original, 0, 0, null);
+                c.drawBitmap(overlay, 0, 0, null);
+                c.drawBitmap(mask, 0, 0, paint);
+                paint.setXfermode(null);
+                return result;
+            //}
+            //return null;
         }
-
-        Bitmap mask = getNinePatchMask(maskResource, original.getWidth(), original.getHeight(), activity);
-        Bitmap result = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
-        Bitmap overlay = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
-        overlay.eraseColor(0x88000000);
-        Canvas c = new Canvas(result);
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-        c.drawBitmap(original, 0, 0, null);
-        c.drawBitmap(overlay, 0, 0, null);
-        c.drawBitmap(mask, 0, 0, paint);
-        paint.setXfermode(null);
-        view.setImageBitmap(result);
-        return true;
+        return null;
     }
 }
