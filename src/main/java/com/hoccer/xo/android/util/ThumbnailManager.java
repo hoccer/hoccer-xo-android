@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.util;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,15 +9,20 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.media.ExifInterface;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v4.util.LruCache;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -258,5 +264,105 @@ public class ThumbnailManager {
                 mImageToLoad.mImageView.setImageDrawable(mStubDrawable);
             }
         }
+    }
+
+    // VIDEO =============================================================================================
+
+    public void displayThumbnailForVideo(String uri, ImageView imageView, int maskResource, String tag) {
+        String taggedUri = taggedThumbnailUri(uri, tag);
+
+        /*Bitmap bitmap = null;
+        if (uri != null) {
+            bitmap = (Bitmap) mMemoryLruCache.get(taggedUri);
+        }
+        if (bitmap == null) {
+            bitmap = loadThumbnailForImage(uri, tag);
+        }*/
+        boolean success = initImageView(uri, imageView, true);
+
+        //if (bitmap != null) {
+        if ( success){
+            //imageView.setImageBitmap(bitmap);
+            //imageView.setVisibility(View.VISIBLE);
+            //initImageView(uri, imageView, true);
+        } else {
+            imageView.setImageDrawable(mStubDrawable);
+            if (uri != null) {
+                //queueThumbnailCreation(uri, imageView, maskResource, tag);
+                makeThumbnail(uri);
+            }
+        }
+    }
+
+    private void makeThumbnail(String uri) {
+        Log.e("bla", "ChatAdapter::makeThumbnail");
+        //if (object.getContentMediaType().contains("video")) {
+        String filePath = getRealPathFromURI(Uri.parse(uri), mContext) + ".png";
+            File f = new File(filePath);
+            if (!f.exists()) {
+                String path = getRealPathFromURI(Uri.parse(uri), mContext);
+                Bitmap bm = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
+                writeThumbnailToFile(bm, filePath);
+            }
+        //}
+    }
+
+    private void writeThumbnailToFile(Bitmap bitmap, String filename) {
+        Log.e( "bla", "ChatAdapter::writeThumbnailToFile");
+
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(filename);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                out.close();
+            } catch (Throwable ignore) {
+            }
+        }
+    }
+
+    // SHOW IMAGE --------------------------------------------------------------------------------------------
+
+    private boolean initImageView(String uri, View view, boolean isLight) {
+        String filePath = getRealPathFromURI(Uri.parse(uri), (Activity)mContext);
+        File imgFile = new File(filePath + ".png");
+
+        if (imgFile.exists()) {
+            ImageView preview = (ImageView) view.findViewById(R.id.iv_video_preview);
+            return loadImage(preview, filePath + ".png", (Activity)mContext, isLight, view);
+        }
+        return false;
+    }
+
+    private boolean loadImage(ImageView view, String fileName, Activity activity, boolean isLight, View view1) {
+        BitmapFactory.Options opt = new BitmapFactory.Options();
+        opt.inSampleSize = 2;
+        Bitmap original = BitmapFactory.decodeFile(fileName, opt);
+        if (original == null) {
+            return false;
+        }
+        int maskResource = R.drawable.bubble_green;
+        RelativeLayout root = (RelativeLayout) view1.findViewById(R.id.rl_root);
+        //root.setGravity(Gravity.RIGHT);
+        if (isLight) {
+            maskResource = R.drawable.bubble_grey;
+            //root.setGravity(Gravity.LEFT);
+        }
+        Bitmap mask = getNinePatchMask(maskResource, original.getWidth(), original.getHeight(), activity);
+        Bitmap result = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
+        Bitmap overlay = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
+        overlay.eraseColor(0x88000000);
+        Canvas c = new Canvas(result);
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+        c.drawBitmap(original, 0, 0, null);
+        c.drawBitmap(overlay, 0, 0, null);
+        c.drawBitmap(mask, 0, 0, paint);
+        paint.setXfermode(null);
+        view.setImageBitmap(result);
+        return true;
     }
 }

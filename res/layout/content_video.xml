@@ -23,6 +23,15 @@
             android:layout_width="wrap_content"
             android:layout_alignLeft="@+id/tv_video_title"/>
 
+
+    <ImageView
+            android:id="@+id/iv_video_preview"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_toLeftOf="@+id/rl_message_attachment"
+            android:src="@drawable/media_cover_art_default"
+            />
+
     <ImageButton
             android:id="@+id/ib_content_open"
             android:src="@drawable/ic_dark_video"

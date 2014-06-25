@@ -3,17 +3,15 @@ package com.hoccer.xo.android.view.chat.attachments;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.graphics.*;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
+import com.hoccer.xo.android.util.ThumbnailManager;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
@@ -49,7 +47,7 @@ public class ChatVideoItem extends ChatMessageItem {
         TextView videoTitle = (TextView) mContentWrapper.findViewById(R.id.tv_video_title);
         TextView videoDescription = (TextView) mContentWrapper.findViewById(R.id.tv_video_description);
         ImageButton playButton = (ImageButton) mContentWrapper.findViewById(R.id.ib_content_open);
-
+        final ImageView thumbnailView = (ImageView) mContentWrapper.findViewById(R.id.iv_video_preview);
 
         int textColor = -1;
         int iconId = -1;
@@ -66,6 +64,23 @@ public class ChatVideoItem extends ChatMessageItem {
         videoTitle.setTextColor(textColor);
         videoDescription.setTextColor(textColor);
         playButton.setImageResource(iconId);
+
+        int mask;
+        if (mMessage.isIncoming()) {
+            //rootView.setGravity(Gravity.LEFT);
+            mask = R.drawable.bubble_grey;
+        } else {
+            //rootView.setGravity(Gravity.RIGHT);
+            mask = R.drawable.bubble_green;
+        }
+
+        String tag = (mMessage.getMessageId() != null) ? mMessage.getMessageId() : mMessage.getMessageTag();
+
+        if (contentObject.getContentDataUrl() != null) {
+            ThumbnailManager.getInstance(mContext).displayThumbnailForVideo(contentObject.getContentDataUrl(), thumbnailView, mask, tag);
+            //initImageView(contentObject.getContentDataUrl(), thumbnailView, true);
+        }
+
 
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,6 +105,4 @@ public class ChatVideoItem extends ChatMessageItem {
             }
         });
     }
-
-
 }
