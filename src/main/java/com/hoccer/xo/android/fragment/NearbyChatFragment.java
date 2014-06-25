@@ -98,6 +98,7 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
             mList.setAdapter(mNearbyAdapter);
         }
         mNearbyAdapter.onResume();
+        checkIfNearbyIsActive();
     }
 
     private void checkIfNearbyIsActive() {
