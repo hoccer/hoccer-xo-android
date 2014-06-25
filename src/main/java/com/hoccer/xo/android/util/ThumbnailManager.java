@@ -31,6 +31,7 @@ import java.io.IOException;
  */
 public class ThumbnailManager {
     private static Logger LOG = Logger.getLogger(ThumbnailManager.class);
+    private static int DEFAULT_HEIGHT_DP = 200;
     private static ThumbnailManager mInstance;
     private LruCache mMemoryLruCache;
     private Context mContext;
@@ -146,7 +147,7 @@ public class ThumbnailManager {
     private Bitmap scaleBitmap(Bitmap bitmap, Context context) {
         //200dp in item_chat_message.xml -> rl_message_attachment -> height
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        float scaledHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, metrics);
+        float scaledHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, DEFAULT_HEIGHT_DP, metrics);
         float scaledWidth = bitmap.getWidth() * (scaledHeight / bitmap.getHeight());
         return Bitmap.createScaledBitmap(bitmap, Math.round(scaledWidth), Math.round(scaledHeight), false);
     }
@@ -195,9 +196,17 @@ public class ThumbnailManager {
     }
 
     private Bitmap renderThumbnail(File file, int maskResource) {
-        BitmapFactory.Options opt = new BitmapFactory.Options();
-        opt.inSampleSize = 4;
-        Bitmap original = BitmapFactory.decodeFile(file.getAbsolutePath(), opt);
+        // Dry-loading of bitmap to calculate sample size
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+        int fileHeight = options.outHeight;
+        int sampleSize = fileHeight / DEFAULT_HEIGHT_DP;
+
+        // Load bitmap in appropriate size
+        options = new BitmapFactory.Options();
+        options.inSampleSize = sampleSize;
+        Bitmap original = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
         original = rotateBitmap(original, file.getAbsolutePath());
         original = scaleBitmap(original, mContext);
         //Load mask
