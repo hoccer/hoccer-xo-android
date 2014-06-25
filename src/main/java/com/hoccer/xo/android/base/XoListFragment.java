@@ -18,7 +18,7 @@ public abstract class XoListFragment extends ListFragment implements IXoFragment
     private XoActivity mActivity;
 
     public XoListFragment() {
-        LOG = Logger.getLogger(getClass());
+        LOG = Logger.getLogger(((Object) this).getClass());
     }
 
     public File getAvatarDirectory() {
