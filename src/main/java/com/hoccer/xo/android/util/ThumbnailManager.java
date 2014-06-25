@@ -17,6 +17,7 @@ import android.support.v4.util.LruCache;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -268,7 +269,7 @@ public class ThumbnailManager {
 
     // VIDEO =============================================================================================
 
-    public void displayThumbnailForVideo(String uri, ImageView imageView, int maskResource, String tag) {
+    public void displayThumbnailForVideo(String uri, RelativeLayout rootView, int maskResource, String tag) {
         String taggedUri = taggedThumbnailUri(uri, tag);
 
         /*Bitmap bitmap = null;
@@ -278,38 +279,34 @@ public class ThumbnailManager {
         if (bitmap == null) {
             bitmap = loadThumbnailForImage(uri, tag);
         }*/
-        boolean success = initImageView(uri, imageView, true);
+        boolean success = initImageView(uri, rootView, maskResource);
 
         //if (bitmap != null) {
         if ( success){
-            //imageView.setImageBitmap(bitmap);
-            //imageView.setVisibility(View.VISIBLE);
-            //initImageView(uri, imageView, true);
+            //rootView.setImageBitmap(bitmap);
+            //rootView.setVisibility(View.VISIBLE);
+            //initImageView(uri, rootView, makeResource);
         } else {
-            imageView.setImageDrawable(mStubDrawable);
+            ImageView thumbnailView = (ImageView) rootView.findViewById(R.id.iv_video_preview);
+            thumbnailView.setImageDrawable(mStubDrawable);
             if (uri != null) {
-                //queueThumbnailCreation(uri, imageView, maskResource, tag);
+                //queueThumbnailCreation(uri, rootView, maskResource, tag);
                 makeThumbnail(uri);
             }
         }
     }
 
     private void makeThumbnail(String uri) {
-        Log.e("bla", "ChatAdapter::makeThumbnail");
-        //if (object.getContentMediaType().contains("video")) {
         String filePath = getRealPathFromURI(Uri.parse(uri), mContext) + ".png";
-            File f = new File(filePath);
-            if (!f.exists()) {
-                String path = getRealPathFromURI(Uri.parse(uri), mContext);
-                Bitmap bm = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
-                writeThumbnailToFile(bm, filePath);
-            }
-        //}
+        File f = new File(filePath);
+        if (!f.exists()) {
+            String path = getRealPathFromURI(Uri.parse(uri), mContext);
+            Bitmap bm = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
+            writeThumbnailToFile(bm, filePath);
+        }
     }
 
     private void writeThumbnailToFile(Bitmap bitmap, String filename) {
-        Log.e( "bla", "ChatAdapter::writeThumbnailToFile");
-
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(filename);
@@ -326,31 +323,25 @@ public class ThumbnailManager {
 
     // SHOW IMAGE --------------------------------------------------------------------------------------------
 
-    private boolean initImageView(String uri, View view, boolean isLight) {
+    private boolean initImageView(String uri, RelativeLayout rootView, int maskResource) {
         String filePath = getRealPathFromURI(Uri.parse(uri), (Activity)mContext);
         File imgFile = new File(filePath + ".png");
 
         if (imgFile.exists()) {
-            ImageView preview = (ImageView) view.findViewById(R.id.iv_video_preview);
-            return loadImage(preview, filePath + ".png", (Activity)mContext, isLight, view);
+            ImageView preview = (ImageView) rootView.findViewById(R.id.iv_video_preview);
+            return loadImage(preview, filePath + ".png", (Activity)mContext, maskResource);
         }
         return false;
     }
 
-    private boolean loadImage(ImageView view, String fileName, Activity activity, boolean isLight, View view1) {
+    private boolean loadImage(ImageView view, String fileName, Activity activity, int maskResource) {
         BitmapFactory.Options opt = new BitmapFactory.Options();
         opt.inSampleSize = 2;
         Bitmap original = BitmapFactory.decodeFile(fileName, opt);
         if (original == null) {
             return false;
         }
-        int maskResource = R.drawable.bubble_green;
-        RelativeLayout root = (RelativeLayout) view1.findViewById(R.id.rl_root);
-        //root.setGravity(Gravity.RIGHT);
-        if (isLight) {
-            maskResource = R.drawable.bubble_grey;
-            //root.setGravity(Gravity.LEFT);
-        }
+
         Bitmap mask = getNinePatchMask(maskResource, original.getWidth(), original.getHeight(), activity);
         Bitmap result = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
         Bitmap overlay = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
