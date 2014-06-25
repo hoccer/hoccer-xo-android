@@ -97,6 +97,7 @@
     <string name="friend_request_add_as_friend">Add as a friend</string>
     <string name="friend_request_cancel_invitation">Cancel invitation</string>
     <string name="friend_request_accept_invitation">Accept invitation</string>
+    <string name="friend_request_decline_invitation">Decline invitation</string>
     <string name="friend_request_invited_me_description">wants to be your friend.</string>
     <string name="friend_request_invited_by_you_description">has received an invitation from you.</string>
 

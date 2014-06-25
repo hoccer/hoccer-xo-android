@@ -96,6 +96,7 @@
     <string name="friend_request_add_as_friend">Als Freund hinzufügen</string>
     <string name="friend_request_cancel_invitation">Freundschaftsanfrage zurückziehen</string>
     <string name="friend_request_accept_invitation">Freundschaftsanfrage akzeptieren</string>
+    <string name="friend_request_decline_invitation">Freundschaftsanfrage ablehnen</string>
     <string name="friend_request_invited_me_description">möchte dein Freund sein.</string>
     <string name="friend_request_invited_by_you_description">hat eine Einladung von dir bekommen.</string>
 
