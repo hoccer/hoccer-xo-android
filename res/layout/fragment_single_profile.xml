@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:background="@color/xo_main_background"
         android:layout_height="match_parent">
 
@@ -70,21 +71,40 @@
                 android:layout_marginRight="45dp"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"/>
 
-        <Button
-                android:id="@+id/btn_profile_invite"
+        <LinearLayout
+                android:id="@+id/ll_profile_invite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:layout_below="@+id/tv_profile_name"
-                android:text="als Freund hinzufügen"
-                android:visibility="gone"/>
+                android:gravity="fill_horizontal"
+                android:visibility="visible">
+
+            <Button
+                    android:id="@+id/btn_profile_invite"
+                    android:layout_height="wrap_content"
+                    android:layout_width="fill_parent"
+                    android:layout_weight="1"
+                    android:text="@string/friend_request_add_as_friend"
+                    android:visibility="visible"/>
+
+            <Button
+                    android:id="@+id/btn_profile_decline"
+                    android:layout_height="wrap_content"
+                    android:layout_width="fill_parent"
+                    android:layout_weight="1"
+                    android:layout_toRightOf="@+id/btn_profile_invite"
+                    android:text="@string/friend_request_decline_invitation"
+                    android:visibility="visible"/>
+
+        </LinearLayout>
 
         <TextView
                 android:id="@+id/tv_profile_key_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/btn_profile_invite"
+                android:layout_below="@+id/ll_profile_invite"
                 android:layout_marginTop="25dp"
                 android:text="@string/profile_key_text"
                 android:layout_marginLeft="45dp"
