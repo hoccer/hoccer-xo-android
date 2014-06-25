@@ -1,6 +1,5 @@
 package com.hoccer.xo.android.util;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.database.Cursor;
@@ -267,14 +266,12 @@ public class ThumbnailManager {
     // VIDEO =============================================================================================
 
     public void displayThumbnailForVideo(String uri, RelativeLayout rootView, int maskResource, String tag) {
-        String taggedUri = taggedThumbnailUri(uri, tag);
 
-        Bitmap bitmap = null;
-        if (uri != null) {
-            bitmap = (Bitmap) mMemoryLruCache.get(taggedUri);
-        }
+        String taggedUri = taggedThumbnailUri(uri, tag);
+        Bitmap bitmap = (Bitmap) mMemoryLruCache.get(taggedUri);
+
         if (bitmap == null) {
-            bitmap = loadThumbnail(uri, maskResource, tag);
+            bitmap = loadThumbnailForVideo(uri, maskResource, tag); //TODO merge with loadThumbnailForImage ?
             //bitmap = loadThumbnailForImage(uri, tag);
         }
 
@@ -285,73 +282,49 @@ public class ThumbnailManager {
             thumbnailView.setVisibility(View.VISIBLE);
         } else {
             thumbnailView.setImageDrawable(mStubDrawable);
-            if (uri != null) {
-                //queueThumbnailCreation(uri, rootView, maskResource, tag);
-                makeThumbnail(uri, tag);
-            }
+            //queueThumbnailCreation(uri, rootView, maskResource, tag);
+            makeThumbnail(uri, tag); //TODO move to new thread
         }
     }
 
     private void makeThumbnail(String uri, String tag) {
         String filePath = getRealPathFromURI(Uri.parse(uri), mContext) + ".png";
         File f = new File(filePath);
+
         if (!f.exists()) {
             String path = getRealPathFromURI(Uri.parse(uri), mContext);
             Bitmap bm = ThumbnailUtils.createVideoThumbnail(path, MediaStore.Images.Thumbnails.FULL_SCREEN_KIND);
-            writeThumbnailToFile(bm, filePath);
-            //saveToThumbnailDirectory(bm, uri, tag);
+            saveToThumbnailDirectory(bm, uri, tag);
         }
     }
 
-    private void writeThumbnailToFile(Bitmap bitmap, String filename) {
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(filename);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                out.close();
-            } catch (Throwable ignore) {
+    private Bitmap loadThumbnailForVideo(String uri, int maskResource, String tag) {
+
+        String thumbnailUri = taggedThumbnailUri(uri, tag);
+        File thumbnail = new File(thumbnailUri);
+
+        if (thumbnail.exists()) {
+            BitmapFactory.Options opt = new BitmapFactory.Options();
+            opt.inSampleSize = 2;
+            Bitmap original = BitmapFactory.decodeFile(thumbnail.getAbsolutePath(), opt);
+            if (original == null) {
+                return null;
+            }else{
+                mMemoryLruCache.put(thumbnailUri, original);
             }
-        }
-    }
 
-    private Bitmap loadThumbnail(String uri, int maskResource, String tag) {
-        String filePath = getRealPathFromURI(Uri.parse(uri), mContext);
-        String fileName = filePath + ".png";
-
-        File imgFile = new File(filePath + ".png");
-
-        if (imgFile.exists()) {
-            //String thumbnailUri = taggedThumbnailUri(fileName, tag);
-            //File thumbnail = new File(thumbnailUri);
-            //if (thumbnail.exists()) {
-                BitmapFactory.Options opt = new BitmapFactory.Options();
-                opt.inSampleSize = 2;
-                Bitmap original = BitmapFactory.decodeFile(fileName, opt);
-                if (original == null) {
-                    return null;
-                }else{
-                    String thumbnailUri = taggedThumbnailUri(uri, tag);
-                    mMemoryLruCache.put(thumbnailUri, original);
-                }
-
-                Bitmap mask = getNinePatchMask(maskResource, original.getWidth(), original.getHeight(), mContext);
-                Bitmap result = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
-                Bitmap overlay = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
-                overlay.eraseColor(0x88000000);
-                Canvas c = new Canvas(result);
-                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-                c.drawBitmap(original, 0, 0, null);
-                c.drawBitmap(overlay, 0, 0, null);
-                c.drawBitmap(mask, 0, 0, paint);
-                paint.setXfermode(null);
-                return result;
-            //}
-            //return null;
+            Bitmap mask = getNinePatchMask(maskResource, original.getWidth(), original.getHeight(), mContext);
+            Bitmap result = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
+            Bitmap overlay = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
+            overlay.eraseColor(0x88000000);
+            Canvas c = new Canvas(result);
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+            c.drawBitmap(original, 0, 0, null);
+            c.drawBitmap(overlay, 0, 0, null);
+            c.drawBitmap(mask, 0, 0, paint);
+            paint.setXfermode(null);
+            return result;
         }
         return null;
     }
