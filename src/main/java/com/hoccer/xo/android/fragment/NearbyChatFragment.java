@@ -103,6 +103,9 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
 
     private void checkIfNearbyIsActive() {
         try {
+            if(mActivity == null) {
+                return;
+            }
             List<TalkClientContact> nearbyGroups = getXoDatabase().findAllNearbyGroups();
             if (nearbyGroups.size() > 0) {
                 hidePlaceholder();

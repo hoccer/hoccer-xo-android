@@ -15,7 +15,7 @@ public abstract class XoListFragment extends ListFragment implements IXoFragment
 
     protected Logger LOG = null;
 
-    private XoActivity mActivity;
+    protected XoActivity mActivity;
 
     public XoListFragment() {
         LOG = Logger.getLogger(((Object) this).getClass());
