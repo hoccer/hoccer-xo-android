@@ -1,6 +1,12 @@
 package com.hoccer.xo.android.fragment;
 
+import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.adapter.NearbyChatAdapter;
@@ -9,12 +15,6 @@ import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.android.view.OverscrollListView;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -31,7 +31,7 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nearby_chat, container, false);
-        mList = (OverscrollListView)  view.findViewById(android.R.id.list);
+        mList = (OverscrollListView) view.findViewById(android.R.id.list);
         mPlaceholderImage = (ImageView) view.findViewById(R.id.iv_contacts_placeholder);
         mPlaceholderImage.setImageResource(R.drawable.placeholder_nearby);
         mPlaceholderText = (TextView) view.findViewById(R.id.tv_contacts_placeholder);
@@ -103,7 +103,7 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
 
     private void checkIfNearbyIsActive() {
         try {
-            if(mActivity == null) {
+            if (mActivity == null) {
                 return;
             }
             List<TalkClientContact> nearbyGroups = getXoDatabase().findAllNearbyGroups();
