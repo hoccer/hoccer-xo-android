@@ -16,6 +16,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -29,11 +30,10 @@ import java.io.File;
  */
 public class AboutFragment extends XoFragment {
 
-    private static final String ABOUT_URL = "http://www.hoccer.com/xo-about-view";
-
     private static final Logger LOG = Logger.getLogger(AboutFragment.class);
 
     private WebView mAboutWebView;
+    private String mAboutString;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +55,8 @@ public class AboutFragment extends XoFragment {
         // open all links in its own window
         mAboutWebView.setWebViewClient(new WebViewClient());
         mAboutWebView.setWebChromeClient(new WebChromeClient());
+
+        mAboutString = getResources().getString(R.string.about_url);
 
         // get settings for web view
         WebSettings webSettings = mAboutWebView.getSettings();
@@ -79,7 +81,7 @@ public class AboutFragment extends XoFragment {
         LOG.debug("onResume()");
         super.onResume();
         // load our target URL
-        mAboutWebView.loadUrl(ABOUT_URL);
+        mAboutWebView.loadUrl(mAboutString);
     }
 
 }

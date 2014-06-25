@@ -286,6 +286,8 @@
         <item>NEARBY</item>
     </string-array>
 
+    <string name="about_url">http://www.hoccer.com/xo-about-view</string>
+
     <string name="preference_database_title">Local Database</string>
     <string name="placeholder_conversations_text">Invite friends to chat with!</string>
     <string name="placeholder_nearby_text">Waiting for others nearby...</string>

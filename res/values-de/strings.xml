@@ -280,4 +280,6 @@
         <item>IN DER NÄHE</item>
     </string-array>
 
+    <string name="about_url">http://www.hoccer.com/xo-about-view</string>
+
 </resources>
