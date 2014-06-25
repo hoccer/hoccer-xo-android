@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.*;
 import android.net.Uri;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
@@ -47,40 +48,32 @@ public class ChatVideoItem extends ChatMessageItem {
         TextView videoTitle = (TextView) mContentWrapper.findViewById(R.id.tv_video_title);
         TextView videoDescription = (TextView) mContentWrapper.findViewById(R.id.tv_video_description);
         ImageButton playButton = (ImageButton) mContentWrapper.findViewById(R.id.ib_content_open);
-        final ImageView thumbnailView = (ImageView) mContentWrapper.findViewById(R.id.iv_video_preview);
+        ImageView thumbnailView = (ImageView) mContentWrapper.findViewById(R.id.iv_video_preview);
+        RelativeLayout rootView = (RelativeLayout) mContentWrapper.findViewById(R.id.rl_root);
 
-        int textColor = -1;
-        int iconId = -1;
+        int textColor;
+        int mask;
+
         if (mMessage.isIncoming()) {
             textColor = Color.BLACK;
-            iconId = R.drawable.ic_dark_music;
-            iconId = R.drawable.ic_dark_video;
+            rootView.setGravity(Gravity.LEFT);
+            mask = R.drawable.bubble_grey;
         } else {
             textColor = Color.WHITE;
-            iconId = R.drawable.ic_light_music;
-            iconId = R.drawable.ic_light_video;
+            rootView.setGravity(Gravity.RIGHT);
+            mask = R.drawable.bubble_green;
         }
 
         videoTitle.setTextColor(textColor);
         videoDescription.setTextColor(textColor);
-        playButton.setImageResource(iconId);
-
-        int mask;
-        if (mMessage.isIncoming()) {
-            //rootView.setGravity(Gravity.LEFT);
-            mask = R.drawable.bubble_grey;
-        } else {
-            //rootView.setGravity(Gravity.RIGHT);
-            mask = R.drawable.bubble_green;
-        }
 
         String tag = (mMessage.getMessageId() != null) ? mMessage.getMessageId() : mMessage.getMessageTag();
+        thumbnailView.setVisibility(View.VISIBLE);
 
         if (contentObject.getContentDataUrl() != null) {
-            ThumbnailManager.getInstance(mContext).displayThumbnailForVideo(contentObject.getContentDataUrl(), thumbnailView, mask, tag);
-            //initImageView(contentObject.getContentDataUrl(), thumbnailView, true);
+            mAttachmentView.setBackgroundDrawable(null);
+            ThumbnailManager.getInstance(mContext).displayThumbnailForVideo(contentObject.getContentDataUrl(), rootView, mask, tag);
         }
-
 
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
