@@ -109,7 +109,6 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
 
     private void initContactListAdapter() {
         if (mAdapter == null) {
-            // create list adapter
             mAdapter = getXoActivity().makeContactListAdapter();
             mAdapter.onCreate();
             // filter out never-related contacts (which we know only via groups)
@@ -131,23 +130,15 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
                 }
             });
 
+            mAdapter.setOnItemCountChangedListener(this);
             mAdapter.requestReload();
             mContactList.setAdapter(mAdapter);
-            mAdapter.setOnItemCountChangedListener(this);
+            onItemCountChanged(mAdapter.getCount());
         }
-        mAdapter.requestReload(); // XXX fix contact adapter and only do this on new adapter
+        mAdapter.requestReload();
         mAdapter.onResume();
-        updateDisplay();
     }
 
-    private void updateDisplay() {
-        showPlaceholder();
-        if (mAdapter != null && mAdapter.getCount() > 0) {
-            hidePlaceholder();
-        }
-    }
-
-    // XXX @Override
     public void onGroupCreationSucceeded(int contactId) {
         LOG.debug("onGroupCreationSucceeded(" + contactId + ")");
         try {
