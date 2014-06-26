@@ -265,6 +265,7 @@
 
     <string-array name="tab_names">
         <item>CHATS</item>
+        <item>EINLADUNGEN</item>
         <item>IN DER NÄHE</item>
     </string-array>
 
