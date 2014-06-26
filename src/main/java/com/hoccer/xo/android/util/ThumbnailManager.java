@@ -340,11 +340,6 @@ public class ThumbnailManager {
             BitmapFactory.Options opt = new BitmapFactory.Options();
             opt.inSampleSize = 2;
             Bitmap original = BitmapFactory.decodeFile(thumbnail.getAbsolutePath(), opt);
-            if (original == null) {
-                return null;
-            }else{
-                mMemoryLruCache.put(thumbnailUri, original);
-            }
 
             Bitmap mask = getNinePatchMask(maskResource, original.getWidth(), original.getHeight(), mContext);
             Bitmap result = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
@@ -357,6 +352,10 @@ public class ThumbnailManager {
             c.drawBitmap(overlay, 0, 0, null);
             c.drawBitmap(mask, 0, 0, paint);
             paint.setXfermode(null);
+
+            if (result != null) {
+                mMemoryLruCache.put(thumbnailUri, result);
+            }
 
             return result;
         }
