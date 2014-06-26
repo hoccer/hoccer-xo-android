@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="@color/xo_main_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <com.hoccer.xo.android.view.OverscrollListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:transcriptMode="disabled"
+            android:stackFromBottom="true"
+            android:smoothScrollbar="false"
+            android:dividerHeight="10dp"
+            android:layout_marginBottom="50dp"
+            android:divider="@null"/>
+
+    <ImageView
+            android:id="@+id/iv_contacts_placeholder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="33dp"
+            android:layout_marginRight="33dp"
+            android:layout_marginTop="80dp"
+            android:src="@drawable/placeholder_chats"
+            android:adjustViewBounds="true"
+            />
+    <TextView
+            android:id="@+id/tv_contacts_placeholder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_contacts_placeholder"
+            android:layout_marginTop="35dp"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/common_signin_btn_light_text_disabled"
+            android:textSize="8pt"
+            android:text="@string/placeholder_conversations_text"/>
+
+    <RelativeLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/list"
+            android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

@@ -3,11 +3,11 @@ package com.hoccer.xo.android.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.*;
-import android.widget.LinearLayout;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.android.service.MediaPlayerServiceConnector;
+import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.view.chat.attachments.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
 
@@ -15,7 +15,6 @@ import net.hockeyapp.android.CrashManager;
 
 import org.apache.log4j.Logger;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -27,7 +26,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.*;
@@ -209,38 +207,24 @@ public class XoPreferenceActivity extends PreferenceActivity
             return;
         }
 
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-
-        final LinearLayout passwordInputView = (LinearLayout) getLayoutInflater().inflate(R.layout.view_password_input, null);
-        final EditText passwordInput = (EditText) passwordInputView.findViewById(R.id.password_input);
-
-        dialogBuilder.setTitle(R.string.import_credentials_dialog_title);
-        dialogBuilder
-                .setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+        XoDialogs.showPasswordDialog("ImportCredentialsDialog",
+                R.string.dialog_import_credentials_title,
+                this,
+                new XoDialogs.OnPasswordClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String password = passwordInput.getText().toString();
+                    public void onClick(DialogInterface dialog, int id, String password) {
                         if (password != null && password.length() > 0) {
                             importCredentials(credentialsFile, password);
-                            dialog.dismiss();
                         } else {
                             Toast.makeText(XoPreferenceActivity.this, R.string.no_password, Toast.LENGTH_LONG).show();
                         }
                     }
-                });
-        dialogBuilder
-                .setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+                },
+                new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        passwordInput.setText("");
-                        dialog.dismiss();
+                    public void onClick(DialogInterface dialog, int id) {
                     }
                 });
-        dialogBuilder.setView(passwordInputView);
-
-        AlertDialog dialog = dialogBuilder.create();
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        dialog.show();
     }
 
     private void importCredentials(File credentialsFile, String password) {
@@ -268,38 +252,24 @@ public class XoPreferenceActivity extends PreferenceActivity
     }
 
     private void doExport() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-
-        final LinearLayout passwordInputView = (LinearLayout) getLayoutInflater().inflate(R.layout.view_password_input, null);
-        final EditText passwordInput = (EditText) passwordInputView.findViewById(R.id.password_input);
-
-        dialogBuilder.setTitle(R.string.export_credentials_dialog_title);
-        dialogBuilder
-                .setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+        XoDialogs.showPasswordDialog("ExportCredentialsDialog",
+                R.string.dialog_export_credentials_title,
+                this,
+                new XoDialogs.OnPasswordClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String password = passwordInput.getText().toString();
+                    public void onClick(DialogInterface dialog, int id, String password) {
                         if (password != null && password.length() > 0) {
                             exportCredentials(password);
-                            dialog.dismiss();
                         } else {
                             Toast.makeText(XoPreferenceActivity.this, R.string.no_password, Toast.LENGTH_LONG).show();
                         }
                     }
-                });
-        dialogBuilder
-                .setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+                },
+                new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        passwordInput.setText("");
-                        dialog.dismiss();
+                    public void onClick(DialogInterface dialog, int id) {
                     }
                 });
-        dialogBuilder.setView(passwordInputView);
-
-        AlertDialog dialog = dialogBuilder.create();
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        dialog.show();
     }
 
     private void exportCredentials(String password) {

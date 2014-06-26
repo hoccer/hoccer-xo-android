@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/fragment_messaging"
         android:background="@color/xo_main_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+    <View
+            android:id="@+id/overscroll_indicator"
+            android:layout_height="5dp"
+            android:layout_width="match_parent"
+            android:background="#0000ff"
+            android:visibility="gone"/>
+
     <com.hoccer.xo.android.view.OverscrollListView
             android:id="@android:id/list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/cv_composition"
-            android:stackFromBottom="true"
+            android:layout_weight="1"
+            android:layout_height="0dp"
             android:transcriptMode="disabled"
+            android:stackFromBottom="true"
             android:smoothScrollbar="false"
             android:dividerHeight="10dp"
             android:divider="@null"/>
 
-    <com.hoccer.xo.android.view.CompositionView
-            android:id="@+id/cv_composition"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"/>
-
     <LinearLayout
             android:id="@android:id/empty"
-            android:layout_centerInParent="true"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content">
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+
         <TextView
                 android:id="@+id/messaging_empty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
     </LinearLayout>
 
-
-</RelativeLayout>
+</LinearLayout>
