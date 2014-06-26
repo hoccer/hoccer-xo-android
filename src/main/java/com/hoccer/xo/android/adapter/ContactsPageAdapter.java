@@ -44,8 +44,4 @@ public class ContactsPageAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return mCount;
     }
-
-    public void showNearbyPlaceholder() {
-        mNearbyChatFragment.showPlaceholder();
-    }
 }
