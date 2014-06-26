@@ -118,7 +118,7 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
     }
 
     private void initFriendRequestAdapter() {
-        mFriendRequestListView = (ListView) getView().findViewById(R.id.lv_contacts_friendrequests);
+        mFriendRequestListView = (ListView) getView().findViewById(R.id.lv_contacts_friend_requests);
         if (getXoDatabase().hasPendingFriendRequests()) {
             mFriendRequestAdapter = new FriendRequestAdapter(getXoActivity());
             mFriendRequestAdapter.setOnItemCountChangedListener(this);

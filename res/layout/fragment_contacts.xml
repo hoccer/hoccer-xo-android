@@ -25,13 +25,13 @@
             android:layout_below="@+id/iv_contacts_placeholder"
             android:layout_marginTop="35dp"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/common_signin_btn_light_text_disabled"
+            android:textColor="@color/common_sign_in_btn_light_text_disabled"
             android:textSize="8pt"
             android:text="@string/placeholder_conversations_text"/>
 
 
     <ListView
-            android:id="@+id/lv_contacts_friendrequests"
+            android:id="@+id/lv_contacts_friend_requests"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="50dp"
@@ -42,6 +42,6 @@
             android:id="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/lv_contacts_friendrequests"/>
+            android:layout_below="@+id/lv_contacts_friend_requests"/>
 
 </RelativeLayout>
