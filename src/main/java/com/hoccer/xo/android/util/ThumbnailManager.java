@@ -1,6 +1,5 @@
 package com.hoccer.xo.android.util;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.database.Cursor;
@@ -19,6 +18,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -228,7 +228,7 @@ public class ThumbnailManager {
         }
     }
 
-    class LoadBitmapTask extends AsyncTask<Object, Object, Bitmap> {
+    private class LoadBitmapTask extends AsyncTask<Object, Object, Bitmap> {
         private ImageToLoad mImageToLoad;
         private int mMaskResource;
         private String mTag;
@@ -264,7 +264,7 @@ public class ThumbnailManager {
         }
     }
 
-    class ThumbnailLoader extends AsyncTask<Object, Void, Bitmap>{
+    private class VideoThumbnailLoader extends AsyncTask<Object, Void, Bitmap>{
 
         String uri;
         int maskResource;
@@ -310,7 +310,8 @@ public class ThumbnailManager {
 
         if (bitmap == null) {
             thumbnailView.setImageDrawable(mStubDrawable);
-            new ThumbnailLoader().execute(uri, thumbnailView, maskResource, tag);
+
+            new VideoThumbnailLoader().execute(uri, thumbnailView, maskResource, tag);
         }else{
             if ( bitmap != null){
                 thumbnailView.setImageBitmap(bitmap);
