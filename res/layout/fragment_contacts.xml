@@ -28,25 +28,9 @@
             android:textSize="8pt"
             android:text="@string/placeholder_conversations_text"/>
 
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-        <ListView
-                android:id="@+id/lv_contacts_friend_requests"
-                android:layout_width="fill_parent"
-                android:layout_height="150dp"
-                android:layout_weight="1"
-                android:layout_marginBottom="20dp"
-                android:visibility="gone"/>
-
-        <ListView
-                android:id="@android:id/list"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="5"/>
-
-    </LinearLayout>
+    <ListView
+            android:id="@android:id/list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
 
 </RelativeLayout>

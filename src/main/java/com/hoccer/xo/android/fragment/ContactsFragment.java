@@ -6,12 +6,10 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
-import com.hoccer.xo.android.adapter.FriendRequestAdapter;
 import com.hoccer.xo.android.adapter.OnItemCountChangedListener;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.android.dialog.TokenDialog;
@@ -26,8 +24,7 @@ import java.sql.SQLException;
  * This currently shows only contact data but should also be able to show
  * recent conversations for use as a "conversations" view.
  */
-public class ContactsFragment extends XoListFragment implements OnItemCountChangedListener,
-        IXoContactListener {
+public class ContactsFragment extends XoListFragment implements OnItemCountChangedListener {
 
     private static final Logger LOG = Logger.getLogger(ContactsFragment.class);
 
@@ -39,10 +36,6 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
     private TextView mPlaceholderText;
 
     private ImageView mPlaceholderImage;
-
-    private ListView mFriendRequestListView;
-
-    private FriendRequestAdapter mFriendRequestAdapter = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +65,6 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
             mAdapter.onDestroy();
             mAdapter = null;
         }
-        getXoActivity().getXoClient().unregisterContactListener(this);
     }
 
     @Override
@@ -80,8 +72,6 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
         LOG.debug("onResume()");
         super.onResume();
         initContactListAdapter();
-        initFriendRequestAdapter();
-        getXoActivity().getXoClient().registerContactListener(this);
     }
 
     @Override
@@ -115,24 +105,6 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
         } catch (SQLException e) {
             LOG.error("SQLException while clearing conversation with contact " + contact.getClientContactId(), e);
         }
-    }
-
-    private void initFriendRequestAdapter() {
-        mFriendRequestListView = (ListView) getView().findViewById(R.id.lv_contacts_friend_requests);
-        if (getXoDatabase().hasPendingFriendRequests()) {
-            mFriendRequestAdapter = new FriendRequestAdapter(getXoActivity());
-            mFriendRequestAdapter.setOnItemCountChangedListener(this);
-            mFriendRequestListView.setAdapter(mFriendRequestAdapter);
-        }
-
-        mFriendRequestListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                getXoActivity().showContactProfile((TalkClientContact) adapterView.getItemAtPosition(i));
-            }
-        });
-
-        updateDisplay();
     }
 
     private void initContactListAdapter() {
@@ -170,14 +142,6 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
 
     private void updateDisplay() {
         showPlaceholder();
-        if (mFriendRequestAdapter != null) {
-            if (getXoDatabase().hasPendingFriendRequests()) {
-                mFriendRequestListView.setVisibility(View.VISIBLE);
-                hidePlaceholder();
-            } else {
-                mFriendRequestListView.setVisibility(View.GONE);
-            }
-        }
         if (mAdapter != null && mAdapter.getCount() > 0) {
             hidePlaceholder();
         }
@@ -235,41 +199,5 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
     private void hidePlaceholder() {
         mPlaceholderImage.setVisibility(View.GONE);
         mPlaceholderText.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onContactAdded(TalkClientContact contact) {
-    }
-
-    @Override
-    public void onContactRemoved(TalkClientContact contact) {
-    }
-
-    @Override
-    public void onClientPresenceChanged(TalkClientContact contact) {
-
-    }
-
-    @Override
-    public void onClientRelationshipChanged(TalkClientContact contact) {
-        if (mFriendRequestAdapter == null) {
-            return;
-        }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mFriendRequestAdapter.notifyDataSetChanged();
-                updateDisplay();
-            }
-        });
-    }
-
-    @Override
-    public void onGroupPresenceChanged(TalkClientContact contact) {
-
-    }
-
-    @Override
-    public void onGroupMembershipChanged(TalkClientContact contact) {
     }
 }
