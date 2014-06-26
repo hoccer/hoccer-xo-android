@@ -149,7 +149,7 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
                             return true;
                         }
                     } else if (contact.isClient()) {
-                        if (contact.isClientRelated() && contact.getClientRelationship().isFriend()) {
+                        if (contact.isClientRelated() && (contact.getClientRelationship().isFriend() || contact.getClientRelationship().isBlocked())) {
                             return true;
                         }
                     } else if (contact.isEverRelated()) {

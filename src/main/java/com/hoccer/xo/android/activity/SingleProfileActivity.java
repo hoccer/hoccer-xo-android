@@ -88,31 +88,34 @@ public class SingleProfileActivity extends XoActivity
                 : mSingleProfileFragment.getContact();
 
         boolean isSelf = mMode == Mode.CREATE_SELF || (contact != null && contact.isSelf());
-
         menu.findItem(R.id.menu_my_profile).setVisible(!isSelf);
-        if(contact.isSelf()) {
+
+        menu.findItem(R.id.menu_profile_edit).setVisible(false);
+        menu.findItem(R.id.menu_profile_delete).setVisible(false);
+        menu.findItem(R.id.menu_profile_block).setVisible(false);
+        menu.findItem(R.id.menu_profile_unblock).setVisible(false);
+
+        if(contact != null && contact.isSelf()) {
             menu.findItem(R.id.menu_profile_edit).setVisible(true);
             menu.findItem(R.id.menu_profile_block).setVisible(false);
             menu.findItem(R.id.menu_profile_unblock).setVisible(false);
             menu.findItem(R.id.menu_profile_delete).setVisible(false);
         } else {
-            if (contact.isNearby()) {
-                menu.findItem(R.id.menu_profile_edit).setVisible(false);
-                menu.findItem(R.id.menu_profile_delete).setVisible(false);
-                menu.findItem(R.id.menu_profile_block).setVisible(false);
-                menu.findItem(R.id.menu_profile_unblock).setVisible(false);
-            } else {
+            if (contact != null && !contact.isNearby()) {
                 TalkRelationship relationship = contact.getClientRelationship();
-                if (relationship != null && relationship.isBlocked()) {
-                    menu.findItem(R.id.menu_profile_block).setVisible(false);
-                    menu.findItem(R.id.menu_profile_unblock).setVisible(true);
-                } else {
-                    menu.findItem(R.id.menu_profile_block).setVisible(true);
-                    menu.findItem(R.id.menu_profile_unblock).setVisible(false);
+                if (relationship != null) {
+                    if (relationship.isBlocked()) {
+                        menu.findItem(R.id.menu_profile_delete).setVisible(true);
+                        menu.findItem(R.id.menu_profile_block).setVisible(false);
+                        menu.findItem(R.id.menu_profile_unblock).setVisible(true);
+                    } else if (relationship.isFriend()) {
+                        menu.findItem(R.id.menu_profile_delete).setVisible(true);
+                        menu.findItem(R.id.menu_profile_block).setVisible(true);
+                        menu.findItem(R.id.menu_profile_unblock).setVisible(false);
+                    }
                 }
             }
         }
-
         return result;
     }
 
