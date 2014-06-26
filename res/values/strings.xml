@@ -277,5 +277,6 @@
     <string name="placeholder_nearby_text">Waiting for others nearby...</string>
     <string name="actionbar_default_title">Hoccer</string>
     <string name="content_audio_caption">Music</string>
+    <string name="nearby_info_usercount">%1$d Users are Nearby</string>
 
 </resources>

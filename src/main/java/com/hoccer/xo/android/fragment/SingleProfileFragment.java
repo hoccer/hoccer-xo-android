@@ -138,7 +138,9 @@ public class SingleProfileFragment extends XoFragment
             LOG.error("Error while refreshing client contact: " + contact.getClientId(), e);
         }
 
-        if(contact.getClientRelationship().getState() != null && contact.getClientRelationship().getState().equals(TalkRelationship.STATE_INVITED_ME)) {
+        if(contact.getClientRelationship() != null &&
+                contact.getClientRelationship().getState() != null &&
+                contact.getClientRelationship().getState().equals(TalkRelationship.STATE_INVITED_ME)) {
             declineButton.setText(R.string.friend_request_decline_invitation);
             declineButton.setOnClickListener(new View.OnClickListener() {
                 @Override

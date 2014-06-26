@@ -31,7 +31,8 @@ import java.sql.SQLException;
  * Fragment for display and editing of group profiles.
  */
 public class GroupProfileFragment extends XoFragment
-        implements View.OnClickListener, IXoContactListener, ActionMode.Callback {
+        implements View.OnClickListener, IXoContactListener, ActionMode.Callback,
+        AdapterView.OnItemClickListener {
 
     private static final Logger LOG = Logger.getLogger(SingleProfileFragment.class);
 
@@ -120,15 +121,30 @@ public class GroupProfileFragment extends XoFragment
             mGroupMemberAdapter.onCreate();
             mGroupMemberAdapter.onResume();
 
-            mGroupMemberAdapter.setFilter(new ContactsAdapter.Filter() {
-                @Override
-                public boolean shouldShow(TalkClientContact contact) {
-                    return contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup) || contact.isSelf();
-                }
-            });
+            if(mGroup.getGroupPresence().isTypeNearby()) {
+                mGroupMemberAdapter.setFilter(new ContactsAdapter.Filter() {
+                    @Override
+                    public boolean shouldShow(TalkClientContact contact) {
+                        return contact.isClientGroupInvited(mGroup) || contact.isClientGroupJoined(mGroup) && !contact.isSelf();
+                    }
+                });
+            } else {
+                mGroupMemberAdapter.setFilter(new ContactsAdapter.Filter() {
+                    @Override
+                    public boolean shouldShow(TalkClientContact contact) {
+                        return contact.isClientGroupInvited(mGroup) || contact
+                                .isClientGroupJoined(mGroup) || contact.isSelf();
+                    }
+                });
+            }
             mGroupMembersList.setAdapter(mGroupMemberAdapter);
         }
         mGroupMemberAdapter.requestReload();
+        if(mGroup != null && mGroup.getGroupPresence().isTypeNearby()) {
+            mGroupMembersList.setOnItemClickListener(this);
+        } else {
+            mGroupMembersList.setOnItemClickListener(null);
+        }
         setHasOptionsMenu(true);
     }
 
@@ -582,6 +598,12 @@ public class GroupProfileFragment extends XoFragment
         update(mGroup);
 
         configureOptionsMenuItems(mOptionsMenu);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        TalkClientContact contact = (TalkClientContact) adapterView.getItemAtPosition(i);
+        getXoActivity().showContactConversation(contact);
     }
 
 }
