@@ -68,10 +68,10 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
     }
 
     public void showPlaceholder() {
-        mCompositionFragment.blockInput();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mCompositionFragment.blockInput(true);
                 mPlaceholderImage.setVisibility(View.VISIBLE);
                 mPlaceholderText.setVisibility(View.VISIBLE);
                 mList.setVisibility(View.GONE);
@@ -83,6 +83,7 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                mCompositionFragment.blockInput(false);
                 mPlaceholderImage.setVisibility(View.GONE);
                 mPlaceholderText.setVisibility(View.GONE);
                 mList.setVisibility(View.VISIBLE);
