@@ -14,20 +14,30 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
     private static final Logger LOG = Logger.getLogger(MediaPlaylist.class);
 
     private List<AudioAttachmentItem> mAudioAttachmentItems = new ArrayList<AudioAttachmentItem>();
-    private List<Integer> mPlaylistIndexes = new ArrayList<Integer>();
+
+    private List<Integer> mPlaylistOrder = new ArrayList<Integer>();
 
     private RepeatMode mRepeatMode = RepeatMode.NO_REPEAT;
-    private int mCurrentIndex = 0;
+
+    private int mCurrentIndex = -1;
     private boolean shuffleActive = false;
 
+    public void setCurrentIndex(int mCurrentIndex) {
+        this.mCurrentIndex = mCurrentIndex;
+    }
+
+    public int getCurrentIndex() {
+        return mCurrentIndex;
+    }
+
     public void setCurrentTrackNumber(int trackNumber) {
-        mCurrentIndex = mPlaylistIndexes.indexOf(trackNumber);
+        mCurrentIndex = mPlaylistOrder.indexOf(trackNumber);
         resetPlaylistIndexes();
     }
 
     public int getCurrentTrackNumber() {
-        if (mPlaylistIndexes != null && mPlaylistIndexes.size() > 0) {
-            return mPlaylistIndexes.get(mCurrentIndex);
+        if (mPlaylistOrder != null && mPlaylistOrder.size() > 0) {
+            return mPlaylistOrder.get(mCurrentIndex);
         } else {
             return 0;
         }
@@ -49,8 +59,8 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
 
     @Override
     public boolean hasNext() {
-        if (!mPlaylistIndexes.isEmpty()) {
-            if (nextIndex() < mPlaylistIndexes.size()) {
+        if (!mPlaylistOrder.isEmpty()) {
+            if (nextIndex() < mPlaylistOrder.size()) {
                 return true;
             }
         }
@@ -61,25 +71,25 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
     public AudioAttachmentItem previous() {
         --mCurrentIndex;
         if (mCurrentIndex < 0) {
-            mCurrentIndex = mPlaylistIndexes.size() - 1;
+            mCurrentIndex = mPlaylistOrder.size() - 1;
         }
-        return mAudioAttachmentItems.get(mPlaylistIndexes.get(mCurrentIndex));
+        return mAudioAttachmentItems.get(mPlaylistOrder.get(mCurrentIndex));
     }
 
     @Override
     public AudioAttachmentItem next() {
         ++mCurrentIndex;
-        if (mCurrentIndex >= mPlaylistIndexes.size()) {
+        if (mCurrentIndex >= mPlaylistOrder.size()) {
             mCurrentIndex = 0;
         }
-        return mAudioAttachmentItems.get(mPlaylistIndexes.get(mCurrentIndex));
+        return mAudioAttachmentItems.get(mPlaylistOrder.get(mCurrentIndex));
     }
 
     public AudioAttachmentItem nextByRepeatMode() {
         switch (mRepeatMode) {
             case NO_REPEAT:
                 if (hasNext()) {
-                    return mAudioAttachmentItems.get(mPlaylistIndexes.get(++mCurrentIndex));
+                    return mAudioAttachmentItems.get(mPlaylistOrder.get(++mCurrentIndex));
                 }
                 break;
             case REPEAT_ALL:
@@ -92,7 +102,7 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
 
     public void clear() {
         mAudioAttachmentItems.clear();
-        mPlaylistIndexes.clear();
+        mPlaylistOrder.clear();
         mCurrentIndex = 0;
     }
 
@@ -122,15 +132,52 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
     }
 
     public void remove(int attachmentIndex) {
+
+        //TODO: ensure mCurrentIndex and playlistIndex != -1
+
+        if (attachmentIndex < 0) {
+            LOG.error("Removing entry with index < 0 is not possible.");
+            return;
+        }
+
+        if (attachmentIndex == getCurrentPlaylistPosition()) {
+            LOG.error("Removing current entry from playlist not possible.");
+            return;
+        }
+
         if (attachmentIndex < mAudioAttachmentItems.size()) {
+            int indexOfPlaylistPosition = getIndexOfPlaylistPosition(attachmentIndex);
             mAudioAttachmentItems.remove(attachmentIndex);
+            mPlaylistOrder.remove(indexOfPlaylistPosition);
+            correctPlaylistIndexes(indexOfPlaylistPosition);
+        }
+    }
 
-            int playlistIndex = mPlaylistIndexes.indexOf(attachmentIndex);
-            mPlaylistIndexes.remove(playlistIndex);
+    private int getIndexOfPlaylistPosition(int attachmentIndex) {
+        return mPlaylistOrder.indexOf(attachmentIndex);
+    }
 
-            if (mCurrentIndex > playlistIndex) {
-                mCurrentIndex--;
+    private int getCurrentPlaylistPosition() {
+        return mPlaylistOrder.get(mCurrentIndex);
+    }
+
+    private void correctPlaylistIndexes(int indexOfPlaylistPosition) {
+        if (mCurrentIndex > indexOfPlaylistPosition) {
+            mCurrentIndex--;
+        }
+        if (shuffleActive) {
+            int missing = -1;
+            int max = Collections.max(mPlaylistOrder);
+            for (int i = 0; i <= max; i++) {
+                if (missing != -1) {
+                    mPlaylistOrder.set(mPlaylistOrder.indexOf(i), missing);
+                }
+                if (mPlaylistOrder.indexOf(i) == -1){
+                    missing = i;
+                }
             }
+        } else {
+            createPlaylistIndexes();
         }
     }
 
@@ -148,7 +195,7 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
 
     public AudioAttachmentItem current() {
         if ((mCurrentIndex >= 0) && (mCurrentIndex < mAudioAttachmentItems.size())) {
-            return mAudioAttachmentItems.get(mPlaylistIndexes.get(mCurrentIndex));
+            return mAudioAttachmentItems.get(mPlaylistOrder.get(mCurrentIndex));
         } else {
             return null;
         }
@@ -171,25 +218,41 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
         resetPlaylistIndexes();
     }
 
+    public List<Integer> getPlaylistOrder() {
+        return mPlaylistOrder;
+    }
+
+    public void setPlaylistOrder(ArrayList<Integer> playlistOrder) {
+        this.mPlaylistOrder = playlistOrder;
+    }
+
     private void resetPlaylistIndexes() {
         int currentTrackNumber = getCurrentTrackNumber();
-        mPlaylistIndexes = new ArrayList<Integer>();
-        for (int i = 0; i < mAudioAttachmentItems.size(); i++) {
-            mPlaylistIndexes.add(i);
-        }
+        createPlaylistIndexes();
 
         if (shuffleActive) {
-            Random rnd = new Random(System.nanoTime());
-            Collections.shuffle(mPlaylistIndexes, rnd);
-
-            // move current index to first shuffle position
-            int shuffledIndex = mPlaylistIndexes.indexOf(currentTrackNumber);
-            int firstShuffledTrack = mPlaylistIndexes.get(0);
-            mPlaylistIndexes.set(0, currentTrackNumber);
-            mPlaylistIndexes.set(shuffledIndex, firstShuffledTrack);
-            mCurrentIndex = 0;
+            shufflePlaylistIndexes(currentTrackNumber);
         } else {
             mCurrentIndex = currentTrackNumber;
+        }
+    }
+
+    private void shufflePlaylistIndexes(int currentTrackNumber) {
+        Random rnd = new Random(System.nanoTime());
+        Collections.shuffle(mPlaylistOrder, rnd);
+
+        // move current index to first shuffle position
+        int shuffledIndex = mPlaylistOrder.indexOf(currentTrackNumber);
+        int firstShuffledTrack = mPlaylistOrder.get(0);
+        mPlaylistOrder.set(0, currentTrackNumber);
+        mPlaylistOrder.set(shuffledIndex, firstShuffledTrack);
+        mCurrentIndex = 0;
+    }
+
+    private void createPlaylistIndexes() {
+        mPlaylistOrder = new ArrayList<Integer>();
+        for (int i = 0; i < mAudioAttachmentItems.size(); i++) {
+            mPlaylistOrder.add(i);
         }
     }
 }
