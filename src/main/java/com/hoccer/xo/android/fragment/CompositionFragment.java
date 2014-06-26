@@ -1,26 +1,32 @@
 package com.hoccer.xo.android.fragment;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.*;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoConfiguration;
+import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.android.content.ContentMediaTypes;
 import com.hoccer.xo.android.content.SelectedContent;
 import com.hoccer.xo.android.gesture.Gestures;
 import com.hoccer.xo.android.gesture.MotionGestureListener;
 import com.hoccer.xo.release.R;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 public class CompositionFragment extends XoFragment implements View.OnClickListener,
         View.OnLongClickListener, MotionGestureListener {
@@ -41,15 +47,15 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         LOG.debug("onCreateView()");
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View v = inflater.inflate(R.layout.view_composition, container, false);
+        View view = inflater.inflate(R.layout.fragment_composition, container, false);
 
         setHasOptionsMenu(true);
 
-        mTextEdit = (EditText) v.findViewById(R.id.messaging_composer_text);
+        mTextEdit = (EditText) view.findViewById(R.id.messaging_composer_text);
         mTextEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -62,7 +68,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             }
         });
 
-        mSendButton = (ImageButton) v.findViewById(R.id.btn_messaging_composer_send);
+        mSendButton = (ImageButton) view.findViewById(R.id.btn_messaging_composer_send);
         mSendButton.setEnabled(false || XoConfiguration.DEVELOPMENT_MODE_ENABLED);
         mSendButton.setOnClickListener(this);
         if (XoConfiguration.DEVELOPMENT_MODE_ENABLED) {
@@ -70,11 +76,11 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             mSendButton.setLongClickable(true);
         }
 
-        mAddAttachmentButton = (ImageButton) v
+        mAddAttachmentButton = (ImageButton) view
                 .findViewById(R.id.btn_messaging_composer_add_attachment);
         mAddAttachmentButton.setOnClickListener(new AddAttachmentOnClickListener());
 
-        return v;
+        return view;
     }
 
     @Override
@@ -153,9 +159,8 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         mAddAttachmentButton.setImageResource(imageResource);
     }
 
-    public void converseWithContact(TalkClientContact contact) {
-        LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
-        mContact = contact;
+    public void setConverseContact(TalkClientContact talkClientContact) {
+        mContact = talkClientContact;
     }
 
     private boolean isComposed() {
@@ -204,18 +209,15 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     private void showAlertSendMessageNotPossible() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
-        builder.setTitle(R.string.composition_alert_empty_group_title);
-        builder.setMessage(R.string.composition_alert_empty_group_text);
-        builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int index) {
-                dialog.dismiss();
-            }
-        });
-
-        Dialog dialog = builder.create();
-        dialog.show();
+        XoDialogs.showOkDialog("EmptyGroupDialog",
+                R.string.dialog_empty_group_title,
+                R.string.dialog_empty_group_message,
+                getXoActivity(),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int index) {
+                    }
+                });
     }
 
     @Override
@@ -241,6 +243,23 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             getXoSoundPool().playThrowSound();
             sendComposedMessage();
         }
+    }
+
+    public void blockInput(boolean doBlock) {
+
+        if(doBlock) {
+            mTextEdit.setVisibility(View.GONE);
+            mSendButton.setVisibility(View.GONE);
+            mAddAttachmentButton.setVisibility(View.GONE);
+        } else {
+            mTextEdit.setVisibility(View.VISIBLE);
+            mSendButton.setVisibility(View.VISIBLE);
+            mAddAttachmentButton.setVisibility(View.VISIBLE);
+        }
+
+        mTextEdit.setEnabled(!doBlock);
+        mSendButton.setEnabled(!doBlock);
+        mAddAttachmentButton.setEnabled(!doBlock);
     }
 
     private class AddAttachmentOnClickListener implements View.OnClickListener {

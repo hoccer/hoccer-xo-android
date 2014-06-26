@@ -45,6 +45,7 @@ public class MediaPlayerServiceConnector {
             LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mBroadcastReceiver);
             mBroadcastReceiver = null;
             mMediaPlayerService = null;
+            mIsConnected = false;
         }
     }
 

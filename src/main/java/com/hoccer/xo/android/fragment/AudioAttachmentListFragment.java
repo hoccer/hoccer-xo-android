@@ -306,7 +306,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
             for (AudioAttachmentItem audioAttachmentItem : mAttachmentListAdapter.getAudioAttachmentItems()) {
                 itemList.add(audioAttachmentItem);
             }
-            mMediaPlayerService.setMediaList(itemList, mAttachmentListAdapter.getConversationContactId());
+            mMediaPlayerService.setMediaList(itemList);
         }
     }
 

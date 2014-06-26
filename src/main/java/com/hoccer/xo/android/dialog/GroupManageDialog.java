@@ -61,7 +61,7 @@ public class GroupManageDialog extends DialogFragment {
         mAdapter.requestReload();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.manage_title);
+        builder.setTitle(R.string.dialog_manage_group_title);
         builder.setCancelable(true);
         builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
             @Override

@@ -492,7 +492,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         mPlaylist.setTrack(item);
     }
 
-    public void setMediaList(List<AudioAttachmentItem> itemList, int conversationContactId) {
+    public void setMediaList(List<AudioAttachmentItem> itemList) {
         mPlaylist.setTrackList(itemList);
     }
 

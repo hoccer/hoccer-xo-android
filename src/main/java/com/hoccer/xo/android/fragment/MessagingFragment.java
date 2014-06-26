@@ -1,15 +1,12 @@
 package com.hoccer.xo.android.fragment;
 
-import android.animation.Animator;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.FragmentTransaction;
 import android.view.*;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.adapter.ChatAdapter;
 import com.hoccer.xo.android.base.IMessagingFragmentManager;
@@ -17,8 +14,6 @@ import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.android.gesture.Gestures;
 import com.hoccer.xo.android.gesture.MotionInterpreter;
-import com.hoccer.xo.android.view.CompositionView;
-import com.hoccer.xo.android.view.OnOverscrollListener;
 import com.hoccer.xo.android.view.OverscrollListView;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -49,7 +44,7 @@ public class MessagingFragment extends XoListFragment
 
     private View mOverscrollIndicator;
 
-    private CompositionView mCompositionView;
+    private CompositionFragment mCompositionFragment;
 
     private boolean mInOverscroll = false;
 
@@ -71,6 +66,8 @@ public class MessagingFragment extends XoListFragment
         } else {
             LOG.error("Creating SingleProfileFragment without arguments is not supported.");
         }
+
+        mMotionInterpreter = new MotionInterpreter(Gestures.Transaction.SHARE, getXoActivity(), mCompositionFragment);
     }
 
     @Override
@@ -89,21 +86,10 @@ public class MessagingFragment extends XoListFragment
 
         mMessageList = (OverscrollListView) view.findViewById(android.R.id.list);
         mEmptyText = (TextView) view.findViewById(R.id.messaging_empty);
-        mCompositionView = ((CompositionView) view.findViewById(R.id.cv_composition));
-        mCompositionView.setCompositionViewListener(new CompositionView.ICompositionViewListener() {
-            @Override
-            public void onAddAttachmentClicked() {
-                getXoActivity().selectAttachment();
-            }
-
-            @Override
-            public void onAttachmentClicked() {
-                getXoActivity().selectAttachment();
-            }
-        });
-        mCompositionView.setContact(mContact);
-
-        mMotionInterpreter = new MotionInterpreter(Gestures.Transaction.SHARE, getActivity(), mCompositionView);
+        mCompositionFragment = new CompositionFragment();
+        mCompositionFragment.setConverseContact(mContact);
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.fragment_container, mCompositionFragment).commit();
     }
 
     @Override
@@ -210,16 +196,6 @@ public class MessagingFragment extends XoListFragment
     public boolean onQueryTextSubmit(String query) {
         LOG.debug("onQueryTextSubmit(\"" + query + "\")");
         return true;
-    }
-
-//    @Override
-//    public void clipBoardItemSelected(IContentObject contentObject) {
-//        mCompositionView.onAttachmentSelected(contentObject);
-//    }
-
-    @Override
-    public void onAttachmentSelected(IContentObject contentObject) {
-        mCompositionView.onAttachmentSelected(contentObject);
     }
 
     public void configureMotionInterpreterForContact(TalkClientContact contact) {

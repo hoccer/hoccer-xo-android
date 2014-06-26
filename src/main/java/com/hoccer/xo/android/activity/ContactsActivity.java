@@ -1,7 +1,6 @@
 package com.hoccer.xo.android.activity;
 
 import android.app.ActionBar;
-import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,9 +14,11 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.adapter.ContactsPageAdapter;
 import com.hoccer.xo.android.base.XoActionbarActivity;
-import com.hoccer.xo.android.fragment.NearbyContactsFragment;
+import com.hoccer.xo.android.fragment.ContactsFragment;
+import com.hoccer.xo.android.fragment.NearbyChatFragment;
 import com.hoccer.xo.release.R;
 
 public class ContactsActivity extends XoActionbarActivity {
@@ -90,9 +91,9 @@ public class ContactsActivity extends XoActionbarActivity {
     private void refreshEnvironmentUpdater() {
         int position = mViewPager.getCurrentItem();
         Fragment fragment = mAdapter.getItem(position);
-        if (fragment instanceof NearbyContactsFragment) {
+        if (fragment instanceof NearbyChatFragment) {
             if (mEnvironmentUpdatesEnabled) {
-                if (checkIfGpsIsTurnedOn()) {
+                if (isLocationServiceEnabled()) {
                     XoApplication.startNearbySession();
                 }
             }
@@ -101,27 +102,24 @@ public class ContactsActivity extends XoActionbarActivity {
         }
     }
 
-    private boolean checkIfGpsIsTurnedOn() {
+    private boolean isLocationServiceEnabled() {
         final LocationManager manager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !manager.isProviderEnabled( LocationManager.NETWORK_PROVIDER)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage(getResources().getString(R.string.nearby_enable_location_service))
-                    .setCancelable(false)
-                    .setPositiveButton(getResources().getString(R.string.nearby_yes),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                                }
-                            })
-                    .setNegativeButton(getResources().getString(R.string.nearby_no),
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-            AlertDialog alert = builder.create();
-            alert.show();
-
+            XoDialogs.showYesNoDialog("EnableLocationServiceDialog",
+                    R.string.dialog_enable_location_service_title,
+                    R.string.dialog_enable_location_service_message,
+                    this,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        }
+                    },
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    });
             return false;
         }
         return true;
@@ -156,6 +154,10 @@ public class ContactsActivity extends XoActionbarActivity {
 
         @Override
         public void onPageSelected(int position) {
+            Fragment fragment = mAdapter.getItem(position);
+            if (fragment instanceof ContactsFragment) {
+                mAdapter.showNearbyPlaceholder();
+            }
             refreshEnvironmentUpdater();
         }
 
