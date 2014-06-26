@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.util;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.database.Cursor;
@@ -263,27 +264,58 @@ public class ThumbnailManager {
         }
     }
 
-    // VIDEO =============================================================================================
+    class ThumbnailLoader extends AsyncTask<Object, Void, Bitmap>{
+
+        String uri;
+        int maskResource;
+        ImageView thumbnailView;
+        String tag;
+
+        @Override
+        protected Bitmap doInBackground(Object... params) {
+
+            uri = (String) params[0];
+            thumbnailView =  (ImageView) params[1];
+            maskResource = (Integer) params[2];
+            tag = (String) params[3];
+
+            Bitmap bm = loadThumbnailForVideo(uri, maskResource, tag);
+
+            if ( bm == null){
+                makeThumbnail(uri, tag);
+                bm = loadThumbnailForVideo(uri, maskResource, tag);
+            }
+
+            return bm;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            if ( bitmap != null){
+                thumbnailView.setImageBitmap(bitmap);
+                thumbnailView.setVisibility(View.VISIBLE);
+            } else {
+                thumbnailView.setImageDrawable(mStubDrawable);
+            }
+        }
+    }
 
     public void displayThumbnailForVideo(String uri, RelativeLayout rootView, int maskResource, String tag) {
 
         String taggedUri = taggedThumbnailUri(uri, tag);
+        ImageView thumbnailView = (ImageView) rootView.findViewById(R.id.iv_video_preview);
         Bitmap bitmap = (Bitmap) mMemoryLruCache.get(taggedUri);
 
         if (bitmap == null) {
-            bitmap = loadThumbnailForVideo(uri, maskResource, tag); //TODO merge with loadThumbnailForImage ?
-            //bitmap = loadThumbnailForImage(uri, tag);
-        }
-
-        ImageView thumbnailView = (ImageView) rootView.findViewById(R.id.iv_video_preview);
-
-        if ( bitmap != null){
-            thumbnailView.setImageBitmap(bitmap);
-            thumbnailView.setVisibility(View.VISIBLE);
-        } else {
             thumbnailView.setImageDrawable(mStubDrawable);
-            //queueThumbnailCreation(uri, rootView, maskResource, tag);
-            makeThumbnail(uri, tag); //TODO move to new thread
+            new ThumbnailLoader().execute(uri, thumbnailView, maskResource, tag);
+        }else{
+            if ( bitmap != null){
+                thumbnailView.setImageBitmap(bitmap);
+                thumbnailView.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -324,6 +356,7 @@ public class ThumbnailManager {
             c.drawBitmap(overlay, 0, 0, null);
             c.drawBitmap(mask, 0, 0, paint);
             paint.setXfermode(null);
+
             return result;
         }
         return null;
