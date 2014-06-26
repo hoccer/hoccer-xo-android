@@ -1,27 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:background="@color/xo_main_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-    <View
-            android:id="@+id/overscroll_indicator"
-            android:layout_height="5dp"
-            android:layout_width="match_parent"
-            android:background="#0000ff"
-            android:visibility="gone"/>
-
     <com.hoccer.xo.android.view.OverscrollListView
             android:id="@android:id/list"
             android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:transcriptMode="disabled"
             android:stackFromBottom="true"
             android:smoothScrollbar="false"
             android:dividerHeight="10dp"
+            android:layout_marginBottom="50dp"
             android:divider="@null"/>
 
     <LinearLayout
@@ -37,4 +30,11 @@
                 android:layout_height="wrap_content"/>
     </LinearLayout>
 
-</LinearLayout>
+    <RelativeLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/list"
+            android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
