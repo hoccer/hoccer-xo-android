@@ -59,6 +59,12 @@ public class GroupContactsAdapter extends ContactsAdapter {
 
         AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
         avatarView.setContact(contact);
+        avatarView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mActivity.showContactProfile(contact);
+            }
+        });
 
         TextView roleView = (TextView) view.findViewById(R.id.contact_role);
         roleView.setVisibility(View.GONE);
@@ -68,7 +74,6 @@ public class GroupContactsAdapter extends ContactsAdapter {
                 roleView.setVisibility(View.VISIBLE);
             }
         } else if (contact.isSelf()) {
-
             TalkGroupMember member = mGroup.getGroupMember();
             if (member != null && member.getRole().equals(TalkGroupMember.ROLE_ADMIN)) {
                 roleView.setVisibility(View.VISIBLE);
