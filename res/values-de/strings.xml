@@ -47,6 +47,8 @@
     <!-- AudioAttachmentList Fragment -->
     <string name="audio_attachment_list_all">Alle</string>
     <string name="audio_attachment_list_unknown">Unbekannt</string>
+    <string name="menu_search">Suche</string>
+    <string name="search_hint">Suche Attachments</string>
 
     <!-- Nearby location request -->
     <string name="nearby_enable_location_service">Um diese Funktion nutzen zu können musst Du Ortungsdienste aktivieren. (GPS oder Netzwerkposition). Willst Du es aktivieren?</string>

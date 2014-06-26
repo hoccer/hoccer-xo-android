@@ -2,16 +2,19 @@ package com.hoccer.xo.android.fragment;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.*;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.*;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
@@ -46,6 +49,8 @@ public class AudioAttachmentListFragment extends XoListFragment {
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback;
 
+    private Menu mMenu;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,10 +69,57 @@ public class AudioAttachmentListFragment extends XoListFragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+
+        mMenu = menu;
+
         ActionBar ab = getActivity().getActionBar();
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         ab.setDisplayShowTitleEnabled(false);
         mFilterAdapter = new AttachmentListFilterAdapter(getXoActivity());
+
+        inflater.inflate(R.menu.fragment_attachment_list, menu);
+
+        createSearchWidget();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_search:
+                boolean success = getActivity().onSearchRequested();
+                if ( !success) {
+                    Log.w( "AudioAttachmentListFragment", "Failed to process search request!");
+                }
+            break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void createSearchWidget(){
+
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) mMenu.findItem(R.id.menu_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setIconifiedByDefault(false);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.e( "bla", "AudioAttachmentListFragment::onQueryTextSubmit -----------------------------------");
+                startSearch(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(final String query) {
+                Log.e( "bla", "AudioAttachmentListFragment::onQueryTextChange");
+                startSearch(query);
+                return false;
+            }
+        });
+    }
+
+    private void startSearch(final String query) {
     }
 
     @Override
