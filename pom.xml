@@ -16,6 +16,16 @@
     <artifactId>hoccer-talk-android</artifactId>
 
     <dependencies>
+
+        <!-- JUnit 4 for testing functionality decoupled from android context -->
+        <!-- IMPORTANT: Needs to be added before the platform dependency to ensure priority in classpath -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Android platform -->
         <dependency>
             <groupId>android</groupId>
