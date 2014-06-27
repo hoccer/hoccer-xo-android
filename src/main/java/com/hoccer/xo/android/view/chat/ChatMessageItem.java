@@ -122,7 +122,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
     protected void configureViewForMessage(View view) {
         AvatarView avatarView = (AvatarView) view.findViewById(R.id.av_message_avatar);
         TextView messageTime = (TextView) view.findViewById(R.id.tv_message_time);
-        TextView messageName = (TextView) view.findViewById(R.id.tv_message_contact_name);
+        TextView messageInfo = (TextView) view.findViewById(R.id.tv_message_contact_info);
         TextView messageText = (TextView) view.findViewById(R.id.tv_message_text);
 
         // Adjust layout for incoming / outgoing message
@@ -132,8 +132,8 @@ public class ChatMessageItem implements AttachmentTransferListener {
             } else {
                 avatarView.setVisibility(View.GONE);
             }
-            messageName.setVisibility(View.VISIBLE);
-            messageName.setText(mMessage.getSenderContact().getNickname());
+            messageInfo.setVisibility(View.VISIBLE);
+            messageInfo.setText(mMessage.getSenderContact().getNickname());
 
             messageText.setBackgroundDrawable(
                     mContext.getResources().getDrawable(R.drawable.bubble_grey));
@@ -154,7 +154,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
         } else {
             avatarView.setVisibility(View.GONE);
-            messageName.setVisibility(View.GONE);
+            updateSeenStatus(view);
 
             messageText.setBackgroundDrawable(
                     mContext.getResources().getDrawable(getBackgroundResource()));
@@ -178,6 +178,19 @@ public class ChatMessageItem implements AttachmentTransferListener {
         messageText.setText(mMessage.getText());
 
         mMessageText = messageText;
+    }
+
+    private void updateSeenStatus(View view) {
+        TextView messageInfo = (TextView) view.findViewById(R.id.tv_message_contact_info);
+
+        if (mMessage.getOutgoingDelivery().getState().equals(TalkDelivery.STATE_DELIVERED_SEEN)
+                && !mMessage.getOutgoingDelivery().isGroupDelivery()) {
+            messageInfo.setVisibility(View.VISIBLE);
+            messageInfo.setTextColor(view.getResources().getColor(R.color.xo_app_main_color));
+            messageInfo.setText(R.string.seen_text);
+        } else {
+            messageInfo.setVisibility(View.GONE);
+        }
     }
 
 

@@ -250,6 +250,7 @@
     <string name="content_audio_caption">Musik</string>
     <string name="nearby_info_usercount">%1$d Benutzer in der nähe</string>
     <string name="profile_nickname_text">Anzeigename</string>
+    <string name="seen_text">gesehen</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>

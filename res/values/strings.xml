@@ -280,5 +280,6 @@
     <string name="content_audio_caption">Music</string>
     <string name="nearby_info_usercount">%1$d Users are Nearby</string>
     <string name="profile_nickname_text">Nickname</string>
+    <string name="seen_text">seen</string>
 
 </resources>
