@@ -120,7 +120,7 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         TextView lastMessageText = (TextView) view.findViewById(R.id.contact_last_message);
         TextView unseenView = (TextView) view.findViewById(R.id.contact_unseen_messages);
 
-        nameView.setText(contact.getName());
+        nameView.setText(contact.getNickname());
         avatarView.setContact(contact);
 
         typeView.setText("");

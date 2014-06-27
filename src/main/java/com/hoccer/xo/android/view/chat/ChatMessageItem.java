@@ -133,7 +133,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
                 avatarView.setVisibility(View.GONE);
             }
             messageName.setVisibility(View.VISIBLE);
-            messageName.setText(mMessage.getSenderContact().getName());
+            messageName.setText(mMessage.getSenderContact().getNickname());
 
             messageText.setBackgroundDrawable(
                     mContext.getResources().getDrawable(R.drawable.bubble_grey));

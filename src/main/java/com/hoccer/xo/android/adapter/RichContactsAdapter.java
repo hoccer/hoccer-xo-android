@@ -90,7 +90,7 @@ public class RichContactsAdapter extends ContactsAdapter {
         LOG.debug("updateContact(" + contact.getClientContactId() + ")");
         TextView nameView = (TextView) view.findViewById(R.id.contact_name);
         AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
-        nameView.setText(contact.getName());
+        nameView.setText(contact.getNickname());
         TextView typeView = (TextView) view.findViewById(R.id.contact_type);
 
         avatarView.setContact(contact);

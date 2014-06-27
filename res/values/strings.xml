@@ -279,5 +279,6 @@
     <string name="actionbar_default_title">Hoccer</string>
     <string name="content_audio_caption">Music</string>
     <string name="nearby_info_usercount">%1$d Users are Nearby</string>
+    <string name="profile_nickname_text">Nickname</string>
 
 </resources>

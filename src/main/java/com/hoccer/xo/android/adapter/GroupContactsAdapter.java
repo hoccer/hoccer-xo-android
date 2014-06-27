@@ -55,7 +55,7 @@ public class GroupContactsAdapter extends ContactsAdapter {
     protected void updateContact(final View view, final TalkClientContact contact) {
         LOG.debug("updateContact(" + contact.getClientContactId() + ")");
         TextView nameView = (TextView) view.findViewById(R.id.contact_name);
-        nameView.setText(contact.getName());
+        nameView.setText(contact.getNickname());
 
         AvatarView avatarView = (AvatarView) view.findViewById(R.id.contact_icon);
         avatarView.setContact(contact);
