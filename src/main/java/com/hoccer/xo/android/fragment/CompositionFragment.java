@@ -159,8 +159,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         mAddAttachmentButton.setImageResource(imageResource);
     }
 
-    public void converseWithContact(TalkClientContact contact) {
-        LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
+    public void setContact(TalkClientContact contact) {
         mContact = contact;
     }
 
@@ -247,7 +246,6 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     public void blockInput(boolean doBlock) {
-
         if(doBlock) {
             mTextEdit.setVisibility(View.GONE);
             mSendButton.setVisibility(View.GONE);
