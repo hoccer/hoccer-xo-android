@@ -32,6 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -67,6 +68,8 @@ public class SingleProfileFragment extends XoFragment
 
     private EditText mNicknameEditText;
 
+    private LinearLayout mInviteButtonContainer;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         LOG.debug("onCreate()");
@@ -84,6 +87,7 @@ public class SingleProfileFragment extends XoFragment
         mNicknameEditButton = (ImageButton) v.findViewById(R.id.ib_profile_nickname_edit);
         mNicknameTextView = (TextView) v.findViewById(R.id.tv_profile_nickname);
         mNicknameEditText = (EditText) v.findViewById(R.id.et_profile_nickname);
+        mInviteButtonContainer = (LinearLayout) v.findViewById(R.id.inc_profile_request);
 
         return v;
     }
@@ -123,10 +127,10 @@ public class SingleProfileFragment extends XoFragment
     private void updateInviteButton(final TalkClientContact contact) {
         Button inviteButton = (Button) getView().findViewById(R.id.btn_profile_invite);
         if(contact == null || contact.isSelf() || contact.isGroup()) {
-            inviteButton.setVisibility(View.GONE);
+            mInviteButtonContainer.setVisibility(View.GONE);
             return;
         } else {
-            inviteButton.setVisibility(View.VISIBLE);
+            mInviteButtonContainer.setVisibility(View.VISIBLE);
         }
 
         try {
@@ -160,7 +164,7 @@ public class SingleProfileFragment extends XoFragment
                 }
             });
         } else {
-            inviteButton.setVisibility(View.GONE);
+            mInviteButtonContainer.setVisibility(View.GONE);
         }
     }
 

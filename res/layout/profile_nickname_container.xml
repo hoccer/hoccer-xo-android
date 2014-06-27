@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/rl_profile_nickname_container"
+                android:layout_marginTop="25dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp">
+
+    <TextView
+            android:id="@+id/tv_profile_nickname_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/profile_text_margin"
+            android:text="@string/profile_nickname_text"
+            style="@style/AppBaseTheme.DescriptiveText"/>
+
+    <View
+            android:id="@+id/v_profile_nickname_delimiter"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/tv_profile_nickname_text"
+            android:layout_marginTop="5dp"
+            android:background="#ffcdcdcd"/>
+
+    <EditText
+            android:id="@+id/et_profile_nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_below="@+id/v_profile_nickname_delimiter"
+            android:layout_alignLeft="@+id/tv_profile_nickname_text"
+            android:layout_toLeftOf="@+id/ib_profile_nickname_edit"
+            android:visibility="gone"/>
+
+    <TextView
+            android:id="@+id/tv_profile_nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_below="@+id/v_profile_nickname_delimiter"
+            android:layout_alignLeft="@+id/tv_profile_nickname_text"
+            android:layout_alignRight="@+id/v_profile_nickname_delimiter"
+            android:text="Max Power"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"/>
+
+    <ImageButton
+            android:id="@+id/ib_profile_nickname_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/v_profile_nickname_delimiter"
+            android:layout_alignRight="@+id/v_profile_nickname_delimiter"
+            android:layout_marginTop="11dp"
+            android:layout_marginRight="@dimen/profile_text_margin"
+            android:src="@android:drawable/ic_menu_edit"
+            android:clickable="true"
+            android:background="@android:color/transparent"/>
+</RelativeLayout>

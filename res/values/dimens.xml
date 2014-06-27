@@ -2,4 +2,7 @@
 <resources>
     <dimen name="xo_message_corner_radius">10dp</dimen>
     <dimen name="default_attachment_icon_dim">40dp</dimen>
+    <dimen name="profile_text_margin">15dp</dimen>
+    <dimen name="profile_container_margin_vertical">25dp</dimen>
+    <dimen name="profile_container_margin_horizontal">30dp</dimen>
 </resources>
