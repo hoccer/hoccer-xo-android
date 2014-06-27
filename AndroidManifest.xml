@@ -176,21 +176,6 @@
                     android:value="com.hoccer.xo.android.activity.XoPreferenceActivity"/>
         </activity>
 
-        <!-- Licenses activity -->
-        <activity
-                android:name="com.hoccer.xo.android.activity.LicensesActivity"
-                android:label="@string/actionbar_default_title"
-                android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
-                android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="com.hoccer.xo.LICENSES"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
-        </activity>
-
         <!-- Maps selection activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.MapsLocationActivity"

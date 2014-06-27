@@ -723,16 +723,6 @@ public abstract class XoActivity extends FragmentActivity {
         startActivity(new Intent(this, PairingActivity.class));
     }
 
-    public void showAbout() {
-        LOG.debug("showAbout()");
-        startActivity(new Intent(this, AboutActivity.class));
-    }
-
-    public void showLicenses() {
-        LOG.debug("showLicenses()");
-        startActivity(new Intent(this, LicensesActivity.class));
-    }
-
     public void showPreferences() {
         LOG.debug("showPreferences()");
         startActivity(new Intent(this, XoPreferenceActivity.class));

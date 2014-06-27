@@ -1,46 +1,39 @@
-package com.hoccer.xo.android.activity;
+package com.hoccer.xo.android.fragment;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
-import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.release.R;
+import org.apache.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Activity that displays our (long) license text
+ * Created by nico on 27/06/2014.
  */
-public class LicensesActivity extends XoActivity {
+public class LicensesFragment extends Fragment{
 
-    TextView mText;
+    private static final Logger LOG = Logger.getLogger(LicensesFragment.class);
 
     @Override
-    protected int getLayoutResource() {
-        return R.layout.activity_licenses;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_licenses, container, false);
     }
 
     @Override
-    protected int getMenuResource() {
-        return -1;
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        TextView licenseView = (TextView) view.findViewById(R.id.tv_licenses);
+        licenseView.setText(readLicenses());
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        LOG.debug("onCreate()");
-        super.onCreate(savedInstanceState);
-
-        enableUpNavigation();
-
-        mText = (TextView)findViewById(R.id.licenses_textview);
-        mText.setMovementMethod(new ScrollingMovementMethod());
-
-        mText.setText(readText());
-    }
-
-    private String readText() {
+    private String readLicenses() {
         InputStream is = getResources().openRawResource(R.raw.licenses);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 
@@ -63,5 +56,4 @@ public class LicensesActivity extends XoActivity {
 
         return os.toString();
     }
-
 }

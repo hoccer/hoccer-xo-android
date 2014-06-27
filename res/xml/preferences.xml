@@ -51,7 +51,6 @@
         <Preference
                 android:title="@string/menu_licenses"
                 android:key="preference_licenses">
-            <intent android:action="com.hoccer.xo.LICENSES"/>
         </Preference>
     </PreferenceCategory>
 

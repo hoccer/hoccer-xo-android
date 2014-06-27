@@ -9,7 +9,7 @@ import com.hoccer.xo.release.R;
  */
 public class LegalImprintActivity extends Activity {
 
-    public static final String DISPLAY_MODE = "display_mode";
+    public static final String DISPLAY_MODE = "xo_legal_imprint_display_mode";
     public static final int SHOW_ABOUT = 1;
     public static final int SHOW_LICENSES = 2;
 
@@ -27,4 +27,5 @@ public class LegalImprintActivity extends Activity {
         }
 
     }
+
 }

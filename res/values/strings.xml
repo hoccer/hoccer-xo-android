@@ -270,5 +270,6 @@
     <string name="content_audio_caption">Music</string>
 
     <string name="about_advert_text">Your free messenger app! ...</string>
+    <string name="about_version_description">Version %1$s</string>
 
 </resources>
