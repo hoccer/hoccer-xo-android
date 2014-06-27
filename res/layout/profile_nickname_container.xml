@@ -51,9 +51,11 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/v_profile_nickname_delimiter"
             android:layout_alignRight="@+id/v_profile_nickname_delimiter"
-            android:layout_marginTop="11dp"
+            android:layout_alignBottom="@id/tv_profile_nickname"
+            android:layout_marginTop="15dp"
             android:layout_marginRight="@dimen/profile_text_margin"
             android:src="@android:drawable/ic_menu_edit"
-            android:clickable="true"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
             android:background="@android:color/transparent"/>
 </RelativeLayout>
