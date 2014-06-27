@@ -11,6 +11,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.*;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -98,21 +99,31 @@ public class AudioAttachmentListFragment extends XoListFragment {
     private void createSearchWidget(){
 
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) mMenu.findItem(R.id.menu_search).getActionView();
+        final SearchView searchView = (SearchView) mMenu.findItem(R.id.menu_search).getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         searchView.setIconifiedByDefault(false);
+
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.e( "bla", "AudioAttachmentListFragment::onQueryTextSubmit -----------------------------------");
-                startSearch(query);
+
+                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+                /*//check if no view has focus:
+                View v=getActivity().getCurrentFocus();
+                if(v!=null) {
+                    inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }*/
+
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(final String query) {
-                Log.e( "bla", "AudioAttachmentListFragment::onQueryTextChange");
+                Log.e("bla", "AudioAttachmentListFragment::onQueryTextChange");
                 startSearch(query);
                 return false;
             }
@@ -120,6 +131,8 @@ public class AudioAttachmentListFragment extends XoListFragment {
     }
 
     private void startSearch(final String query) {
+        //TODO filter list
+
     }
 
     @Override
