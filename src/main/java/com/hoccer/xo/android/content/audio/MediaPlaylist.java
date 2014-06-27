@@ -133,16 +133,17 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
 
     public void remove(int attachmentIndex) {
 
-        //TODO: ensure mCurrentIndex and playlistIndex != -1
-
         if (attachmentIndex < 0) {
-            LOG.error("Removing entry with index < 0 is not possible.");
-            return;
+            throw new IllegalArgumentException("Removing entry with index < 0 is not possible.");
         }
 
+        LOG.error("#foo attachmentIndex: " + attachmentIndex);
+        LOG.error("#foo getCurrentIndex: " + getCurrentIndex());
+        LOG.error("#foo getCurrentPlaylistPosition: " + getCurrentPlaylistPosition());
+        LOG.error("#foo getIndexOfPlaylistPosition: " + getIndexOfPlaylistPosition(attachmentIndex));
+
         if (attachmentIndex == getCurrentPlaylistPosition()) {
-            LOG.error("Removing current entry from playlist not possible.");
-            return;
+            throw new IllegalStateException("Removing the current entry " + getCurrentPlaylistPosition() + "from playlist not possible.");
         }
 
         if (attachmentIndex < mAudioAttachmentItems.size()) {
