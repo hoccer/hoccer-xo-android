@@ -52,8 +52,4 @@ public class NearbyChatAdapter extends ChatAdapter {
             LOG.error("SQLException while batch retrieving messages for nearby", e);
         }
     }
-
-    public void setConverseContact(TalkClientContact talkClientContact) {
-        mContact = talkClientContact;
-    }
 }
