@@ -94,7 +94,7 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
                 try {
                     TalkClientContact contact = getXoDatabase().findClientContactById(contactId);
                     if (contact != null) {
-                        converseWithContact(contact);
+                        setContact(contact);
                     }
                 } catch (SQLException e) {
                     LOG.error("sql error", e);
@@ -188,12 +188,12 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
         mCompositionFragment.onAttachmentSelected(contentObject);
     }
 
-    public void converseWithContact(TalkClientContact contact) {
-        LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
+    private void setContact(TalkClientContact contact) {
+        LOG.debug("setContact(" + contact.getClientContactId() + ")");
         mContact = contact;
         mActionBar.setTitle(contact.getName());
-        mMessagingFragment.converseWithContact(contact);
-        mCompositionFragment.converseWithContact(contact);
+        mMessagingFragment.setContact(contact);
+        mCompositionFragment.setContact(contact);
         if (mContact.isDeleted()) {
             finish();
         }

@@ -159,21 +159,8 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         mAddAttachmentButton.setImageResource(imageResource);
     }
 
-    public void converseWithContact(TalkClientContact contact) {
-        LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
+    public void setContact(TalkClientContact contact) {
         mContact = contact;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mTextEdit.setVisibility(View.VISIBLE);
-                mSendButton.setVisibility(View.VISIBLE);
-                mAddAttachmentButton.setVisibility(View.VISIBLE);
-
-                mTextEdit.setEnabled(true);
-                mSendButton.setEnabled(true);
-                mAddAttachmentButton.setEnabled(true);
-            }
-        });
     }
 
     private boolean isComposed() {
@@ -259,7 +246,6 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     public void blockInput(boolean doBlock) {
-
         if(doBlock) {
             mTextEdit.setVisibility(View.GONE);
             mSendButton.setVisibility(View.GONE);

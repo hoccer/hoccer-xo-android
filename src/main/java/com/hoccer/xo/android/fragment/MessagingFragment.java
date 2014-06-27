@@ -93,8 +93,8 @@ public class MessagingFragment extends XoListFragment
         return true;
     }
 
-    public void converseWithContact(TalkClientContact contact) {
-        LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
+    public void setContact(TalkClientContact contact) {
+        LOG.debug("setContact(" + contact.getClientContactId() + ")");
         mContact = contact;
 
         if (mAdapter == null) {
