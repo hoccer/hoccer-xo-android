@@ -103,7 +103,7 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
     public void clear() {
         mAudioAttachmentItems.clear();
         mPlaylistOrder.clear();
-        mCurrentIndex = 0;
+        mCurrentIndex = -1;
     }
 
     @Override
@@ -143,7 +143,7 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
         LOG.error("#foo getIndexOfPlaylistPosition: " + getIndexOfPlaylistPosition(attachmentIndex));
 
         if (attachmentIndex == getCurrentPlaylistPosition()) {
-            throw new IllegalStateException("Removing the current entry " + getCurrentPlaylistPosition() + "from playlist not possible.");
+            throw new IllegalStateException("Removing the current entry (" + getCurrentPlaylistPosition() + ") from playlist not possible.");
         }
 
         if (attachmentIndex < mAudioAttachmentItems.size()) {
