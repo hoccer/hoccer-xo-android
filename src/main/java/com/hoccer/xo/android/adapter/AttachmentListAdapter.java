@@ -1,11 +1,6 @@
 package com.hoccer.xo.android.adapter;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +13,10 @@ import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
-import com.hoccer.xo.android.fragment.AudioAttachmentListFragment;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.android.view.AudioAttachmentView;
-import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -142,7 +134,7 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
 
         if (download.getContentMediaType().equals(this.mContentMediaType)) {
             if ((mConversationContactId == MediaPlayerService.UNDEFINED_CONTACT_ID) || (mConversationContactId == contactId)) {
-                mAudioAttachmentItems.add(0, AudioAttachmentItem.create(download.getContentDataUrl(), download));
+                mAudioAttachmentItems.add(0, AudioAttachmentItem.create(download.getContentDataUrl(), download, true));
 
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
@@ -231,7 +223,7 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
             if (downloads != null) {
                 for (TalkClientDownload download : downloads) {
                     if (!isRecordedAudio(download.getFileName())) {
-                        AudioAttachmentItem newItem = AudioAttachmentItem.create(download.getContentDataUrl(), download);
+                        AudioAttachmentItem newItem = AudioAttachmentItem.create(download.getContentDataUrl(), download, true);
                         if (newItem != null) {
                             mAudioAttachmentItems.add(newItem);
                         }
