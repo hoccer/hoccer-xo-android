@@ -5,10 +5,36 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <WebView
-        android:id="@+id/about_webview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_gravity="center"/>
+    <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:background="@color/xo_main_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="40dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="60dp"
+            android:orientation="horizontal">
+
+        <ImageView
+                android:id="@+id/about_image"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/ic_launcher"/>
+        <TextView
+                android:id="@+id/about_image_text"
+                android:layout_width="300dp"
+                android:layout_height="100dp"
+                android:layout_toRightOf="@id/about_image"/>
+
+    </RelativeLayout>
+
+    <TextView
+            android:id="@+id/about_advert_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:text="@string/about_advert_text"/>
 
 </LinearLayout>

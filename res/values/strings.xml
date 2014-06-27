@@ -269,4 +269,6 @@
     <string name="actionbar_default_title">Hoccer</string>
     <string name="content_audio_caption">Music</string>
 
+    <string name="about_advert_text">Your free messenger app! ...</string>
+
 </resources>
