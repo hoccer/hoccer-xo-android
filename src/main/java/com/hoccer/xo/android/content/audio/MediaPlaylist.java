@@ -43,6 +43,10 @@ public class MediaPlaylist implements ListIterator<AudioAttachmentItem> {
         }
     }
 
+    public List<AudioAttachmentItem> getAudioAttachmentItems() {
+        return mAudioAttachmentItems;
+    }
+
     public int size() {
         return mAudioAttachmentItems.size();
     }
