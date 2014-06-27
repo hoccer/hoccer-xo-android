@@ -97,7 +97,7 @@ public class SingleProfileFragment extends XoFragment
                     showProfile();
                 } catch (SQLException e) {
                     e.printStackTrace();
-                }
+ 				}
             }
         } else {
             LOG.error("Creating SingleProfileFragment without arguments is not supported.");

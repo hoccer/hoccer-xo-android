@@ -107,7 +107,7 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
             if (nearbyGroups.size() > 0) {
                 hidePlaceholder();
                 mNearbyAdapter.setConverseContact(nearbyGroups.get(0));
-                mCompositionFragment.setConverseContact(nearbyGroups.get(0));
+                mCompositionFragment.converseWithContact(nearbyGroups.get(0));
             }
         } catch (SQLException e) {
             e.printStackTrace();
