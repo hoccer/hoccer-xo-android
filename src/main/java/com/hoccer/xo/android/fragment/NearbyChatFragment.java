@@ -129,6 +129,8 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
                         hidePlaceholder();
                         final TalkClientContact nearbyGroup = nearbyGroups.get(0);
                         mNearbyAdapter.setConverseContact(nearbyGroup);
+                        mNearbyAdapter.requestReload();
+                        mNearbyAdapter.notifyDataSetChanged();
                         mCompositionFragment.converseWithContact(nearbyGroup);
 
                         mUserCountText.setText(mActivity.getResources().getString(
