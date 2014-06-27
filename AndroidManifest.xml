@@ -131,17 +131,6 @@
                 android:windowSoftInputMode="stateHidden"
                 android:exported="true">
 
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-            <!--<intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-            </intent-filter>-->
-
-            <meta-data
-                    android:name="android.app.searchable"
-                    android:resource="@xml/searchable" />
-
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="com.hoccer.xo.android.activity.ContactsActivity"/>
