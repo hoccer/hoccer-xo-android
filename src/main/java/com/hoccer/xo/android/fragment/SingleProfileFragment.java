@@ -30,7 +30,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -60,6 +62,14 @@ public class SingleProfileFragment extends XoFragment
 
     private boolean isRegistered = true;
 
+    private ImageButton mNicknameEditButton;
+
+    private TextView mNicknameTextView;
+
+    private EditText mNicknameEditText;
+
+    private LinearLayout mInviteButtonContainer;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         LOG.debug("onCreate()");
@@ -74,17 +84,53 @@ public class SingleProfileFragment extends XoFragment
         mNameText = (TextView) v.findViewById(R.id.tv_profile_name);
         mKeyText = (TextView) v.findViewById(R.id.tv_profile_key);
         mEditName = (EditText) v.findViewById(R.id.et_profile_name);
+        mNicknameEditButton = (ImageButton) v.findViewById(R.id.ib_profile_nickname_edit);
+        mNicknameTextView = (TextView) v.findViewById(R.id.tv_profile_nickname);
+        mNicknameEditText = (EditText) v.findViewById(R.id.et_profile_nickname);
+        mInviteButtonContainer = (LinearLayout) v.findViewById(R.id.inc_profile_request);
 
         return v;
+    }
+
+    private void showNicknameEdit() {
+        mNicknameEditText.setVisibility(View.VISIBLE);
+        mNicknameTextView.setVisibility(View.INVISIBLE);
+        mNicknameEditButton.setImageResource(R.drawable.ic_light_navigation_accept);
+        mNicknameEditButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String nickname = mNicknameEditText.getText().toString();
+                mContact.setNickname(nickname);
+                try {
+                    getXoDatabase().saveContact(mContact);
+                } catch (SQLException e) {
+                    LOG.error("error while saving nickname to contact " + mContact.getClientId(), e);
+                }
+                updateNickname(mContact);
+                hideNicknameEdit();
+            }
+        });
+    }
+
+    private void hideNicknameEdit() {
+        mNicknameEditText.setVisibility(View.GONE);
+        mNicknameTextView.setVisibility(View.VISIBLE);
+        mNicknameEditButton.setImageResource(android.R.drawable.ic_menu_edit);
+        mNicknameEditButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showNicknameEdit();
+            }
+        });
     }
 
     private void updateInviteButton(final TalkClientContact contact) {
         Button inviteButton = (Button) getView().findViewById(R.id.btn_profile_invite);
         if(contact == null || contact.isSelf() || contact.isGroup()) {
-            inviteButton.setVisibility(View.GONE);
+            mInviteButtonContainer.setVisibility(View.GONE);
             return;
         } else {
-            inviteButton.setVisibility(View.VISIBLE);
+            mInviteButtonContainer.setVisibility(View.VISIBLE);
         }
 
         try {
@@ -118,7 +164,7 @@ public class SingleProfileFragment extends XoFragment
                 }
             });
         } else {
-            inviteButton.setVisibility(View.GONE);
+            mInviteButtonContainer.setVisibility(View.GONE);
         }
     }
 
@@ -358,6 +404,19 @@ public class SingleProfileFragment extends XoFragment
 
         updateInviteButton(contact);
         updateDeclineButton(contact);
+        hideNicknameEdit();
+        if(mContact.isSelf()) {
+            // TODO: hide nickname elements
+        } else {
+            updateNickname(contact);
+            // TODO: show nickname elements
+        }
+
+    }
+
+    private void updateNickname(TalkClientContact contact) {
+        mNicknameEditText.setText(contact.getNickname());
+        mNicknameTextView.setText(contact.getNickname());
     }
 
     public String getFingerprint() {

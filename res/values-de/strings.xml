@@ -95,8 +95,8 @@
 
     <string name="friend_request_add_as_friend">Als Freund hinzufügen</string>
     <string name="friend_request_cancel_invitation">Freundschaftsanfrage zurückziehen</string>
-    <string name="friend_request_accept_invitation">Freundschaftsanfrage akzeptieren</string>
-    <string name="friend_request_decline_invitation">Freundschaftsanfrage ablehnen</string>
+    <string name="friend_request_accept_invitation">Freundschafts- anfrage akzeptieren</string>
+    <string name="friend_request_decline_invitation">Freundschafts- anfrage ablehnen</string>
     <string name="friend_request_invited_me_description">möchte dein Freund sein.</string>
     <string name="friend_request_invited_by_you_description">hat eine Einladung von dir bekommen.</string>
 
@@ -222,8 +222,7 @@
     <string name="pref_import_credentials">Zugangsdaten importieren</string>
     <string name="pref_legal_information">Rechtliches</string>
     <string name="pref_encryption">Verschlüsselung</string>
-    <string name="profile_compare_key_description">Für ein Extra an Sicherheit vergleiche diesen Fingerabdruck mit dem Fingerabdruck den Deine Freunde in deiner Kontaktkarte sehen
-    </string>
+    <string name="profile_compare_key_description">Für ein Extra an Sicherheit vergleiche diesen Fingerabdruck mit dem Fingerabdruck, den deine Freunde in deiner Kontaktkarte sehen.</string>
     <string name="pref_please_wait">Bitte warten...</string>
     <string name="my_profile_title">Mein Profil</string>
     <string name="welcome_to_title">Willkommen bei XO!</string>
@@ -250,6 +249,8 @@
     <string name="actionbar_default_title">Hoccer</string>
     <string name="content_audio_caption">Musik</string>
     <string name="nearby_info_usercount">%1$d Benutzer in der nähe</string>
+    <string name="profile_nickname_text">Anzeigename</string>
+    <string name="seen_text">gesehen</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>

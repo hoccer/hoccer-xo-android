@@ -271,16 +271,6 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         }
     }
 
-    public void blockInput() {
-        mTextEdit.setVisibility(View.GONE);
-        mSendButton.setVisibility(View.GONE);
-        mAddAttachmentButton.setVisibility(View.GONE);
-
-        mTextEdit.setEnabled(false);
-        mSendButton.setEnabled(false);
-        mAddAttachmentButton.setEnabled(false);
-    }
-
     private class AddAttachmentOnClickListener implements View.OnClickListener {
 
         @Override

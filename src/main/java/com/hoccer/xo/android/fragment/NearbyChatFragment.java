@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.fragment;
 
+import android.widget.RelativeLayout;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.adapter.NearbyChatAdapter;
@@ -33,6 +34,7 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
     private TextView mUserCountText;
 
     private View mNearbyInfoContainer;
+    private RelativeLayout mCompositionFragmentContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
         mPlaceholderText.setText(R.string.placeholder_nearby_text);
         mUserCountText = (TextView) view.findViewById(R.id.tv_nearby_usercount);
         mNearbyInfoContainer = view.findViewById(R.id.rl_nearby_info);
+        mCompositionFragmentContainer = (RelativeLayout)view.findViewById(R.id.fragment_container);
         mCompositionFragment = new CompositionFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.add(R.id.fragment_container, mCompositionFragment).commit();
@@ -76,7 +79,6 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
     }
 
     public void showPlaceholder() {
-        mCompositionFragment.blockInput();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -84,6 +86,7 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
                 mPlaceholderText.setVisibility(View.VISIBLE);
                 mList.setVisibility(View.GONE);
                 mNearbyInfoContainer.setVisibility(View.GONE);
+                mCompositionFragmentContainer.setVisibility(View.GONE);
             }
         });
     }
@@ -96,6 +99,7 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
                 mPlaceholderText.setVisibility(View.GONE);
                 mList.setVisibility(View.VISIBLE);
                 mNearbyInfoContainer.setVisibility(View.VISIBLE);
+                mCompositionFragmentContainer.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -125,6 +129,8 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
                         hidePlaceholder();
                         final TalkClientContact nearbyGroup = nearbyGroups.get(0);
                         mNearbyAdapter.setConverseContact(nearbyGroup);
+                        mNearbyAdapter.requestReload();
+                        mNearbyAdapter.notifyDataSetChanged();
                         mCompositionFragment.converseWithContact(nearbyGroup);
 
                         mUserCountText.setText(mActivity.getResources().getString(

@@ -69,7 +69,7 @@ public class FriendRequestAdapter extends XoAdapter {
 
         avatarView.setContact(contact);
 
-        nameView.setText(contact.getName());
+        nameView.setText(contact.getNickname());
         timeView.setText("");
 
         if (contact.getClientRelationship().invitedMe()) {

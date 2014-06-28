@@ -194,7 +194,7 @@ public class SingleProfileActivity extends XoActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mActionBar.setTitle(contact.getName());
+                mActionBar.setTitle(contact.getNickname());
                 if (mMode == Mode.CREATE_SELF) {
                     mActionBar.setTitle(R.string.welcome_to_title);
                 } else {

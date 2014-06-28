@@ -55,5 +55,6 @@ public class NearbyChatAdapter extends ChatAdapter {
 
     public void setConverseContact(TalkClientContact talkClientContact) {
         mContact = talkClientContact;
+        initialize();
     }
 }

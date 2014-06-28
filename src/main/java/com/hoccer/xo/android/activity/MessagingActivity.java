@@ -182,7 +182,7 @@ public class MessagingActivity extends XoActivity implements IXoContactListener 
     public void converseWithContact(TalkClientContact contact) {
         LOG.debug("converseWithContact(" + contact.getClientContactId() + ")");
         mContact = contact;
-        mActionBar.setTitle(contact.getName());
+        mActionBar.setTitle(contact.getNickname());
         mMessagingFragment.converseWithContact(contact);
         mCompositionFragment.converseWithContact(contact);
         if (mContact.isDeleted()) {

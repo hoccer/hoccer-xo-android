@@ -34,7 +34,7 @@
     <RelativeLayout
             android:id="@+id/rl_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/tv_message_time"
             android:layout_toRightOf="@id/av_message_avatar">
 
@@ -72,13 +72,14 @@
     </RelativeLayout>
 
     <TextView
-            android:id="@+id/tv_message_contact_name"
+            android:id="@+id/tv_message_contact_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
             android:textColor="@android:color/secondary_text_dark"
             android:layout_alignParentBottom="true"
             android:layout_alignLeft="@+id/rl_container"
-            android:layout_below="@+id/rl_container"/>
+            android:layout_below="@+id/rl_container"
+            android:text="alsbdfadlskf"/>
 
 </RelativeLayout>
