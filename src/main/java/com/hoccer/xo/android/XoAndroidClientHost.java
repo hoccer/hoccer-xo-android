@@ -124,6 +124,11 @@ public class XoAndroidClientHost implements IXoClientHost {
     }
 
     @Override
+    public String getClientBuildVariant() {
+        return "release";
+    }
+
+    @Override
     public Date getClientTime() {
         return new Date();
     }
