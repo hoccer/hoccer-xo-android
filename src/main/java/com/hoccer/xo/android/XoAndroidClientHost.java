@@ -33,7 +33,8 @@ public class XoAndroidClientHost implements IXoClientHost {
 
     Context mContext = null;
     PackageInfo mPackageInfo = null;
-    boolean mSilentDeliveryEnabled = false;
+    boolean mSendDeliveryConfirmationEnabled = true;
+    SharedPreferences mPreferences;
 
     public XoAndroidClientHost(Context context) {
         mContext = context;
@@ -46,9 +47,7 @@ public class XoAndroidClientHost implements IXoClientHost {
             e.printStackTrace();
         }
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-
-        mSilentDeliveryEnabled = preferences.getBoolean("preference_confirm_messages_seen", false);
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
     }
 
     @Override
@@ -185,7 +184,8 @@ public class XoAndroidClientHost implements IXoClientHost {
     }
 
     @Override
-    public boolean isSilentDeliveryEnabled() {
-        return mSilentDeliveryEnabled;
+    public boolean isSendDeliveryConfirmationEnabled() {
+        mSendDeliveryConfirmationEnabled = mPreferences.getBoolean("preference_confirm_messages_seen", true);
+        return mSendDeliveryConfirmationEnabled;
     }
 }
