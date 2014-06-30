@@ -172,9 +172,22 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
                 Dao<TalkClientContact, Integer> talkClientContacts = getDao(TalkClientContact.class);
                 talkClientContacts.executeRaw("ALTER TABLE `clientContact` ADD COLUMN `nickname` VARCHAR");
 
+                migrateDeliveryStates();
+
+
             }
         } catch (SQLException e) {
             LOG.error("sql error upgrading database", e);
+        }
+    }
+
+    private void migrateDeliveryStates() {
+        try {
+            XoClientDatabase database = new XoClientDatabase(this);
+            database.initialize();
+            database.migrateAllFilecacheUris();
+        } catch (SQLException e) {
+            LOG.error("error while migrating delivery states from old database!", e);
         }
     }
 
@@ -184,7 +197,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
             database.initialize();
             database.migrateAllFilecacheUris();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("error while migrating old filecache uris from old Database", e);
         }
     }
 
