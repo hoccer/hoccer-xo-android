@@ -91,7 +91,7 @@ public class ChatAudioItem extends ChatMessageItem {
             }
         });
 
-        mAudioContentObject = AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject);
+        mAudioContentObject = AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject, true);
         mIsPlayable = mAudioContentObject != null;
         updatePlayPauseView();
     }

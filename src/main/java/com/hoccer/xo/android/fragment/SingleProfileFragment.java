@@ -26,6 +26,20 @@ import com.hoccer.xo.release.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import org.apache.log4j.Logger;
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.ActionMode;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
 import java.io.File;
 import java.sql.SQLException;
 
@@ -83,7 +97,7 @@ public class SingleProfileFragment extends XoFragment
                     showProfile();
                 } catch (SQLException e) {
                     e.printStackTrace();
-                }
+ 				}
             }
         } else {
             LOG.error("Creating SingleProfileFragment without arguments is not supported.");
@@ -153,30 +167,45 @@ public class SingleProfileFragment extends XoFragment
         mMenu = menu;
     }
 
-    @Override
+	@Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_profile_block:
+                blockContact();
+                return true;
+            case R.id.menu_profile_unblock:
+                unblockContact();
+                return true;
+            case R.id.menu_profile_delete:
+                if (mContact != null) {
+                    XoDialogs.showYesNoDialog("ContactDeleteDialog",
+                            R.string.dialog_delete_contact_title,
+                            R.string.dialog_delete_contact_message,
+                            getXoActivity(),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+                                    getXoActivity().getXoClient().deleteContact(mContact);
+                                    getXoActivity().hackReturnedFromDialog();
+                                }
+                            },
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
 
-        if (mContact != null) {
-            switch (item.getItemId()) {
-                case R.id.menu_profile_block:
-                    XoDialogs.confirmBlockContact(getXoActivity(), mContact);
-                    return true;
-                case R.id.menu_profile_unblock:
-                    getXoClient().unblockContact(mContact);
-                    return true;
-                case R.id.menu_profile_delete:
-                    XoDialogs.confirmDeleteContact(getXoActivity(), mContact);
-                    return true;
-                case R.id.menu_profile_edit:
-                    getActivity().startActionMode(this);
-                    return true;
-                case R.id.menu_audio_attachment_list:
-                    IMessagingFragmentManager mgr = (IMessagingFragmentManager)getActivity();
-                    if(mgr != null) {
-                        mgr.showAudioAttachmentListFragment();
-                    }
-                    return true;
-            }
+                                }
+                            });
+                }
+                return true;
+            case R.id.menu_profile_edit:
+                getActivity().startActionMode(this);
+                return true;
+			case R.id.menu_audio_attachment_list:
+                IMessagingFragmentManager mgr = (IMessagingFragmentManager)getActivity();
+                if(mgr != null) {
+                    mgr.showAudioAttachmentListFragment();
+                }
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -365,6 +394,36 @@ public class SingleProfileFragment extends XoFragment
         }
         builder.deleteCharAt(builder.lastIndexOf(":"));
         return builder.toString();
+    }
+
+    private void blockContact() {
+        LOG.debug("blockContact()");
+        XoDialogs.showYesNoDialog("BlockContactDialog",
+                R.string.dialog_block_user_title,
+                R.string.dialog_block_user_message,
+                getXoActivity(),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (mContact != null) {
+                            getXoClient().blockContact(mContact);
+                            getXoActivity().finish();
+                        }
+                    }
+                },
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+    }
+
+    private void unblockContact() {
+        LOG.debug("unblockContact()");
+        if (mContact != null) {
+            getXoClient().unblockContact(mContact);
+            getXoActivity().finish();
+        }
     }
 
     public void refreshContact(TalkClientContact newContact) {

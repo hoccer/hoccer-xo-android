@@ -108,6 +108,7 @@
                 android:name="com.hoccer.xo.android.activity.MessagingActivity"
                 android:label="@string/actionbar_default_title"
                 android:windowSoftInputMode="stateHidden"
+                android:exported="true"
                 android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
 

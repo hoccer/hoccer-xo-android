@@ -393,6 +393,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
             mMediaPlayer = null;
             setPaused(false);
             setStopped(true);
+            mPlaylist.clear();
             if (isNotificationActive()) {
                 removeNotification();
             }

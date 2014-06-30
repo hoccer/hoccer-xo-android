@@ -17,13 +17,12 @@ import com.hoccer.xo.release.R;
 public abstract class XoActionbarActivity extends XoActivity {
 
     private Menu mMenu;
-    private MediaPlayerServiceConnector mMediaPlayerServiceConnector;
+    private MediaPlayerServiceConnector mMediaPlayerServiceConnector = new MediaPlayerServiceConnector();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMediaPlayerServiceConnector = new MediaPlayerServiceConnector();
         mMediaPlayerServiceConnector.connect(this,
                 MediaPlayerService.PLAYSTATE_CHANGED_ACTION,
                 new MediaPlayerServiceConnector.Listener() {

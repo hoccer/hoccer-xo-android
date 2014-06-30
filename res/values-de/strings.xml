@@ -36,7 +36,7 @@
     <string name="contacts_category_groups">Gruppen</string>
     <string name="contacts_empty_info">Du hast noch keine Kontakte hinzugefügt</string>
     <string name="contacts_empty_pairing">Kontakt hinzufügen</string>
-    <string name="contacts_sms_invitation">Einladung</string>
+    <string name="dialog_token_invitation_title">Einladung</string>
     <string name="contacts_sms_invitation_description">hat dir eine SMS-Einladung geschickt.
         Möchtest du die Einladung annehmen?
     </string>
@@ -51,7 +51,8 @@
     <string name="search_hint">Suche Attachments</string>
 
     <!-- Nearby location request -->
-    <string name="nearby_enable_location_service">Um diese Funktion nutzen zu können musst Du Ortungsdienste aktivieren. (GPS oder Netzwerkposition). Willst Du es aktivieren?</string>
+    <string name="dialog_enable_location_service_title">Ortungsdienste</string>
+    <string name="dialog_enable_location_service_message">Um diese Funktion nutzen zu können musst Du Ortungsdienste aktivieren. (GPS oder Netzwerkposition). Willst Du es aktivieren?</string>
     <string name="nearby_yes">Ja</string>
     <string name="nearby_no">Nein</string>
 
@@ -63,8 +64,8 @@
 
     <!-- Composition fragment -->
     <string name="composition_text_hint">Nachricht eingeben</string>
-    <string name="composition_alert_empty_group_title">Nachricht kann nicht gesendet werden</string>
-    <string name="composition_alert_empty_group_text">Du kannst keine Nachrichten an die Gruppe verschicken, weil sie außer Dir keine Mitglieder hat. Du kannst aber deine Freunde in die Gruppe einladen.</string>
+    <string name="dialog_empty_group_title">Nachricht kann nicht gesendet werden</string>
+    <string name="dialog_empty_group_message">Du kannst keine Nachrichten an die Gruppe verschicken, weil sie außer Dir keine Mitglieder hat. Du kannst aber deine Freunde in die Gruppe einladen.</string>
 
     <!-- Messaging fragment -->
     <string name="messaging_loading">Lädt...</string>
@@ -83,8 +84,8 @@
     <string name="pairing_token_generating">Erzeugen...</string>
     <string name="pairing_token_send_sms">Einladen via SMS</string>
     <string name="pairing_success">Kontakt wurde erfolgreich hinzugefügt</string>
-    <string name="pairing_failure">Der Kontakt konnte nicht hinzugefügt werden</string>
-    <string name="pairing_failure_description">Der eingegebene Code ist ungültig.</string>
+    <string name="dialog_pairing_failed_title">Der Kontakt konnte nicht hinzugefügt werden</string>
+    <string name="dialog_pairing_failed_message">Der eingegebene Code ist ungültig.</string>
 
     <!-- Profile fragment -->
     <string name="profile_avatar_set_button">Mein Bild ändern</string>
@@ -154,13 +155,13 @@
     <string name="setname_title">Benutzername ändern</string>
 
     <!-- Contact deletion dialog -->
-    <string name="deletecontact_title">Kontakt wirklich löschen?</string>
-    <string name="deletecontact_question">Bist du sicher, dass du diesen Kontakt löschen möchtest? Alle Nachrichten werden dann unwiderruflich gelöscht. 
+    <string name="dialog_delete_contact_title">Kontakt wirklich löschen?</string>
+    <string name="dialog_delete_contact_message">Bist du sicher, dass du diesen Kontakt löschen möchtest? Alle Nachrichten werden dann unwiderruflich gelöscht.
     </string>
 
     <!-- Depair dialog -->
     <string name="depaircontact_title">Verbindung auflösen?</string>
-    <string name="depaircontact_question">Bist du sicher, dass du die Verbindung auflösen möchtest? Es können dann keine Nachrichten ausgetauscht werden, bis ihr euch erneut verbindet. 
+    <string name="depaircontact_question">Bist du sicher, dass du die Verbindung auflösen möchtest? Es können dann keine Nachrichten ausgetauscht werden, bis ihr euch erneut verbindet.
     </string>
 
     <!-- Group kick selection dialog -->
@@ -170,19 +171,19 @@
     <string name="invite_title">In Gruppe einladen</string>
 
     <!-- Group manage selection dialog -->
-    <string name="manage_title">Gruppenmitglieder verwalten</string>
+    <string name="dialog_manage_group_title">Gruppenmitglieder verwalten</string>
 
     <!-- Location selection activity -->
     <string name="selectlocation_title">Standort auswählen</string>
 
     <!-- Group leave dialog -->
-    <string name="delete_group_title">Gruppe löschen</string>
-    <string name="delete_group_question">Bist du dir sicher, dass du die Gruppe löschen möchtest?</string>
-    <string name="reject_invitation_title">Einladung ablehnen</string>
-    <string name="reject_invitation_question">Bist du dir sicher, dass du die Einladung ablehnen möchtest? Du musst erneut eingeladen werden, um wieder teilnehmen zu können. 
+    <string name="dialog_delete_group_title">Gruppe löschen</string>
+    <string name="dialog_delete_group_message">Bist du dir sicher, dass du die Gruppe löschen möchtest?</string>
+    <string name="dialog_reject_group_invitation_title">Einladung ablehnen</string>
+    <string name="dialog_reject_group_invitation_message">Bist du dir sicher, dass du die Einladung ablehnen möchtest? Du musst erneut eingeladen werden, um wieder teilnehmen zu können.
     </string>
-    <string name="leave_title">Gruppe verlassen</string>
-    <string name="leave_question">Bist du dir sicher, dass du die Gruppe verlassen möchtest? Du musst erneut eingeladen werden, um wieder teilnehmen zu können. 
+    <string name="dialog_leave_group_title">Gruppe verlassen</string>
+    <string name="dialog_leave_group_message">Bist du dir sicher, dass du die Gruppe verlassen möchtest? Du musst erneut eingeladen werden, um wieder teilnehmen zu können.
     </string>
     <string name="common_group">Gruppe</string>
     <string name="common_group_invite">Eingeladen</string>
@@ -192,7 +193,7 @@
     <string name="file_chooser_string">Datei auswählen</string>
     <string name="open_file">Datei öffnen</string>
     <string name="error_no_such_app">keine installierte App kann diese Datei öffnen</string>
-    <string name="error_no_videoplayer">Video nicht abspielbar. Bitte anderen Videoplayer installieren. 
+    <string name="error_no_videoplayer">Video nicht abspielbar. Bitte anderen Videoplayer installieren.
     </string>
     <string name="menu_group_delete_profile">Gruppe schließen</string>
     <string name="menu_group_edit_profile">Gruppe bearbeiten</string>
@@ -216,7 +217,7 @@
     <string name="dialog_attachment_choose_discard_option">Anhang verwerfen</string>
     <string name="dialog_attachment_title">Anhang bearbeiten</string>
     <string name="dialog_block_user_title">Kontakt blockieren</string>
-    <string name="dialog_block_user_message">Bist du dir sicher, dass du diesen Kontakt blockieren möchtest? Du wirst keine weiteren Nachrichten von diesem Kontakt erhalten. 
+    <string name="dialog_block_user_message">Bist du dir sicher, dass du diesen Kontakt blockieren möchtest? Du wirst keine weiteren Nachrichten von diesem Kontakt erhalten.
     </string>
 
     <!-- Media Player -->
@@ -248,11 +249,11 @@
     <string name="sms_invitation_text">Hey! Ich nutze die Gratis-App HoccerXO zum sicheren Chatten! Jetzt herunterladen: http://hoccer.com/ Dann mich als Kontakt hinzufügen: %1$s%2$s
         \nxo %3$s
     </string>
-    <string name="export_credentials_dialog_title">Zugangsdaten exportieren</string>
+    <string name="dialog_export_credentials_title">Zugangsdaten exportieren</string>
     <string name="export_credentials_success">Zugangsdaten erfolgreich exportiert.</string>
     <string name="export_credentials_failure">Es ist ein Fehler beim exportieren der Zugangsdaten aufgetreten.</string>
 
-    <string name="import_credentials_dialog_title">Zugangsdaten importieren</string>
+    <string name="dialog_import_credentials_title">Zugangsdaten importieren</string>
     <string name="import_credentials_success">Zugangsdaten erfolgreich importiert.\nBitte starten Sie die App neu.</string>
     <string name="import_credentials_failure">Es ist ein Fehler beim importieren der Zugangsdaten aufgetreten.</string>
 
