@@ -1,10 +1,13 @@
 package com.hoccer.xo.android.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.*;
-import android.widget.LinearLayout;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoConfiguration;
+import com.hoccer.xo.android.service.MediaPlayerService;
+import com.hoccer.xo.android.service.MediaPlayerServiceConnector;
+import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.view.chat.attachments.AttachmentTransferControlView;
 import com.hoccer.xo.release.R;
 
@@ -12,7 +15,6 @@ import net.hockeyapp.android.CrashManager;
 
 import org.apache.log4j.Logger;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -24,7 +26,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.*;
@@ -43,6 +44,9 @@ public class XoPreferenceActivity extends PreferenceActivity
 
     private Dialog mWaitingDialog;
 
+    private Menu mMenu;
+    private MediaPlayerServiceConnector mMediaPlayerServiceConnector;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -56,6 +60,23 @@ public class XoPreferenceActivity extends PreferenceActivity
             addPreferencesFromResource(R.xml.preferences);
         }
         getListView().setBackgroundColor(Color.WHITE);
+
+        mMediaPlayerServiceConnector = new MediaPlayerServiceConnector();
+        mMediaPlayerServiceConnector.connect(this,
+                MediaPlayerService.PLAYSTATE_CHANGED_ACTION,
+                new MediaPlayerServiceConnector.Listener() {
+                    @Override
+                    public void onConnected(MediaPlayerService service) {
+                        updateActionBarIcons();
+                    }
+                    @Override
+                    public void onDisconnected() {
+                    }
+                    @Override
+                    public void onAction(String action, MediaPlayerService service) {
+                        updateActionBarIcons();
+                    }
+                });
     }
 
     @Override
@@ -65,16 +86,28 @@ public class XoPreferenceActivity extends PreferenceActivity
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        boolean result = super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.common, menu);
+
+        mMenu = menu;
+        updateActionBarIcons();
+
+        return result;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         LOG.debug("onOptionsItemSelected(" + item.toString() + ")");
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                break;
-            default:
-                return super.onOptionsItemSelected(item);
+                return true;
+            case R.id.menu_media_player:
+                openFullScreenPlayer();
+                return true;
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     private void checkForCrashesIfEnabled() {
@@ -150,6 +183,7 @@ public class XoPreferenceActivity extends PreferenceActivity
         if (mSpinner != null) {
             mSpinner.completeAndGone();
         }
+        mMediaPlayerServiceConnector.disconnect();
         super.onDestroy();
     }
 
@@ -173,38 +207,24 @@ public class XoPreferenceActivity extends PreferenceActivity
             return;
         }
 
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-
-        final LinearLayout passwordInputView = (LinearLayout) getLayoutInflater().inflate(R.layout.view_password_input, null);
-        final EditText passwordInput = (EditText) passwordInputView.findViewById(R.id.password_input);
-
-        dialogBuilder.setTitle(R.string.import_credentials_dialog_title);
-        dialogBuilder
-                .setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+        XoDialogs.showPasswordDialog("ImportCredentialsDialog",
+                R.string.dialog_import_credentials_title,
+                this,
+                new XoDialogs.OnPasswordClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String password = passwordInput.getText().toString();
+                    public void onClick(DialogInterface dialog, int id, String password) {
                         if (password != null && password.length() > 0) {
                             importCredentials(credentialsFile, password);
-                            dialog.dismiss();
                         } else {
                             Toast.makeText(XoPreferenceActivity.this, R.string.no_password, Toast.LENGTH_LONG).show();
                         }
                     }
-                });
-        dialogBuilder
-                .setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+                },
+                new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        passwordInput.setText("");
-                        dialog.dismiss();
+                    public void onClick(DialogInterface dialog, int id) {
                     }
                 });
-        dialogBuilder.setView(passwordInputView);
-
-        AlertDialog dialog = dialogBuilder.create();
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        dialog.show();
     }
 
     private void importCredentials(File credentialsFile, String password) {
@@ -232,38 +252,24 @@ public class XoPreferenceActivity extends PreferenceActivity
     }
 
     private void doExport() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-
-        final LinearLayout passwordInputView = (LinearLayout) getLayoutInflater().inflate(R.layout.view_password_input, null);
-        final EditText passwordInput = (EditText) passwordInputView.findViewById(R.id.password_input);
-
-        dialogBuilder.setTitle(R.string.export_credentials_dialog_title);
-        dialogBuilder
-                .setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+        XoDialogs.showPasswordDialog("ExportCredentialsDialog",
+                R.string.dialog_export_credentials_title,
+                this,
+                new XoDialogs.OnPasswordClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String password = passwordInput.getText().toString();
+                    public void onClick(DialogInterface dialog, int id, String password) {
                         if (password != null && password.length() > 0) {
                             exportCredentials(password);
-                            dialog.dismiss();
                         } else {
                             Toast.makeText(XoPreferenceActivity.this, R.string.no_password, Toast.LENGTH_LONG).show();
                         }
                     }
-                });
-        dialogBuilder
-                .setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+                },
+                new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        passwordInput.setText("");
-                        dialog.dismiss();
+                    public void onClick(DialogInterface dialog, int id) {
                     }
                 });
-        dialogBuilder.setView(passwordInputView);
-
-        AlertDialog dialog = dialogBuilder.create();
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        dialog.show();
     }
 
     private void exportCredentials(String password) {
@@ -286,4 +292,21 @@ public class XoPreferenceActivity extends PreferenceActivity
         Toast.makeText(this, R.string.export_credentials_success, Toast.LENGTH_LONG).show();
     }
 
+    private void openFullScreenPlayer(){
+        Intent resultIntent = new Intent(this, FullscreenPlayerActivity.class);
+        startActivity(resultIntent);
+    }
+
+    private void updateActionBarIcons() {
+        if (mMediaPlayerServiceConnector.isConnected() && mMenu != null) {
+            MenuItem mediaPlayerItem = mMenu.findItem(R.id.menu_media_player);
+
+            MediaPlayerService service = mMediaPlayerServiceConnector.getService();
+            if (service.isStopped() || service.isPaused()) {
+                mediaPlayerItem.setVisible(false);
+            } else {
+                mediaPlayerItem.setVisible(true);
+            }
+        }
+    }
 }

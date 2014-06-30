@@ -40,7 +40,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
     /**
      * Number of TalkClientMessage objects in a batch
      */
-    private static final long BATCH_SIZE = 10L;
+    protected static final long BATCH_SIZE = 10L;
 
     /**
      * Defines the distance from the bottom-most item in the chat view - in number of items.
@@ -54,9 +54,9 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
      */
     private boolean shouldAutoScroll = true;
 
-    private TalkClientContact mContact;
+    protected TalkClientContact mContact;
 
-    private List<ChatMessageItem> mChatMessageItems;
+    protected List<ChatMessageItem> mChatMessageItems;
 
     private ListView mListView;
     private List < Integer > mLastVisibleViews = new ArrayList<Integer>();
@@ -65,13 +65,13 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
 
     public ChatAdapter(ListView listView, XoActivity activity, TalkClientContact contact) {
         super(activity);
-        mContact = contact;
         mListView = listView;
+        mContact = contact;
 
         initialize();
     }
 
-    private void initialize() {
+    protected void initialize() {
         int totalMessageCount = 0;
         try {
             totalMessageCount = (int) mDatabase.getMessageCountByContactId(mContact.getClientContactId());
@@ -132,6 +132,11 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         getXoClient().unregisterTransferListener(this);
         LocalBroadcastManager.getInstance(mActivity).unregisterReceiver(mReceiver);
         mReceiver = null;
+
+        for(int i = 0; i < mLastVisibleViews.size(); ++i){
+            int viewIndex = mLastVisibleViews.get(i);
+            getItem(viewIndex).setVisibility(false);
+        }
     }
 
     @Override
@@ -246,7 +251,7 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
         return chatItemType;
     }
 
-    private ChatMessageItem getItemForMessage(TalkClientMessage message) {
+    protected ChatMessageItem getItemForMessage(TalkClientMessage message) {
         ChatItemType itemType = getListItemTypeForMessage(message);
 
         if (itemType == ChatItemType.ChatItemWithImage) {

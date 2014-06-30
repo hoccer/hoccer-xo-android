@@ -86,8 +86,6 @@ public abstract class XoFragment extends Fragment implements IXoFragment {
         }
     }
 
-
-
     public void onServiceConnected() {
     }
 

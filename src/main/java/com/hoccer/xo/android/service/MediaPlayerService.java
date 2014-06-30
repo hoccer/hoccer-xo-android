@@ -62,7 +62,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
     private MediaPlaylist mPlaylist = new MediaPlaylist();
 
     public class MediaPlayerBinder extends Binder {
-
         public MediaPlayerService getService() {
             return MediaPlayerService.this;
         }
@@ -394,6 +393,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
             mMediaPlayer = null;
             setPaused(false);
             setStopped(true);
+            mPlaylist.clear();
             if (isNotificationActive()) {
                 removeNotification();
             }
@@ -493,7 +493,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnErrorLi
         mPlaylist.setTrack(item);
     }
 
-    public void setMediaList(List<AudioAttachmentItem> itemList, int conversationContactId) {
+    public void setMediaList(List<AudioAttachmentItem> itemList) {
         mPlaylist.setTrackList(itemList);
     }
 

@@ -3,18 +3,16 @@ package com.hoccer.xo.android.view.chat.attachments;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.util.ColorSchemeManager;
+import com.hoccer.xo.android.util.ThumbnailManager;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
@@ -50,12 +48,34 @@ public class ChatVideoItem extends ChatMessageItem {
         TextView videoTitle = (TextView) mContentWrapper.findViewById(R.id.tv_video_title);
         TextView videoDescription = (TextView) mContentWrapper.findViewById(R.id.tv_video_description);
         ImageButton playButton = (ImageButton) mContentWrapper.findViewById(R.id.ib_content_open);
+        ImageView thumbnailView = (ImageView) mContentWrapper.findViewById(R.id.iv_video_preview);
+        RelativeLayout rootView = (RelativeLayout) mContentWrapper.findViewById(R.id.rl_root);
 
         int textColor = (mMessage.isIncoming()) ? mContext.getResources().getColor(R.color.xo_incoming_message_textColor) : mContext.getResources().getColor(R.color.xo_compose_message_textColor);
 
         videoTitle.setTextColor(textColor);
         videoDescription.setTextColor(textColor);
         playButton.setBackgroundDrawable(ColorSchemeManager.fillAttachmentForeground(mContext, R.drawable.ic_light_play, mMessage.isIncoming()));
+        int mask;
+
+        if (mMessage.isIncoming()) {
+            rootView.setGravity(Gravity.LEFT);
+            mask = R.drawable.bubble_grey;
+        } else {
+            rootView.setGravity(Gravity.RIGHT);
+            mask = R.drawable.bubble_green;
+        }
+
+        videoTitle.setTextColor(textColor);
+        videoDescription.setTextColor(textColor);
+
+        String tag = (mMessage.getMessageId() != null) ? mMessage.getMessageId() : mMessage.getMessageTag();
+        thumbnailView.setVisibility(View.INVISIBLE);
+
+        if (contentObject.getContentDataUrl() != null) {
+            mAttachmentView.setBackgroundDrawable(null);
+            ThumbnailManager.getInstance(mContext).displayThumbnailForVideo(contentObject.getContentDataUrl(), rootView, mask, tag);
+        }
 
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +100,4 @@ public class ChatVideoItem extends ChatMessageItem {
             }
         });
     }
-
-
 }

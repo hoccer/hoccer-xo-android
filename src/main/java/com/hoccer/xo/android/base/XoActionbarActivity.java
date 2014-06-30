@@ -2,12 +2,11 @@ package com.hoccer.xo.android.base;
 
 import android.content.*;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.hoccer.xo.android.activity.FullscreenPlayerActivity;
 import com.hoccer.xo.android.service.MediaPlayerService;
+import com.hoccer.xo.android.service.MediaPlayerServiceConnector;
 import com.hoccer.xo.release.R;
 
 /**
@@ -17,37 +16,42 @@ import com.hoccer.xo.release.R;
  */
 public abstract class XoActionbarActivity extends XoActivity {
 
-    private MediaPlayerService mMediaPlayerService;
-    private ServiceConnection mMediaPlayerServiceConnection;
     private Menu mMenu;
-    private BroadcastReceiver mBroadcastReceiver;
+    private MediaPlayerServiceConnector mMediaPlayerServiceConnector = new MediaPlayerServiceConnector();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = new Intent(this, MediaPlayerService.class);
-        startService(intent);
-        bindMediaPlayerService(intent);
-        createMediaPlayerBroadcastReceiver();
+        mMediaPlayerServiceConnector.connect(this,
+                MediaPlayerService.PLAYSTATE_CHANGED_ACTION,
+                new MediaPlayerServiceConnector.Listener() {
+                    @Override
+                    public void onConnected(MediaPlayerService service) {
+                        updateActionBarIcons();
+                    }
+                    @Override
+                    public void onDisconnected() {
+                    }
+                    @Override
+                    public void onAction(String action, MediaPlayerService service) {
+                        updateActionBarIcons();
+                    }
+                });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        unbindService(mMediaPlayerServiceConnection);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
-        mBroadcastReceiver = null;
+        mMediaPlayerServiceConnector.disconnect();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         boolean result = super.onCreateOptionsMenu(menu);
 
         mMenu = menu;
-        updateActionBarIcons(menu);
+        updateActionBarIcons();
 
         return result;
     }
@@ -58,10 +62,8 @@ public abstract class XoActionbarActivity extends XoActivity {
         switch (item.getItemId()) {
             case R.id.menu_media_player:
                 openFullScreenPlayer();
-                updateActionBarIcons(mMenu);
-                break;
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -70,47 +72,16 @@ public abstract class XoActionbarActivity extends XoActivity {
         startActivity(resultIntent);
     }
 
-    private void createMediaPlayerBroadcastReceiver() {
-        mBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(MediaPlayerService.PLAYSTATE_CHANGED_ACTION)) {
-                    updateActionBarIcons(mMenu);
-                }
-            }
-        };
-        IntentFilter filter = new IntentFilter(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, filter);
-    }
+    private void updateActionBarIcons() {
+        if (mMediaPlayerServiceConnector.isConnected() && mMenu != null) {
+            MenuItem mediaPlayerItem = mMenu.findItem(R.id.menu_media_player);
 
-    private void updateActionBarIcons( Menu menu){
-        if ( mMediaPlayerService != null && menu != null) {
-            MenuItem mediaPlayerItem = menu.findItem(R.id.menu_media_player);
-
-            if ( mMediaPlayerService.isStopped() || mMediaPlayerService.isPaused()) {
+            MediaPlayerService service = mMediaPlayerServiceConnector.getService();
+            if (service.isStopped() || service.isPaused()) {
                 mediaPlayerItem.setVisible(false);
-            }else {
+            } else {
                 mediaPlayerItem.setVisible(true);
             }
         }
-    }
-
-    private void bindMediaPlayerService(Intent intent) {
-
-        mMediaPlayerServiceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
-                mMediaPlayerService = binder.getService();
-                updateActionBarIcons( mMenu);
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mMediaPlayerService = null;
-            }
-        };
-
-        bindService(intent, mMediaPlayerServiceConnection, Context.BIND_AUTO_CREATE);
     }
 }

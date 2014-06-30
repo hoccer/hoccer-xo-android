@@ -3,8 +3,6 @@ package com.hoccer.xo.android.view.chat.attachments;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.*;
-import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
@@ -16,22 +14,21 @@ import com.hoccer.talk.content.IContentObject;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.android.util.ColorSchemeManager;
+import com.hoccer.xo.android.service.MediaPlayerServiceConnector;
 import com.hoccer.xo.android.view.chat.ChatMessageItem;
 import com.hoccer.xo.release.R;
 
 
-
 public class ChatAudioItem extends ChatMessageItem {
 
-    private MediaPlayerService mMediaPlayerService;
     private ImageButton mPlayPauseButton;
-    private BroadcastReceiver mReceiver;
-    private ServiceConnection mConnection;
+    private MediaPlayerServiceConnector mMediaPlayerServiceConnector;
     private AudioAttachmentItem mAudioContentObject;
     private boolean mIsPlayable = false;
 
     public ChatAudioItem(Context context, TalkClientMessage message) {
         super(context, message);
+        mMediaPlayerServiceConnector = new MediaPlayerServiceConnector();
     }
 
     @Override
@@ -95,44 +92,25 @@ public class ChatAudioItem extends ChatMessageItem {
             }
         });
 
-        mAudioContentObject = AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject);
-
+        mAudioContentObject = AudioAttachmentItem.create(contentObject.getContentDataUrl(), contentObject, true);
         mIsPlayable = mAudioContentObject != null;
         updatePlayPauseView();
     }
 
-    private void bindService(Intent intent) {
-
-        mConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
-                mMediaPlayerService = binder.getService();
-                updatePlayPauseView();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mMediaPlayerService = null;
-            }
-        };
-
-        mContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-    }
-
     private void pausePlaying() {
-        if (isBound()) {
-            mMediaPlayerService.pause();
+        if (mMediaPlayerServiceConnector.isConnected()) {
+            mMediaPlayerServiceConnector.getService().pause();
         }
     }
 
     private void startPlaying() {
-        if (isBound()) {
-            if (mMediaPlayerService.isPaused() && mMediaPlayerService.getCurrentMediaItem() != null && mAudioContentObject.equals(mMediaPlayerService.getCurrentMediaItem())) {
-                mMediaPlayerService.play();
+        if (mMediaPlayerServiceConnector.isConnected()) {
+            MediaPlayerService service = mMediaPlayerServiceConnector.getService();
+            if (service.isPaused() && service.getCurrentMediaItem() != null && mAudioContentObject.equals(service.getCurrentMediaItem())) {
+                service.play();
             } else {
-                mMediaPlayerService.setMedia(mAudioContentObject);
-                mMediaPlayerService.play(0);
+                service.setMedia(mAudioContentObject);
+                service.play(0);
             }
         }
     }
@@ -159,25 +137,34 @@ public class ChatAudioItem extends ChatMessageItem {
 
     public boolean isActive() {
         boolean isActive = false;
-        if (mAudioContentObject != null && isBound()) {
-            isActive = !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && mAudioContentObject.equals(mMediaPlayerService.getCurrentMediaItem());
+        if (mAudioContentObject != null && mMediaPlayerServiceConnector.isConnected()) {
+            MediaPlayerService service = mMediaPlayerServiceConnector.getService();
+            isActive = !service.isPaused() && !service.isStopped() && mAudioContentObject.equals(service.getCurrentMediaItem());
         }
 
         return isActive;
     }
 
     private void initializeMediaPlayerService(){
-        Intent intent = new Intent(mContext, MediaPlayerService.class);
-        mContext.startService(intent);
-        bindService(intent);
-
-        createBroadcastReceiver();
+        mMediaPlayerServiceConnector.connect(mContext,
+                MediaPlayerService.PLAYSTATE_CHANGED_ACTION,
+                new MediaPlayerServiceConnector.Listener() {
+                    @Override
+                    public void onConnected(MediaPlayerService service) {
+                        updatePlayPauseView();
+                    }
+                    @Override
+                    public void onDisconnected() {
+                    }
+                    @Override
+                    public void onAction(String action, MediaPlayerService service) {
+                        updatePlayPauseView();
+                    }
+                });
     }
 
     private void destroyMediaPlayerService(){
-        mContext.unbindService(mConnection);
-        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mReceiver);
-        mReceiver = null;
+        mMediaPlayerServiceConnector.disconnect();
     }
 
     @Override
@@ -193,22 +180,5 @@ public class ChatAudioItem extends ChatMessageItem {
         }else{
             destroyMediaPlayerService();
         }
-    }
-
-    private void createBroadcastReceiver() {
-        mReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(MediaPlayerService.PLAYSTATE_CHANGED_ACTION)) {
-                    updatePlayPauseView();
-                }
-            }
-        };
-        IntentFilter filter = new IntentFilter(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
-        LocalBroadcastManager.getInstance(mContext).registerReceiver(mReceiver, filter);
-    }
-
-    public boolean isBound() {
-        return mMediaPlayerService != null;
     }
 }

@@ -9,11 +9,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.OnItemCountChangedListener;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.android.util.ColorSchemeManager;
+import com.hoccer.xo.android.dialog.TokenDialog;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -128,7 +128,8 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
             }
             if (item instanceof TalkClientSmsToken) {
                 TalkClientSmsToken token = (TalkClientSmsToken) item;
-                XoDialogs.showTokenDialog(getXoActivity(), token);
+                new TokenDialog(getXoActivity(), token)
+                        .show(getXoActivity().getFragmentManager(), "TokenDialog");
             }
         }
     }

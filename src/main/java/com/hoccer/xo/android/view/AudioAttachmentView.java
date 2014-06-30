@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.content.MediaMetaData;
 import com.hoccer.xo.android.service.MediaPlayerService;
+import com.hoccer.xo.android.service.MediaPlayerServiceConnector;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
@@ -21,9 +22,7 @@ public class AudioAttachmentView extends LinearLayout implements View.OnClickLis
 
     private Context mContext;
     private AudioAttachmentItem mAudioAttachmentItem;
-    private ServiceConnection mConnection;
-    private BroadcastReceiver mReceiver;
-    private MediaPlayerService mMediaPlayerService;
+    private MediaPlayerServiceConnector mMediaPlayerServiceConnector;
     private DownloadArtworkTask mCurrentTask = null;
 
     private TextView mTitleTextView;
@@ -35,6 +34,7 @@ public class AudioAttachmentView extends LinearLayout implements View.OnClickLis
     public AudioAttachmentView(Context context) {
         super(context);
         mContext = context;
+        mMediaPlayerServiceConnector = new MediaPlayerServiceConnector();
         addView(inflate(mContext, R.layout.item_audio_attachment, null));
 
         mTitleTextView = ((TextView) findViewById(R.id.tv_title_name));
@@ -71,9 +71,10 @@ public class AudioAttachmentView extends LinearLayout implements View.OnClickLis
     }
 
     public boolean isActive() {
-        if (isBound()) {
-            AudioAttachmentItem currentItem = mMediaPlayerService.getCurrentMediaItem();
-            return !mMediaPlayerService.isPaused() && !mMediaPlayerService.isStopped() && (mAudioAttachmentItem.equals(currentItem));
+        if (mMediaPlayerServiceConnector.isConnected()) {
+            MediaPlayerService service = mMediaPlayerServiceConnector.getService();
+            AudioAttachmentItem currentItem = service.getCurrentMediaItem();
+            return !service.isPaused() && !service.isStopped() && (mAudioAttachmentItem.equals(currentItem));
         } else {
             return false;
         }
@@ -92,61 +93,31 @@ public class AudioAttachmentView extends LinearLayout implements View.OnClickLis
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        Intent intent = new Intent(mContext, MediaPlayerService.class);
-        mContext.startService(intent);
-        bindService(intent);
-
-        createBroadcastReceiver();
+        mMediaPlayerServiceConnector.connect(mContext,
+                MediaPlayerService.PLAYSTATE_CHANGED_ACTION,
+                new MediaPlayerServiceConnector.Listener() {
+                    @Override
+                    public void onConnected(MediaPlayerService service) {
+                        updatePlayPauseView();
+                    }
+                    @Override
+                    public void onDisconnected() {
+                    }
+                    @Override
+                    public void onAction(String action, MediaPlayerService service) {
+                        updatePlayPauseView();
+                    }
+                });
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        mContext.unbindService(mConnection);
-        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mReceiver);
-        mReceiver = null;
+        mMediaPlayerServiceConnector.disconnect();
     }
 
     @Override
     public void onClick(View v) {
-    }
-
-    private void bindService(Intent intent) {
-
-        mConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) service;
-                mMediaPlayerService = binder.getService();
-
-                updatePlayPauseView();
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-                mMediaPlayerService = null;
-            }
-        };
-
-        mContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-    }
-
-
-    private void createBroadcastReceiver() {
-        mReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(MediaPlayerService.PLAYSTATE_CHANGED_ACTION)) {
-                    updatePlayPauseView();
-                }
-            }
-        };
-        IntentFilter filter = new IntentFilter(MediaPlayerService.PLAYSTATE_CHANGED_ACTION);
-        LocalBroadcastManager.getInstance(mContext).registerReceiver(mReceiver, filter);
-    }
-
-    public boolean isBound() {
-        return mMediaPlayerService != null;
     }
 
     private class DownloadArtworkTask extends AsyncTask<Void, Void, Drawable> {

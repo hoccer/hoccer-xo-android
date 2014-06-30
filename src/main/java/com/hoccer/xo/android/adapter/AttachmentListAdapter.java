@@ -17,7 +17,6 @@ import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.android.view.AudioAttachmentView;
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -135,16 +134,37 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
 
         if (download.getContentMediaType().equals(this.mContentMediaType)) {
             if ((mConversationContactId == MediaPlayerService.UNDEFINED_CONTACT_ID) || (mConversationContactId == contactId)) {
-                mAudioAttachmentItems.add(0, AudioAttachmentItem.create(download.getContentDataUrl(), download));
+                mAudioAttachmentItems.add(0, AudioAttachmentItem.create(download.getContentDataUrl(), download, true));
+
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if( mSelections != null && mSelections.size() > 0) {
+                            updateCheckedItems();
+                        }
+
                         notifyDataSetChanged();
                     }
                 });
             }
         }
+    }
 
+    private void updateCheckedItems() {
+        SparseBooleanArray updatedSelection = new SparseBooleanArray(mSelections.size());
+
+        for( int i = 0; i < mSelections.size(); ++i){
+            boolean b = mSelections.valueAt(i);
+            int k = mSelections.keyAt(i);
+            updatedSelection.put(k +1, b);
+        }
+
+        mSelections.clear();
+
+        //@Info Setting mSelection to updatedSelection won't work since the reference changes, which is not allowed
+        for( int i = 0; i < updatedSelection.size(); ++i){
+            mSelections.append(updatedSelection.keyAt(i), updatedSelection.valueAt(i));
+        }
     }
 
     @Override
@@ -203,7 +223,7 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
             if (downloads != null) {
                 for (TalkClientDownload download : downloads) {
                     if (!isRecordedAudio(download.getFileName())) {
-                        AudioAttachmentItem newItem = AudioAttachmentItem.create(download.getContentDataUrl(), download);
+                        AudioAttachmentItem newItem = AudioAttachmentItem.create(download.getContentDataUrl(), download, true);
                         if (newItem != null) {
                             mAudioAttachmentItems.add(newItem);
                         }

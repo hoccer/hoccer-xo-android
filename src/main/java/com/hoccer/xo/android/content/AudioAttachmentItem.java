@@ -16,19 +16,21 @@ public class AudioAttachmentItem {
 
     private String mFilePath;
 
-    public static AudioAttachmentItem create(String mediaFilePath, IContentObject contentObject) {
+    public static AudioAttachmentItem create(String mediaFilePath, IContentObject contentObject, boolean withMetadata) {
         if (mediaFilePath == null || mediaFilePath.isEmpty()) {
             return null;
         }
         AudioAttachmentItem mi = new AudioAttachmentItem();
         mi.setFilePath(mediaFilePath);
 
-        String path = Uri.parse(mediaFilePath).getPath();
-        try {
-            mi.setMetaData(MediaMetaData.create(path));
-        } catch (Exception e) {
-            LOG.warn("Cannot load meta-data for file.");
-            return null;
+        if (withMetadata) {
+            String path = Uri.parse(mediaFilePath).getPath();
+            try {
+                mi.setMetaData(MediaMetaData.create(path));
+            } catch (Exception e) {
+                LOG.warn("Cannot load meta-data for file.");
+                return null;
+            }
         }
 
         mi.setContentObject(contentObject);
