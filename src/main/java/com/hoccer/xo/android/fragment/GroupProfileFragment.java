@@ -336,7 +336,12 @@ public class GroupProfileFragment extends XoFragment
             name = mGroupNameEdit.getText().toString();
         }
 
-        mGroupNameText.setText(name);
+
+        if(mGroup.getGroupPresence().isTypeNearby()) {
+            mGroupNameText.setText(R.string.nearby_text);
+        } else {
+            mGroupNameText.setText(name);
+        }
         mGroupNameEdit.setText(name);
 
         switch (mMode) {

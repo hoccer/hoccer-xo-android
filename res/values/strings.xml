@@ -281,5 +281,6 @@
     <string name="nearby_info_usercount">%1$d Users are Nearby</string>
     <string name="profile_nickname_text">Nickname</string>
     <string name="seen_text">seen</string>
+    <string name="nearby_text">Nearby</string>
 
 </resources>
