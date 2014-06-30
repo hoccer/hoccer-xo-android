@@ -108,8 +108,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.e( "bla", "AudioAttachmentListFragment::onQueryTextSubmit -----------------------------------");
-
                 InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
@@ -118,7 +116,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
             @Override
             public boolean onQueryTextChange(final String query) {
-                Log.e("bla", "AudioAttachmentListFragment::onQueryTextChange");
                 searchAttachmentList(query);
                 return false;
             }
