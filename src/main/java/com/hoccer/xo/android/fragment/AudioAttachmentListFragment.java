@@ -44,6 +44,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
     private final static Logger LOG = Logger.getLogger(AudioAttachmentListFragment.class);
     private ServiceConnection mConnection;
+    private AttachmentListAdapter mAttachmentCacheAdapter;
     private AttachmentListAdapter mAttachmentListAdapter;
     private AttachmentListFilterAdapter mFilterAdapter;
     private int mFilteredContactId;
@@ -112,29 +113,23 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
-                /*//check if no view has focus:
-                View v=getActivity().getCurrentFocus();
-                if(v!=null) {
-                    inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                }*/
-
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(final String query) {
                 Log.e("bla", "AudioAttachmentListFragment::onQueryTextChange");
-                startSearch(query);
+                searchAttachmentList(query);
                 return false;
             }
         });
     }
 
-    private void startSearch(final String query) {
+    private void searchAttachmentList(final String query) {
 
-        AttachmentListAdapter adapter = new AttachmentListAdapter(getActivity(), mAttachmentListAdapter.getContentMediaType(), mAttachmentListAdapter.getConversationContactId());
+        mAttachmentListAdapter.clear();
 
-        List< AudioAttachmentItem > items = mAttachmentListAdapter.getAudioAttachmentItems();
+        List< AudioAttachmentItem > items = mAttachmentCacheAdapter.getAudioAttachmentItems();
 
         for(int i = 0; i < items.size(); ++i){
             AudioAttachmentItem item = items.get(i);
@@ -143,10 +138,10 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
             if ( (title != null && title.toLowerCase().contains(query.toLowerCase())) ||
                  (artist != null && artist.toLowerCase().contains(query.toLowerCase()))){
-                adapter.addItem(item);
+                mAttachmentListAdapter.addItem(item);
             }
         }
-        setListAdapter(adapter);
+        //setListAdapter(mAttachmentListAdapter);
     }
 
     @Override
@@ -251,9 +246,12 @@ public class AudioAttachmentListFragment extends XoListFragment {
             XoApplication.getXoClient().unregisterTransferListener(mAttachmentListAdapter);
         }
 
-        mAttachmentListAdapter = new AttachmentListAdapter(getXoActivity(), ContentMediaType.AUDIO,
-                mFilteredContactId);
-        mAttachmentListAdapter.loadAttachmentList();
+        mAttachmentCacheAdapter = new AttachmentListAdapter(getXoActivity(), ContentMediaType.AUDIO, mFilteredContactId);
+        mAttachmentCacheAdapter.loadAttachmentList();
+
+        mAttachmentListAdapter = new AttachmentListAdapter(getActivity(), ContentMediaType.AUDIO, mFilteredContactId);
+        mAttachmentListAdapter.setAudioAttachmentItems( mAttachmentCacheAdapter.getAudioAttachmentItems());
+
         XoApplication.getXoClient().registerTransferListener(mAttachmentListAdapter);
         setListAdapter(mAttachmentListAdapter);
     }
@@ -302,6 +300,8 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 int messageId = XoApplication.getXoClient().getDatabase().findMessageByDownloadId(downloadId).getClientMessageId();
                 XoApplication.getXoClient().getDatabase().deleteMessageById(messageId);
 
+                AudioAttachmentItem itemToBeDeleted = mAttachmentListAdapter.getItem(pos);
+                mAttachmentCacheAdapter.removeItem(itemToBeDeleted.getFilePath());
                 mAttachmentListAdapter.removeItem(pos);
 
                 mMediaPlayerService.removeMedia(pos);

@@ -63,6 +63,16 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         return mAudioAttachmentItems;
     }
 
+    public void setAudioAttachmentItems( List<AudioAttachmentItem> items) {
+        mAudioAttachmentItems.addAll(items);
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
     public int getConversationContactId() {
         return mConversationContactId;
     }
@@ -214,6 +224,23 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         });
     }
 
+    public void removeItem(String filepath) {
+
+        for(int i=0; i < mAudioAttachmentItems.size(); ++i){
+            if ( mAudioAttachmentItems.get(i).getFilePath().equalsIgnoreCase(filepath)){
+                mAudioAttachmentItems.remove(i);
+                mActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyDataSetChanged();
+                    }
+                });
+
+                return;
+            }
+        }
+    }
+
     public void addItem(AudioAttachmentItem item){
         mAudioAttachmentItems.add(item);
         mActivity.runOnUiThread(new Runnable() {
@@ -224,6 +251,9 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         });
     }
 
+    public void clear(){
+        mAudioAttachmentItems.clear();
+    }
 
     public void setSelections(SparseBooleanArray selections) {
         this.mSelections = selections;
