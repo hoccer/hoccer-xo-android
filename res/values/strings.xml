@@ -268,5 +268,6 @@
     <string name="placeholder_nearby_text">Waiting for others nearby...</string>
     <string name="actionbar_default_title">Hoccer</string>
     <string name="content_audio_caption">Music</string>
+    <string name="multi_invite_dialog_accept">send</string>
 
 </resources>

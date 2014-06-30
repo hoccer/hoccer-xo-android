@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.fragment;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.hoccer.talk.client.IXoPairingListener;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoDialogs;
+import com.hoccer.xo.android.adapter.SystemContactAdapter;
 import com.hoccer.xo.android.base.XoFragment;
 import com.hoccer.xo.release.R;
 
@@ -71,10 +73,30 @@ public class PairingFragment extends XoFragment implements View.OnClickListener,
 
         mQrShowButton = (Button) view.findViewById(R.id.pairing_show_qr);
         mQrShowButton.setOnClickListener(this);
+        Button mutliInviteButton = (Button) view.findViewById(R.id.btn_multi_invite);
+        mutliInviteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openMultiInviteDialog();
+            }
+        });
 
         getXoClient().registerPairingListener(this);
 
         return view;
+    }
+
+    private void openMultiInviteDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getXoActivity());
+        builder.setPositiveButton(R.string.multi_invite_dialog_accept, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        builder.setCancelable(true);
+        builder.setAdapter(new SystemContactAdapter(getXoActivity()), null);
+        builder.show();
     }
 
     @Override
