@@ -131,8 +131,22 @@ public class AudioAttachmentListFragment extends XoListFragment {
     }
 
     private void startSearch(final String query) {
-        //TODO filter list
 
+        AttachmentListAdapter adapter = new AttachmentListAdapter(getActivity(), mAttachmentListAdapter.getContentMediaType(), mAttachmentListAdapter.getConversationContactId());
+
+        List< AudioAttachmentItem > items = mAttachmentListAdapter.getAudioAttachmentItems();
+
+        for(int i = 0; i < items.size(); ++i){
+            AudioAttachmentItem item = items.get(i);
+            String title = item.getMetaData().getTitle();
+            String artist = item.getMetaData().getArtist();
+
+            if ( (title != null && title.toLowerCase().contains(query.toLowerCase())) ||
+                 (artist != null && artist.toLowerCase().contains(query.toLowerCase()))){
+                adapter.addItem(item);
+            }
+        }
+        setListAdapter(adapter);
     }
 
     @Override
@@ -239,6 +253,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
         mAttachmentListAdapter = new AttachmentListAdapter(getXoActivity(), ContentMediaType.AUDIO,
                 mFilteredContactId);
+        mAttachmentListAdapter.loadAttachmentList();
         XoApplication.getXoClient().registerTransferListener(mAttachmentListAdapter);
         setListAdapter(mAttachmentListAdapter);
     }
