@@ -33,6 +33,7 @@ public class XoAndroidClientHost implements IXoClientHost {
 
     Context mContext = null;
     PackageInfo mPackageInfo = null;
+    boolean mSilentDeliveryEnabled = false;
 
     public XoAndroidClientHost(Context context) {
         mContext = context;
@@ -44,6 +45,10 @@ public class XoAndroidClientHost implements IXoClientHost {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+
+        mSilentDeliveryEnabled = preferences.getBoolean("preference_confirm_messages_seen", false);
     }
 
     @Override
@@ -165,16 +170,7 @@ public class XoAndroidClientHost implements IXoClientHost {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
 
             serverUri = preferences.getString("preference_server_uri", XoClientConfiguration.SERVER_URI);
-/*
-            serverUri = preferences.getString("preference_server_uri", null);
-            if (serverUri == null || serverUri.equalsIgnoreCase("") ||
-                    !(serverUri.startsWith("wss://") || serverUri.startsWith("ws://"))) {
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("preference_server_uri", XoClientConfiguration.SERVER_URI);
-                editor.commit();
-                serverUri = XoClientConfiguration.SERVER_URI;
-            }
-            */
+
         } else {
             serverUri = XoClientConfiguration.SERVER_URI;
         }
@@ -188,5 +184,8 @@ public class XoAndroidClientHost implements IXoClientHost {
         return keySize.intValue();
     }
 
-
+    @Override
+    public boolean isSilentDeliveryEnabled() {
+        return mSilentDeliveryEnabled;
+    }
 }

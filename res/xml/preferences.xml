@@ -17,6 +17,11 @@
 
     </PreferenceCategory>
 
+    <CheckBoxPreference
+            android:key="preference_confirm_messages_seen"
+            android:title="@string/pref_confirm_messages_seen"
+            android:defaultValue="false"/>
+
     <PreferenceCategory
             android:title="@string/pref_credentials">
         <Preference
