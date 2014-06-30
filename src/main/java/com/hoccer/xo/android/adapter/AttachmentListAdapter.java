@@ -245,6 +245,12 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
 
     public void clear(){
         mAudioAttachmentItems.clear();
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     public void setSelections(SparseBooleanArray selections) {
