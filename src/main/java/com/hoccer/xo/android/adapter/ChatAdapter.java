@@ -168,7 +168,9 @@ public class ChatAdapter extends XoAdapter implements IXoMessageListener, IXoTra
             int current = mLastVisibleViews.get(i);
 
             if ((current < firstVisible) || (current > lastVisible)) {
-                getItem(current).setVisibility(false);
+                if ( getItem(current) != null) {
+                    getItem(current).setVisibility(false);
+                }
             }
         }
 
