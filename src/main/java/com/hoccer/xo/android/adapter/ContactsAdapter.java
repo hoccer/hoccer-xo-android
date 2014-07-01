@@ -39,13 +39,23 @@ public abstract class ContactsAdapter extends XoAdapter
     protected final static int VIEW_TYPE_CLIENT    = 1;
     protected final static int VIEW_TYPE_GROUP     = 2;
     protected final static int VIEW_TYPE_TOKEN     = 3;
+    protected static final int VIEW_TYPE_NEARBY_HISTORY = 4;
 
-    protected final static int VIEW_TYPE_COUNT = 4;
+    protected final static int VIEW_TYPE_COUNT = 5;
 
     private OnItemCountChangedListener mOnItemCountChangedListener;
 
+    private int mNearbyHistoryLayout;
+
+    private boolean showNearbyHistory = false;
+
     public ContactsAdapter(XoActivity activity) {
         super(activity);
+    }
+
+    public ContactsAdapter(XoActivity activity, boolean showNearbyHistory) {
+        super(activity);
+        this.showNearbyHistory = showNearbyHistory;
     }
 
     Filter mFilter = null;
@@ -318,34 +328,43 @@ public abstract class ContactsAdapter extends XoAdapter
 
         View v = convertView;
 
-        switch(type) {
-        case VIEW_TYPE_CLIENT:
-            if(v == null) {
-                v = mInflater.inflate(getClientLayout(), null);
-            }
-            updateContact(v, (TalkClientContact) getItem(position));
-            break;
-        case VIEW_TYPE_GROUP:
-            if(v == null) {
-                v = mInflater.inflate(getGroupLayout(), null);
-            }
-            updateContact(v, (TalkClientContact)getItem(position));
-            break;
-        case VIEW_TYPE_SEPARATOR:
-            if(v == null) {
+        switch (type) {
+            case VIEW_TYPE_CLIENT:
+                if (v == null) {
+                    v = mInflater.inflate(getClientLayout(), null);
+                }
+                updateContact(v, (TalkClientContact) getItem(position));
+                break;
+            case VIEW_TYPE_GROUP:
+                if (v == null) {
+                    v = mInflater.inflate(getGroupLayout(), null);
+                }
+                updateContact(v, (TalkClientContact) getItem(position));
+                break;
+            case VIEW_TYPE_SEPARATOR:
+                if (v == null) {
+                    v = mInflater.inflate(getSeparatorLayout(), null);
+                }
+                updateSeparator(v, position);
+                break;
+            case VIEW_TYPE_TOKEN:
+                if (v == null) {
+                    v = mInflater.inflate(getTokenLayout(), null);
+                }
+                updateToken(v, (TalkClientSmsToken) getItem(position));
+                break;
+            case VIEW_TYPE_NEARBY_HISTORY:
+                if(!showNearbyHistory) {
+                    break;
+                }
+                if (v == null) {
+                    v = mInflater.inflate(getNearbyHistoryLayout(), null);
+                }
+                updateNearbyHistoryLayout(v);
+                break;
+            default:
                 v = mInflater.inflate(getSeparatorLayout(), null);
-            }
-            updateSeparator(v, position);
-            break;
-        case VIEW_TYPE_TOKEN:
-            if(v == null) {
-                v = mInflater.inflate(getTokenLayout(), null);
-            }
-            updateToken(v, (TalkClientSmsToken)getItem(position));
-            break;
-        default:
-            v = mInflater.inflate(getSeparatorLayout(), null);
-            break;
+                break;
         }
 
         return v;
@@ -356,6 +375,7 @@ public abstract class ContactsAdapter extends XoAdapter
     protected abstract int getSeparatorLayout();
     protected abstract int getTokenLayout();
 
+    protected abstract void updateNearbyHistoryLayout(View v);
     protected abstract void updateContact(View view, final TalkClientContact contact);
     protected abstract void updateToken(View view, final TalkClientSmsToken token);
 
@@ -368,6 +388,10 @@ public abstract class ContactsAdapter extends XoAdapter
 
     public void setOnItemCountChangedListener(OnItemCountChangedListener onItemCountChangedListener) {
         mOnItemCountChangedListener = onItemCountChangedListener;
+    }
+
+    public int getNearbyHistoryLayout() {
+        return mNearbyHistoryLayout;
     }
 
     public interface Filter {

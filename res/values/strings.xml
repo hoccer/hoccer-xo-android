@@ -285,5 +285,6 @@
     <string name="nearby_text">all nearby</string>
     <string name="error_send_message">Could not send message.</string>
     <string name="pref_privacy_title">Privacy</string>
+    <string name="nearby_saved">nearby saved</string>
 
 </resources>

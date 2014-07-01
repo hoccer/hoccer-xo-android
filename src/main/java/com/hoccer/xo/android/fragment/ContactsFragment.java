@@ -11,6 +11,7 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.OnItemCountChangedListener;
+import com.hoccer.xo.android.adapter.RichContactsAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.android.dialog.TokenDialog;
 import com.hoccer.xo.release.R;
@@ -109,7 +110,7 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
 
     private void initContactListAdapter() {
         if (mAdapter == null) {
-            mAdapter = getXoActivity().makeContactListAdapter();
+            mAdapter = new RichContactsAdapter(getXoActivity());
             mAdapter.onCreate();
             // filter out never-related contacts (which we know only via groups)
             mAdapter.setFilter(new ContactsAdapter.Filter() {
