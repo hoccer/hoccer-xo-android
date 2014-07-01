@@ -27,7 +27,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
 
     private static String DATABASE_NAME = "hoccer-talk.db";
 
-    private static final int DATABASE_VERSION = 15;
+    private static final int DATABASE_VERSION = 16;
 
     private static AndroidTalkDatabase INSTANCE = null;
 
@@ -173,8 +173,6 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
                 talkClientContacts.executeRaw("ALTER TABLE `clientContact` ADD COLUMN `nickname` VARCHAR");
 
                 migrateDeliveryStates();
-
-
             }
         } catch (SQLException e) {
             LOG.error("sql error upgrading database", e);
@@ -185,7 +183,7 @@ public class AndroidTalkDatabase extends OrmLiteSqliteOpenHelper implements IXoC
         try {
             XoClientDatabase database = new XoClientDatabase(this);
             database.initialize();
-            database.migrateAllFilecacheUris();
+            database.migrateDeliveryStates();
         } catch (SQLException e) {
             LOG.error("error while migrating delivery states from old database!", e);
         }
