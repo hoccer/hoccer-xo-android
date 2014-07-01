@@ -53,6 +53,16 @@ public class GroupManagementContactsAdapter extends ContactsAdapter {
     }
 
     @Override
+    protected int getNearbyHistoryLayout() {
+        return -1;
+    }
+
+    @Override
+    protected void updateNearbyHistoryLayout(View v) {
+
+    }
+
+    @Override
     protected void updateToken(View view, TalkClientSmsToken token) {
         LOG.debug("updateToken(" + token.getSmsTokenId() + ")");
     }

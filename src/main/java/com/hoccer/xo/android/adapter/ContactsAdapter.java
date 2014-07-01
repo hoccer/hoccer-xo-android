@@ -45,8 +45,6 @@ public abstract class ContactsAdapter extends XoAdapter
 
     private OnItemCountChangedListener mOnItemCountChangedListener;
 
-    private int mNearbyHistoryLayout;
-
     private boolean showNearbyHistory = false;
 
     public ContactsAdapter(XoActivity activity) {
@@ -260,6 +258,11 @@ public abstract class ContactsAdapter extends XoAdapter
         int count = 0;
         count += mSmsTokens.size();
         count += mClientContacts.size();
+
+        // add saved nearby messages
+        if (showNearbyHistory) {
+            count ++;
+        }
         return count;
     }
 
@@ -280,6 +283,9 @@ public abstract class ContactsAdapter extends XoAdapter
             }
             offset += mClientContacts.size();
         }
+        if (position == getCount()-1) {
+            return null;
+        }
         return null;
     }
 
@@ -299,6 +305,9 @@ public abstract class ContactsAdapter extends XoAdapter
                 return VIEW_TYPE_CLIENT;
             }
             offset += mClientContacts.size();
+        }
+        if (position == getCount()-1) {
+            return VIEW_TYPE_NEARBY_HISTORY;
         }
         return VIEW_TYPE_SEPARATOR;
     }
@@ -374,11 +383,11 @@ public abstract class ContactsAdapter extends XoAdapter
     protected abstract int getGroupLayout();
     protected abstract int getSeparatorLayout();
     protected abstract int getTokenLayout();
+    protected abstract int getNearbyHistoryLayout();
 
     protected abstract void updateNearbyHistoryLayout(View v);
     protected abstract void updateContact(View view, final TalkClientContact contact);
     protected abstract void updateToken(View view, final TalkClientSmsToken token);
-
 
     protected void updateSeparator(View view, int position) {
         LOG.debug("updateSeparator()");
@@ -388,10 +397,6 @@ public abstract class ContactsAdapter extends XoAdapter
 
     public void setOnItemCountChangedListener(OnItemCountChangedListener onItemCountChangedListener) {
         mOnItemCountChangedListener = onItemCountChangedListener;
-    }
-
-    public int getNearbyHistoryLayout() {
-        return mNearbyHistoryLayout;
     }
 
     public interface Filter {

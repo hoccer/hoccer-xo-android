@@ -58,8 +58,14 @@ public class RichContactsAdapter extends ContactsAdapter {
     }
 
     @Override
+    protected int getNearbyHistoryLayout() {
+        return R.layout.item_nearby_history;
+    }
+
+    @Override
     protected void updateNearbyHistoryLayout(View v) {
-        
+        TextView messagesCount = (TextView)v.findViewById(R.id.tv_nearby_history_messages_count);
+        messagesCount.setText("666");
     }
 
     @Override

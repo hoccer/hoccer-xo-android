@@ -110,7 +110,7 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
 
     private void initContactListAdapter() {
         if (mAdapter == null) {
-            mAdapter = new RichContactsAdapter(getXoActivity());
+            mAdapter = new RichContactsAdapter(getXoActivity(), true);
             mAdapter.onCreate();
             // filter out never-related contacts (which we know only via groups)
             mAdapter.setFilter(new ContactsAdapter.Filter() {
