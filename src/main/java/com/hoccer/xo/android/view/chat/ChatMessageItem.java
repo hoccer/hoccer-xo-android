@@ -134,6 +134,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
             }
             messageInfo.setVisibility(View.VISIBLE);
             messageInfo.setText(mMessage.getSenderContact().getNickname());
+            messageInfo.setTextColor(messageInfo.getResources().getColor(android.R.color.secondary_text_dark));
 
             messageText.setBackgroundDrawable(
                     mContext.getResources().getDrawable(R.drawable.bubble_grey));
