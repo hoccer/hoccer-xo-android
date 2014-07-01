@@ -283,5 +283,6 @@
     <string name="profile_nickname_text">Nickname</string>
     <string name="seen_text">seen</string>
     <string name="nearby_text">Nearby</string>
+    <string name="error_send_message">Could not send message.</string>
 
 </resources>

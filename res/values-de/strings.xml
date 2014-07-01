@@ -253,6 +253,7 @@
     <string name="profile_nickname_text">Anzeigename</string>
     <string name="seen_text">gesehen</string>
     <string name="nearby_text">in der Nähe</string>
+    <string name="error_send_message">Die Nachricht konnte nicht gesendet werden.</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>
