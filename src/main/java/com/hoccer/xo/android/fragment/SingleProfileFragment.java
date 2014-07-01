@@ -405,11 +405,12 @@ public class SingleProfileFragment extends XoFragment
         updateInviteButton(contact);
         updateDeclineButton(contact);
         hideNicknameEdit();
+        View nickNameContainer = getView().findViewById(R.id.inc_profile_nickname);
         if(mContact.isSelf()) {
-            // TODO: hide nickname elements
+            nickNameContainer.setVisibility(View.GONE);
         } else {
             updateNickname(contact);
-            // TODO: show nickname elements
+            nickNameContainer.setVisibility(View.VISIBLE);
         }
 
     }
