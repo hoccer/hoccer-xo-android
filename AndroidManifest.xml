@@ -103,6 +103,14 @@
             </intent-filter>
         </activity>
 
+        <!-- Nearby contacts activity -->
+        <activity
+                android:name="com.hoccer.xo.android.activity.NearbyContactsActivity"
+                android:label="@string/actionbar_default_title"
+                android:configChanges="keyboardHidden|orientation|screenSize"
+                android:screenOrientation="portrait">
+        </activity>
+
         <!-- Messaging activity -->
         <activity
                 android:name="com.hoccer.xo.android.activity.MessagingActivity"

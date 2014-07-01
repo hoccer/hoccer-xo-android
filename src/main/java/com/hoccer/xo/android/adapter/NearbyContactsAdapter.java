@@ -34,8 +34,6 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
 
     private List<TalkClientContact> mNearbyContacts = new ArrayList<TalkClientContact>();
 
-    private OnItemCountChangedListener mOnItemCountChangedListener;
-
     public NearbyContactsAdapter(XoClientDatabase db, XoActivity xoActivity) {
         super();
         mDatabase = db;
@@ -66,10 +64,6 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
         return convertView;
     }
 
-    public void setOnItemCountChangedListener(OnItemCountChangedListener listener) {
-        mOnItemCountChangedListener = listener;
-    }
-
     public void registerListeners() {
         mXoActivity.getXoClient().registerContactListener(this);
         mXoActivity.getXoClient().registerTransferListener(this);
@@ -95,7 +89,6 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
                 timer.schedule(task, 1000);
                 return;
             }
-            int currentItemCount = mNearbyContacts.size();
             mNearbyContacts = mDatabase.findAllNearbyContacts();
             for (TalkClientContact contact : mNearbyContacts) {
                 TalkClientDownload avatarDownload = contact.getAvatarDownload();
@@ -103,9 +96,7 @@ public class NearbyContactsAdapter extends BaseAdapter implements IXoContactList
                     mDatabase.refreshClientDownload(avatarDownload);
                 }
             }
-            if(mOnItemCountChangedListener != null && currentItemCount != mNearbyContacts.size()) {
-                mOnItemCountChangedListener.onItemCountChanged(mNearbyContacts.size());
-            }
+            mNearbyContacts.get(0).setNickname(mXoActivity.getResources().getString(R.string.nearby_text));
         } catch (SQLException e) {
             e.printStackTrace();
         }
