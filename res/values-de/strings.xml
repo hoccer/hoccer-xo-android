@@ -252,8 +252,9 @@
     <string name="nearby_info_usercount">%1$d Benutzer in der nähe</string>
     <string name="profile_nickname_text">Anzeigename</string>
     <string name="seen_text">gesehen</string>
-    <string name="nearby_text">in der Nähe</string>
+    <string name="nearby_text">Alle in der Nähe</string>
     <string name="error_send_message">Die Nachricht konnte nicht gesendet werden.</string>
+    <string name="pref_privacy_title">Privatspähre Einstellungen</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>
