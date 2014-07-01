@@ -1,11 +1,13 @@
 package com.hoccer.xo.android.fragment;
 
 import android.support.v4.app.FragmentTransaction;
+import android.widget.ListView;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.adapter.NearbyChatAdapter;
 import com.hoccer.xo.android.base.XoAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
+import com.hoccer.xo.android.util.ColorSchemeManager;
 import com.hoccer.xo.android.view.OverscrollListView;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
@@ -23,7 +25,8 @@ import java.util.List;
 public class NearbyChatFragment extends XoListFragment implements IXoContactListener {
     private static final Logger LOG = Logger.getLogger(NearbyChatFragment.class);
     private NearbyChatAdapter mNearbyAdapter;
-    private OverscrollListView mList;
+    private ListView mList;
+    private ImageView mPlaceholderImageFrame;
     private ImageView mPlaceholderImage;
     private TextView mPlaceholderText;
     private CompositionFragment mCompositionFragment;
@@ -31,10 +34,12 @@ public class NearbyChatFragment extends XoListFragment implements IXoContactList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nearby_chat, container, false);
-        mList = (OverscrollListView)  view.findViewById(android.R.id.list);
-        mPlaceholderImage = (ImageView) view.findViewById(R.id.iv_contacts_placeholder);
-        mPlaceholderImage.setImageResource(R.drawable.placeholder_nearby);
-        mPlaceholderText = (TextView) view.findViewById(R.id.tv_contacts_placeholder);
+        mList = (ListView)  view.findViewById(android.R.id.list);
+        mPlaceholderImageFrame = (ImageView) view.findViewById(R.id.iv_nearby_placeholder_frame);
+        mPlaceholderImageFrame.setImageResource(R.drawable.placeholder_nearby);
+        mPlaceholderImage = (ImageView) view.findViewById(R.id.iv_nearby_placeholder);
+        mPlaceholderImage.setBackgroundDrawable(ColorSchemeManager.fillBackground(getXoActivity(), R.drawable.placeholder_nearby_point, true));
+        mPlaceholderText = (TextView) view.findViewById(R.id.tv_nearby_placeholder);
         mPlaceholderText.setText(R.string.placeholder_nearby_text);
         mCompositionFragment = new CompositionFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -71,6 +76,7 @@ public class NearbyChatFragment extends XoListFragment implements IXoContactList
             @Override
             public void run() {
                 mCompositionFragment.blockInput(true);
+                mPlaceholderImageFrame.setVisibility(View.VISIBLE);
                 mPlaceholderImage.setVisibility(View.VISIBLE);
                 mPlaceholderText.setVisibility(View.VISIBLE);
                 mList.setVisibility(View.GONE);
@@ -83,6 +89,7 @@ public class NearbyChatFragment extends XoListFragment implements IXoContactList
             @Override
             public void run() {
                 mCompositionFragment.blockInput(false);
+                mPlaceholderImageFrame.setVisibility(View.GONE);
                 mPlaceholderImage.setVisibility(View.GONE);
                 mPlaceholderText.setVisibility(View.GONE);
                 mList.setVisibility(View.VISIBLE);
