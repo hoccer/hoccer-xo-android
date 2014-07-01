@@ -11,6 +11,7 @@ import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.view.AvatarView;
 import com.hoccer.xo.release.R;
@@ -32,6 +33,10 @@ public class RichContactsAdapter extends ContactsAdapter {
         setShowTokens(true);
     }
 
+    public RichContactsAdapter(XoActivity activity, boolean showNearbyHistory) {
+        super(activity, showNearbyHistory);
+    }
+
     @Override
     protected int getClientLayout() {
         return R.layout.item_contact_client;
@@ -50,6 +55,11 @@ public class RichContactsAdapter extends ContactsAdapter {
     @Override
     protected int getTokenLayout() {
         return R.layout.item_contact_sms_invite;
+    }
+
+    @Override
+    protected void updateNearbyHistoryLayout(View v) {
+        
     }
 
     @Override

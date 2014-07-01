@@ -282,6 +282,9 @@
     <string name="nearby_info_usercount">%1$d Users are Nearby</string>
     <string name="profile_nickname_text">Nickname</string>
     <string name="seen_text">seen</string>
-    <string name="nearby_text">Nearby</string>
+    <string name="nearby_text">all nearby</string>
+    <string name="error_send_message">Could not send message.</string>
+    <string name="pref_privacy_title">Privacy</string>
+    <string name="nearby_saved">nearby saved</string>
 
 </resources>

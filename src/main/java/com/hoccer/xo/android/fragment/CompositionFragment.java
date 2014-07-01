@@ -10,9 +10,14 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.hoccer.talk.client.model.TalkClientContact;
+import com.hoccer.talk.client.model.TalkClientMessage;
 import com.hoccer.talk.client.model.TalkClientUpload;
 import com.hoccer.talk.content.IContentObject;
+import com.hoccer.talk.model.TalkDelivery;
+import com.hoccer.talk.model.TalkRelationship;
 import com.hoccer.xo.android.XoConfiguration;
 import com.hoccer.xo.android.XoDialogs;
 import com.hoccer.xo.android.base.XoFragment;
@@ -22,6 +27,8 @@ import com.hoccer.xo.android.gesture.Gestures;
 import com.hoccer.xo.android.gesture.MotionGestureListener;
 import com.hoccer.xo.android.gesture.MotionInterpreter;
 import com.hoccer.xo.release.R;
+
+import java.sql.SQLException;
 
 public class CompositionFragment extends XoFragment implements View.OnClickListener,
         View.OnLongClickListener, MotionGestureListener {
@@ -197,7 +204,18 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     private boolean isSendMessagePossible() {
-        return !(mContact.isGroup() && mContact.getGroupMemberships().size() == 1);
+        boolean isBlocked = false;
+        TalkRelationship clientRelationship = mContact.getClientRelationship();
+        if(clientRelationship != null && clientRelationship.getState().equals(TalkRelationship.STATE_BLOCKED)) {
+            isBlocked = true;
+        }
+
+        boolean isEmptyGroup = false;
+        if(mContact.isGroup() && mContact.getGroupMemberships().size() == 1) {
+            isEmptyGroup = true;
+        }
+
+        return !isBlocked && !isEmptyGroup;
     }
 
     private void sendComposedMessage() {
@@ -205,9 +223,11 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
             return;
         }
 
+        boolean isAborted = false;
         if (!isSendMessagePossible()) {
-            showAlertSendMessageNotPossible();
-            return;
+//            showAlertSendMessageNotPossible();
+            showSendMessageNotPossibleToast();
+            isAborted = true;
         }
 
         String messageText = mTextEdit.getText().toString();
@@ -220,9 +240,20 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         if (mAttachment != null) {
             upload = SelectedContent.createAttachmentUpload(mAttachment);
         }
-        getXoClient()
-                .requestDelivery(getXoClient().composeClientMessage(mContact, messageText, upload));
+
+        if(isAborted) {
+            TalkClientMessage message = getXoClient()
+                    .composeClientMessage(mContact, messageText, upload);
+            getXoClient().markMessagesAsAborted(message);
+        } else {
+            getXoClient()
+                    .requestDelivery(getXoClient().composeClientMessage(mContact, messageText, upload));
+        }
         clearComposedMessage();
+    }
+
+    private void showSendMessageNotPossibleToast() {
+        Toast.makeText(getXoActivity(), R.string.error_send_message, Toast.LENGTH_LONG).show();
     }
 
     private void configureMotionInterpreterForContact(TalkClientContact contact) {

@@ -134,6 +134,7 @@ public class ChatMessageItem implements AttachmentTransferListener {
             }
             messageInfo.setVisibility(View.VISIBLE);
             messageInfo.setText(mMessage.getSenderContact().getNickname());
+            messageInfo.setTextColor(messageInfo.getResources().getColor(android.R.color.secondary_text_dark));
 
             messageText.setBackgroundDrawable(
                     mContext.getResources().getDrawable(R.drawable.bubble_grey));
@@ -183,8 +184,11 @@ public class ChatMessageItem implements AttachmentTransferListener {
     private void updateSeenStatus(View view) {
         TextView messageInfo = (TextView) view.findViewById(R.id.tv_message_contact_info);
 
-        if (mMessage.getOutgoingDelivery().getState().equals(TalkDelivery.STATE_DELIVERED_SEEN)
+        String currentState = mMessage.getOutgoingDelivery().getState();
+        if ((currentState.equals(TalkDelivery.STATE_DELIVERED_SEEN)
+                || currentState.equals(TalkDelivery.STATE_DELIVERED_SEEN_ACKNOWLEDGED))
                 && !mMessage.getOutgoingDelivery().isGroupDelivery()) {
+
             messageInfo.setVisibility(View.VISIBLE);
             messageInfo.setTextColor(view.getResources().getColor(R.color.xo_app_main_color));
             messageInfo.setText(R.string.seen_text);
@@ -195,19 +199,19 @@ public class ChatMessageItem implements AttachmentTransferListener {
 
 
     public int getBackgroundResource() {
-        String currentState = mMessage.getOutgoingDelivery().getMessageId();
+        String currentState = mMessage.getOutgoingDelivery().getState();
         if(currentState == null) {
-            return R.drawable.bubble_green;
+            return R.drawable.bubble_light_green;
         }
         if (currentState.equals(TalkDelivery.STATE_DELIVERING)) {
-            return R.drawable.bubble_grey;
-        } else if(currentState.equals(TalkDelivery.STATE_DELIVERED_PRIVATE)) {
-            return R.drawable.bubble_green;
-        } else if(currentState.equals(TalkDelivery.STATE_ABORTED)) {
-
-        } else if(currentState.equals(TalkDelivery.STATE_FAILED)) {
-
+            return R.drawable.bubble_light_green;
+        } else if(currentState.equals(TalkDelivery.STATE_ABORTED) || currentState.equals(TalkDelivery.STATE_ABORTED_ACKNOWLEDGED)) {
+            return R.drawable.bubble_red;
+        } else if(currentState.equals(TalkDelivery.STATE_FAILED) || currentState.equals(TalkDelivery.STATE_FAILED_ACKNOWLEDGED)) {
+            return R.drawable.bubble_red;
         }
+
+
         return R.drawable.bubble_green;
     }
 
