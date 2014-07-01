@@ -46,6 +46,7 @@ public abstract class ContactsAdapter extends XoAdapter
     private OnItemCountChangedListener mOnItemCountChangedListener;
 
     private boolean showNearbyHistory = false;
+    private long mArchivedNearbyMessagesCount = 0;
 
     public ContactsAdapter(XoActivity activity) {
         super(activity);
@@ -62,6 +63,7 @@ public abstract class ContactsAdapter extends XoAdapter
 
     List<TalkClientSmsToken> mSmsTokens = new ArrayList<TalkClientSmsToken>();
     List<TalkClientContact> mClientContacts = new ArrayList<TalkClientContact>();
+    List<TalkClientMessage> mArchivedNearbyMessages = new ArrayList<TalkClientMessage>();
 
     public Filter getFilter() {
         return mFilter;
@@ -261,7 +263,15 @@ public abstract class ContactsAdapter extends XoAdapter
 
         // add saved nearby messages
         if (showNearbyHistory) {
-            count ++;
+            // TODO: only if nearby history was found in db
+            try {
+                long mArchivedNearbyMessagesCount = mDatabase.getArchivedMessageCountNearby();
+                if (mArchivedNearbyMessagesCount > 0) {
+                    count++;
+                }
+            } catch (SQLException e) {
+                LOG.error("SQL Error while retrieving archived nearby messages", e);
+            }
         }
         return count;
     }
@@ -283,7 +293,8 @@ public abstract class ContactsAdapter extends XoAdapter
             }
             offset += mClientContacts.size();
         }
-        if (position == getCount()-1) {
+        // TODO: only if nearby history was found in db
+        if (position == getCount()-1 && mArchivedNearbyMessagesCount > 0) {
             return null;
         }
         return null;
@@ -306,7 +317,9 @@ public abstract class ContactsAdapter extends XoAdapter
             }
             offset += mClientContacts.size();
         }
-        if (position == getCount()-1) {
+
+        // TODO: only if nearby history was found in db
+        if (position == getCount()-1 && mArchivedNearbyMessagesCount > 0) {
             return VIEW_TYPE_NEARBY_HISTORY;
         }
         return VIEW_TYPE_SEPARATOR;
@@ -363,9 +376,6 @@ public abstract class ContactsAdapter extends XoAdapter
                 updateToken(v, (TalkClientSmsToken) getItem(position));
                 break;
             case VIEW_TYPE_NEARBY_HISTORY:
-                if(!showNearbyHistory) {
-                    break;
-                }
                 if (v == null) {
                     v = mInflater.inflate(getNearbyHistoryLayout(), null);
                 }
