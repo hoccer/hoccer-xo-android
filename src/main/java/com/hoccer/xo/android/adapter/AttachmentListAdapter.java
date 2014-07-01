@@ -216,21 +216,18 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         });
     }
 
-    public void removeItem(String filepath) {
-
-        for(int i=0; i < mAudioAttachmentItems.size(); ++i){
-            if ( mAudioAttachmentItems.get(i).getFilePath().equalsIgnoreCase(filepath)){
-                mAudioAttachmentItems.remove(i);
-                mActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyDataSetChanged();
-                    }
-                });
-
-                return;
-            }
+    public boolean removeItem(AudioAttachmentItem item) {
+        boolean isRemovable = mAudioAttachmentItems.contains(item);
+        if (isRemovable) {
+            mAudioAttachmentItems.remove(mAudioAttachmentItems.indexOf(item));
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    notifyDataSetChanged();
+                }
+            });
         }
+        return isRemovable;
     }
 
     public void addItem(AudioAttachmentItem item){
