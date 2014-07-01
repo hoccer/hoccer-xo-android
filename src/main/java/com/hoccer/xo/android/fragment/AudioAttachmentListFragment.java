@@ -82,7 +82,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
         inflater.inflate(R.menu.fragment_attachment_list, menu);
 
-        createSearchWidget();
+        initSearchWidget();
     }
 
     @Override
@@ -98,119 +98,31 @@ public class AudioAttachmentListFragment extends XoListFragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void createSearchWidget(){
-
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        final SearchView searchView = (SearchView) mMenu.findItem(R.id.menu_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        searchView.setIconifiedByDefault(false);
-
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(final String query) {
-                searchAttachmentList(query);
-                return false;
-            }
-        });
-    }
-
-    private void searchAttachmentList(final String query) {
-
-        mAttachmentListAdapter.clear();
-
-        List< AudioAttachmentItem > items = mAttachmentCacheAdapter.getAudioAttachmentItems();
-
-        for(int i = 0; i < items.size(); ++i){
-            AudioAttachmentItem item = items.get(i);
-            String title = item.getMetaData().getTitle();
-            String artist = item.getMetaData().getArtist();
-
-            if ( (title != null && title.toLowerCase().contains(query.toLowerCase())) ||
-                 (artist != null && artist.toLowerCase().contains(query.toLowerCase()))){
-                mAttachmentListAdapter.addItem(item);
-            }
-        }
-        //setListAdapter(mAttachmentListAdapter);
-    }
-
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onStart() {
+        super.onStart();
 
         if (getArguments() != null) {
             int clientContactId = getArguments().getInt(ARG_CLIENT_CONTACT_ID);
+
             if (clientContactId == -1) {
                 LOG.error("invalid contact id");
             } else {
                 mFilteredContactId = clientContactId;
             }
-
-        } else {
-            LOG.error("Creating SingleProfileFragment without arguments is not supported.");
         }
 
         loadAttachments();
 
         ListView listView = getListView();
-        listView.setOnItemClickListener(new OnAttachmentClickHandler());
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            @Override
-            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                mAttachmentListAdapter.setSelections(getListView().getCheckedItemPositions());
-                mAttachmentListAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.context_menu_fragment_messaging, menu);
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.menu_delete_attachment:
-                        /*@Note Copy list in order to assure that the checked items are still available in the dialog.
-                         *     The selected items might already have been reset by the list.*/
-                        SparseBooleanArray selectedItems = getListView().getCheckedItemPositions();
-
-                        SparseBooleanArray selectedItemsCopy = new SparseBooleanArray();
-                        for( int i = 0; i < selectedItems.size(); ++i){
-                            selectedItemsCopy.append(selectedItems.keyAt(i), selectedItems.valueAt(i));
-                        }
-                        showConfirmDeleteDialog(selectedItemsCopy);
-
-                        mode.finish();
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-            }
-        });
+        ListInteractionHandler listHandler = new ListInteractionHandler();
+        listView.setOnItemClickListener(listHandler);
+        listView.setMultiChoiceModeListener(listHandler);
 
         Intent intent = new Intent(getActivity(), MediaPlayerService.class);
         getActivity().startService(intent);
-        bindService(intent);
+        bindToMediaPlayerService(intent);
     }
 
     @Override
@@ -270,7 +182,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
         builder.setMessage(R.string.attachment_confirm_delete_dialog_message);
         builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                deleteSelectedAttachments( selectedItems);
+                deleteSelectedAttachments(selectedItems);
             }
         });
         builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
@@ -302,8 +214,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 int messageId = XoApplication.getXoClient().getDatabase().findMessageByDownloadId(downloadId).getClientMessageId();
                 XoApplication.getXoClient().getDatabase().deleteMessageById(messageId);
 
-                AudioAttachmentItem itemToBeDeleted = mAttachmentListAdapter.getItem(pos);
-                mAttachmentCacheAdapter.removeItem(itemToBeDeleted.getFilePath());
+                mAttachmentCacheAdapter.removeItem(mAttachmentListAdapter.getItem(pos));
                 mAttachmentListAdapter.removeItem(pos);
 
                 mMediaPlayerService.removeMedia(pos);
@@ -343,7 +254,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
         return deleted;
     }
 
-    private void bindService(Intent intent) {
+    private void bindToMediaPlayerService(Intent intent) {
 
         mConnection = new ServiceConnection() {
             @Override
@@ -361,7 +272,53 @@ public class AudioAttachmentListFragment extends XoListFragment {
         getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
-    private class OnAttachmentClickHandler implements AdapterView.OnItemClickListener {
+    private void initSearchWidget(){
+
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        final SearchView searchView = (SearchView) mMenu.findItem(R.id.menu_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setIconifiedByDefault(false);
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(final String query) {
+                searchAttachmentList(query);
+                return false;
+            }
+        });
+    }
+
+    private void searchAttachmentList(final String query) {
+
+        mAttachmentListAdapter.clear();
+
+        List< AudioAttachmentItem > items = mAttachmentCacheAdapter.getAudioAttachmentItems();
+
+        for(int i = 0; i < items.size(); ++i){
+            AudioAttachmentItem item = items.get(i);
+            String title = item.getMetaData().getTitle();
+            String artist = item.getMetaData().getArtist();
+            String fileName = item.getFileName();
+
+            if ( (title != null && title.toLowerCase().contains(query.toLowerCase())) ||
+                    (artist != null && artist.toLowerCase().contains(query.toLowerCase())) ||
+                    (fileName != null && fileName.toLowerCase().contains(query.toLowerCase()))){
+                mAttachmentListAdapter.addItem(item);
+            }
+        }
+        //setListAdapter(mAttachmentListAdapter);
+    }
+
+    private class ListInteractionHandler implements AdapterView.OnItemClickListener, AbsListView.MultiChoiceModeListener {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -381,6 +338,49 @@ public class AudioAttachmentListFragment extends XoListFragment {
             }
 
             getXoActivity().showFullscreenPlayer();
+        }
+
+        @Override
+        public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+            mAttachmentListAdapter.setSelections(getListView().getCheckedItemPositions());
+            mAttachmentListAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.context_menu_fragment_messaging, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menu_delete_attachment:
+                        /*@Note Copy list in order to assure that the checked items are still available in the dialog.
+                         *     The selected items might already have been reset by the list.*/
+                    SparseBooleanArray selectedItems = getListView().getCheckedItemPositions();
+
+                    SparseBooleanArray selectedItemsCopy = new SparseBooleanArray();
+                    for (int i = 0; i < selectedItems.size(); ++i) {
+                        selectedItemsCopy.append(selectedItems.keyAt(i), selectedItems.valueAt(i));
+                    }
+                    showConfirmDeleteDialog(selectedItemsCopy);
+
+                    mode.finish();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
         }
 
         private void setMediaList() {
