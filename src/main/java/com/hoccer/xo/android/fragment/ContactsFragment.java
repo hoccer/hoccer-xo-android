@@ -8,21 +8,15 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.hoccer.talk.client.model.TalkClientContact;
-import com.hoccer.talk.client.model.TalkClientDownload;
-import com.hoccer.talk.client.model.TalkClientMediaCollection;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
-import com.hoccer.talk.content.ContentMediaType;
-import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.OnItemCountChangedListener;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.android.dialog.TokenDialog;
-import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Fragment that shows a list of contacts
@@ -87,25 +81,6 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
         mAdapter.requestReload(); // XXX fix contact adapter and only do this on new adapter
         mAdapter.onResume();
         onItemCountChanged(mAdapter.getCount());
-
-
-        List<TalkClientDownload> downloads;
-        try {
-            TalkClientMediaCollection collection = XoApplication.getXoClient().getDatabase().createMediaCollection("MyCollection");
-            downloads = XoApplication.getXoClient().getDatabase().findClientDownloadByMediaType(ContentMediaType.AUDIO);
-            collection.add(downloads.get(0));
-
-
-            List<TalkClientMediaCollection> collections = XoApplication.getXoClient().getDatabase().findAllMediaCollections();
-
-            for(int i = 0; i < collections.size(); i++) {
-                TalkClientMediaCollection coll = collections.get(i);
-                LOG.debug(coll.getName() + " " + coll.size());
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
     }
 
     @Override
