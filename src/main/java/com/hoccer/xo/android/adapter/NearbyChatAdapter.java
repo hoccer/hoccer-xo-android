@@ -21,7 +21,6 @@ public class NearbyChatAdapter extends ChatAdapter {
         int totalMessageCount = 0;
         if (mContact != null) {
             try {
-                totalMessageCount = (int) mDatabase.getNearbyMessageCount();
                 totalMessageCount = (int) mDatabase.getMessageCountByContactId(mContact.getClientContactId());
             } catch (SQLException e) {
                 LOG.error("SQLException while loading message count in nearby ");
