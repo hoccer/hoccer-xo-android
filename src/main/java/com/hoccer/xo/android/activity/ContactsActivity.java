@@ -103,8 +103,8 @@ public class ContactsActivity extends XoActionbarActivity {
     }
 
     private boolean isLocationServiceEnabled() {
-        final LocationManager manager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !manager.isProviderEnabled( LocationManager.NETWORK_PROVIDER)) {
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER) && !manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             XoDialogs.showYesNoDialog("EnableLocationServiceDialog",
                     R.string.dialog_enable_location_service_title,
                     R.string.dialog_enable_location_service_message,
@@ -119,14 +119,15 @@ public class ContactsActivity extends XoActionbarActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
                         }
-                    });
+                    }
+            );
             return false;
         }
         return true;
     }
 
     @Override
-    public boolean onCreateOptionsMenu (Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         menu.findItem(R.id.menu_audio_attachment_list).setVisible(true);
 
@@ -143,6 +144,11 @@ public class ContactsActivity extends XoActionbarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showAudioAttachmentList() {
+        Intent intent = new Intent(this, MediaBrowserActivity.class);
+        startActivity(intent);
     }
 
     private class ConversationsPageListener implements ViewPager.OnPageChangeListener {

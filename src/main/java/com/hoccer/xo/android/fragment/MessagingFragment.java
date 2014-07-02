@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.*;
@@ -8,6 +9,8 @@ import android.widget.TextView;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.XoApplication;
+import com.hoccer.xo.android.activity.MediaBrowserActivity;
+import com.hoccer.xo.android.activity.MessagingActivity;
 import com.hoccer.xo.android.adapter.ChatAdapter;
 import com.hoccer.xo.android.base.IMessagingFragmentManager;
 import com.hoccer.xo.android.base.XoAdapter;
@@ -165,8 +168,8 @@ public class MessagingFragment extends XoListFragment
                 }
                 break;
             case R.id.menu_audio_attachment_list:
-                if (mContact != null && mgr != null) {
-                    mgr.showAudioAttachmentListFragment();
+                if (mContact != null) {
+                    showAudioAttachmentList();
                 }
             default:
                 return super.onOptionsItemSelected(item);
@@ -250,5 +253,11 @@ public class MessagingFragment extends XoListFragment
         } else if (mContact.isClient() && mContact.isNearby()) {
             getActivity().finish();
         }
+    }
+
+    public void showAudioAttachmentList() {
+        Intent intent = new Intent(getActivity(), MediaBrowserActivity.class);
+        intent.putExtra(MessagingActivity.EXTRA_CLIENT_CONTACT_ID, mContact.getClientContactId());
+        startActivity(intent);
     }
 }

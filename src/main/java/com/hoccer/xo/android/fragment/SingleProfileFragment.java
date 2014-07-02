@@ -200,12 +200,6 @@ public class SingleProfileFragment extends XoFragment
             case R.id.menu_profile_edit:
                 getActivity().startActionMode(this);
                 return true;
-			case R.id.menu_audio_attachment_list:
-                IMessagingFragmentManager mgr = (IMessagingFragmentManager)getActivity();
-                if(mgr != null) {
-                    mgr.showAudioAttachmentListFragment();
-                }
-                return true;
         }
         return super.onOptionsItemSelected(item);
     }

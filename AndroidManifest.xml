@@ -125,7 +125,7 @@
 
         <!-- AudioAttachmentList activity -->
         <activity
-                android:name="com.hoccer.xo.android.activity.AudioAttachmentListActivity"
+                android:name="com.hoccer.xo.android.activity.MediaBrowserActivity"
                 android:label="@string/actionbar_default_title"
                 android:parentActivityName="com.hoccer.xo.android.activity.ContactsActivity"
                 android:screenOrientation="portrait"
@@ -142,7 +142,7 @@
                 android:name="com.hoccer.xo.android.activity.FullscreenPlayerActivity"
                 android:label="@string/actionbar_default_title"
                 android:screenOrientation="portrait"
-                android:parentActivityName="com.hoccer.xo.android.activity.AudioAttachmentListActivity"
+                android:parentActivityName="com.hoccer.xo.android.activity.MediaBrowserActivity"
                 android:windowSoftInputMode="stateHidden"
                 android:theme="@android:style/Theme.Black.NoTitleBar"
                 android:exported="true">

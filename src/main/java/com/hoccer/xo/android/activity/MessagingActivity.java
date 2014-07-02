@@ -149,20 +149,6 @@ public class MessagingActivity extends XoActionbarActivity implements IMessaging
     }
 
     @Override
-    public void showAudioAttachmentListFragment() {
-        Bundle bundle = new Bundle();
-        bundle.putInt(AudioAttachmentListFragment.ARG_CLIENT_CONTACT_ID, mContactId);
-
-        mAudioAttachmentListFragment = new AudioAttachmentListFragment();
-        mAudioAttachmentListFragment.setArguments(bundle);
-
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fl_messaging_fragment_container, mAudioAttachmentListFragment);
-        ft.addToBackStack(null);
-        ft.commit();
-    }
-
-    @Override
     public void showSingleProfileFragment() {
         Bundle bundle = new Bundle();
         bundle.putInt(SingleProfileFragment.ARG_CLIENT_CONTACT_ID, mContactId);

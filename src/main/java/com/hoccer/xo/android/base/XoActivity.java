@@ -720,12 +720,6 @@ public abstract class XoActivity extends FragmentActivity {
         startActivity(new Intent(this, PairingActivity.class));
     }
 
-    public void showAudioAttachmentList() {
-        LOG.debug("showAudioAttachmentList()");
-        Intent intent = new Intent(this, AudioAttachmentListActivity.class);
-        startActivity(intent);
-    }
-
     public void showFullscreenPlayer() {
         LOG.debug("showFullscreenPlayer()");
         startActivity(new Intent(this, FullscreenPlayerActivity.class));
