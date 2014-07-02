@@ -90,56 +90,12 @@ public class AudioAttachmentListFragment extends XoListFragment {
         switch (item.getItemId()) {
             case R.id.menu_search:
                 boolean success = getActivity().onSearchRequested();
-                if ( !success) {
-                    Log.w( "AudioAttachmentListFragment", "Failed to process search request!");
+                if (!success) {
+                    Log.w("AudioAttachmentListFragment", "Failed to process search request!");
                 }
-            break;
+                break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void createSearchWidget(){
-
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        final SearchView searchView = (SearchView) mMenu.findItem(R.id.menu_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        searchView.setIconifiedByDefault(false);
-
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(final String query) {
-                searchAttachmentList(query);
-                return false;
-            }
-        });
-    }
-
-    private void searchAttachmentList(final String query) {
-
-        mAttachmentListAdapter.clear();
-
-        List< AudioAttachmentItem > items = mAttachmentCacheAdapter.getAudioAttachmentItems();
-
-        for(int i = 0; i < items.size(); ++i){
-            AudioAttachmentItem item = items.get(i);
-            String title = item.getMetaData().getTitle();
-            String artist = item.getMetaData().getArtist();
-
-            if ( (title != null && title.toLowerCase().contains(query.toLowerCase())) ||
-                 (artist != null && artist.toLowerCase().contains(query.toLowerCase()))){
-                mAttachmentListAdapter.addItem(item);
-            }
-        }
-        //setListAdapter(mAttachmentListAdapter);
     }
 
     @Override
@@ -153,7 +109,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
             } else {
                 mFilteredContactId = clientContactId;
             }
-
         } else {
             LOG.error("Creating SingleProfileFragment without arguments is not supported.");
         }
@@ -191,7 +146,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
                         SparseBooleanArray selectedItems = getListView().getCheckedItemPositions();
 
                         SparseBooleanArray selectedItemsCopy = new SparseBooleanArray();
-                        for( int i = 0; i < selectedItems.size(); ++i){
+                        for (int i = 0; i < selectedItems.size(); ++i) {
                             selectedItemsCopy.append(selectedItems.keyAt(i), selectedItems.valueAt(i));
                         }
                         showConfirmDeleteDialog(selectedItemsCopy);
@@ -248,7 +203,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
         mAttachmentCacheAdapter.loadAttachmentList();
 
         mAttachmentListAdapter = new AttachmentListAdapter(getActivity(), ContentMediaType.AUDIO, mFilteredContactId);
-        mAttachmentListAdapter.setAudioAttachmentItems( mAttachmentCacheAdapter.getAudioAttachmentItems());
+        mAttachmentListAdapter.setAudioAttachmentItems(mAttachmentCacheAdapter.getAudioAttachmentItems());
 
         XoApplication.getXoClient().registerTransferListener(mAttachmentListAdapter);
         setListAdapter(mAttachmentListAdapter);
@@ -259,7 +214,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
         // remove list items from back to front to avoid index invalidation
         for (int index = attachmentCount - 1; index >= 0; --index) {
-            if(selectedItems.get(index)) {
+            if (selectedItems.get(index)) {
                 deleteAudioAttachment(index);
             }
         }
@@ -270,7 +225,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
         builder.setMessage(R.string.attachment_confirm_delete_dialog_message);
         builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                deleteSelectedAttachments( selectedItems);
+                deleteSelectedAttachments(selectedItems);
             }
         });
         builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
@@ -285,7 +240,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
         AudioAttachmentItem item = mAttachmentListAdapter.getItem(pos);
 
         if (isPlaying(item)) {
-            if (mMediaPlayerService.getRepeatMode() == MediaPlaylist.RepeatMode.REPEAT_TITLE){
+            if (mMediaPlayerService.getRepeatMode() == MediaPlaylist.RepeatMode.REPEAT_TITLE) {
                 mMediaPlayerService.stop();
             } else {
                 mMediaPlayerService.playNextByRepeatMode();
@@ -316,6 +271,50 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void createSearchWidget() {
+
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        final SearchView searchView = (SearchView) mMenu.findItem(R.id.menu_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setIconifiedByDefault(false);
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(final String query) {
+                searchAttachmentList(query);
+                return false;
+            }
+        });
+    }
+
+    private void searchAttachmentList(final String query) {
+
+        mAttachmentListAdapter.clear();
+
+        List<AudioAttachmentItem> items = mAttachmentCacheAdapter.getAudioAttachmentItems();
+
+        for (int i = 0; i < items.size(); ++i) {
+            AudioAttachmentItem item = items.get(i);
+            String title = item.getMetaData().getTitle();
+            String artist = item.getMetaData().getArtist();
+
+            if ((title != null && title.toLowerCase().contains(query.toLowerCase())) ||
+                    (artist != null && artist.toLowerCase().contains(query.toLowerCase()))) {
+                mAttachmentListAdapter.addItem(item);
+            }
+        }
+        //setListAdapter(mAttachmentListAdapter);
     }
 
     private boolean isPaused(AudioAttachmentItem item) {
