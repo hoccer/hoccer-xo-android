@@ -19,21 +19,16 @@ public class NearbyChatAdapter extends ChatAdapter {
     @Override
     protected void initialize() {
         int totalMessageCount = 0;
-        if (mContact != null) {
-            try {
-                totalMessageCount = (int) mDatabase.getMessageCountByContactId(mContact.getClientContactId());
-            } catch (SQLException e) {
-                LOG.error("SQLException while loading message count in nearby ");
-            }
-            mChatMessageItems = new ArrayList<ChatMessageItem>(totalMessageCount);
-            for (int i = 0; i < totalMessageCount; i++) {
-                mChatMessageItems.add(null);
-            }
-            loadNextMessages(mChatMessageItems.size() - (int) BATCH_SIZE);
-        } else {
-            mChatMessageItems = new ArrayList<ChatMessageItem>(totalMessageCount);
+        try {
+            totalMessageCount = (int) mDatabase.getNearbyMessageCount();
+        } catch (SQLException e) {
+            LOG.error("SQLException while loading message count in nearby ");
         }
-
+        mChatMessageItems = new ArrayList<ChatMessageItem>(totalMessageCount);
+        for (int i = 0; i < totalMessageCount; i++) {
+            mChatMessageItems.add(null);
+        }
+        loadNextMessages(mChatMessageItems.size() - (int) BATCH_SIZE);
     }
 
     @Override
@@ -42,7 +37,7 @@ public class NearbyChatAdapter extends ChatAdapter {
             if (offset < 0) {
                 offset = 0;
             }
-            final List<TalkClientMessage> messagesBatch = mDatabase.findMessagesByContactId(mContact.getClientContactId(), BATCH_SIZE, offset);
+            final List<TalkClientMessage> messagesBatch = mDatabase.findNearbyMessages(BATCH_SIZE, offset);
             for (int i = 0; i < messagesBatch.size(); i++) {
                 ChatMessageItem messageItem = getItemForMessage(messagesBatch.get(i));
                 mChatMessageItems.set(offset + i, messageItem);
