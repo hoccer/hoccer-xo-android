@@ -205,9 +205,12 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
 
     private boolean isSendMessagePossible() {
         boolean isBlocked = false;
-        TalkRelationship clientRelationship = mContact.getClientRelationship();
-        if(clientRelationship != null && clientRelationship.getState().equals(TalkRelationship.STATE_BLOCKED)) {
-            isBlocked = true;
+        if(!mContact.isGroup() && !mContact.isNearby()) {
+            TalkRelationship clientRelationship = mContact.getClientRelationship();
+            if (clientRelationship != null && clientRelationship.getState()
+                    .equals(TalkRelationship.STATE_BLOCKED)) {
+                isBlocked = true;
+            }
         }
 
         boolean isEmptyGroup = false;
