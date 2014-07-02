@@ -6,13 +6,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.hoccer.xo.android.base.XoActionbarActivity;
 import com.hoccer.xo.android.fragment.AudioAttachmentListFragment;
-import com.hoccer.xo.android.fragment.CollectionListFragment;
+import com.hoccer.xo.android.fragment.MediaCollectionListFragment;
 import com.hoccer.xo.release.R;
 
 public class MediaBrowserActivity extends XoActionbarActivity {
 
     private AudioAttachmentListFragment mAudioAttachmentListFragment;
-    private CollectionListFragment mCollectionListFragment;
+    private MediaCollectionListFragment mCollectionListFragment;
 
     private Integer mContactId;
 
@@ -69,7 +69,8 @@ public class MediaBrowserActivity extends XoActionbarActivity {
     }
 
     private void showCollectionListFragment() {
-        mCollectionListFragment = new CollectionListFragment();
+        mCollectionListFragment = new MediaCollectionListFragment();
+
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fl_fragment_container, mCollectionListFragment);
         ft.addToBackStack(null);

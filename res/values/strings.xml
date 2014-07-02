@@ -48,7 +48,6 @@
     <!-- AudioAttachmentList Fragment -->
     <string name="audio_attachment_list_all">All</string>
     <string name="audio_attachment_list_unknown">Unknown</string>
-    <string name="menu_collections">Collections</string>
     <string name="menu_search">Search</string>
     <string name="search_hint">Search Attachments</string>
 
@@ -233,6 +232,12 @@
     <string name="media_meta_data_unknown_artist">Unknown artist</string>
     <string name="media_player_playlist_track_divider">of</string>
     <string name="media_player_default_filter_label">All</string>
+
+    <!-- Media Browser -->
+    <string name="collections">Collections</string>
+    <string name="menu_collections">Collections</string>
+    <string name="new_media_collection">New collection</string>
+    <string name="enter_new_collection_name">Please enter the name for the new collection:</string>
 
     <!-- Preferences -->
     <string name="preference_keysize_summary">Renew RSA key with selected size</string>
