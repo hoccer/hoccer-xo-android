@@ -133,7 +133,7 @@ public class NearbyChatFragment extends XoListFragment implements IXoContactList
 
                         mUserCountText.setText(mActivity.getResources().getString(
                                 R.string.nearby_info_usercount, allNearbyContacts.size() - 1));
-                        mUserCountText.setOnClickListener(new View.OnClickListener() {
+                        mNearbyInfoContainer.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 Intent intent = new Intent(mActivity, NearbyContactsActivity.class);
