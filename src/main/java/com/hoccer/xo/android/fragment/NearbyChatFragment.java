@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.hoccer.talk.client.IXoContactListener;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.xo.android.activity.NearbyContactsActivity;
-import com.hoccer.xo.android.adapter.NearbyChatAdapter;
+import com.hoccer.xo.android.adapter.ChatAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.android.view.OverscrollListView;
 import com.hoccer.xo.release.R;
@@ -24,7 +24,7 @@ import java.util.List;
 
 public class NearbyChatFragment extends XoListFragment implements IXoContactListener {
     private static final Logger LOG = Logger.getLogger(NearbyChatFragment.class);
-    private NearbyChatAdapter mNearbyAdapter;
+    private ChatAdapter mNearbyAdapter;
     private OverscrollListView mList;
     private ImageView mPlaceholderImage;
     private TextView mPlaceholderText;
@@ -63,7 +63,6 @@ public class NearbyChatFragment extends XoListFragment implements IXoContactList
     public void onResume() {
         super.onResume();
         showPlaceholder();
-        converseWithContact();
     }
 
     @Override
@@ -103,16 +102,6 @@ public class NearbyChatFragment extends XoListFragment implements IXoContactList
         });
     }
 
-    public void converseWithContact() {
-        if (mNearbyAdapter == null) {
-            mNearbyAdapter = new NearbyChatAdapter(mList, getXoActivity());
-            mNearbyAdapter.onCreate();
-            mList.setAdapter(mNearbyAdapter);
-        }
-        mNearbyAdapter.onResume();
-        updateViews();
-    }
-
     private void updateViews() {
         try {
             if (mActivity == null) {
@@ -121,16 +110,19 @@ public class NearbyChatFragment extends XoListFragment implements IXoContactList
             final List<TalkClientContact> nearbyGroups = getXoDatabase().findAllNearbyGroups();
             final List<TalkClientContact> allNearbyContacts = getXoDatabase().findAllNearbyContacts();
             if (nearbyGroups.size() > 0) {
+                if (mNearbyAdapter == null) {
+                    mNearbyAdapter = new ChatAdapter(mList, getXoActivity(), nearbyGroups.get(0));
+                    mNearbyAdapter.onCreate();
+                    mList.setAdapter(mNearbyAdapter);
+                }
+                mNearbyAdapter.onResume();
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         hidePlaceholder();
-                        final TalkClientContact nearbyGroup = nearbyGroups.get(0);
-                        mNearbyAdapter.setConverseContact(nearbyGroup);
                         mNearbyAdapter.requestReload();
                         mNearbyAdapter.notifyDataSetChanged();
-                        mCompositionFragment.converseWithContact(nearbyGroup);
-
+                        mCompositionFragment.converseWithContact(nearbyGroups.get(0));
                         mUserCountText.setText(mActivity.getResources().getString(
                                 R.string.nearby_info_usercount, allNearbyContacts.size() - 1));
                         mUserCountText.setOnClickListener(new View.OnClickListener() {
