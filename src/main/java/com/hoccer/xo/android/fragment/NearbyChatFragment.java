@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
