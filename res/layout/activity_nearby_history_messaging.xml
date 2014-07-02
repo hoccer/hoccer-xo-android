@@ -5,9 +5,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-    <FrameLayout
-            android:id="@+id/fl_fragment_container"
+    <ListView
+            android:id="@+id/lv_nearby_history_chat"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:transcriptMode="disabled"
+            android:stackFromBottom="true"
+            android:smoothScrollbar="false"
+            android:dividerHeight="10dp"
+            android:divider="@null"/>
 
 </RelativeLayout>
