@@ -110,7 +110,7 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
 
     private void initContactListAdapter() {
         if (mAdapter == null) {
-            mAdapter = new RichContactsAdapter(getXoActivity());
+            mAdapter = new RichContactsAdapter(getXoActivity(), true);
             mAdapter.onCreate();
             // filter out never-related contacts (which we know only via groups)
             mAdapter.setFilter(new ContactsAdapter.Filter() {
@@ -156,9 +156,12 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         if (l == mContactList) {
+
             LOG.debug("onListItemClick(contactList," + position + ")");
+
             Object item = mContactList.getItemAtPosition(position);
             if (item instanceof TalkClientContact) {
+
                 TalkClientContact contact = (TalkClientContact) item;
                 if (contact.isGroup() && contact.isGroupInvited()) {
                     getXoActivity().showContactProfile(contact);
@@ -167,9 +170,9 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
                 }
             }
             if (item instanceof TalkClientSmsToken) {
+
                 TalkClientSmsToken token = (TalkClientSmsToken) item;
-                new TokenDialog(getXoActivity(), token)
-                        .show(getXoActivity().getFragmentManager(), "TokenDialog");
+                new TokenDialog(getXoActivity(), token).show(getXoActivity().getFragmentManager(), "TokenDialog");
             }
         }
     }

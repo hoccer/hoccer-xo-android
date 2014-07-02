@@ -249,7 +249,7 @@
     <string name="placeholder_nearby_text">Warten auf andere Nearby-Nutzer...</string>
     <string name="actionbar_default_title">Hoccer</string>
     <string name="content_audio_caption">Musik</string>
-    <string name="nearby_info_usercount">%1$d Benutzer in der nähe</string>
+    <string name="nearby_info_usercount">%1$d Benutzer in der Nähe</string>
     <string name="profile_nickname_text">Anzeigename</string>
     <string name="seen_text">gesehen</string>
     <string name="nearby_text">Alle in der Nähe</string>
