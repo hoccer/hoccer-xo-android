@@ -82,7 +82,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
         inflater.inflate(R.menu.fragment_attachment_list, menu);
 
-        createSearchWidget();
+        initSearchWidget();
     }
 
     @Override
@@ -229,50 +229,6 @@ public class AudioAttachmentListFragment extends XoListFragment {
         }
     }
 
-    private void createSearchWidget() {
-
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        final SearchView searchView = (SearchView) mMenu.findItem(R.id.menu_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        searchView.setIconifiedByDefault(false);
-
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(final String query) {
-                searchAttachmentList(query);
-                return false;
-            }
-        });
-    }
-
-    private void searchAttachmentList(final String query) {
-
-        mAttachmentListAdapter.clear();
-
-        List<AudioAttachmentItem> items = mAttachmentCacheAdapter.getAudioAttachmentItems();
-
-        for (int i = 0; i < items.size(); ++i) {
-            AudioAttachmentItem item = items.get(i);
-            String title = item.getMetaData().getTitle();
-            String artist = item.getMetaData().getArtist();
-
-            if ((title != null && title.toLowerCase().contains(query.toLowerCase())) ||
-                    (artist != null && artist.toLowerCase().contains(query.toLowerCase()))) {
-                mAttachmentListAdapter.addItem(item);
-            }
-        }
-        //setListAdapter(mAttachmentListAdapter);
-    }
-
     private boolean isPaused(AudioAttachmentItem item) {
         if (mMediaPlayerService != null && mMediaPlayerService.isPaused()) {
             if (item.equals(mMediaPlayerService.getCurrentMediaItem())) {
@@ -314,6 +270,50 @@ public class AudioAttachmentListFragment extends XoListFragment {
         };
 
         getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void initSearchWidget() {
+
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        final SearchView searchView = (SearchView) mMenu.findItem(R.id.menu_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setIconifiedByDefault(false);
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(final String query) {
+                searchAttachmentList(query);
+                return false;
+            }
+        });
+    }
+
+    private void searchAttachmentList(final String query) {
+
+        mAttachmentListAdapter.clear();
+
+        List<AudioAttachmentItem> items = mAttachmentCacheAdapter.getAudioAttachmentItems();
+
+        for (int i = 0; i < items.size(); ++i) {
+            AudioAttachmentItem item = items.get(i);
+            String title = item.getMetaData().getTitle();
+            String artist = item.getMetaData().getArtist();
+
+            if ((title != null && title.toLowerCase().contains(query.toLowerCase())) ||
+                    (artist != null && artist.toLowerCase().contains(query.toLowerCase()))) {
+                mAttachmentListAdapter.addItem(item);
+            }
+        }
+        //setListAdapter(mAttachmentListAdapter);
     }
 
     private class ListInteractionHandler implements AdapterView.OnItemClickListener, AbsListView.MultiChoiceModeListener {
