@@ -4,8 +4,8 @@
         xmlns:custom="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp">
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
 
     <com.hoccer.xo.android.view.AvatarView
             android:id="@+id/contact_icon"
@@ -15,6 +15,15 @@
             custom:cornerRadius="65"
             custom:defaultAvatarImageUrl="@drawable/avatar_default_contact"
             style="@style/AppBaseTheme.Contact.Avatar"/>
+
+    <TextView
+            android:id="@+id/contact_unseen_messages"
+            android:layout_alignRight="@+id/contact_icon"
+            android:layout_alignTop="@id/contact_icon"
+            android:layout_marginRight="-3dp"
+            android:visibility="gone"
+            android:background="@drawable/unread_messages"
+            style="@style/AppBaseTheme.Contact.UnreadMessages"/>
 
     <TextView
             android:id="@+id/contact_name"
@@ -28,15 +37,6 @@
             android:singleLine="true"
             android:layout_marginRight="85dp"
             style="@style/AppBaseTheme.Contact.Name"/>
-
-    <TextView
-            android:id="@+id/contact_unseen_messages"
-            android:layout_alignRight="@+id/contact_icon"
-            android:layout_alignTop="@id/contact_icon"
-            android:layout_marginRight="-3dp"
-            android:visibility="gone"
-            android:background="@drawable/unread_messages"
-            style="@style/AppBaseTheme.Contact.UnreadMessages"/>
 
     <TextView
             android:id="@+id/contact_last_message"

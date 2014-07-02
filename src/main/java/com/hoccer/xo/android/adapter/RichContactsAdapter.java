@@ -19,6 +19,7 @@ import com.hoccer.xo.release.R;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Contacts adapter for the main contact list
@@ -59,13 +60,28 @@ public class RichContactsAdapter extends ContactsAdapter {
 
     @Override
     protected int getNearbyHistoryLayout() {
-        return R.layout.item_nearby_history;
+        return R.layout.item_contact_client;
     }
 
     @Override
     protected void updateNearbyHistoryLayout(View v) {
-        TextView messagesCount = (TextView)v.findViewById(R.id.tv_nearby_history_messages_count);
-        messagesCount.setText("666");
+        TextView titleText = (TextView) v.findViewById(R.id.contact_name);
+        TextView timestampText = (TextView) v.findViewById(R.id.contact_time);
+        TextView lastMessageText = (TextView) v.findViewById(R.id.contact_last_message);
+        AvatarView avatarView = (AvatarView) v.findViewById(R.id.contact_icon);
+
+        try {
+            long offset = mDatabase.getNearbyMessageCount() - 1;
+            TalkClientMessage lastNearbyMessage = mDatabase.findNearbyMessages(1, offset).get(0);
+            timestampText.setText(getTimeString(lastNearbyMessage.getTimestamp()));
+            lastMessageText.setText(lastNearbyMessage.getText());
+        } catch (SQLException e) {
+            LOG.error(e);
+        }
+
+        titleText.setText(R.string.nearby_saved);
+        avatarView.setAvatarImage(R.drawable.avatar_default_location);
+        avatarView.setClickable(false);
     }
 
     @Override
@@ -122,9 +138,7 @@ public class RichContactsAdapter extends ContactsAdapter {
             TalkClientMessage message = mDatabase
                     .findLatestMessageByContactId(contact.getClientContactId());
             if (message != null) {
-                Date messageTime = message.getTimestamp();
-                SimpleDateFormat sdf = new SimpleDateFormat("EEE HH:mm");
-                lastMessageTime = sdf.format(messageTime);
+                lastMessageTime = getTimeString(message.getTimestamp());
             }
         } catch (SQLException e) {
             LOG.error("sql error", e);
@@ -174,6 +188,11 @@ public class RichContactsAdapter extends ContactsAdapter {
                 mActivity.showContactProfile(contact);
             }
         });
+    }
+
+    private String getTimeString(Date messageTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE HH:mm");
+        return sdf.format(messageTime);
     }
 
     private String chooseAttachmentType(Context context, String attachmentType) {
