@@ -12,15 +12,13 @@ import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.SearchView;
+import android.widget.*;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.content.ContentMediaType;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.adapter.AttachmentListAdapter;
 import com.hoccer.xo.android.adapter.AttachmentListFilterAdapter;
+import com.hoccer.xo.android.adapter.SearchResultsAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.content.audio.MediaPlaylist;
@@ -48,9 +46,12 @@ public class AudioAttachmentListFragment extends XoListFragment {
     private AttachmentListAdapter mAttachmentCacheAdapter;
     private AttachmentListAdapter mAttachmentListAdapter;
     private AttachmentListFilterAdapter mFilterAdapter;
+    private SearchResultsAdapter mResultsAdapter;
     private int mFilteredContactId;
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback;
+
+    private boolean mInSearchMode = false;
 
     private Menu mMenu;
 
@@ -163,6 +164,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
         mAttachmentListAdapter.setAudioAttachmentItems(mAttachmentCacheAdapter.getAudioAttachmentItems());
 
         XoApplication.getXoClient().registerTransferListener(mAttachmentListAdapter);
+        XoApplication.getXoClient().registerTransferListener(mAttachmentCacheAdapter);
         setListAdapter(mAttachmentListAdapter);
     }
 
@@ -274,68 +276,77 @@ public class AudioAttachmentListFragment extends XoListFragment {
 
     private void initSearchWidget() {
 
+        SearchActionHandler handler = new SearchActionHandler();
+
+        MenuItem searchMenuItem = mMenu.findItem(R.id.menu_search);
+        searchMenuItem.setOnActionExpandListener(handler);
+
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        final SearchView searchView = (SearchView) mMenu.findItem(R.id.menu_search).getActionView();
+        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         searchView.setIconifiedByDefault(false);
+        searchView.setOnQueryTextListener(handler);
 
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(final String query) {
-                searchAttachmentList(query);
-                return false;
-            }
-        });
     }
 
     private void searchAttachmentList(final String query) {
+        if (mInSearchMode) {
 
-        mAttachmentListAdapter.clear();
-
-        List<AudioAttachmentItem> items = mAttachmentCacheAdapter.getAudioAttachmentItems();
-
-        for (int i = 0; i < items.size(); ++i) {
-            AudioAttachmentItem item = items.get(i);
-            String title = item.getMetaData().getTitle();
-            String artist = item.getMetaData().getArtist();
-
-            if ((title != null && title.toLowerCase().contains(query.toLowerCase())) ||
-                    (artist != null && artist.toLowerCase().contains(query.toLowerCase()))) {
-                mAttachmentListAdapter.addItem(item);
+            if (mResultsAdapter == null) {
+                mResultsAdapter = new SearchResultsAdapter();
             }
+            mResultsAdapter.clear();
+            AttachmentListAdapter audioAttachments = new AttachmentListAdapter(getXoActivity());
+
+            List<AudioAttachmentItem> items = mAttachmentListAdapter.getAudioAttachmentItems();
+
+            for (int i = 0; i < items.size(); ++i) {
+                AudioAttachmentItem item = items.get(i);
+                String title = item.getMetaData().getTitle();
+                String artist = item.getMetaData().getArtist();
+
+                if ((title != null && title.toLowerCase().contains(query.toLowerCase())) ||
+                        (artist != null && artist.toLowerCase().contains(query.toLowerCase()))) {
+                    audioAttachments.addItem(item);
+                }
+            }
+
+            mResultsAdapter.addSection("Audio Attachments", audioAttachments);
+            setListAdapter(mResultsAdapter);
         }
-        //setListAdapter(mAttachmentListAdapter);
     }
 
     private class ListInteractionHandler implements AdapterView.OnItemClickListener, AbsListView.MultiChoiceModeListener {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Object selectedItem = getListAdapter().getItem(position);
 
-            AudioAttachmentItem selectedItem = mAttachmentListAdapter.getItem(position);
+            if (selectedItem instanceof AudioAttachmentItem) {
+                AudioAttachmentItem selectedAudioItem = (AudioAttachmentItem) selectedItem;
+                if (mInSearchMode) {
+                    List<AudioAttachmentItem> itemList = new ArrayList<AudioAttachmentItem>();
+                    itemList.add(selectedAudioItem);
+                    position = 0;
+                    mInSearchMode = false;
+                    mMediaPlayerService.setMediaList(itemList);
+                } else {
+                    setMediaList();
+                }
 
-            setMediaList();
+                if (isPlaying(selectedAudioItem)) {
+                    mMediaPlayerService.updatePosition(position);
+                } else if (isPaused(selectedAudioItem)) {
+                    mMediaPlayerService.updatePosition(position);
+                    mMediaPlayerService.play();
+                } else {
+                    mMediaPlayerService.play(position);
+                }
 
-            if (isPlaying(selectedItem)) {
-                mMediaPlayerService.updatePosition(position);
-            } else if (isPaused(selectedItem)) {
-                mMediaPlayerService.updatePosition(position);
-                mMediaPlayerService.play();
+                getXoActivity().showFullscreenPlayer();
             } else {
-                setMediaList();
-                mMediaPlayerService.play(position);
-            }
 
-            getXoActivity().showFullscreenPlayer();
+            }
         }
 
         @Override
@@ -400,6 +411,40 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 loadAttachments();
             }
 
+            return true;
+        }
+    }
+
+    private class SearchActionHandler implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener{
+
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+
+            return true;
+        }
+
+        @Override
+        public boolean onQueryTextChange(final String query) {
+            searchAttachmentList(query);
+            return false;
+        }
+
+        @Override
+        public boolean onMenuItemActionExpand(MenuItem item) {
+            mInSearchMode = true;
+            return true;
+        }
+
+        @Override
+        public boolean onMenuItemActionCollapse(MenuItem item) {
+            if (item.getItemId() == R.id.menu_search) {
+                mInSearchMode = false;
+                mResultsAdapter.clear();
+                setListAdapter(mAttachmentListAdapter);
+                Toast.makeText(getActivity(),"HOLLERRR!!!", Toast.LENGTH_LONG).show();
+            }
             return true;
         }
     }

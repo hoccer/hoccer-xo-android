@@ -1,10 +1,13 @@
 package com.hoccer.xo.android.adapter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import com.hoccer.talk.client.IXoTransferListener;
 import com.hoccer.talk.client.model.TalkClientDownload;
 import com.hoccer.talk.client.model.TalkClientMessage;
@@ -15,6 +18,7 @@ import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.content.AudioAttachmentItem;
 import com.hoccer.xo.android.service.MediaPlayerService;
 import com.hoccer.xo.android.view.AudioAttachmentView;
+import com.hoccer.xo.release.R;
 import org.apache.log4j.Logger;
 
 import java.sql.SQLException;
@@ -55,7 +59,7 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         return mAudioAttachmentItems;
     }
 
-    public void setAudioAttachmentItems( List<AudioAttachmentItem> items) {
+    public void setAudioAttachmentItems(List<AudioAttachmentItem> items) {
         mAudioAttachmentItems.addAll(items);
         mActivity.runOnUiThread(new Runnable() {
             @Override
@@ -153,7 +157,7 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
                 mActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if( mSelections != null && mSelections.size() > 0) {
+                        if (mSelections != null && mSelections.size() > 0) {
                             updateCheckedItems();
                         }
 
@@ -161,23 +165,6 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
                     }
                 });
             }
-        }
-    }
-
-    private void updateCheckedItems() {
-        SparseBooleanArray updatedSelection = new SparseBooleanArray(mSelections.size());
-
-        for( int i = 0; i < mSelections.size(); ++i){
-            boolean b = mSelections.valueAt(i);
-            int k = mSelections.keyAt(i);
-            updatedSelection.put(k +1, b);
-        }
-
-        mSelections.clear();
-
-        //@Info Setting mSelection to updatedSelection won't work since the reference changes, which is not allowed
-        for( int i = 0; i < updatedSelection.size(); ++i){
-            mSelections.append(updatedSelection.keyAt(i), updatedSelection.valueAt(i));
         }
     }
 
@@ -230,7 +217,7 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         return isRemovable;
     }
 
-    public void addItem(AudioAttachmentItem item){
+    public void addItem(AudioAttachmentItem item) {
         mAudioAttachmentItems.add(item);
         mActivity.runOnUiThread(new Runnable() {
             @Override
@@ -240,7 +227,7 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         });
     }
 
-    public void clear(){
+    public void clear() {
         mAudioAttachmentItems.clear();
         mActivity.runOnUiThread(new Runnable() {
             @Override
@@ -282,6 +269,23 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
         }
     }
 
+    private void updateCheckedItems() {
+        SparseBooleanArray updatedSelection = new SparseBooleanArray(mSelections.size());
+
+        for (int i = 0; i < mSelections.size(); ++i) {
+            boolean b = mSelections.valueAt(i);
+            int k = mSelections.keyAt(i);
+            updatedSelection.put(k + 1, b);
+        }
+
+        mSelections.clear();
+
+        //@Info Setting mSelection to updatedSelection won't work since the reference changes, which is not allowed
+        for (int i = 0; i < updatedSelection.size(); ++i) {
+            mSelections.append(updatedSelection.keyAt(i), updatedSelection.valueAt(i));
+        }
+    }
+
     private boolean isRecordedAudio(String fileName) {
         if (fileName.startsWith("recording")) {
             return true;
@@ -289,5 +293,5 @@ public class AttachmentListAdapter extends BaseAdapter implements IXoTransferLis
 
         return false;
     }
+
 }
-	
