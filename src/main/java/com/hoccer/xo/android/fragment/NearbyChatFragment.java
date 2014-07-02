@@ -106,7 +106,7 @@ public class NearbyChatFragment extends XoListFragment implements XoAdapter.Adap
 
     public void converseWithContact() {
         if (mNearbyAdapter == null) {
-            mNearbyAdapter = new NearbyChatAdapter(mList, getXoActivity(), null);
+            mNearbyAdapter = new NearbyChatAdapter(mList, getXoActivity());
             mNearbyAdapter.setAdapterReloadListener(this);
             mNearbyAdapter.onCreate();
             mList.setAdapter(mNearbyAdapter);

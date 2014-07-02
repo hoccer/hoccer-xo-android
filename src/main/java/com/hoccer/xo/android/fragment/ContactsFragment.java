@@ -1,21 +1,30 @@
 package com.hoccer.xo.android.fragment;
 
-import android.os.Bundle;
-import android.view.*;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 import com.hoccer.talk.client.XoClientDatabase;
 import com.hoccer.talk.client.model.TalkClientContact;
 import com.hoccer.talk.client.model.TalkClientSmsToken;
+import com.hoccer.xo.android.activity.NearbyHistoryMessagingActivity;
 import com.hoccer.xo.android.adapter.ContactsAdapter;
 import com.hoccer.xo.android.adapter.OnItemCountChangedListener;
 import com.hoccer.xo.android.adapter.RichContactsAdapter;
 import com.hoccer.xo.android.base.XoListFragment;
 import com.hoccer.xo.android.dialog.TokenDialog;
 import com.hoccer.xo.release.R;
+
 import org.apache.log4j.Logger;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import java.sql.SQLException;
 
@@ -161,7 +170,6 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
 
             Object item = mContactList.getItemAtPosition(position);
             if (item instanceof TalkClientContact) {
-
                 TalkClientContact contact = (TalkClientContact) item;
                 if (contact.isGroup() && contact.isGroupInvited()) {
                     getXoActivity().showContactProfile(contact);
@@ -170,9 +178,13 @@ public class ContactsFragment extends XoListFragment implements OnItemCountChang
                 }
             }
             if (item instanceof TalkClientSmsToken) {
-
                 TalkClientSmsToken token = (TalkClientSmsToken) item;
-                new TokenDialog(getXoActivity(), token).show(getXoActivity().getFragmentManager(), "TokenDialog");
+                new TokenDialog(getXoActivity(), token).show(getXoActivity().getFragmentManager(),
+                        "TokenDialog");
+            }
+            if (item instanceof String) { // item can only be an instance of string if the user pressed on the nearby saved option
+                Intent intent = new Intent(getXoActivity(), NearbyHistoryMessagingActivity.class);
+                startActivity(intent);
             }
         }
     }

@@ -46,7 +46,7 @@ public abstract class ContactsAdapter extends XoAdapter
     private OnItemCountChangedListener mOnItemCountChangedListener;
 
     private boolean showNearbyHistory = false;
-    private long mArchivedNearbyMessagesCount = 0;
+    private long mNearbyMessagesCount = 0;
 
     public ContactsAdapter(XoActivity activity) {
         super(activity);
@@ -263,10 +263,11 @@ public abstract class ContactsAdapter extends XoAdapter
 
         // add saved nearby messages
         if (showNearbyHistory) {
+
             // TODO: only if nearby history was found in db
             try {
-                long mArchivedNearbyMessagesCount = mDatabase.getArchivedMessageCountNearby();
-                if (mArchivedNearbyMessagesCount > 0) {
+                mNearbyMessagesCount = mDatabase.getNearbyMessageCount();
+                if (mNearbyMessagesCount > 0) {
                     count++;
                 }
             } catch (SQLException e) {
@@ -294,8 +295,8 @@ public abstract class ContactsAdapter extends XoAdapter
             offset += mClientContacts.size();
         }
         // TODO: only if nearby history was found in db
-        if (position == getCount()-1 && mArchivedNearbyMessagesCount > 0) {
-            return null;
+        if (position == getCount()-1 && mNearbyMessagesCount > 0) {
+            return new String("nearbyArchived");
         }
         return null;
     }
@@ -319,7 +320,7 @@ public abstract class ContactsAdapter extends XoAdapter
         }
 
         // TODO: only if nearby history was found in db
-        if (position == getCount()-1 && mArchivedNearbyMessagesCount > 0) {
+        if (position == getCount()-1 && mNearbyMessagesCount > 0) {
             return VIEW_TYPE_NEARBY_HISTORY;
         }
         return VIEW_TYPE_SEPARATOR;
