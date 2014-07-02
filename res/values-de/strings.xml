@@ -47,6 +47,7 @@
     <!-- AudioAttachmentList Fragment -->
     <string name="audio_attachment_list_all">Alle</string>
     <string name="audio_attachment_list_unknown">Unbekannt</string>
+    <string name="menu_collections">Sammlungen</string>
     <string name="menu_search">Suche</string>
     <string name="search_hint">Suche Attachments</string>
 
