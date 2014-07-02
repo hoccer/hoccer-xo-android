@@ -1,5 +1,6 @@
 package com.hoccer.xo.android.activity;
 
+import com.hoccer.xo.android.adapter.NearbyChatAdapter;
 import com.hoccer.xo.android.base.XoActivity;
 import com.hoccer.xo.android.fragment.NearbyChatFragment;
 import com.hoccer.xo.release.R;
@@ -7,6 +8,7 @@ import com.hoccer.xo.release.R;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.widget.ListView;
 
 public class NearbyHistoryMessagingActivity extends XoActivity {
 
@@ -21,12 +23,10 @@ public class NearbyHistoryMessagingActivity extends XoActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        FragmentManager manager = getSupportFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.fl_fragment_container, new NearbyChatFragment());
-        transaction.commit();
+    protected void onResume() {
+        super.onResume();
+        ListView listView = (ListView) findViewById(R.id.lv_nearby_history_chat);
+        listView.setAdapter(new NearbyChatAdapter(listView, this));
     }
 }
 
