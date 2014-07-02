@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import com.hoccer.xo.release.R;
@@ -72,6 +75,47 @@ public class XoDialogs {
                 });
                 builder.setNegativeButton(R.string.common_cancel, cancelListener);
                 builder.setView(passwordInputView);
+                Dialog dialog = builder.create();
+                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                return dialog;
+            }
+        };
+        dialogFragment.show(activity.getFragmentManager(), tag);
+    }
+
+    public interface OnOkClickListener {
+        public void onClick(DialogInterface dialog, int which, String input);
+    }
+    public interface OnCancelClickListener {
+        public void onClick(DialogInterface dialog, int which);
+    }
+
+    public static void showCreateDialog(final String tag, final int titleId, final int messageId, final Activity activity, final XoDialogs.OnOkClickListener okListener, final OnCancelClickListener cancelListener) {
+        final View dialogView = (LinearLayout)activity.getLayoutInflater().inflate(R.layout.dialog_create_new_item, null);
+        final EditText input = (EditText) dialogView.findViewById(R.id.et_input_name);
+        final InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        DialogFragment dialogFragment = new DialogFragment() {
+            @Override
+            public Dialog onCreateDialog(Bundle savedInstanceState) {
+                LOG.debug("Creating dialog: " + tag);
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setTitle(titleId);
+                builder.setMessage(messageId);
+                builder.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        inputMethodManager.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                        okListener.onClick(dialog, which, input.getText().toString());
+                    }
+                });
+                builder.setNegativeButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        inputMethodManager.hideSoftInputFromWindow(input.getWindowToken(), 0);
+                        cancelListener.onClick(dialog, which);
+                    }
+                });
+                builder.setView(dialogView);
                 Dialog dialog = builder.create();
                 dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                 return dialog;

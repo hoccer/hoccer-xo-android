@@ -47,7 +47,6 @@
     <!-- AudioAttachmentList Fragment -->
     <string name="audio_attachment_list_all">Alle</string>
     <string name="audio_attachment_list_unknown">Unbekannt</string>
-    <string name="menu_collections">Sammlungen</string>
     <string name="menu_search">Suche</string>
     <string name="search_hint">Suche Attachments</string>
 
@@ -226,6 +225,12 @@
     <string name="media_meta_data_unknown_artist">Unbekannter Interpret</string>
     <string name="media_player_playlist_track_divider">von</string>
     <string name="media_player_default_filter_label">Alle</string>
+
+    <!-- Media Browser -->
+    <string name="collections">Sammlungen</string>
+    <string name="menu_collections">Sammlungen</string>
+    <string name="new_media_collection">Neue Sammlung</string>
+    <string name="enter_new_collection_name">Bitte geben Sie einen Namen für die neue Sammlung ein:</string>
 
     <!-- Preferences -->
     <string name="preference_keysize_summary">RSA Schlüssel mit gewählter Schlüssellänge erneuern</string>
