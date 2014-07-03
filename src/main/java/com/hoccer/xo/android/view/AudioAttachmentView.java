@@ -5,8 +5,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,27 +44,6 @@ public class AudioAttachmentView extends LinearLayout implements View.OnClickLis
         if (mAudioAttachmentItem == null || !mAudioAttachmentItem.getFilePath().equals(audioAttachmentItem.getFilePath())) {
             mAudioAttachmentItem = audioAttachmentItem;
             updateAudioView();
-        }
-    }
-
-    private void updateAudioView() {
-        mTitleTextView.setText(mAudioAttachmentItem.getMetaData().getTitleOrFilename(mAudioAttachmentItem.getFilePath()).trim());
-
-        String artist = mAudioAttachmentItem.getMetaData().getArtist();
-        if (artist == null || artist.isEmpty()) {
-            artist = getResources().getString(R.string.media_meta_data_unknown_artist);
-        }
-
-        mArtistTextView.setText(artist.trim());
-
-        if (mCurrentTask != null && mCurrentTask.getStatus() != AsyncTask.Status.FINISHED) {
-            mCurrentTask.cancel(true);
-        }
-        if (mAudioAttachmentItem.getMetaData().getArtwork() == null) {
-            mCurrentTask = new DownloadArtworkTask();
-            mCurrentTask.execute();
-        } else {
-            AudioAttachmentView.this.mArtworkImageView.setImageDrawable(mAudioAttachmentItem.getMetaData().getArtwork());
         }
     }
 
@@ -118,6 +95,27 @@ public class AudioAttachmentView extends LinearLayout implements View.OnClickLis
 
     @Override
     public void onClick(View v) {
+    }
+
+    private void updateAudioView() {
+        mTitleTextView.setText(mAudioAttachmentItem.getMetaData().getTitleOrFilename(mAudioAttachmentItem.getFilePath()).trim());
+
+        String artist = mAudioAttachmentItem.getMetaData().getArtist();
+        if (artist == null || artist.isEmpty()) {
+            artist = getResources().getString(R.string.media_meta_data_unknown_artist);
+        }
+
+        mArtistTextView.setText(artist.trim());
+
+        if (mCurrentTask != null && mCurrentTask.getStatus() != AsyncTask.Status.FINISHED) {
+            mCurrentTask.cancel(true);
+        }
+        if (mAudioAttachmentItem.getMetaData().getArtwork() == null) {
+            mCurrentTask = new DownloadArtworkTask();
+            mCurrentTask.execute();
+        } else {
+            AudioAttachmentView.this.mArtworkImageView.setImageDrawable(mAudioAttachmentItem.getMetaData().getArtwork());
+        }
     }
 
     private class DownloadArtworkTask extends AsyncTask<Void, Void, Drawable> {
