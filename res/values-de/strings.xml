@@ -255,7 +255,8 @@
     <string name="nearby_text">Alle in der Nähe</string>
     <string name="error_send_message">Die Nachricht konnte nicht gesendet werden.</string>
     <string name="pref_privacy_title">Privatspähre</string>
-    <string name="nearby_saved">In der Nähe gespeichert</string>
+    <string name="error_send_message_empty_group">Diese Gruppe ist leer.</string>
+    <string name="error_send_message_blocked">Sie haben diesen Kontakt blockiert. Die Nachricht wird nicht gesendet.</string>
 
     <string-array name="preference_log_level_names">
         <item>Info</item>

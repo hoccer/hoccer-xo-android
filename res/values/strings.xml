@@ -286,5 +286,7 @@
     <string name="error_send_message">Could not send message.</string>
     <string name="pref_privacy_title">Privacy</string>
     <string name="nearby_saved">Nearby saved</string>
+    <string name="error_send_message_empty_group">There is nobody in this group.</string>
+    <string name="error_send_message_blocked">The contact is blocked. Message will not be sent.</string>
 
 </resources>

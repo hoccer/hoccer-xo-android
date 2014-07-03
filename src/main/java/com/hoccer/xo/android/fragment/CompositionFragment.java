@@ -204,14 +204,7 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
     }
 
     private boolean isSendMessagePossible() {
-        boolean isBlocked = false;
-        if(!mContact.isGroup() && !mContact.isNearby()) {
-            TalkRelationship clientRelationship = mContact.getClientRelationship();
-            if (clientRelationship != null && clientRelationship.getState()
-                    .equals(TalkRelationship.STATE_BLOCKED)) {
-                isBlocked = true;
-            }
-        }
+        boolean isBlocked = isBlocked();
 
         boolean isEmptyGroup = false;
         if(mContact.isGroup() && mContact.getGroupMemberships().size() == 1) {
@@ -221,16 +214,36 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
         return !isBlocked && !isEmptyGroup;
     }
 
+    private boolean isBlocked() {
+        if(!mContact.isGroup() && !mContact.isNearby()) {
+            TalkRelationship clientRelationship = mContact.getClientRelationship();
+            if (clientRelationship != null && clientRelationship.getState()
+                    .equals(TalkRelationship.STATE_BLOCKED)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isEmptyGroup() {
+        if(mContact.isGroup() && mContact.getGroupMemberships().size() == 1) {
+            return true;
+        }
+        return false;
+    }
+
     private void sendComposedMessage() {
         if (mContact == null) {
             return;
         }
 
         boolean isAborted = false;
-        if (!isSendMessagePossible()) {
-//            showAlertSendMessageNotPossible();
-            showSendMessageNotPossibleToast();
+        if (isBlocked()) {
+            Toast.makeText(getXoActivity(), R.string.error_send_message_blocked, Toast.LENGTH_LONG).show();
             isAborted = true;
+        } else if (isEmptyGroup()) {
+            Toast.makeText(getXoActivity(), R.string.error_send_message_empty_group, Toast.LENGTH_LONG).show();
+            return;
         }
 
         String messageText = mTextEdit.getText().toString();
@@ -253,10 +266,6 @@ public class CompositionFragment extends XoFragment implements View.OnClickListe
                     .requestDelivery(getXoClient().composeClientMessage(mContact, messageText, upload));
         }
         clearComposedMessage();
-    }
-
-    private void showSendMessageNotPossibleToast() {
-        Toast.makeText(getXoActivity(), R.string.error_send_message, Toast.LENGTH_LONG).show();
     }
 
     private void configureMotionInterpreterForContact(TalkClientContact contact) {
