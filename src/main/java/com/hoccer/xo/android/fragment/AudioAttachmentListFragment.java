@@ -36,6 +36,7 @@ import java.util.List;
 public class AudioAttachmentListFragment extends XoListFragment {
 
     public static final String ARG_CLIENT_CONTACT_ID = "com.hoccer.xo.android.fragment.ARG_CLIENT_CONTACT_ID";
+    public static final String ARG_MEDIA_COLLECTION_ID = "com.hoccer.xo.android.fragment.ARG_MEDIA_COLLECTION_ID";
     public static final String AUDIO_ATTACHMENT_REMOVED_ACTION = "com.hoccer.xo.android.fragment.AUDIO_ATTACHMENT_REMOVED_ACTION";
     public static final String TALK_CLIENT_MESSAGE_ID_EXTRA = "com.hoccer.xo.android.fragment.TALK_CLIENT_MESSAGE_ID_EXTRA";
 
@@ -49,6 +50,7 @@ public class AudioAttachmentListFragment extends XoListFragment {
     private AttachmentListAdapter mAttachmentListAdapter;
     private AttachmentListFilterAdapter mFilterAdapter;
     private int mFilteredContactId;
+    private int mMediaCollectionId;
     private ActionMode mActionMode;
     private ActionMode.Callback mActionModeCallback;
 
@@ -109,6 +111,13 @@ public class AudioAttachmentListFragment extends XoListFragment {
                 LOG.error("invalid contact id");
             } else {
                 mFilteredContactId = clientContactId;
+            }
+
+            int mediaCollectionId = getArguments().getInt(ARG_MEDIA_COLLECTION_ID);
+            if (mediaCollectionId == -1) {
+                LOG.error("invalid collection id");
+            } else {
+                mMediaCollectionId = mediaCollectionId;
             }
         }
 

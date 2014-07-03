@@ -2,8 +2,12 @@ package com.hoccer.xo.android.fragment;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.view.*;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import com.hoccer.talk.client.model.TalkClientMediaCollection;
 import com.hoccer.xo.android.XoApplication;
 import com.hoccer.xo.android.XoDialogs;
@@ -55,6 +59,9 @@ public class MediaCollectionListFragment extends ListFragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        getListView().setOnItemClickListener(new ListInteractionHandler());
+
         loadCollections();
     }
 
@@ -87,5 +94,27 @@ public class MediaCollectionListFragment extends ListFragment {
             LOG.error("Creating new media collection failed.", e);
         }
         mMediaCollectionListAdapter.add(collection);
+    }
+
+    private class ListInteractionHandler implements AdapterView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Integer mediaCollectionId = ((TalkClientMediaCollection) mMediaCollectionListAdapter.getItem(position)).getId();
+            showAudioAttachmentListFragment(mediaCollectionId);
+        }
+    }
+
+    private void showAudioAttachmentListFragment(Integer mediaCollectionId) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(AudioAttachmentListFragment.ARG_MEDIA_COLLECTION_ID, mediaCollectionId);
+
+        AudioAttachmentListFragment mAudioAttachmentListFragment = new AudioAttachmentListFragment();
+        mAudioAttachmentListFragment.setArguments(bundle);
+
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fl_fragment_container, mAudioAttachmentListFragment);
+        ft.addToBackStack(null);
+        ft.commit();
     }
 }
