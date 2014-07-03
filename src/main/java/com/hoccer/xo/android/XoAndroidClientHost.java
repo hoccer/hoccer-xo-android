@@ -2,6 +2,7 @@ package com.hoccer.xo.android;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.os.Build;
 import com.hoccer.talk.client.IXoClientDatabaseBackend;
 import com.hoccer.talk.client.IXoClientHost;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
@@ -33,9 +35,11 @@ public class XoAndroidClientHost implements IXoClientHost {
 
     Context mContext = null;
     PackageInfo mPackageInfo = null;
+    Properties mClientConfigProperties = null;
 
     public XoAndroidClientHost(Context context) {
         mContext = context;
+        loadClientConfigProperties();
         try {
             PackageManager packageManager = mContext.getPackageManager();
             if (packageManager != null) {
@@ -84,6 +88,19 @@ public class XoAndroidClientHost implements IXoClientHost {
     @Override
     public String getSupportTag() {
         return XoConfiguration.SERVER_SUPPORT_TAG;
+    }
+
+    @Override
+    public void loadClientConfigProperties() {
+
+        mClientConfigProperties = new Properties();
+        try {
+            InputStream inputStream = mContext.getAssets().open("clientConfig.properties");
+            mClientConfigProperties.load(inputStream);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -155,25 +172,7 @@ public class XoAndroidClientHost implements IXoClientHost {
 
     @Override
     public String getServerUri() {
-        String serverUri;
-        if (XoConfiguration.DEVELOPMENT_MODE_ENABLED) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-
-            serverUri = preferences.getString("preference_server_uri", XoClientConfiguration.SERVER_URI);
-/*
-            serverUri = preferences.getString("preference_server_uri", null);
-            if (serverUri == null || serverUri.equalsIgnoreCase("") ||
-                    !(serverUri.startsWith("wss://") || serverUri.startsWith("ws://"))) {
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("preference_server_uri", XoClientConfiguration.SERVER_URI);
-                editor.commit();
-                serverUri = XoClientConfiguration.SERVER_URI;
-            }
-            */
-        } else {
-            serverUri = XoClientConfiguration.SERVER_URI;
-        }
-        return serverUri;
+        return (XoConfiguration.DEVELOPMENT_MODE_ENABLED) ?  mClientConfigProperties.getProperty("serverDebugUri") : mClientConfigProperties.getProperty("serverUri");
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.hoccer.xo.android.service;
 
 import android.app.*;
+import android.content.res.AssetManager;
 import com.google.android.gcm.GCMRegistrar;
 
 import com.hoccer.talk.android.push.TalkPushService;
@@ -41,6 +42,8 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.*;
@@ -232,7 +235,17 @@ public class XoClientService extends Service {
     private void configureServiceUri() {
         String uriString = mPreferences.getString("preference_service_uri", "");
         if (uriString.isEmpty()) {
-            uriString = XoClientConfiguration.SERVER_URI;
+
+            Properties clientConfigProperties = new Properties();
+            try {
+                AssetManager assetManager = getAssets();
+                InputStream inputStream = assetManager.open("clientConfig.properties");
+                clientConfigProperties.load(inputStream);
+                uriString = clientConfigProperties.getProperty("serverUri");
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         URI uri = URI.create(uriString);
         mClient.setServiceUri(uri);

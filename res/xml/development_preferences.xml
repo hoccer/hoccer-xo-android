@@ -90,8 +90,7 @@
                 android:key="preference_server_uri"
                 android:entries="@array/servers"
                 android:entryValues="@array/servers"
-                android:title="Select Server URI"
-                android:defaultValue="wss://talkserver.talk.hoccer.de:8443/"/>
+                android:title="Select Server URI"/>
 
         <ListPreference
                 android:key="preference_database"
